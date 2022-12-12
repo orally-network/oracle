@@ -1,0 +1,9 @@
+[package]
+name = "oracle_factory"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+candid = "0.8.0"
+ic-cdk = "0.6.5"
+ic-cdk-macros = "0.6.5"

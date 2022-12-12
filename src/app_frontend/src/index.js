@@ -1,4 +1,4 @@
-import { app_backend } from "../../declarations/app_backend";
+// import { app_backend } from "../../declarations/app_backend";
 
 document.querySelector("form").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -9,11 +9,11 @@ document.querySelector("form").addEventListener("submit", async (e) => {
   button.setAttribute("disabled", true);
 
   // Interact with foo actor, calling the greet method
-  const greeting = await app_backend.greet(name);
+  // const greeting = await app_backend.greet(name);
 
   button.removeAttribute("disabled");
 
-  document.getElementById("greeting").innerText = greeting;
+  // document.getElementById("greeting").innerText = greeting;
 
   return false;
 });

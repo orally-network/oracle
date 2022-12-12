@@ -957,6 +957,9 @@ dependencies = [
  "ic-cdk",
  "ic-cdk-macros",
  "ic-web3",
+ "serde",
+ "serde_bytes",
+ "serde_json",
 ]
 
 [[package]]

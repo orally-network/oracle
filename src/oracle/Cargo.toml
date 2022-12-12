@@ -1,0 +1,11 @@
+[package]
+name = "oracle"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+candid = "0.8.0"
+ic-cdk = "0.6.5"
+ic-cdk-macros = "0.6.5"
+ic-web3 = { git = "https://github.com/rocklabs-io/ic-web3" }
+hex = "0.4"

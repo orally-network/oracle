@@ -1,14 +1,8 @@
 use candid::candid_method;
-use ic_cdk_macros::{self, update, query};
+use ic_cdk_macros::{self, update, query, pre_upgrade, post_upgrade, heartbeat};
 use std::str::FromStr;
+use std::cell::{Cell, RefCell};
 use ic_cdk::export::{Principal};
-use serde::{Deserialize, Serialize};
-use ic_cdk::api::management_canister::http_request::{
-    http_request, CanisterHttpRequestArgument, HttpHeader, HttpMethod, HttpResponse, TransformArgs,
-    TransformContext,
-};
-use ic_cdk::api::call::RejectionCode;
-use serde_json::{self, Value};
 
 use ic_web3::transports::ICHttp;
 use ic_web3::Web3;
@@ -19,14 +13,53 @@ use ic_web3::{
     types::{Address, TransactionParameters, BlockId, BlockNumber},
 };
 
+mod fetcher;
+use fetcher::Fetcher;
+mod pubsub;
+mod http;
+mod processing;
+
+use pubsub::Subscription;
+
 const URL: &str = "https://eth-goerli.g.alchemy.com/v2/bUH5A9MJ6basJ88Hq85y23Ada8CYSvD4";
 const CHAIN_ID: u64 = 5;
 const KEY_NAME: &str = "dfx_test_key";
 const TOKEN_ABI: &[u8] = include_bytes!("./contracts/icp_price_abi.json");
 const CONTRACT_ADDRESS: &str = "0xCFf00E5f685cCE94Dfc6d1a18200c764f9BCca1f";
-const MAX_RESPONSE_BYTES: u64 = 500_000;
 
 type Result<T, E> = std::result::Result<T, E>;
+
+thread_local! {
+    static FETCHER: Cell<Fetcher> = Cell::default();
+    static SUBSCRIPTIONS: RefCell<Vec<Subscription>> = RefCell::default();
+
+    pub static FETCH_COUNTER: RefCell<usize> = RefCell::new(0);
+}
+
+#[update]
+fn init() {
+    // init fetcher
+}
+
+#[pre_upgrade]
+fn pre_upgrade() {
+    // STATE.with(|s| {
+    //     ic_cdk::storage::stable_save((s,)).unwrap();
+    // });
+
+    // save states
+}
+
+#[post_upgrade]
+fn post_upgrade() {
+    // let (s_prev,): (State,) = ic_cdk::storage::stable_restore().unwrap();
+    // STATE.with(|s| {
+    //     *s.borrow_mut() = s_prev;
+    // });
+
+    // restore states
+    // init fetcher
+}
 
 #[update]
 async fn get_address() -> Result<String, String> {
@@ -37,76 +70,14 @@ async fn get_address() -> Result<String, String> {
     Ok(hex::encode(canister_addr))
 }
 
-async fn send_request(host: String, url: String, method: HttpMethod, body: Option<Vec<u8>>) -> Result<String, (RejectionCode, String)> {
-    let mut host_header = host.clone().to_owned();
-    host_header.push_str(":443");
-
-    let request_headers = vec![
-        HttpHeader {
-            name: "Host".to_string(),
-            value: host_header,
-        },
-        HttpHeader {
-            name: "User-Agent".to_string(),
-            value: "oracle_canister".to_string(),
-        },
-    ];
-
-    let request = CanisterHttpRequestArgument {
-        url: url.clone(),
-        method,
-        body,
-        max_response_bytes: Some(MAX_RESPONSE_BYTES),
-        transform: Some(TransformContext::new(transform, vec![])),
-        headers: request_headers,
-    };
-
-    ic_cdk::api::print(format!("Requesting url: {}", url.to_string()));
-
-    match http_request(request).await {
-        Ok((response, )) => {
-            ic_cdk::api::print(format!("Response status: {}", response.status));
-
-            let decoded_body = String::from_utf8(response.body)
-                .expect("Remote service response is not UTF-8 encoded.");
-
-            ic_cdk::api::print(format!("Response body: {}", decoded_body));
-
-            Ok(decoded_body)
-        },
-        Err((code, message)) => {
-            ic_cdk::api::print(format!("Error: {}", message));
-            Err((code, message))
-        }
-    }
-}
-
 #[update(name = "fetch_price")]
 #[candid_method(update, rename = "fetch_price")]
-async fn fetch_price() -> Result<String, String> {
-    let host = "api.pro.coinbase.com".to_string();
+async fn fetch_price() -> String {
+    let fetcher = Fetcher::new(None, 5).await;
 
-    let url = format!("https://{host}/products/ICP-USD/stats");
-    ic_cdk::api::print(url.clone());
+    ic_cdk::println!("!!!!");
 
-    match send_request(host, url, HttpMethod::GET, None).await {
-        Ok(response) => {
-            ic_cdk::api::print(format!("Response from fetch_price: {}", response));
-
-            let response_obj: Value = serde_json::from_str(&response).unwrap();
-
-            ic_cdk::api::print(format!("Price: {}", response_obj["last"]));
-
-            Ok(response_obj["last"].to_string())
-        }
-        Err((code, message)) => {
-            let f_message =
-                format!("The http_request resulted into error. RejectionCode: {code:?}, Error: {message}");
-            ic_cdk::api::print(f_message.clone());
-
-            Err(message)
-        }
-    }
+    "1".to_string()
 }
 
 #[update(name = "update_price")]
@@ -150,9 +121,7 @@ async fn update_price() -> Result<String, String> {
         op.transaction_type = Some(ic_web3::ethabi::ethereum_types::U64::from(2)) //EIP1559_TX_ID
     });
 
-    let price = fetch_price()
-        .await
-        .map_err(|e| format!("fetch_price error: {}", e))?;
+    let price: String = "10".to_string();
 
     ic_cdk::println!("Price from oracle: {}", price);
 
@@ -164,38 +133,6 @@ async fn update_price() -> Result<String, String> {
     ic_cdk::println!("txhash: {}", hex::encode(txhash));
 
     Ok(format!("{}", hex::encode(txhash)))
-}
-
-#[query]
-fn transform(raw: TransformArgs) -> HttpResponse {
-    let mut sanitized = raw.response.clone();
-    sanitized.headers = vec![
-        HttpHeader {
-            name: "Content-Security-Policy".to_string(),
-            value: "default-src 'self'".to_string(),
-        },
-        HttpHeader {
-            name: "Referrer-Policy".to_string(),
-            value: "strict-origin".to_string(),
-        },
-        HttpHeader {
-            name: "Permissions-Policy".to_string(),
-            value: "geolocation=(self)".to_string(),
-        },
-        HttpHeader {
-            name: "Strict-Transport-Security".to_string(),
-            value: "max-age=63072000".to_string(),
-        },
-        HttpHeader {
-            name: "X-Frame-Options".to_string(),
-            value: "DENY".to_string(),
-        },
-        HttpHeader {
-            name: "X-Content-Type-Options".to_string(),
-            value: "nosniff".to_string(),
-        },
-    ];
-    sanitized
 }
 
 fn main() {

@@ -3,6 +3,7 @@ use ic_cdk_macros::{self, update, query, pre_upgrade, post_upgrade, heartbeat};
 use std::str::FromStr;
 use std::cell::{Cell, RefCell};
 use ic_cdk::export::{Principal};
+use futures::future::join_all;
 
 use ic_web3::transports::ICHttp;
 use ic_web3::Web3;
@@ -14,7 +15,7 @@ use ic_web3::{
 };
 
 mod fetcher;
-use fetcher::Fetcher;
+use fetcher::{Fetcher, Endpoint};
 mod pubsub;
 mod http;
 mod processing;
@@ -70,14 +71,29 @@ async fn get_address() -> Result<String, String> {
     Ok(hex::encode(canister_addr))
 }
 
-#[update(name = "fetch_price")]
-#[candid_method(update, rename = "fetch_price")]
-async fn fetch_price() -> String {
-    let fetcher = Fetcher::new(None, 5).await;
+#[update]
+async fn setup() {}
 
-    ic_cdk::println!("!!!!");
+#[update(name = "run_example")]
+#[candid_method(update, rename = "run_example")]
+async fn run_example() -> String {
+    let fetcher = Fetcher::new(
+        Some(vec![
+            Endpoint {
+                url: "https://api.pro.coinbase.com/products/ICP-USD/stats".to_string(),
+                resolver: "last".to_string(),
+            },
+            Endpoint {
+                url: "https://api.pro.coinbase.com/products/BTC-USD/stats".to_string(),
+                resolver: "last".to_string(),
+            },
+        ]),
+        30,
+    );
 
-    "1".to_string()
+    fetcher.start();
+
+    "Ok".to_string()
 }
 
 #[update(name = "update_price")]

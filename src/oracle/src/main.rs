@@ -31,8 +31,8 @@ const CONTRACT_ADDRESS: &str = "0xCFf00E5f685cCE94Dfc6d1a18200c764f9BCca1f";
 type Result<T, E> = std::result::Result<T, E>;
 
 thread_local! {
-    static FETCHER: Cell<Fetcher> = Cell::default();
-    static SUBSCRIPTIONS: RefCell<Vec<Subscription>> = RefCell::default();
+    pub static FETCHER: RefCell<Fetcher> = RefCell::default();
+    pub static SUBSCRIPTIONS: RefCell<Vec<Subscription>> = RefCell::default();
 
     pub static FETCH_COUNTER: RefCell<usize> = RefCell::new(0);
 }
@@ -74,11 +74,11 @@ async fn get_address() -> Result<String, String> {
 #[update]
 async fn setup() {}
 
-#[update(name = "run_example")]
-#[candid_method(update, rename = "run_example")]
-async fn run_example() -> String {
+#[update(name = "start_fetcher")]
+#[candid_method(update, rename = "start_fetcher")]
+async fn start_fetcher() -> String {
     let fetcher = Fetcher::new(
-        Some(vec![
+        vec![
             Endpoint {
                 url: "https://api.pro.coinbase.com/products/ICP-USD/stats".to_string(),
                 resolver: "last".to_string(),
@@ -87,11 +87,27 @@ async fn run_example() -> String {
                 url: "https://api.pro.coinbase.com/products/BTC-USD/stats".to_string(),
                 resolver: "last".to_string(),
             },
-        ]),
+        ],
         30,
     );
 
-    fetcher.start();
+    FETCHER.with(|f| {
+        *f.borrow_mut() = fetcher;
+    });
+
+    "Ok".to_string()
+}
+
+#[update(name = "stop_fetcher")]
+#[candid_method(update, rename = "stop_fetcher")]
+async fn stop_fetcher() -> String {
+    FETCHER.with(|fetcher| {
+        let f = fetcher.borrow().clone();
+
+        f.stop();
+
+        *fetcher.borrow_mut() = Fetcher::default();
+    });
 
     "Ok".to_string()
 }

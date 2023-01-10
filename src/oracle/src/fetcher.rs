@@ -1,5 +1,9 @@
 use std::time::Duration;
-use serde::{Deserialize, Serialize};
+use ic_cdk::export::{
+    candid::CandidType,
+    serde::{Deserialize, Serialize},
+    Principal,
+};
 use serde_json::{self, Value};
 use ic_cdk::api::management_canister::http_request::{
     http_request, CanisterHttpRequestArgument, HttpHeader, HttpMethod, HttpResponse, TransformArgs,
@@ -27,36 +31,34 @@ pub struct Endpoint {
 #[derive(Clone, Debug, Default)]
 pub struct Fetcher {
     pub frequency: u64,
-    pub endpoints: Option<Vec<Endpoint>>,
-    pub timer_id: Option<TimerId>,
+    pub endpoints: Vec<Endpoint>,
+    pub timer_id: TimerId,
 }
 
 impl Fetcher {
-    pub fn new(endpoints: Option<Vec<Endpoint>>, frequency: u64) -> Self {
+    pub fn new(endpoints: Vec<Endpoint>, frequency: u64) -> Self {
+        let endpoints_cloned = endpoints.clone();
+
+        let timer_id = set_timer_interval(
+            Duration::from_secs(frequency),
+            move || ic_cdk::spawn(
+                Fetcher::fetch(
+                    endpoints_cloned.clone()
+                )
+            ),
+        );
+
         let fetcher = Fetcher {
             frequency,
             endpoints,
-            timer_id: None
+            timer_id,
         };
 
         fetcher
     }
 
-    pub fn start(mut self) {
-        let timer_id = set_timer_interval(
-            Duration::from_secs(self.frequency),
-            move || ic_cdk::spawn(
-                Fetcher::fetch(
-                    self.endpoints.as_ref().ok_or("No endpoints").unwrap().to_vec()
-                )
-            ),
-        );
-
-        self.timer_id = Some(timer_id);
-    }
-
     pub fn stop(self) {
-        clear_timer(self.timer_id.unwrap());
+        clear_timer(self.timer_id);
     }
 
     async fn fetch(endpoints: Vec<Endpoint>) {
@@ -71,6 +73,7 @@ impl Fetcher {
                     Ok(body) => {
                         let body: Value = serde_json::from_str(&body).unwrap();
 
+                        // todo: check expected behavior of resolver on more complex responses
                         Ok(body[resolver].clone())
                     },
                     Err(err) => {

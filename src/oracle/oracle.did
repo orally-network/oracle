@@ -1,5 +1,6 @@
 service : {
     get_address: () -> (variant { Ok: text; Err: text });
     update_price: () -> (variant { Ok: text; Err: text });
-    run_example: () -> (text);
+    start_fetcher: () -> (text);
+    stop_fetcher: () -> (text);
 }

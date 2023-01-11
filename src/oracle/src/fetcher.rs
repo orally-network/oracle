@@ -74,7 +74,7 @@ impl Fetcher {
                         let body: Value = serde_json::from_str(&body).unwrap();
 
                         // todo: check expected behavior of resolver on more complex responses
-                        // Ok(body[resolver].clone())
+                        // todo: handle different types of responses
                         Ok(body[resolver].as_str().expect("Parse Value to String").parse::<f64>().expect("Convert to float"))
                     },
                     Err(err) => {
@@ -98,6 +98,7 @@ impl Fetcher {
         });
 
         // processing it
+        // todo: handle other processing methods (which could be defined on creating oracle stage)
         let result = average(outputs);
 
         ic_cdk::api::print(format!("Result: {}", result));

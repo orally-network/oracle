@@ -19,7 +19,7 @@ use ic_web3::futures::TryFutureExt;
 use futures::future::join_all;
 
 use crate::http::send_request;
-
+use crate::processing::average;
 use crate::*;
 
 #[derive(Clone, Debug, Default)]
@@ -74,7 +74,8 @@ impl Fetcher {
                         let body: Value = serde_json::from_str(&body).unwrap();
 
                         // todo: check expected behavior of resolver on more complex responses
-                        Ok(body[resolver].clone())
+                        // Ok(body[resolver].clone())
+                        Ok(body[resolver].as_str().expect("Parse Value to String").parse::<f64>().expect("Convert to float"))
                     },
                     Err(err) => {
                         Err(err)
@@ -96,37 +97,14 @@ impl Fetcher {
             }
         });
 
+        // processing it
+        let result = average(outputs);
+
+        ic_cdk::api::print(format!("Result: {}", result));
+
         return;
 
-        // processing it
-
-        // store it in the state
-
-        // call publisher to publish it
+        // call publisher to publish it to all subscribers
         ic_cdk::api::print("aaa");
-
-        let host = "api.pro.coinbase.com".to_string();
-
-        let url = format!("https://api.pro.coinbase.com/products/ICP-USD/stats");
-        ic_cdk::api::print(url.clone());
-
-        match send_request(url, HttpMethod::GET, None).await {
-            Ok(response) => {
-                ic_cdk::api::print(format!("Response from fetch_price: {}", response));
-
-                let response_obj: Value = serde_json::from_str(&response).unwrap();
-
-                ic_cdk::api::print(format!("Price: {}", response_obj["last"]));
-
-                // Ok(response_obj["last"].to_string());
-            }
-            Err((code, message)) => {
-                let f_message =
-                    format!("The http_request resulted into error. RejectionCode: {code:?}, Error: {message}");
-                ic_cdk::api::print(f_message.clone());
-
-                // Err(message);
-            }
-        };
     }
 }

@@ -2,6 +2,7 @@ use ic_cdk::api::management_canister::http_request::{
     http_request, CanisterHttpRequestArgument, HttpHeader, HttpMethod, HttpResponse, TransformArgs,
     TransformContext,
 };
+use ic_cdk::api::call::RejectionCode;
 use ic_cdk::query;
 
 #[query]
@@ -34,4 +35,15 @@ fn transform(raw: TransformArgs) -> HttpResponse {
         },
     ];
     sanitized
+}
+
+pub fn average(values: Vec<Result<f64, (RejectionCode, String)>>) -> f64 {
+    values
+        .iter()
+        .filter_map(|v| v.as_ref().ok())
+        // .map(|v| match v {
+        //     Ok(v) => *v
+        // })
+        .sum::<f64>()
+        / values.len() as f64
 }

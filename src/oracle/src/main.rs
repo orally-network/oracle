@@ -3,6 +3,7 @@ use ic_cdk_macros::{self, update, query, pre_upgrade, post_upgrade, heartbeat};
 use std::str::FromStr;
 use std::cell::{Cell, RefCell};
 use ic_cdk::export::{Principal};
+use ic_cdk::{storage};
 use futures::future::join_all;
 
 use ic_web3::transports::ICHttp;
@@ -42,25 +43,25 @@ fn init() {
     // init fetcher
 }
 
-#[pre_upgrade]
-fn pre_upgrade() {
-    // STATE.with(|s| {
-    //     ic_cdk::storage::stable_save((s,)).unwrap();
-    // });
-
-    // save states
-}
-
-#[post_upgrade]
-fn post_upgrade() {
-    // let (s_prev,): (State,) = ic_cdk::storage::stable_restore().unwrap();
-    // STATE.with(|s| {
-    //     *s.borrow_mut() = s_prev;
-    // });
-
-    // restore states
-    // init fetcher
-}
+// #[pre_upgrade]
+// fn pre_upgrade() {
+//     // save states
+//
+//     FETCHER.with(|fetcher| storage::stable_save((fetcher,)).unwrap());
+// }
+//
+// #[post_upgrade]
+// fn post_upgrade() {
+//     // restore states
+//
+//     let (old_fetcher,): (Fetcher,) = storage::stable_restore().unwrap();
+//
+//     FETCHER.with(|fetcher| {
+//         let new_fetcher = Fetcher::new(old_fetcher.endpoints, old_fetcher.frequency);
+//
+//         *fetcher.borrow_mut() = new_fetcher;
+//     });
+// }
 
 #[update]
 async fn get_address() -> Result<String, String> {

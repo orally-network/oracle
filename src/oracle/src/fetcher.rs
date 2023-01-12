@@ -20,6 +20,7 @@ use futures::future::join_all;
 
 use crate::http::send_request;
 use crate::processing::average;
+use crate::pubsub::notify;
 use crate::*;
 
 #[derive(Clone, Debug, Default)]
@@ -103,9 +104,9 @@ impl Fetcher {
 
         ic_cdk::api::print(format!("Result: {}", result));
 
-        return;
-
         // call publisher to publish it to all subscribers
-        ic_cdk::api::print("aaa");
+        notify(result).await;
+
+        return;
     }
 }

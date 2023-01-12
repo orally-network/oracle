@@ -1,6 +1,6 @@
 service : {
     get_address: () -> (variant { Ok: text; Err: text });
-    update_price: () -> (variant { Ok: text; Err: text });
     start_fetcher: () -> (text);
     stop_fetcher: () -> (text);
+    subscribe: (text) -> (text);
 }

@@ -23,12 +23,17 @@ mod processing;
 
 use pubsub::Subscription;
 
+// url: "https://api.pro.coinbase.com/products/ICP-USD/stats".to_string(),
+// resolver: "last".to_string(),
+// url: "https://api.pro.coinbase.com/products/BTC-USD/stats".to_string(),
+// resolver: "last".to_string(),
+
 // todo: make rpc and chain_id settable on oracle creating stage
-const URL: &str = "https://eth-goerli.g.alchemy.com/v2/qrm39CebFg7x-b4I4XhJO4e2AocKXpNx";
-const CHAIN_ID: u64 = 5;
+// const URL: &str = "https://eth-goerli.g.alchemy.com/v2/qrm39CebFg7x-b4I4XhJO4e2AocKXpNx";
+// const CHAIN_ID: u64 = 5;
 const KEY_NAME: &str = "dfx_test_key";
 const ABI: &[u8] = include_bytes!("./contracts/icp_price_abi.json");
-const CONTRACT_ADDRESS: &str = "0xCFf00E5f685cCE94Dfc6d1a18200c764f9BCca1f";
+// const CONTRACT_ADDRESS: &str = "0xCFf00E5f685cCE94Dfc6d1a18200c764f9BCca1f";
 
 type Result<T, E> = std::result::Result<T, E>;
 
@@ -36,12 +41,8 @@ thread_local! {
     pub static FETCHER: RefCell<Fetcher> = RefCell::default();
     pub static SUBSCRIPTIONS: RefCell<Vec<Subscription>> = RefCell::default();
 
-    pub static FETCH_COUNTER: RefCell<usize> = RefCell::new(0);
-}
-
-#[update]
-fn init() {
-    // init fetcher
+    pub static CHAIN_ID: RefCell<u64> = RefCell::default();
+    pub static RPC: RefCell<String> = RefCell::default();
 }
 
 // #[pre_upgrade]
@@ -74,34 +75,23 @@ async fn get_address() -> Result<String, String> {
 }
 
 #[update]
-async fn setup() {}
-
-#[update(name = "start_fetcher")]
-#[candid_method(update, rename = "start_fetcher")]
-async fn start_fetcher() -> String {
-    let fetcher = Fetcher::new(
-        vec![
-            Endpoint {
-                url: "https://api.pro.coinbase.com/products/ICP-USD/stats".to_string(),
-                resolver: "last".to_string(),
-            },
-            Endpoint {
-                url: "https://api.pro.coinbase.com/products/BTC-USD/stats".to_string(),
-                resolver: "last".to_string(),
-            },
-        ],
-        30,
-    );
+async fn setup(endpoints: Vec<Endpoint>, frequency: u64, chain_id: u64, rpc: String) -> Result<(), String> {
+    let fetcher = Fetcher::new(endpoints, frequency);
 
     FETCHER.with(|f| {
         *f.borrow_mut() = fetcher;
     });
+    CHAIN_ID.with(|c| {
+        *c.borrow_mut() = chain_id;
+    });
+    RPC.with(|r| {
+        *r.borrow_mut() = rpc;
+    });
 
-    "Ok".to_string()
+    Ok(())
 }
 
-#[update(name = "stop_fetcher")]
-#[candid_method(update, rename = "stop_fetcher")]
+#[update]
 async fn stop_fetcher() -> String {
     FETCHER.with(|fetcher| {
         let f = fetcher.borrow().clone();
@@ -116,11 +106,11 @@ async fn stop_fetcher() -> String {
 
 #[update(name = "subscribe")]
 #[candid_method(update, rename = "subscribe")]
-async fn subscribe(contract_address: String) -> String {
+async fn subscribe(contract_address: String, method: String) -> String {
     let subscription = Subscription {
         contract_address,
         abi: ABI.to_vec(),
-        method: "set_price".to_string(),
+        method,
     };
 
     ic_cdk::println!("subscribe: {:?}", subscription);

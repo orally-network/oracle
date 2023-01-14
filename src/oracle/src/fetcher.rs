@@ -23,7 +23,7 @@ use crate::processing::average;
 use crate::pubsub::notify;
 use crate::*;
 
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
 pub struct Endpoint {
     pub url: String,
     pub resolver: String,
@@ -40,13 +40,17 @@ impl Fetcher {
     pub fn new(endpoints: Vec<Endpoint>, frequency: u64) -> Self {
         let endpoints_cloned = endpoints.clone();
 
+        let func = move || ic_cdk::spawn(
+            Fetcher::fetch(
+                endpoints_cloned.clone()
+            )
+        );
+
+        func();
+
         let timer_id = set_timer_interval(
             Duration::from_secs(frequency),
-            move || ic_cdk::spawn(
-                Fetcher::fetch(
-                    endpoints_cloned.clone()
-                )
-            ),
+            func,
         );
 
         let fetcher = Fetcher {

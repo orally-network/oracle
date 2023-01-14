@@ -30,7 +30,9 @@ pub async fn update_price(address: String, method: String, abi: &[u8], price: f6
     let derivation_path = vec![ic_cdk::id().as_slice().to_vec()];
     let key_info = KeyInfo{ derivation_path, key_name: KEY_NAME.to_string() };
 
-    let w3 = match ICHttp::new(URL, None, None) {
+    let rpc_url = RPC.with(|rpc| rpc.borrow().clone());
+
+    let w3 = match ICHttp::new(&rpc_url, None, None) {
         Ok(v) => { Web3::new(v) },
         Err(e) => { return Err(e.to_string()) },
     };
@@ -66,8 +68,10 @@ pub async fn update_price(address: String, method: String, abi: &[u8], price: f6
 
     ic_cdk::println!("Price from oracle: {}", price);
 
+    let chain_id = CHAIN_ID.with(|chain_id| chain_id.borrow().clone());
+
     let txhash = contract
-        .signed_call(&method, (price.to_string(),), options, hex::encode(canister_addr), key_info, CHAIN_ID)
+        .signed_call(&method, (price.to_string(),), options, hex::encode(canister_addr), key_info, chain_id)
         .await
         .map_err(|e| format!("token transfer failed: {}", e))?;
 

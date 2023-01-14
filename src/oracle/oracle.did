@@ -1,6 +1,11 @@
+type endpoint = record {
+    url: text;
+    resolver: text;
+}
+
 service : {
     get_address: () -> (variant { Ok: text; Err: text });
-    start_fetcher: () -> (text);
+    setup: (vec endpoint, nat64, nat64, text) -> (variant { Ok: null; Err: text });
     stop_fetcher: () -> (text);
-    subscribe: (text) -> (text);
+    subscribe: (text, text) -> (text);
 }

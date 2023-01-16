@@ -1,4 +1,5 @@
 use std::time::Duration;
+use std::ops::Deref;
 use ic_cdk::export::{
     candid::CandidType,
     serde::{Deserialize, Serialize},
@@ -29,41 +30,47 @@ pub struct Endpoint {
     pub resolver: String,
 }
 
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
 pub struct Fetcher {
     pub frequency: u64,
     pub endpoints: Vec<Endpoint>,
-    pub timer_id: TimerId,
 }
 
 impl Fetcher {
     pub fn new(endpoints: Vec<Endpoint>, frequency: u64) -> Self {
-        let endpoints_cloned = endpoints.clone();
+        if frequency < 60 {
+            panic!("Frequency unset or need to be more than 1 minute.");
+        }
 
+        let fetcher = Fetcher {
+            frequency,
+            endpoints,
+        };
+
+        fetcher
+    }
+
+    pub fn start(self) {
         let func = move || ic_cdk::spawn(
             Fetcher::fetch(
-                endpoints_cloned.clone()
+                self.endpoints.clone(),
             )
         );
 
         func();
 
         let timer_id = set_timer_interval(
-            Duration::from_secs(frequency),
+            Duration::from_secs(self.frequency),
             func,
         );
 
-        let fetcher = Fetcher {
-            frequency,
-            endpoints,
-            timer_id,
-        };
-
-        fetcher
+        TIMER_ID.with(|t| t.replace(timer_id));
     }
 
     pub fn stop(self) {
-        clear_timer(self.timer_id);
+        let timer_id = TIMER_ID.with(|t| t.take());
+
+        clear_timer(timer_id);
     }
 
     async fn fetch(endpoints: Vec<Endpoint>) {

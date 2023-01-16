@@ -1,7 +1,13 @@
 type endpoint = record {
     url: text;
     resolver: text;
-}
+};
+
+type subscription = record {
+    contract_address: text;
+    method: text;
+    abi: blob;
+};
 
 service : {
     get_address: () -> (variant { Ok: text; Err: text });

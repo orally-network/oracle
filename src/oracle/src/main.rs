@@ -3,7 +3,7 @@ use ic_cdk_macros::{self, update, query, pre_upgrade, post_upgrade, heartbeat};
 use std::str::FromStr;
 use std::cell::{Cell, RefCell};
 use ic_cdk::export::{Principal};
-use ic_cdk::{storage};
+use ic_cdk::{storage, timer::{TimerId}};
 use futures::future::join_all;
 
 use ic_web3::transports::ICHttp;
@@ -38,6 +38,8 @@ const ABI: &[u8] = include_bytes!("./contracts/icp_price_abi.json");
 type Result<T, E> = std::result::Result<T, E>;
 
 thread_local! {
+    pub static TIMER_ID: RefCell<TimerId> = RefCell::default();
+
     pub static FETCHER: RefCell<Fetcher> = RefCell::default();
     pub static SUBSCRIPTIONS: RefCell<Vec<Subscription>> = RefCell::default();
 
@@ -45,25 +47,49 @@ thread_local! {
     pub static RPC: RefCell<String> = RefCell::default();
 }
 
-// #[pre_upgrade]
-// fn pre_upgrade() {
-//     // save states
-//
-//     FETCHER.with(|fetcher| storage::stable_save((fetcher,)).unwrap());
-// }
-//
-// #[post_upgrade]
-// fn post_upgrade() {
-//     // restore states
-//
-//     let (old_fetcher,): (Fetcher,) = storage::stable_restore().unwrap();
-//
-//     FETCHER.with(|fetcher| {
-//         let new_fetcher = Fetcher::new(old_fetcher.endpoints, old_fetcher.frequency);
-//
-//         *fetcher.borrow_mut() = new_fetcher;
-//     });
-// }
+fn map_subscriptions_to_show(subscriptions: Vec<Subscription>) -> Vec<(String, String)> {
+    subscriptions.iter().map(|s| (s.contract_address.clone(), s.method.clone())).collect::<Vec<(String, String)>>()
+}
+
+#[pre_upgrade]
+fn pre_upgrade() {
+    // save states
+
+    let fetcher = FETCHER.with(|fetcher| fetcher.take());
+    let subscriptions = SUBSCRIPTIONS.with(|subscriptions| subscriptions.take());
+    let chain_id = CHAIN_ID.with(|chain_id| chain_id.take());
+    let rpc = RPC.with(|rpc| rpc.take());
+
+    ic_cdk::println!(
+        "!pre_upgrade: fetcher: {:?}, subscriptions: {:?}, chain_id: {:?}, rpc: {:?}",
+        fetcher,
+        map_subscriptions_to_show(subscriptions.clone()),
+        chain_id,
+        rpc,
+    );
+
+    storage::stable_save((fetcher, subscriptions, chain_id, rpc)).expect("failed to save to stable storage");
+}
+
+#[post_upgrade]
+fn post_upgrade() {
+    // restore states
+
+    let (fetcher, subscriptions, chain_id, rpc,): (Fetcher, Vec<Subscription>, u64, String,) = storage::stable_restore().expect("failed to restore from stable storage");
+
+    ic_cdk::println!(
+        "post_upgrade: fetcher: {:?}, subscriptions: {:?}, chain_id: {:?}, rpc: {:?}",
+        fetcher,
+        map_subscriptions_to_show(subscriptions.clone()),
+        chain_id,
+        rpc,
+    );
+
+    FETCHER.with(|f| f.replace(fetcher));
+    SUBSCRIPTIONS.with(|s| s.replace(subscriptions));
+    CHAIN_ID.with(|c| c.replace(chain_id));
+    RPC.with(|r| r.replace(rpc));
+}
 
 #[update]
 async fn get_address() -> Result<String, String> {
@@ -75,8 +101,8 @@ async fn get_address() -> Result<String, String> {
 }
 
 #[update]
-async fn setup(endpoints: Vec<Endpoint>, frequency: u64, chain_id: u64, rpc: String) -> Result<(), String> {
-    let fetcher = Fetcher::new(endpoints, frequency);
+async fn init(endpoints: Vec<Endpoint>, frequency: u64, chain_id: u64, rpc: String) -> Result<(), String> {
+    let fetcher = Fetcher::new(endpoints.clone(), frequency.clone());
 
     FETCHER.with(|f| {
         *f.borrow_mut() = fetcher;
@@ -85,8 +111,19 @@ async fn setup(endpoints: Vec<Endpoint>, frequency: u64, chain_id: u64, rpc: Str
         *c.borrow_mut() = chain_id;
     });
     RPC.with(|r| {
-        *r.borrow_mut() = rpc;
+        *r.borrow_mut() = rpc.clone();
     });
+
+    ic_cdk::println!("init: endpoints: {:?}, frequency: {:?}, chain_id: {:?}, rpc: {:?}", endpoints, frequency, chain_id, rpc);
+
+    Ok(())
+}
+
+#[update]
+fn setup() -> Result<(), String> {
+    ic_cdk::println!("setup");
+
+    FETCHER.with(|f| f.take().start());
 
     Ok(())
 }
@@ -113,10 +150,10 @@ async fn subscribe(contract_address: String, method: String) -> String {
         method,
     };
 
-    ic_cdk::println!("subscribe: {:?}", subscription);
-
     SUBSCRIPTIONS.with(|subscriptions| {
         subscriptions.borrow_mut().push(subscription);
+
+        ic_cdk::println!("subscriptions: {:?}", map_subscriptions_to_show(subscriptions.borrow().clone()));
     });
 
     "Ok".to_string()

@@ -1,7 +1,12 @@
+use ic_cdk::export::{
+    candid::CandidType,
+    serde::{Deserialize, Serialize},
+    Principal,
+};
 use crate::*;
 
 // todo: multi params in the future
-#[derive(Debug, Clone)]
+#[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
 pub struct Subscription {
     pub contract_address: String,
     pub method: String,
@@ -21,7 +26,7 @@ pub async fn notify(price: f64) {
             subscription.method.clone(),
             &subscription.abi.clone(),
             price,
-        ).await.expect("TODO: panic message");
+        ).await.expect("Update price failed");
     }
 }
 

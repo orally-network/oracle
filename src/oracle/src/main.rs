@@ -1,8 +1,12 @@
 use candid::candid_method;
-use ic_cdk_macros::{self, update, query, pre_upgrade, post_upgrade, heartbeat};
+use ic_cdk_macros::{self, update, query, pre_upgrade, post_upgrade, heartbeat, init};
 use std::str::FromStr;
 use std::cell::{Cell, RefCell};
-use ic_cdk::export::{Principal};
+use ic_cdk::export::{
+    Principal,
+    serde::{Deserialize, Serialize},
+    candid::CandidType,
+};
 use ic_cdk::{storage, timer::{TimerId}};
 use futures::future::join_all;
 
@@ -45,6 +49,14 @@ thread_local! {
 
     pub static CHAIN_ID: RefCell<u64> = RefCell::default();
     pub static RPC: RefCell<String> = RefCell::default();
+}
+
+#[derive(Debug, CandidType, Serialize, Deserialize)]
+struct InitPayload {
+    endpoints: Vec<Endpoint>,
+    frequency: u64,
+    chain_id: u64,
+    rpc: String,
 }
 
 fn map_subscriptions_to_show(subscriptions: Vec<Subscription>) -> Vec<(String, String)> {
@@ -100,21 +112,26 @@ async fn get_address() -> Result<String, String> {
     Ok(hex::encode(canister_addr))
 }
 
+#[init]
+fn init(payload: Option<InitPayload>) {
+    ic_cdk::println!("init");
+
+    if let Some(payload) = payload {
+        ic_cdk::println!("init: payload: {:?}", payload);
+
+        init_candid(payload);
+    }
+}
+
 #[update]
-async fn init(endpoints: Vec<Endpoint>, frequency: u64, chain_id: u64, rpc: String) -> Result<(), String> {
-    let fetcher = Fetcher::new(endpoints.clone(), frequency.clone());
+async fn init_candid(payload: InitPayload) -> Result<(), String> {
+    let fetcher = Fetcher::new(payload.endpoints.clone(), payload.frequency.clone());
 
-    FETCHER.with(|f| {
-        *f.borrow_mut() = fetcher;
-    });
-    CHAIN_ID.with(|c| {
-        *c.borrow_mut() = chain_id;
-    });
-    RPC.with(|r| {
-        *r.borrow_mut() = rpc.clone();
-    });
+    FETCHER.with(|f| f.replace(fetcher));
+    CHAIN_ID.with(|c| c.replace(payload.chain_id));
+    RPC.with(|r| r.replace(payload.rpc.clone()));
 
-    ic_cdk::println!("init: endpoints: {:?}, frequency: {:?}, chain_id: {:?}, rpc: {:?}", endpoints, frequency, chain_id, rpc);
+    ic_cdk::println!("init: endpoints: {:?}, frequency: {:?}, chain_id: {:?}, rpc: {:?}", payload.endpoints, payload.frequency, payload.chain_id, payload.rpc);
 
     Ok(())
 }

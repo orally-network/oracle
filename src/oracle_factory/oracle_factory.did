@@ -1,0 +1,15 @@
+type endpoint = record {
+    url: text;
+    resolver: text;
+};
+
+type init_payload = record {
+    endpoints: vec endpoint;
+    frequency: nat64;
+    chain_id: nat64;
+    rpc: text;
+};
+
+service : {
+    create_oracle: (init_payload) -> (variant { Ok: text; Err: text });
+};

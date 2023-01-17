@@ -113,13 +113,13 @@ async fn get_address() -> Result<String, String> {
 }
 
 #[init]
-fn init(payload: Option<InitPayload>) {
+async fn init(payload: Option<InitPayload>) {
     ic_cdk::println!("init");
 
     if let Some(payload) = payload {
         ic_cdk::println!("init: payload: {:?}", payload);
 
-        init_candid(payload);
+        init_candid(payload).await.expect("init_candid failed");
     }
 }
 
@@ -137,8 +137,8 @@ async fn init_candid(payload: InitPayload) -> Result<(), String> {
 }
 
 #[update]
-fn setup() -> Result<(), String> {
-    ic_cdk::println!("setup");
+fn start() -> Result<(), String> {
+    ic_cdk::println!("oracle start");
 
     FETCHER.with(|f| f.take().start());
 

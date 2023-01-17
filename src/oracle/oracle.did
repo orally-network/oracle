@@ -3,6 +3,13 @@ type endpoint = record {
     resolver: text;
 };
 
+type init_payload = record {
+    endpoints: vec endpoint;
+    frequency: nat64;
+    chain_id: nat64;
+    rpc: text;
+};
+
 type subscription = record {
     contract_address: text;
     method: text;
@@ -11,7 +18,7 @@ type subscription = record {
 
 service : {
     get_address: () -> (variant { Ok: text; Err: text });
-    init: (vec endpoint, nat64, nat64, text) -> (variant { Ok: null; Err: text });
+    init_candid: (init_payload) -> (variant { Ok: null; Err: text });
     setup: () -> (variant { Ok: null; Err: text });
     stop_fetcher: () -> (text);
     subscribe: (text, text) -> (text);

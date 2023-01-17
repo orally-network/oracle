@@ -17,3 +17,4 @@ src/declarations/
 # frontend code
 node_modules/
 dist/
+src/oracle_factory/src/build/

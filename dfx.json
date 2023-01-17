@@ -7,7 +7,7 @@
     },
     "oracle_factory": {
       "candid": "src/oracle_factory/oracle_factory.did",
-      "package": "oracle",
+      "package": "oracle_factory",
       "type": "rust"
     },
     "app_frontend": {

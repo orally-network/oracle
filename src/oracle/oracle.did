@@ -19,7 +19,7 @@ type subscription = record {
 service : {
     get_address: () -> (variant { Ok: text; Err: text });
     init_candid: (init_payload) -> (variant { Ok: null; Err: text });
-    setup: () -> (variant { Ok: null; Err: text });
+    start: () -> (variant { Ok: null; Err: text });
     stop_fetcher: () -> (text);
     subscribe: (text, text) -> (text);
 }

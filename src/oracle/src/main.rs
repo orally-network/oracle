@@ -24,6 +24,7 @@ use fetcher::{Fetcher, Endpoint};
 mod pubsub;
 mod http;
 mod processing;
+mod queries;
 
 use pubsub::Subscription;
 
@@ -35,7 +36,8 @@ use pubsub::Subscription;
 // todo: make rpc and chain_id settable on oracle creating stage
 // const URL: &str = "https://eth-goerli.g.alchemy.com/v2/qrm39CebFg7x-b4I4XhJO4e2AocKXpNx";
 // const CHAIN_ID: u64 = 5;
-const KEY_NAME: &str = "dfx_test_key";
+// const KEY_NAME: &str = "dfx_test_key";
+const KEY_NAME: &str = "key_1";
 const ABI: &[u8] = include_bytes!("./contracts/icp_price_abi.json");
 // const CONTRACT_ADDRESS: &str = "0xCFf00E5f685cCE94Dfc6d1a18200c764f9BCca1f";
 
@@ -103,7 +105,7 @@ fn post_upgrade() {
     RPC.with(|r| r.replace(rpc));
 }
 
-#[update]
+#[query]
 async fn get_address() -> Result<String, String> {
     let canister_addr = get_eth_addr(None, None, KEY_NAME.to_string())
         .await
@@ -158,8 +160,7 @@ async fn stop_fetcher() -> String {
     "Ok".to_string()
 }
 
-#[update(name = "subscribe")]
-#[candid_method(update, rename = "subscribe")]
+#[update]
 async fn subscribe(contract_address: String, method: String) -> String {
     let subscription = Subscription {
         contract_address,

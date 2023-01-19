@@ -2,6 +2,10 @@ use ic_cdk::api::management_canister::http_request::{
     http_request, CanisterHttpRequestArgument, HttpHeader, HttpMethod, HttpResponse, TransformArgs,
     TransformContext, TransformFunc,
 };
+use canistergeek_ic_rust::{
+    logger::{log_message},
+    monitor::{collect_metrics},
+};
 use ic_cdk::api::call::RejectionCode;
 
 const MAX_RESPONSE_BYTES: u64 = 500_000;
@@ -31,20 +35,27 @@ pub async fn send_request(url: String, method: HttpMethod, body: Option<Vec<u8>>
     };
 
     ic_cdk::api::print(format!("Requesting url: {}", url.to_string()));
+    log_message(format!("Requesting url: {}", url.to_string()));
+
+    collect_metrics();
 
     match http_request(request).await {
         Ok((response, )) => {
+            collect_metrics();
             ic_cdk::api::print(format!("Response status: {}", response.status));
+            log_message(format!("Response status: {}", response.status));
 
             let decoded_body = String::from_utf8(response.body)
                 .expect("Remote service response is not UTF-8 encoded.");
 
             ic_cdk::api::print(format!("Response body: {}", decoded_body));
+            log_message(format!("Response body: {}", decoded_body));
 
             Ok(decoded_body)
         },
         Err((code, message)) => {
             ic_cdk::api::print(format!("Error: {}", message));
+            log_message(format!("Error: {}", message));
             Err((code, message))
         }
     }

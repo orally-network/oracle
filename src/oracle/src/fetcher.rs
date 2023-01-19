@@ -15,6 +15,10 @@ use ic_cdk::{
     timer::{clear_timer, set_timer, set_timer_interval, TimerId},
     update,
 };
+use canistergeek_ic_rust::{
+    logger::{log_message},
+    monitor::{collect_metrics},
+};
 use ic_cdk::api::call::RejectionCode;
 use ic_web3::futures::TryFutureExt;
 use futures::future::join_all;
@@ -102,9 +106,11 @@ impl Fetcher {
             match output {
                 Ok(output) => {
                     ic_cdk::api::print(format!("Output: {}", output));
+                    log_message(format!("Output: {}", output));
                 },
                 Err(err) => {
                     ic_cdk::api::print(format!("Error: {:?}", err));
+                    log_message(format!("Error: {:?}", err));
                 }
             }
         });
@@ -114,9 +120,12 @@ impl Fetcher {
         let result = average(outputs);
 
         ic_cdk::api::print(format!("Result: {}", result));
+        log_message(format!("Result: {}", result));
 
         // call publisher to publish it to all subscribers
         notify(result).await;
+
+        collect_metrics();
 
         return;
     }

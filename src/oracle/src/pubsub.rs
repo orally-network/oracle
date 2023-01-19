@@ -3,6 +3,10 @@ use ic_cdk::export::{
     serde::{Deserialize, Serialize},
     Principal,
 };
+use canistergeek_ic_rust::{
+    logger::{log_message},
+    monitor::{collect_metrics},
+};
 use crate::*;
 
 // todo: multi params in the future
@@ -17,9 +21,11 @@ pub async fn notify(price: f64) {
     let subscriptions = SUBSCRIPTIONS.with(|subscriptions| subscriptions.borrow().clone());
 
     ic_cdk::println!("notify subscribers");
+    log_message(format!("notify subscribers"));
 
     for subscription in subscriptions.iter() {
         ic_cdk::println!("notify subscriber: {}", subscription.contract_address);
+        log_message(format!("notify subscriber: {}", subscription.contract_address));
 
         update_price(
             subscription.contract_address.clone(),
@@ -46,24 +52,37 @@ pub async fn update_price(address: String, method: String, abi: &[u8], price: f6
         w3.eth(),
         contract_address,
         abi
-    ).map_err(|e| format!("init contract failed: {}", e))?;
+    ).map_err(|e| {
+        log_message(format!("Failed to create contract: {:?}", e));
+        format!("init contract failed: {:?}", e)
+    })?;
 
     let canister_addr = get_eth_addr(None, None, KEY_NAME.to_string())
         .await
-        .map_err(|e| format!("get canister eth addr failed: {}", e))?;
+        .map_err(|e| {
+            log_message(format!("get canister eth addr failed: {}", e));
+            format!("get canister eth addr failed: {}", e)
+        })?;
 
     ic_cdk::println!("canister_addr: {}", canister_addr);
+    log_message(format!("canister_addr: {}", canister_addr));
 
     // add nonce to options
     let tx_count = w3.eth()
         .transaction_count(canister_addr, None)
         .await
-        .map_err(|e| format!("get tx count error: {}", e))?;
+        .map_err(|e| {
+            log_message(format!("get transaction count failed: {}", e));
+            format!("get tx count error: {}", e)
+        })?;
     // get gas_price
     let gas_price = w3.eth()
         .gas_price()
         .await
-        .map_err(|e| format!("get gas_price error: {}", e))?;
+        .map_err(|e| {
+            log_message(format!("get gas price error: {}", e));
+            format!("get gas_price error: {}", e)
+        })?;
     // legacy transaction type is still ok
     let options = Options::with(|op| {
         op.nonce = Some(tx_count);
@@ -72,15 +91,20 @@ pub async fn update_price(address: String, method: String, abi: &[u8], price: f6
     });
 
     ic_cdk::println!("Price from oracle: {}", price);
+    log_message(format!("Price from oracle: {}", price));
 
     let chain_id = CHAIN_ID.with(|chain_id| chain_id.borrow().clone());
 
     let txhash = contract
         .signed_call(&method, (price.to_string(),), options, hex::encode(canister_addr), key_info, chain_id)
         .await
-        .map_err(|e| format!("token transfer failed: {}", e))?;
+        .map_err(|e| {
+            log_message(format!("token transfer failed: {}", e));
+            format!("token transfer failed: {}", e)
+        })?;
 
     ic_cdk::println!("txhash: {}", hex::encode(txhash));
+    log_message(format!("txhash: {}", hex::encode(txhash)));
 
     Ok(format!("{}", hex::encode(txhash)))
 }

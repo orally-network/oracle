@@ -16,10 +16,19 @@ type subscription = record {
     abi: blob;
 };
 
+type subscription_simple = record { text; text };
+
 service : {
     get_address: () -> (variant { Ok: text; Err: text });
     init_candid: (init_payload) -> (variant { Ok: null; Err: text });
     start: () -> (variant { Ok: null; Err: text });
     stop_fetcher: () -> (text);
     subscribe: (text, text) -> (text);
+
+    update_price_manual: (text, text, float64) -> (text);
+
+    get_subscriptions: () -> (vec subscription_simple);
+    get_fetcher: () -> (text);
+    get_chain_id: () -> (nat64);
+    get_rpc: () -> (text);
 }

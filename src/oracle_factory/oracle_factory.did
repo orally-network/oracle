@@ -12,4 +12,5 @@ type init_payload = record {
 
 service : {
     create_oracle: (init_payload) -> (variant { Ok: text; Err: text });
+    update_oracle: (text) -> (variant { Ok: text; Err: text });
 };

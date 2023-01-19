@@ -9,6 +9,10 @@ use ic_cdk::export::{
 };
 use ic_cdk::{storage, timer::{TimerId}};
 use futures::future::join_all;
+use canistergeek_ic_rust::{
+    logger::{log_message},
+    monitor::{collect_metrics},
+};
 
 use ic_web3::transports::ICHttp;
 use ic_web3::Web3;
@@ -25,6 +29,7 @@ mod pubsub;
 mod http;
 mod processing;
 mod queries;
+mod logger;
 
 use pubsub::Subscription;
 
@@ -36,8 +41,8 @@ use pubsub::Subscription;
 // todo: make rpc and chain_id settable on oracle creating stage
 // const URL: &str = "https://eth-goerli.g.alchemy.com/v2/qrm39CebFg7x-b4I4XhJO4e2AocKXpNx";
 // const CHAIN_ID: u64 = 5;
-// const KEY_NAME: &str = "dfx_test_key";
-const KEY_NAME: &str = "key_1";
+const KEY_NAME: &str = "dfx_test_key";
+// const KEY_NAME: &str = "key_1";
 const ABI: &[u8] = include_bytes!("./contracts/icp_price_abi.json");
 // const CONTRACT_ADDRESS: &str = "0xCFf00E5f685cCE94Dfc6d1a18200c764f9BCca1f";
 
@@ -74,6 +79,10 @@ fn pre_upgrade() {
     let chain_id = CHAIN_ID.with(|chain_id| chain_id.take());
     let rpc = RPC.with(|rpc| rpc.take());
 
+    // monitoring
+    let monitor_stable_data = canistergeek_ic_rust::monitor::pre_upgrade_stable_data();
+    let logger_stable_data = canistergeek_ic_rust::logger::pre_upgrade_stable_data();
+
     ic_cdk::println!(
         "!pre_upgrade: fetcher: {:?}, subscriptions: {:?}, chain_id: {:?}, rpc: {:?}",
         fetcher,
@@ -81,15 +90,26 @@ fn pre_upgrade() {
         chain_id,
         rpc,
     );
+    log_message(
+        format!(
+            "pre_upgrade fetcher: {:?}, subscriptions: {:?}, chain_id: {:?}, rpc: {:?}",
+            fetcher,
+            map_subscriptions_to_show(subscriptions.clone()),
+            chain_id,
+            rpc
+        )
+    );
 
-    storage::stable_save((fetcher, subscriptions, chain_id, rpc)).expect("failed to save to stable storage");
+    storage::stable_save((fetcher, subscriptions, chain_id, rpc, monitor_stable_data, logger_stable_data)).expect("failed to save to stable storage");
 }
 
 #[post_upgrade]
 fn post_upgrade() {
     // restore states
 
-    let (fetcher, subscriptions, chain_id, rpc,): (Fetcher, Vec<Subscription>, u64, String,) = storage::stable_restore().expect("failed to restore from stable storage");
+    let (fetcher, subscriptions, chain_id, rpc, monitor_stable_data, logger_stable_data,):
+        (Fetcher, Vec<Subscription>, u64, String, canistergeek_ic_rust::monitor::PostUpgradeStableData, canistergeek_ic_rust::logger::PostUpgradeStableData)
+        = storage::stable_restore().expect("failed to restore from stable storage");
 
     ic_cdk::println!(
         "post_upgrade: fetcher: {:?}, subscriptions: {:?}, chain_id: {:?}, rpc: {:?}",
@@ -98,6 +118,19 @@ fn post_upgrade() {
         chain_id,
         rpc,
     );
+    log_message(
+        format!(
+            "post_upgrade fetcher: {:?}, subscriptions: {:?}, chain_id: {:?}, rpc: {:?}",
+            fetcher,
+            map_subscriptions_to_show(subscriptions.clone()),
+            chain_id,
+            rpc
+        )
+    );
+
+    // monitoring
+    canistergeek_ic_rust::monitor::post_upgrade_stable_data(monitor_stable_data);
+    canistergeek_ic_rust::logger::post_upgrade_stable_data(logger_stable_data);
 
     FETCHER.with(|f| f.replace(fetcher));
     SUBSCRIPTIONS.with(|s| s.replace(subscriptions));
@@ -105,7 +138,7 @@ fn post_upgrade() {
     RPC.with(|r| r.replace(rpc));
 }
 
-#[query]
+#[update]
 async fn get_address() -> Result<String, String> {
     let canister_addr = get_eth_addr(None, None, KEY_NAME.to_string())
         .await
@@ -117,9 +150,11 @@ async fn get_address() -> Result<String, String> {
 #[init]
 async fn init(payload: Option<InitPayload>) {
     ic_cdk::println!("init");
+    log_message("init".to_string());
 
     if let Some(payload) = payload {
         ic_cdk::println!("init: payload: {:?}", payload);
+        log_message(format!("init: payload: {:?}", payload));
 
         init_candid(payload).await.expect("init_candid failed");
     }
@@ -134,6 +169,7 @@ async fn init_candid(payload: InitPayload) -> Result<(), String> {
     RPC.with(|r| r.replace(payload.rpc.clone()));
 
     ic_cdk::println!("init: endpoints: {:?}, frequency: {:?}, chain_id: {:?}, rpc: {:?}", payload.endpoints, payload.frequency, payload.chain_id, payload.rpc);
+    log_message(format!("init: endpoints: {:?}, frequency: {:?}, chain_id: {:?}, rpc: {:?}", payload.endpoints, payload.frequency, payload.chain_id, payload.rpc));
 
     Ok(())
 }
@@ -141,21 +177,23 @@ async fn init_candid(payload: InitPayload) -> Result<(), String> {
 #[update]
 fn start() -> Result<(), String> {
     ic_cdk::println!("oracle start");
+    log_message("oracle start".to_string());
+    collect_metrics();
 
-    FETCHER.with(|f| f.take().start());
+    FETCHER.with(|fetcher| {
+        let f = fetcher.borrow().clone();
+
+        f.start();
+    });
 
     Ok(())
 }
 
 #[update]
 async fn stop_fetcher() -> String {
-    FETCHER.with(|fetcher| {
-        let f = fetcher.borrow().clone();
+    log_message("stop_fetcher".to_string());
 
-        f.stop();
-
-        *fetcher.borrow_mut() = Fetcher::default();
-    });
+    FETCHER.with(|fetcher| fetcher.take().stop());
 
     "Ok".to_string()
 }
@@ -172,7 +210,15 @@ async fn subscribe(contract_address: String, method: String) -> String {
         subscriptions.borrow_mut().push(subscription);
 
         ic_cdk::println!("subscriptions: {:?}", map_subscriptions_to_show(subscriptions.borrow().clone()));
+        log_message(format!("subscriptions: {:?}", map_subscriptions_to_show(subscriptions.borrow().clone())));
     });
+
+    "Ok".to_string()
+}
+
+#[update]
+async fn update_price_manual(contract_address: String, method: String, price: f64) -> String {
+    pubsub::update_price(contract_address, method, ABI, price).await.expect("Update price failed");
 
     "Ok".to_string()
 }

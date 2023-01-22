@@ -1,0 +1,18 @@
+$background-color: rgb(4, 20, 23);
+$background-secondary-color: rgb(19, 56, 62);
+$hover-color: #1F4A4E;
+$element-background: rgb(36, 84, 91);
+$text-color: rgb(255, 255, 255);
+$text-secondary-color: #cbcbcb;
+$primary-color: rgb(247,147,26);
+$red-color: rgba(230, 0, 0, 0.9);
+
+$break-point-desktop: 1200px;
+$break-point-tablet: 768px;
+$break-point-mobile: 420px;
+
+:export {
+  primaryColor: $primary-color;
+  elementBackground: $element-background;
+  background: $background-secondary-color;
+};

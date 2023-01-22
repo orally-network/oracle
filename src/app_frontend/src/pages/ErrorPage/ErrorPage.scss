@@ -1,0 +1,14 @@
+@use 'Styles/variables';
+
+.errorPage {
+  background-color: variables.$background-secondary-color;
+  width: 100%;
+  height: 100vh;
+}
+
+.errorLabel {
+  color: white;
+  font-size: 2em;
+  text-align: center;
+  padding-top: 100px;
+}

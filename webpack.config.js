@@ -3,6 +3,7 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
+const Dotenv = require('dotenv-webpack');
 
 function initCanisterEnv() {
   let localCanisters, prodCanisters;
@@ -38,9 +39,9 @@ const canisterEnvVariables = initCanisterEnv();
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
-const frontendDirectory = "app_frontend";
+const frontendDirectory = "application";
 
-const frontend_entry = path.join("src", frontendDirectory, "src", "index.html");
+const asset_entry = path.join("src", frontendDirectory, "src", "index.html");
 
 module.exports = {
   target: "web",
@@ -48,7 +49,7 @@ module.exports = {
   entry: {
     // The frontend.entrypoint points to the HTML file for this build, so we need
     // to replace the extension to `.js`.
-    index: path.join(__dirname, frontend_entry).replace(/\.html$/, ".js"),
+    index: path.join(__dirname, asset_entry).replace(/\.html$/, ".jsx"),
   },
   devtool: isDevelopment ? "source-map" : false,
   optimization: {
@@ -56,7 +57,7 @@ module.exports = {
     minimizer: [new TerserPlugin()],
   },
   resolve: {
-    extensions: [".js", ".ts", ".jsx", ".tsx"],
+    extensions: [".js", ".jsx"],
     fallback: {
       assert: require.resolve("assert/"),
       buffer: require.resolve("buffer/"),
@@ -64,27 +65,73 @@ module.exports = {
       stream: require.resolve("stream-browserify/"),
       util: require.resolve("util/"),
     },
+    alias: {
+      Containers: path.resolve(__dirname, './src/application/src/containers/'),
+      Components: path.resolve(__dirname, './src/application/src/components/'),
+      Services: path.resolve(__dirname, './src/application/src/services/'),
+      Constants: path.resolve(__dirname, './src/application/src/constants/'),
+      Utils: path.resolve(__dirname, './src/application/src/utils/'),
+      Styles: path.resolve(__dirname, './src/application/src/styles/'),
+      Assets: path.resolve(__dirname, './src/application/assets/'),
+      Declarations: path.resolve(__dirname, './src/declarations/'),
+      Shared: path.resolve(__dirname, './src/application/src/shared/'),
+      Pages: path.resolve(__dirname, './src/application/src/pages/'),
+    },
   },
   output: {
     filename: "index.js",
     path: path.join(__dirname, "dist", frontendDirectory),
   },
-
-  // Depending in the language or framework you are using for
-  // front-end development, add module loaders to the default
-  // webpack configuration. For example, if you are using React
-  // modules and CSS as described in the "Adding a stylesheet"
-  // tutorial, uncomment the following lines:
-  // module: {
-  //  rules: [
-  //    { test: /\.(ts|tsx|jsx)$/, loader: "ts-loader" },
-  //    { test: /\.css$/, use: ['style-loader','css-loader'] }
-  //  ]
-  // },
+  module: {
+    rules: [
+      { test: /\.(js)x?$/, loader: "ts-loader", exclude: /node_modules/, options: { transpileOnly: true } },
+      {
+        test: /\.(s[ac]|c)ss$/i,
+        use: [
+          // Creates `style` nodes from JS strings
+          'style-loader',
+          // Translates CSS into CommonJS
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true,
+            },
+          },
+          // Compiles Sass to CSS
+          {
+            loader: "sass-loader",
+            options: {
+              sourceMap: true,
+              sassOptions: {
+                outputStyle: "compressed",
+              },
+              implementation: require("sass"),
+            },
+          },
+        ],
+      },
+      {
+        test: /\.svg$/,
+        use: ['@svgr/webpack'],
+      },
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        type: 'asset/resource',
+      },
+    ]
+  },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, frontend_entry),
+      template: path.join(__dirname, asset_entry),
       cache: false,
+    }),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.join(__dirname, "src", frontendDirectory, "assets"),
+          to: path.join(__dirname, "dist", frontendDirectory),
+        },
+      ],
     }),
     new webpack.EnvironmentPlugin({
       NODE_ENV: "development",
@@ -94,30 +141,21 @@ module.exports = {
       Buffer: [require.resolve("buffer/"), "Buffer"],
       process: require.resolve("process/browser"),
     }),
-    new CopyPlugin({
-      patterns: [
-        {
-          from: `src/${frontendDirectory}/src/.ic-assets.json*`,
-          to: ".ic-assets.json5",
-          noErrorOnMissing: true
-        },
-      ],
-    }),
+    new Dotenv(),
   ],
-  // proxy /api to port 4943 during development.
-  // if you edit dfx.json to define a project-specific local network, change the port to match.
+  // proxy /api to port 8000 during development
   devServer: {
     proxy: {
       "/api": {
-        target: "http://127.0.0.1:4943",
+        target: "http://127.0.0.1:8000",
         changeOrigin: true,
         pathRewrite: {
           "^/api": "/api",
         },
       },
     },
-    static: path.resolve(__dirname, "src", frontendDirectory, "assets"),
     hot: true,
+    historyApiFallback: true,
     watchFiles: [path.resolve(__dirname, "src", frontendDirectory)],
     liveReload: true,
   },

@@ -1,0 +1,36 @@
+@use './variables';
+
+@mixin hoverScale {
+  transition: transform 0.3s;
+
+  &:hover {
+    transform: scale(1.03);
+  }
+}
+
+@mixin card {
+  border-radius: 25px;
+  background-color: variables.$background-secondary-color;
+  padding: 16px 20px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+@mixin title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+@mixin underline-selection {
+  cursor: pointer;
+  text-underline-offset: 2px;
+  text-decoration-style: dotted;
+  text-decoration-line: underline;
+  color: variables.$text-secondary-color;
+
+  &:hover {
+    color: variables.$text-color;
+  }
+}

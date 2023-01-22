@@ -10,7 +10,13 @@ type init_payload = record {
     rpc: text;
 };
 
+type oracle = record {
+    payload: init_payload;
+    canister_id: text;
+};
+
 service : {
     create_oracle: (init_payload) -> (variant { Ok: text; Err: text });
     update_oracle: (text) -> (variant { Ok: text; Err: text });
+    get_oracles: () -> (vec oracle);
 };

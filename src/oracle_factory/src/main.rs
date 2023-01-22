@@ -18,7 +18,8 @@ use canistergeek_ic_rust::{
     logger::{log_message},
     monitor::{collect_metrics},
 };
-use ic_cdk_macros::{update};
+use ic_cdk_macros::{query, update};
+use std::cell::{Cell, RefCell};
 
 #[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
 pub struct Endpoint {
@@ -27,7 +28,7 @@ pub struct Endpoint {
 }
 
 #[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
-struct InitPayload {
+pub struct InitPayload {
     endpoints: Vec<Endpoint>,
     frequency: u64,
     chain_id: u64,
@@ -35,6 +36,16 @@ struct InitPayload {
 }
 
 const INIT_CYCLES_BALANCE: u128 = 1_000_000_000_000; // 1T
+
+#[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
+pub struct Oracle {
+    payload: InitPayload,
+    canister_id: String,
+}
+
+thread_local! {
+    pub static ORACLES: RefCell<Vec<Oracle>> = RefCell::default();
+}
 
 #[update]
 async fn create_oracle(payload: InitPayload) -> Result<String, String> {
@@ -68,6 +79,13 @@ async fn create_oracle(payload: InitPayload) -> Result<String, String> {
                     collect_metrics();
                     ic_cdk::println!("Started oracle canister: {:?}", canister_id.to_string());
                     log_message(format!("Started oracle canister: {:?}", canister_id.to_string()));
+
+                    ORACLES.with(|oracles| {
+                        oracles.borrow_mut().push(Oracle {
+                            payload,
+                            canister_id: canister_id.to_string(),
+                        });
+                    });
 
                     Ok(canister_id.to_string())
                 },
@@ -120,18 +138,33 @@ async fn update_oracle(canister: String) -> Result<String, String> {
     }
 }
 
+#[query]
+fn get_oracles() -> Vec<Oracle> {
+    ORACLES.with(|o| o.borrow().clone())
+}
+
 #[ic_cdk_macros::pre_upgrade]
 fn pre_upgrade_function() {
+    ic_cdk::println!("Pre upgrade function");
+    log_message(format!("Pre upgrade function"));
+
+    let oracles = ORACLES.with(|o| o.take());
     let monitor_stable_data = canistergeek_ic_rust::monitor::pre_upgrade_stable_data();
     let logger_stable_data = canistergeek_ic_rust::logger::pre_upgrade_stable_data();
-    ic_cdk::storage::stable_save((monitor_stable_data, logger_stable_data)).expect("Failed to save stable data");
+
+    ic_cdk::storage::stable_save((oracles, monitor_stable_data, logger_stable_data)).expect("Failed to save stable data");
 }
 
 #[ic_cdk_macros::post_upgrade]
 fn post_upgrade_function() {
-    let stable_data: Result<(canistergeek_ic_rust::monitor::PostUpgradeStableData, canistergeek_ic_rust::logger::PostUpgradeStableData), String> = ic_cdk::storage::stable_restore();
+    ic_cdk::println!("Post upgrade function");
+    log_message(format!("Post upgrade function"));
+
+    let stable_data: Result<(Vec<Oracle>, canistergeek_ic_rust::monitor::PostUpgradeStableData, canistergeek_ic_rust::logger::PostUpgradeStableData), String> = ic_cdk::storage::stable_restore();
+
     match stable_data {
-        Ok((monitor_stable_data, logger_stable_data)) => {
+        Ok((oracles, monitor_stable_data, logger_stable_data)) => {
+            ORACLES.with(|o| o.replace(oracles));
             canistergeek_ic_rust::monitor::post_upgrade_stable_data(monitor_stable_data);
             canistergeek_ic_rust::logger::post_upgrade_stable_data(logger_stable_data);
         }

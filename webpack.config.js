@@ -39,7 +39,7 @@ const canisterEnvVariables = initCanisterEnv();
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
-const frontendDirectory = "application";
+const frontendDirectory = "app_frontend";
 
 const asset_entry = path.join("src", frontendDirectory, "src", "index.html");
 
@@ -66,16 +66,15 @@ module.exports = {
       util: require.resolve("util/"),
     },
     alias: {
-      Containers: path.resolve(__dirname, './src/application/src/containers/'),
-      Components: path.resolve(__dirname, './src/application/src/components/'),
-      Services: path.resolve(__dirname, './src/application/src/services/'),
-      Constants: path.resolve(__dirname, './src/application/src/constants/'),
-      Utils: path.resolve(__dirname, './src/application/src/utils/'),
-      Styles: path.resolve(__dirname, './src/application/src/styles/'),
-      Assets: path.resolve(__dirname, './src/application/assets/'),
+      Components: path.resolve(__dirname, './src/app_frontend/src/components/'),
+      Services: path.resolve(__dirname, './src/app_frontend/src/services/'),
+      Constants: path.resolve(__dirname, './src/app_frontend/src/constants/'),
+      Utils: path.resolve(__dirname, './src/app_frontend/src/utils/'),
+      Styles: path.resolve(__dirname, './src/app_frontend/src/styles/'),
+      Assets: path.resolve(__dirname, './src/app_frontend/assets/'),
       Declarations: path.resolve(__dirname, './src/declarations/'),
-      Shared: path.resolve(__dirname, './src/application/src/shared/'),
-      Pages: path.resolve(__dirname, './src/application/src/pages/'),
+      Shared: path.resolve(__dirname, './src/app_frontend/src/shared/'),
+      Pages: path.resolve(__dirname, './src/app_frontend/src/pages/'),
     },
   },
   output: {

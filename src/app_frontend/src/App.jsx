@@ -1,9 +1,14 @@
 import React from 'react';
 
+import Header from 'Components/Header';
+import Oracles from 'Pages/Oracles';
+
 const App = () => {
 return (
     <div>
-      <h1>App</h1>
+      <Header />
+
+      <Oracles />
     </div>
   );
 }

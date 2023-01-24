@@ -4,12 +4,11 @@ import { ToastContainer } from 'react-toastify';
 import { BrowserRouter } from 'react-router-dom';
 import Modal from 'react-modal';
 
-import ErrorBoundary from 'Containers/ErrorBoundary';
+import ErrorBoundary from 'Shared/ErrorBoundary';
 
 import App from './App';
 
 import 'Styles/index.scss';
-import '!style-loader!css-loader!rc-slider/assets/index.css';
 import '!style-loader!css-loader!react-toastify/dist/ReactToastify.css';
 
 Modal.setAppElement('#app');

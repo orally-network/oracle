@@ -24,3 +24,8 @@ fn get_chain_id() -> u64 {
 fn get_rpc() -> String {
     RPC.with(|rpc| rpc.borrow().clone())
 }
+
+#[query]
+fn get_factory_address() -> String {
+    FACTORY_ADDRESS.with(|factory_address| factory_address.borrow().clone())
+}

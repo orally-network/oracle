@@ -15,6 +15,12 @@ pub struct Subscription {
     pub contract_address: String,
     pub method: String,
     pub abi: Vec<u8>,
+
+    // pub owner_address: String, // H160
+    // pub execution_address: String,
+    // if execution_address is not topped up enough, then the subscription will be paused
+    // pub active: bool,
+    // pub last_execution: u64,
 }
 
 pub async fn notify(price: f64) {

@@ -138,6 +138,28 @@ async fn update_oracle(canister: String) -> Result<String, String> {
     }
 }
 
+#[update]
+async fn update_oracles() -> Result<String, String> {
+    ic_cdk::println!("Updating all oracle canisters");
+    log_message(format!("Updating all oracle canisters"));
+
+    let oracles = ORACLES.with(|o| o.borrow().clone());
+
+    for oracle in oracles {
+        match update_oracle(oracle.canister_id.clone()).await {
+            Ok(_) => {
+                ic_cdk::println!("Updated oracle canister: {:?}", oracle.canister_id);
+                log_message(format!("Updated oracle canister: {:?}", oracle.canister_id));
+            },
+            Err(error) => {
+                ic_cdk::trap(&format!("Failed to update canister: {}", error));
+            }
+        }
+    }
+
+    Ok("Updated all oracle canisters".to_string())
+}
+
 #[query]
 fn get_oracles() -> Vec<Oracle> {
     ORACLES.with(|o| o.borrow().clone())

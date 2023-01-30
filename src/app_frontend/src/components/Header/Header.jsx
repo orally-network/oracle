@@ -1,5 +1,7 @@
 import React from 'react';
 
+import Connect from 'Shared/Connect';
+
 import styles from './Header.scss';
 
 const Header = () => {
@@ -7,9 +9,7 @@ const Header = () => {
     <div className={styles.header}>
       <div className={styles.logo}>ORALLY</div>
 
-      <div className={styles.connect}>
-        Connect
-      </div>
+      <Connect className={styles.connect} />
     </div>
   )
 };

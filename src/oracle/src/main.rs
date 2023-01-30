@@ -223,13 +223,6 @@ async fn verify_address(siwe_msg: String, siwe_sig: String) -> Result<(String,St
 
     ic_cdk::println!("validate_address: msg: {:?}, sig: {:?}", msg, sig);
 
-    // Check if uri is equal to the caller
-    // msg.uri.to_string().eq(&format!("did:icp:{}",&caller.to_string())).then(|| ()).ok_or("Invoked by unauthorized principal")?;
-
-    // Check if target (canister and method) is part of authorized resources
-    // let target = format!("icp:{}/{}",canister.to_string(), method_name);
-    // msg.resources.clone().into_iter().find(|r| r.as_str().eq(&target)).ok_or(format!("Unauthorized for resource: {}", &target))?;
-
     msg.verify(&sig, &opts).await.map_err(|e| e.to_string())?;
 
     let factory_addr = FACTORY_ADDRESS.with(|f| Principal::from_text(f.borrow().clone()).unwrap());

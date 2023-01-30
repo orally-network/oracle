@@ -1,0 +1,24 @@
+@use 'Styles/variables';
+
+.input {
+  background-color: variables.$background-secondary-color;
+  border: 0;
+  border-bottom: 2px solid variables.$primary-color;
+  font-size: 2rem;
+
+  &::placeholder {
+    color: variables.$text-color;
+    opacity: 0.4;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  -moz-appearance: textfield;
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}

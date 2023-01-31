@@ -215,13 +215,6 @@ fn validate_caller() -> () {
     // }
 }
 
-#[ic_cdk_macros::update(name = "doThis")]
-pub async fn do_this() -> () {
-    canistergeek_ic_rust::monitor::collect_metrics();
-    canistergeek_ic_rust::logger::log_message(String::from("do_this"));
-    // rest part of the your method...
-}
-
 fn main() {
     candid::export_service!();
     std::print!("{}", __export_service());

@@ -34,6 +34,7 @@ mod http;
 mod processing;
 mod queries;
 mod logger;
+mod migrations;
 
 use pubsub::Subscription;
 
@@ -73,80 +74,6 @@ struct InitPayload {
 
 fn map_subscriptions_to_show(subscriptions: Vec<Subscription>) -> Vec<(String, String)> {
     subscriptions.iter().map(|s| (s.contract_address.clone(), s.method.clone())).collect::<Vec<(String, String)>>()
-}
-
-#[pre_upgrade]
-fn pre_upgrade() {
-    // save states
-
-    let fetcher = FETCHER.with(|fetcher| fetcher.take());
-    let subscriptions = SUBSCRIPTIONS.with(|subscriptions| subscriptions.take());
-    let chain_id = CHAIN_ID.with(|chain_id| chain_id.take());
-    let rpc = RPC.with(|rpc| rpc.take());
-    let factory_address = FACTORY_ADDRESS.with(|factory_address| factory_address.take());
-
-    // monitoring
-    let monitor_stable_data = canistergeek_ic_rust::monitor::pre_upgrade_stable_data();
-    let logger_stable_data = canistergeek_ic_rust::logger::pre_upgrade_stable_data();
-
-    ic_cdk::println!(
-        "!pre_upgrade: fetcher: {:?}, subscriptions: {:?}, chain_id: {:?}, rpc: {:?}, factory_address: {:?}",
-        fetcher,
-        map_subscriptions_to_show(subscriptions.clone()),
-        chain_id,
-        rpc,
-        factory_address,
-    );
-    log_message(
-        format!(
-            "pre_upgrade fetcher: {:?}, subscriptions: {:?}, chain_id: {:?}, rpc: {:?}, factory_address: {:?}",
-            fetcher,
-            map_subscriptions_to_show(subscriptions.clone()),
-            chain_id,
-            rpc,
-            factory_address
-        )
-    );
-
-    storage::stable_save((fetcher, subscriptions, chain_id, rpc, factory_address, monitor_stable_data, logger_stable_data)).expect("failed to save to stable storage");
-}
-
-#[post_upgrade]
-fn post_upgrade() {
-    // restore states
-
-    let (fetcher, subscriptions, chain_id, rpc, factory_address, monitor_stable_data, logger_stable_data,):
-        (Fetcher, Vec<Subscription>, u64, String, String, canistergeek_ic_rust::monitor::PostUpgradeStableData, canistergeek_ic_rust::logger::PostUpgradeStableData)
-        = storage::stable_restore().expect("failed to restore from stable storage");
-
-    ic_cdk::println!(
-        "post_upgrade: fetcher: {:?}, subscriptions: {:?}, chain_id: {:?}, rpc: {:?}, factory_address: {:?}",
-        fetcher,
-        map_subscriptions_to_show(subscriptions.clone()),
-        chain_id,
-        rpc,
-        factory_address,
-    );
-    log_message(
-        format!(
-            "post_upgrade fetcher: {:?}, subscriptions: {:?}, chain_id: {:?}, rpc: {:?}, factory_address: {:?}",
-            fetcher,
-            map_subscriptions_to_show(subscriptions.clone()),
-            chain_id,
-            rpc,
-            factory_address
-        )
-    );
-
-    // monitoring
-    canistergeek_ic_rust::monitor::post_upgrade_stable_data(monitor_stable_data);
-    canistergeek_ic_rust::logger::post_upgrade_stable_data(logger_stable_data);
-
-    FETCHER.with(|f| f.replace(fetcher));
-    SUBSCRIPTIONS.with(|s| s.replace(subscriptions));
-    CHAIN_ID.with(|c| c.replace(chain_id));
-    RPC.with(|r| r.replace(rpc));
-    FACTORY_ADDRESS.with(|f| f.replace(factory_address));
 }
 
 #[update]
@@ -206,53 +133,6 @@ async fn stop_fetcher() -> String {
     log_message("stop_fetcher".to_string());
 
     FETCHER.with(|fetcher| fetcher.take().stop());
-
-    "Ok".to_string()
-}
-
-#[update]
-async fn verify_address(siwe_msg: String, siwe_sig: String) -> Result<(String,String),String> {
-    let opts = VerificationOpts {
-        domain: None,
-        nonce: None,
-        timestamp: Some(OffsetDateTime::from_unix_timestamp((ic_cdk::api::time() / (1000 * 1000 * 1000)) as i64).unwrap())
-    };
-
-    let msg = Message::from_str(&siwe_msg).map_err(|e| e.to_string())?;
-    let sig = <[u8; 65]>::from_hex(siwe_sig).map_err(|e| e.to_string())?;
-
-    ic_cdk::println!("validate_address: msg: {:?}, sig: {:?}", msg, sig);
-
-    msg.verify(&sig, &opts).await.map_err(|e| e.to_string())?;
-
-    let factory_addr = FACTORY_ADDRESS.with(|f| Principal::from_text(f.borrow().clone()).unwrap());
-
-    let canister_addr = get_eth_addr(Some(factory_addr), Some(vec![msg.address.to_vec()]), KEY_NAME.to_string())
-        .await
-        .map_err(|e| format!("get canister eth addr failed: {}", e))?;
-
-    Ok((
-        hex::encode(msg.address),
-        hex::encode(canister_addr)
-    ))
-}
-
-#[update]
-async fn subscribe(contract_address: String, method: String) -> String {
-    // verification
-
-    let subscription = Subscription {
-        contract_address,
-        abi: ABI.to_vec(),
-        method,
-    };
-
-    SUBSCRIPTIONS.with(|subscriptions| {
-        subscriptions.borrow_mut().push(subscription);
-
-        ic_cdk::println!("subscriptions: {:?}", map_subscriptions_to_show(subscriptions.borrow().clone()));
-        log_message(format!("subscriptions: {:?}", map_subscriptions_to_show(subscriptions.borrow().clone())));
-    });
 
     "Ok".to_string()
 }

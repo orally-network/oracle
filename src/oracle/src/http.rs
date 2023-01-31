@@ -4,7 +4,6 @@ use ic_cdk::api::management_canister::http_request::{
 };
 use canistergeek_ic_rust::{
     logger::{log_message},
-    monitor::{collect_metrics},
 };
 use ic_cdk::api::call::RejectionCode;
 
@@ -37,11 +36,8 @@ pub async fn send_request(url: String, method: HttpMethod, body: Option<Vec<u8>>
     ic_cdk::api::print(format!("Requesting url: {}", url.to_string()));
     log_message(format!("Requesting url: {}", url.to_string()));
 
-    collect_metrics();
-
     match http_request(request).await {
         Ok((response, )) => {
-            collect_metrics();
             ic_cdk::api::print(format!("Response status: {}", response.status));
             log_message(format!("Response status: {}", response.status));
 

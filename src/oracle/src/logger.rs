@@ -15,8 +15,7 @@ pub async fn update_canistergeek_information(request: canistergeek_ic_rust::api_
 }
 
 fn validate_caller() -> () {
-    canistergeek_ic_rust::monitor::collect_metrics();
-    canistergeek_ic_rust::logger::log_message(format!("Caller: {:?}", ic_cdk::caller()));
+    log_message(format!("Caller: {:?}", ic_cdk::caller()));
 
     // match Principal::from_text("hozae-racaq-aaaaa-aaaaa-c") {
     //     Ok(caller) if caller == ic_cdk::caller() => (),

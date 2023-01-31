@@ -1,3 +1,4 @@
+use std::ops::Sub;
 use ic_cdk::export::{
     candid::CandidType,
     serde::{Deserialize, Serialize},
@@ -16,12 +17,14 @@ pub struct Subscription {
     pub method: String,
     pub abi: Vec<u8>,
 
-    // pub owner_address: String, // H160
-    // pub execution_address: String,
+    pub owner_address: Address, // H160
+    pub execution_address: Address,
     // if execution_address is not topped up enough, then the subscription will be paused
-    // pub active: bool,
-    // pub last_execution: u64,
+    pub active: bool,
+    pub last_execution: u64,
 }
+
+const MINIMUM_BALANCE: U256 = U256::from(10_000_000_000_000_000); // 0.01 ETH
 
 pub async fn notify(price: f64) {
     let subscriptions = SUBSCRIPTIONS.with(|subscriptions| subscriptions.borrow().clone());
@@ -113,4 +116,91 @@ pub async fn update_price(address: String, method: String, abi: &[u8], price: f6
     log_message(format!("txhash: {}", hex::encode(txhash)));
 
     Ok(format!("{}", hex::encode(txhash)))
+}
+
+#[update]
+async fn verify_address_candid(msg: String, signature: String) -> (String, String) {
+    let (owner_address, execution_address) = verify_address(msg, signature).await;
+
+    return (hex::encode(owner_address), hex::encode(execution_address));
+}
+
+#[update]
+async fn verify_address(siwe_msg: String, siwe_sig: String) -> Result<(Address,Address),String> {
+    let opts = VerificationOpts {
+        domain: None,
+        nonce: None,
+        timestamp: Some(OffsetDateTime::from_unix_timestamp((ic_cdk::api::time() / (1000 * 1000 * 1000)) as i64).unwrap())
+    };
+
+    let msg = Message::from_str(&siwe_msg).map_err(|e| e.to_string())?;
+    let sig = <[u8; 65]>::from_hex(siwe_sig).map_err(|e| e.to_string())?;
+
+    ic_cdk::println!("validate_address: msg: {:?}, sig: {:?}", msg, sig);
+
+    msg.verify(&sig, &opts).await.map_err(|e| e.to_string())?;
+
+    let factory_addr = FACTORY_ADDRESS.with(|f| Principal::from_text(f.borrow().clone()).unwrap());
+
+    let canister_addr = get_eth_addr(Some(factory_addr), Some(vec![msg.address.to_vec()]), KEY_NAME.to_string())
+        .await
+        .map_err(|e| format!("get canister eth addr failed: {}", e))?;
+
+    Ok((Address::from(msg.address), canister_addr))
+}
+
+#[update]
+async fn subscribe(contract_address: String, method: String, message: String, signature: String) -> Result<String, String> {
+    // verification
+    let (owner_address, execution_address) = match verify_address(message, signature).await {
+        Ok(_) => {},
+        Err(e) => {
+            ic_cdk::println!("verify address failed: {}", e);
+            log_message(format!("verify address failed: {}", e));
+
+            Err(e)
+        }
+    };
+
+    let rpc_url = RPC.with(|rpc| rpc.borrow().clone());
+
+    let w3 = match ICHttp::new(&rpc_url, None, None) {
+        Ok(v) => { Web3::new(v) },
+        Err(e) => { return Err(e.to_string()) },
+    };
+    let balance = w3.eth().balance(execution_address, None).await.map_err(|e| {
+        ic_cdk::println!("get balance failed: {}", e);
+        log_message(format!("get balance failed: {}", e));
+
+        e
+    })?;
+
+    ic_cdk::println!("balance: {}", balance);
+    log_message(format!("balance: {}", balance));
+
+    if balance < MINIMUM_BALANCE {
+        ic_cdk::println!("balance is not enough: {}", balance);
+        log_message(format!("balance is not enough: {}", balance));
+
+        return Err("balance is not enough".to_string());
+    }
+
+    let subscription = Subscription {
+        contract_address,
+        abi: ABI.to_vec(),
+        method,
+        owner_address,
+        execution_address,
+        active: true,
+        last_execution: 0,
+    };
+
+    SUBSCRIPTIONS.with(|subscriptions| {
+        subscriptions.borrow_mut().push(subscription);
+
+        ic_cdk::println!("subscriptions: {:?}", map_subscriptions_to_show(subscriptions.borrow().clone()));
+        log_message(format!("subscriptions: {:?}", map_subscriptions_to_show(subscriptions.borrow().clone())));
+    });
+
+    Ok("success".to_string())
 }

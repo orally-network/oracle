@@ -2,7 +2,10 @@ use ic_cdk::export::{
     serde::{Deserialize, Serialize},
     candid::{CandidType, encode_one, Principal},
 };
-use ic_cdk::api::call::{call};
+use ic_cdk::api::{
+    call::{call},
+
+};
 use ic_cdk::api::management_canister::main::{
     create_canister_with_extra_cycles,
     CanisterIdRecord,
@@ -37,14 +40,8 @@ pub struct InitPayload {
 
 const INIT_CYCLES_BALANCE: u128 = 1_000_000_000_000; // 1T
 
-#[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
-pub struct Oracle {
-    payload: InitPayload,
-    canister_id: String,
-}
-
 thread_local! {
-    pub static ORACLES: RefCell<Vec<Oracle>> = RefCell::default();
+    pub static ORACLE_IDS: RefCell<Vec<String>> = RefCell::default();
 }
 
 #[update]
@@ -80,11 +77,8 @@ async fn create_oracle(payload: InitPayload) -> Result<String, String> {
                     ic_cdk::println!("Started oracle canister: {:?}", canister_id.to_string());
                     log_message(format!("Started oracle canister: {:?}", canister_id.to_string()));
 
-                    ORACLES.with(|oracles| {
-                        oracles.borrow_mut().push(Oracle {
-                            payload,
-                            canister_id: canister_id.to_string(),
-                        });
+                    ORACLE_IDS.with(|ids| {
+                        ids.borrow_mut().push(canister_id.to_string());
                     });
 
                     Ok(canister_id.to_string())
@@ -143,13 +137,13 @@ async fn update_oracles() -> Result<String, String> {
     ic_cdk::println!("Updating all oracle canisters");
     log_message(format!("Updating all oracle canisters"));
 
-    let oracles = ORACLES.with(|o| o.borrow().clone());
+    let ids = ORACLE_IDS.with(|o| o.borrow().clone());
 
-    for oracle in oracles {
-        match update_oracle(oracle.canister_id.clone()).await {
+    for id in ids {
+        match update_oracle(id.clone()).await {
             Ok(_) => {
-                ic_cdk::println!("Updated oracle canister: {:?}", oracle.canister_id);
-                log_message(format!("Updated oracle canister: {:?}", oracle.canister_id));
+                ic_cdk::println!("Updated oracle canister: {:?}", id);
+                log_message(format!("Updated oracle canister: {:?}", id));
             },
             Err(error) => {
                 ic_cdk::trap(&format!("Failed to update canister: {}", error));
@@ -161,8 +155,8 @@ async fn update_oracles() -> Result<String, String> {
 }
 
 #[query]
-fn get_oracles() -> Vec<Oracle> {
-    ORACLES.with(|o| o.borrow().clone())
+fn get_oracles() -> Vec<String> {
+    ORACLE_IDS.with(|o| o.borrow().clone())
 }
 
 #[ic_cdk_macros::pre_upgrade]
@@ -170,11 +164,11 @@ fn pre_upgrade_function() {
     ic_cdk::println!("Pre upgrade function");
     log_message(format!("Pre upgrade function"));
 
-    let oracles = ORACLES.with(|o| o.take());
+    let ids = ORACLE_IDS.with(|o| o.take());
     let monitor_stable_data = canistergeek_ic_rust::monitor::pre_upgrade_stable_data();
     let logger_stable_data = canistergeek_ic_rust::logger::pre_upgrade_stable_data();
 
-    ic_cdk::storage::stable_save((oracles, monitor_stable_data, logger_stable_data)).expect("Failed to save stable data");
+    ic_cdk::storage::stable_save((ids, monitor_stable_data, logger_stable_data)).expect("Failed to save stable data");
 }
 
 #[ic_cdk_macros::post_upgrade]
@@ -182,11 +176,11 @@ fn post_upgrade_function() {
     ic_cdk::println!("Post upgrade function");
     log_message(format!("Post upgrade function"));
 
-    let stable_data: Result<(Vec<Oracle>, canistergeek_ic_rust::monitor::PostUpgradeStableData, canistergeek_ic_rust::logger::PostUpgradeStableData), String> = ic_cdk::storage::stable_restore();
+    let stable_data: Result<(Vec<String>, canistergeek_ic_rust::monitor::PostUpgradeStableData, canistergeek_ic_rust::logger::PostUpgradeStableData), String> = ic_cdk::storage::stable_restore();
 
     match stable_data {
-        Ok((oracles, monitor_stable_data, logger_stable_data)) => {
-            ORACLES.with(|o| o.replace(oracles));
+        Ok((ids, monitor_stable_data, logger_stable_data)) => {
+            ORACLE_IDS.with(|o| o.replace(ids));
             canistergeek_ic_rust::monitor::post_upgrade_stable_data(monitor_stable_data);
             canistergeek_ic_rust::logger::post_upgrade_stable_data(logger_stable_data);
         }

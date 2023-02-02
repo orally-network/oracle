@@ -11,6 +11,7 @@
   "scripts": {
     "build:canisters:local": "dfx build oracle && cp ./.dfx/local/canisters/oracle/oracle.wasm ./src/oracle_factory/src/build/ && gzip ./src/oracle_factory/src/build/oracle.wasm --force && dfx build oracle_factory && dfx canister install oracle_factory --mode=upgrade",
     "build:canisters:ic": "dfx build oracle && cp ./.dfx/local/canisters/oracle/oracle.wasm ./src/oracle_factory/src/build/ && gzip ./src/oracle_factory/src/build/oracle.wasm --force && dfx build oracle_factory --network ic && dfx canister install oracle_factory --mode=upgrade --network ic",
+    "optimize": "ic-cdk-optimizer .wasm -o -opt.wasm",
     "build": "webpack",
     "prebuild": "npm run generate",
     "start": "webpack serve --mode development --env development",

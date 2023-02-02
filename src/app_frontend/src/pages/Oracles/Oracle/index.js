@@ -1,1 +1,1 @@
-export { default } from './Oracle';
+export { default } from './OracleContainer';

@@ -18,6 +18,6 @@ type oracle = record {
 service : {
     create_oracle: (init_payload) -> (variant { Ok: text; Err: text });
     update_oracle: (text) -> (variant { Ok: text; Err: text });
-    get_oracles: () -> (vec oracle);
+    get_oracles: () -> (vec text);
     update_oracles: () -> (variant { Ok: text; Err: text });
 };

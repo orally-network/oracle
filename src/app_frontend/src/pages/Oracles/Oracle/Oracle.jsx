@@ -1,23 +1,21 @@
-import React, { useMemo } from 'react';
+import React, { useState } from 'react';
 import { useAccount, useNetwork, useSignMessage } from 'wagmi';
 import { SiweMessage } from 'siwe';
 
 import Card from 'Components/Card';
 import Button from 'Components/Button';
-import { CHAINS_MAP } from 'Constants/chains';
-import { createActor as createOracleActor } from 'Declarations/oracle';
 
 import styles from './Oracle.scss';
 
-const Oracle = ({ payload, canister_id }) => {
-  console.log(payload, CHAINS_MAP[payload.chain_id], canister_id);
-
-  const chain = CHAINS_MAP[payload.chain_id];
+const Oracle = ({ oracleId, fetcher, chain, oracle, rpc, subscriptions, chain_id, factory_address }) => {
+  console.log({oracleId, fetcher, chain, subscriptions, chain_id, factory_address });
 
   const { address } = useAccount();
   const { chain: currentChain } = useNetwork();
   const { signMessageAsync } = useSignMessage();
-  const oracle = useMemo(() => createOracleActor(canister_id), [canister_id]);
+
+  const [message, setMessage] = useState(null);
+  const [signature, setSignature] = useState(null);
 
   return (
     <Card className={styles.oracle}>
@@ -29,7 +27,7 @@ const Oracle = ({ payload, canister_id }) => {
         </div>
 
         <div className={styles.frequency}>
-          {Number(payload.frequency) / 60} mins
+          {(Number(fetcher.frequency) / 60).toFixed(2)} mins
         </div>
       </div>
 
@@ -38,7 +36,7 @@ const Oracle = ({ payload, canister_id }) => {
           Sources
         </div>
 
-        {payload.endpoints.map((endpoint, index) => (
+        {fetcher.endpoints.map((endpoint, index) => (
           <div key={index} className={styles.endpoint}>
             {endpoint.url}
           </div>
@@ -51,7 +49,7 @@ const Oracle = ({ payload, canister_id }) => {
         </div>
 
         <div className={styles.rpc}>
-          {new URL(payload.rpc).hostname}
+          {new URL(rpc).hostname}
         </div>
       </div>
 
@@ -68,9 +66,13 @@ const Oracle = ({ payload, canister_id }) => {
           // nonce: 0,
         });
 
+        setMessage(message.prepareMessage());
+
         const signature = await signMessageAsync({
           message: message.prepareMessage(),
         });
+
+        setSignature(signature.slice(2));
 
         console.log({ message, signature, oracle })
 
@@ -78,7 +80,19 @@ const Oracle = ({ payload, canister_id }) => {
         const a = await oracle.verify_address(message.prepareMessage(), signature.slice(2));
         console.log({a });
       }}>
-        Do some shit
+        Verify - get address
+      </Button>
+
+      <Button onClick={async () => {
+        const res = await oracle.subscribe('0xCFf00E5f685cCE94Dfc6d1a18200c764f9BCca1f', 'set_price', message, signature);
+
+        console.log({res });
+      }}>
+        Subscribe
+      </Button>
+
+      <Button>
+        Top up wallet
       </Button>
     </Card>
   );

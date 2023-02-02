@@ -21,7 +21,7 @@ const Oracles = () => {
 
   return (
     <div className={styles.oracles}>
-      {oracles.map((oracle, i) => <Oracle key={i} {...oracle} />)}
+      {oracles.map(oracleId => <Oracle key={oracleId} oracleId={oracleId} />)}
     </div>
   );
 };

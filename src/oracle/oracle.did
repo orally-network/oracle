@@ -3,6 +3,11 @@ type endpoint = record {
     resolver: text;
 };
 
+type fetcher = record {
+    frequency: nat64;
+    endpoints: vec endpoint;
+};
+
 type init_payload = record {
     endpoints: vec endpoint;
     frequency: nat64;
@@ -10,27 +15,26 @@ type init_payload = record {
     rpc: text;
 };
 
-type subscription = record {
-    contract_address: text;
-    method: text;
-    abi: blob;
-};
-
 type subscription_simple = record { text; text };
+
+type state = record {
+    subscriptions: vec subscription_simple;
+    fetcher: fetcher;
+    chain_id: nat64;
+    rpc: text;
+    factory_address: text;
+};
 
 service : {
     get_address: () -> (variant { Ok: text; Err: text });
     init_candid: (init_payload) -> (variant { Ok: null; Err: text });
     start: () -> (variant { Ok: null; Err: text });
     stop_fetcher: () -> (text);
-    subscribe: (text, text) -> (text);
+    subscribe: (text, text, text, text) -> (variant { Ok: text; Err: text });
 
     update_price_manual: (text, text, float64) -> (text);
     set_factory_address: (text) -> (text);
     verify_address: (text, text) -> (variant { Ok: record { text; text }; Err: text });
 
-    get_subscriptions: () -> (vec subscription_simple);
-    get_fetcher: () -> (text);
-    get_chain_id: () -> (nat64);
-    get_rpc: () -> (text);
+    get_state: () -> (state);
 }

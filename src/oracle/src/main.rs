@@ -137,12 +137,22 @@ async fn stop_fetcher() -> String {
     "Ok".to_string()
 }
 
-#[update]
-async fn update_price_manual(contract_address: String, method: String, price: f64) -> String {
-    pubsub::update_price(contract_address, method, ABI, price).await.expect("Update price failed");
-
-    "Ok".to_string()
-}
+// #[update]
+// async fn update_price_manual(contract_address: String, method: String, price: f64) -> String {
+//     let subscription = Subscription {
+//         contract_address: Address::from_str(&contract_address).unwrap(),
+//         method: method.clone(),
+//         abi: Vec::from(ABI),
+//         owner_address: ,
+//         execution_address: ,
+//         active: true,
+//         last_execution: 0,
+//     };
+//
+//     pubsub::update_price(contract_address, method, ABI, price).await.expect("Update price failed");
+//
+//     "Ok".to_string()
+// }
 
 #[update]
 async fn set_factory_address(address: String) -> String {

@@ -76,14 +76,7 @@ fn map_subscriptions_to_show(subscriptions: Vec<Subscription>) -> Vec<(String, S
     subscriptions.iter().map(|s| (s.contract_address.clone(), s.method.clone())).collect::<Vec<(String, String)>>()
 }
 
-#[update]
-async fn get_address() -> Result<String, String> {
-    let canister_addr = get_eth_addr(None, None, KEY_NAME.to_string())
-        .await
-        .map_err(|e| format!("get canister eth addr failed: {}", e))?;
 
-    Ok(hex::encode(canister_addr))
-}
 
 #[init]
 async fn init(payload: Option<InitPayload>) {
@@ -132,7 +125,11 @@ fn start() -> Result<(), String> {
 async fn stop_fetcher() -> String {
     log_message("stop_fetcher".to_string());
 
-    FETCHER.with(|fetcher| fetcher.take().stop());
+    FETCHER.with(|fetcher| {
+        let f = fetcher.borrow().clone();
+
+        f.stop();
+    });
 
     "Ok".to_string()
 }

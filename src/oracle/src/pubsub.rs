@@ -41,6 +41,7 @@ pub async fn notify(price: f64) {
         log_message(format!("notify subscriber: {}", subscription.contract_address));
 
         if !subscription.active {
+            ic_cdk::api::print(&format!("subscription is not active"));
             ic_cdk::trap(&format!("subscription is not active"));
         }
 
@@ -68,7 +69,12 @@ pub async fn update_price(sub: Subscription, price: f64) -> Result<String, Strin
 
     // ecdsa key info
     let derivation_path = vec![hex::decode(sub.owner_address).unwrap().to_vec()];
-    let key_info = KeyInfo{ derivation_path: derivation_path.clone(), key_name: KEY_NAME.to_string() };
+    let key_info = KeyInfo{ 
+        derivation_path, 
+        key_name: KEY_NAME.to_string(), 
+        proxy_canister_id: Some(Principal::from_text("qsgjb-riaaa-aaaaa-aaaga-cai".to_string()).unwrap()),
+        ecdsa_sign_cycles: None
+    };
 
     let rpc_url = RPC.with(|rpc| rpc.borrow().clone());
     let factory_addr = FACTORY_ADDRESS.with(|f| Principal::from_text(f.borrow().clone()).unwrap());
@@ -87,7 +93,7 @@ pub async fn update_price(sub: Subscription, price: f64) -> Result<String, Strin
         format!("init contract failed: {:?}", e)
     })?;
 
-    let canister_addr = get_eth_addr(Some(factory_addr), Some(derivation_path.clone()), KEY_NAME.to_string())
+    let canister_addr = get_eth_addr(key_info.proxy_canister_id, key_info.clone())
         .await
         .map_err(|e| {
             log_message(format!("get canister eth addr failed: {}", e));
@@ -160,10 +166,17 @@ async fn verify_address(siwe_msg: String, siwe_sig: String) -> Result<(String,St
     ic_cdk::println!("validate_address: msg: {:?}, sig: {:?}", msg, sig);
 
     msg.verify(&sig, &opts).await.map_err(|e| e.to_string())?;
+    
+    let derivation_path = vec![msg.address.to_vec()];
+    
+    let key_info = KeyInfo{ 
+        derivation_path, 
+        key_name: KEY_NAME.to_string(), 
+        proxy_canister_id: Some(Principal::from_text("qsgjb-riaaa-aaaaa-aaaga-cai".to_string()).unwrap()),
+        ecdsa_sign_cycles: None
+    };
 
-    let factory_addr = FACTORY_ADDRESS.with(|f| Principal::from_text(f.borrow().clone()).unwrap());
-
-    let canister_addr = get_eth_addr(Some(factory_addr), Some(vec![msg.address.to_vec()]), KEY_NAME.to_string())
+    let canister_addr = get_eth_addr(key_info.proxy_canister_id, key_info)
         .await
         .map_err(|e| format!("get canister eth addr failed: {}", e))?;
 

@@ -1,5 +1,6 @@
 [workspace]
 members = [
     "src/oracle",
-    "src/oracle_factory"
+    "src/oracle_factory",
+    "src/ecdsa_proxy",
 ]

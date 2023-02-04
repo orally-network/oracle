@@ -43,7 +43,8 @@ pub struct Fetcher {
 impl Fetcher {
     pub fn new(endpoints: Vec<Endpoint>, frequency: u64) -> Self {
         if frequency < 60 {
-            panic!("Frequency unset or need to be more than 1 minute.");
+            ic_cdk::api::print(&format!("Frequency unset or need to be more than 1 minute."));
+            ic_cdk::trap(&format!("Frequency unset or need to be more than 1 minute."));
         }
 
         let fetcher = Fetcher {
@@ -55,6 +56,11 @@ impl Fetcher {
     }
 
     pub fn start(self) {
+        if self.frequency < 60 {
+            ic_cdk::api::print(&format!("Frequency unset or need to be more than 1 minute."));
+            ic_cdk::trap(&format!("Frequency unset or need to be more than 1 minute."));
+        }
+        
         let func = move || ic_cdk::spawn(
             Fetcher::fetch(
                 self.endpoints.clone(),

@@ -10,6 +10,11 @@
       "package": "oracle_factory",
       "type": "rust"
     },
+    "ecdsa_proxy": {
+      "candid": "src/ecdsa_proxy/ecdsa_proxy.did",
+      "package": "ecdsa_proxy",
+      "type": "rust"
+    },
     "app_frontend": {
       "dependencies": [
         "oracle"

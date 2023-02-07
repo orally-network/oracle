@@ -7,31 +7,37 @@ const CHAINS = [
     id: 1,
     name: 'Ethereum',
     img: ethereumImg,
+    coin: 'ETH',
   },
   {
     id: 5,
     name: 'Goerli',
     img: ethereumImg,
+    coin: 'GoerliETH',
   },
   {
     id: 137,
     name: 'Polygon',
     img: polygonImg,
+    coin: 'MATIC',
   },
   {
     id: 80001,
     name: 'Mumbai',
     img: polygonImg,
+    coin: 'MumbaiMATIC',
   },
   {
     id: 1231,
     name: 'Ultron',
     img: ultronImg,
+    coin: 'ULX',
   },
   {
     id: 1230,
     name: 'Ultron Testnet',
     img: ultronImg,
+    coin: 'TULX',
   },
 ];
 

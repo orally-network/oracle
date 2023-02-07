@@ -55,6 +55,7 @@ const Oracle = ({ oracleId, addressData, signMessage, state }) => {
       <Control
         addressData={addressData}
         signMessage={signMessage}
+        chain={chain}
       />
     </Card>
   );

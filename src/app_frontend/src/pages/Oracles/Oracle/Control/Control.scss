@@ -1,0 +1,31 @@
+.control {
+  display: flex;
+  
+  .executionAddress {
+    display: flex;
+    min-width: 210px;
+    
+    .executionAddressInfo {
+      display: flex;
+      flex-direction: column;
+
+      .address {
+        cursor: pointer;
+      }
+
+      .balance {
+        font-size: 0.8em;
+        color: #999;
+      }
+    }
+    
+    .topUp {
+      margin-left: 10px;
+    }
+  }
+  
+  .subscribe {
+    //width: -webkit-fill-available;
+    width: 290px;
+  }
+}

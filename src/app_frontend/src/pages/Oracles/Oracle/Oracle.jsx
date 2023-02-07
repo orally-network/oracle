@@ -1,21 +1,20 @@
-import React, { useState } from 'react';
-import { useAccount, useNetwork, useSignMessage } from 'wagmi';
-import { SiweMessage } from 'siwe';
+import React from 'react';
 
 import Card from 'Components/Card';
-import Button from 'Components/Button';
 
+import Control from './Control';
 import styles from './Oracle.scss';
 
-const Oracle = ({ oracleId, fetcher, chain, oracle, rpc, subscriptions, chain_id, factory_address }) => {
-  console.log({oracleId, fetcher, chain, subscriptions, chain_id, factory_address });
+// 1. connect
+// 2. sign message
+// 3. address, balance, top up (modal flow with input) + subscribe (modal flow with contract, method, abi file)
 
-  const { address } = useAccount();
-  const { chain: currentChain } = useNetwork();
-  const { signMessageAsync } = useSignMessage();
-
-  const [message, setMessage] = useState(null);
-  const [signature, setSignature] = useState(null);
+const Oracle = ({ oracleId, addressData, signMessage, state }) => {
+  const {
+    fetcher, chain, subscriptions, chain_id, factory_address, rpc,
+  } = state;
+  
+  console.log({oracleId, fetcher, chain, subscriptions, chain_id, factory_address, addressData });
 
   return (
     <Card className={styles.oracle}>
@@ -53,47 +52,10 @@ const Oracle = ({ oracleId, fetcher, chain, oracle, rpc, subscriptions, chain_id
         </div>
       </div>
 
-      <Button onClick={async () => {
-        // get nonce
-
-        const message = new SiweMessage({
-          domain: window.location.host,
-          address,
-          statement: 'Sign in with Ethereum to the oracle.',
-          uri: window.location.origin,
-          version: '1',
-          chainId: currentChain?.id,
-          // nonce: 0,
-        });
-
-        setMessage(message.prepareMessage());
-
-        const signature = await signMessageAsync({
-          message: message.prepareMessage(),
-        });
-
-        setSignature(signature.slice(2));
-
-        console.log({ message, signature, oracle })
-
-        // verify signature
-        const a = await oracle.verify_address(message.prepareMessage(), signature.slice(2));
-        console.log({a });
-      }}>
-        Verify - get address
-      </Button>
-
-      <Button onClick={async () => {
-        const res = await oracle.subscribe('0xCFf00E5f685cCE94Dfc6d1a18200c764f9BCca1f', 'set_price', message, signature);
-
-        console.log({res });
-      }}>
-        Subscribe
-      </Button>
-
-      <Button>
-        Top up wallet
-      </Button>
+      <Control
+        addressData={addressData}
+        signMessage={signMessage}
+      />
     </Card>
   );
 };

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { useAccount } from 'wagmi';
 
 import { oracle_factory } from 'Declarations/oracle_factory';
+import { getLocalStorageAddress } from 'Utils/localStorageAddress';
 
 import Oracle from './Oracle';
 
@@ -8,6 +10,9 @@ import styles from './Oracles.scss';
 
 const Oracles = () => {
   const [oracles, setOracles] = useState([]);
+  const [addressData, setAddressData] = useState();
+  
+  const { address } = useAccount();
 
   useEffect(() => {
     const fetch = async () => {
@@ -17,11 +22,18 @@ const Oracles = () => {
     };
 
     fetch();
+
+    if (address) {
+      setAddressData(getLocalStorageAddress(address.toLowerCase()));
+    }
+  }, []);
+
+  useEffect(() => {
   }, []);
 
   return (
     <div className={styles.oracles}>
-      {oracles.map(oracleId => <Oracle key={oracleId} oracleId={oracleId} />)}
+      {oracles.map(oracleId => <Oracle key={oracleId} oracleId={oracleId} addressData={addressData} setAddressData={setAddressData} />)}
     </div>
   );
 };

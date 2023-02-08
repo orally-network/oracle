@@ -4,6 +4,7 @@ import { SiweMessage } from 'siwe';
 
 import { createActor as createOracleActor } from 'Declarations/oracle';
 import { CHAINS_MAP } from 'Constants/chains';
+import { remove0x } from 'Utils/addressUtils';
 
 import Oracle from './Oracle';
 import { setLocalStorageAddress } from 'Utils/localStorageAddress';
@@ -35,7 +36,7 @@ const OracleContainer = ({ oracleId, addressData, setAddressData }) => {
     });
 
     // verify signature
-    const res = await oracle.verify_address(messageString, signature.slice(2));
+    const res = await oracle.verify_address(messageString, remove0x(signature));
 
     console.log({ res, message, messageString, signature, oracle });
 
@@ -46,7 +47,7 @@ const OracleContainer = ({ oracleId, addressData, setAddressData }) => {
 
       setAddressData(data);
     }
-  }, []);
+  }, [address, oracle, currentChain, signMessageAsync, setAddressData]);
 
   useEffect(() => {
     const fetch = async () => {

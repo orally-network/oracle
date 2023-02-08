@@ -22,14 +22,13 @@ const Oracles = () => {
     };
 
     fetch();
-
-    if (address) {
-      setAddressData(getLocalStorageAddress(address.toLowerCase()));
-    }
   }, []);
 
   useEffect(() => {
-  }, []);
+    if (address) {
+      setAddressData(getLocalStorageAddress(address.toLowerCase()));
+    }
+  }, [address]);
 
   return (
     <div className={styles.oracles}>

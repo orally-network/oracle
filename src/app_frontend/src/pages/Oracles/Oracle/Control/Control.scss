@@ -11,6 +11,10 @@
 
       .address {
         cursor: pointer;
+        
+        &:active {
+            opacity: 0.5;
+        }
       }
 
       .balance {

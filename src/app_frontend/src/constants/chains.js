@@ -1,43 +1,41 @@
+import { mainnet, goerli, polygon, polygonMumbai } from 'wagmi/chains';
+
 import ethereumImg from 'Assets/chains/ethereum.jpeg';
 import polygonImg from 'Assets/chains/polygon.jpeg';
 import ultronImg from 'Assets/chains/ultron.jpeg';
 
 const CHAINS = [
   {
-    id: 1,
-    name: 'Ethereum',
+    ...mainnet,
     img: ethereumImg,
-    coin: 'ETH',
   },
   {
-    id: 5,
-    name: 'Goerli',
+    ...goerli,
     img: ethereumImg,
-    coin: 'GoerliETH',
   },
   {
-    id: 137,
-    name: 'Polygon',
+    ...polygon,
     img: polygonImg,
-    coin: 'MATIC',
   },
   {
-    id: 80001,
-    name: 'Mumbai',
+    ...polygonMumbai,
     img: polygonImg,
-    coin: 'MumbaiMATIC',
   },
   {
     id: 1231,
     name: 'Ultron',
     img: ultronImg,
-    coin: 'ULX',
+    nativeCurrency: {
+      symbol: 'ULX',
+    },
   },
   {
     id: 1230,
     name: 'Ultron Testnet',
     img: ultronImg,
-    coin: 'TULX',
+    nativeCurrency: {
+      symbol: 'TULX',
+    },
   },
 ];
 

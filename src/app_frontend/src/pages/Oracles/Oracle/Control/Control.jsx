@@ -1,5 +1,6 @@
-import React from 'react';
-import { useAccount } from 'wagmi';
+import React, { useEffect, useState } from 'react';
+import { useAccount, useProvider } from 'wagmi';
+import { utils } from 'ethers';
 
 import Connect from 'Shared/Connect';
 import Button from 'Components/Button';
@@ -9,9 +10,28 @@ import styles from './Control.scss';
 
 const Control = ({ addressData, signMessage, chain }) => {
   const { address } = useAccount();
-  
-  const executionBalance = 0.1;
+  const provider = useProvider({
+    chainId: chain.id,
+  });
+  const [executionBalance, setExecutionBalance] = useState(0);
 
+  useEffect(() => {
+    console.log({addressData, provider, chain});
+    
+    if (addressData?.executionAddress && provider && chain) {
+      const fetch = async () => {
+        console.log('fetching balance', addressData.executionAddress, chain.id);
+        const res = await provider.getBalance(addressData.executionAddress);
+
+        setExecutionBalance(
+          Number(utils.formatUnits(res, chain.nativeCurrency.decimals)).toFixed(3)
+        );
+      };
+
+      fetch();
+    }
+  }, []);
+  
   if (!address) {
     return <Connect />;
   }
@@ -26,8 +46,6 @@ const Control = ({ addressData, signMessage, chain }) => {
     );
   }
   
-  console.log({ addressData })
-  
   return (
     <div className={styles.control}>
       <div className={styles.executionAddress}>
@@ -37,7 +55,7 @@ const Control = ({ addressData, signMessage, chain }) => {
           </div>
           
           <div className={styles.balance}>
-            {executionBalance} {chain.coin}
+            {executionBalance} {chain.nativeCurrency.symbol}
           </div>
         </div>
 

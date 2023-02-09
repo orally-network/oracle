@@ -1,10 +1,12 @@
 import React, { useState, useCallback } from 'react';
+import { toast } from 'react-toastify';
 import { sendTransaction, prepareSendTransaction, getNetwork, switchNetwork, waitForTransaction } from '@wagmi/core';
 import { utils } from 'ethers';
 
 import Modal from 'Components/Modal';
 import Input from 'Components/Input';
 import Button from 'Components/Button';
+import logger from 'Utils/logger';
 
 import styles from './Control.scss';
 
@@ -29,8 +31,23 @@ const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAdd
       },
     });
     const { hash } = await sendTransaction(config);
+
+    setIsTopUpModalOpen(false);
     
-    const data = await waitForTransaction({ hash });
+    const data = await toast.promise(
+      waitForTransaction({ hash }),
+      {
+        pending: `Sending ${amount} ${chain.nativeCurrency.symbol} to ${executionAddress}`,
+        success: `Sent successfully`,
+        error: {
+          render({ error }) {
+            logger.error(`Sending ${chain.nativeCurrency.symbol}`, error);
+
+            return 'Something went wrong. Try again later.';
+          }
+        },
+      }
+    );
     
     console.log({ data, hash });
     

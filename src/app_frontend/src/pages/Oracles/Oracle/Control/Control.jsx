@@ -9,6 +9,8 @@ import { truncateEthAddress } from 'Utils/addressUtils';
 import TopUpModal from './TopUpModal';
 import styles from './Control.scss';
 
+const MIN_BALANCE = 0.1;
+
 const Control = ({ addressData, signMessage, chain }) => {
   const [executionBalance, setExecutionBalance] = useState(null);
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
@@ -67,7 +69,10 @@ const Control = ({ addressData, signMessage, chain }) => {
         </Button>
       </div>
       
-      <Button className={styles.subscribe}>
+      <Button
+        className={styles.subscribe}
+        disabled={executionBalance?.formatted < MIN_BALANCE}
+      >
         Subscribe
       </Button>
       

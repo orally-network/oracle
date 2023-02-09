@@ -33,3 +33,13 @@
     width: 290px;
   }
 }
+
+.topUpModal {
+  display: flex;
+  flex-direction: column;
+  
+  .topUpBtn {
+    margin-top: 20px;
+    width: 100%;
+  }
+}

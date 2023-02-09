@@ -5,6 +5,7 @@
   border: 0;
   border-bottom: 2px solid variables.$primary-color;
   font-size: 2rem;
+  color: variables.$text-color;
 
   &::placeholder {
     color: variables.$text-color;

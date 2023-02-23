@@ -9,7 +9,7 @@ import styles from './Oracle.scss';
 // 2. sign message
 // 3. address, balance, top up (modal flow with input) + subscribe (modal flow with contract, method, abi file)
 
-const Oracle = ({ oracleId, addressData, signMessage, state }) => {
+const Oracle = ({ oracleId, addressData, signMessage, state, oracle }) => {
   const {
     fetcher, chain, subscriptions, chain_id, factory_address, rpc,
   } = state;
@@ -56,6 +56,7 @@ const Oracle = ({ oracleId, addressData, signMessage, state }) => {
         addressData={addressData}
         signMessage={signMessage}
         chain={chain}
+        oracle={oracle}
       />
     </Card>
   );

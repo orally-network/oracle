@@ -9,8 +9,6 @@ import { remove0x } from 'Utils/addressUtils';
 import Oracle from './Oracle';
 import { setLocalStorageAddress } from 'Utils/localStorageAddress';
 
-// const res = await oracle.subscribe('0xCFf00E5f685cCE94Dfc6d1a18200c764f9BCca1f', 'set_price', message, signature);
-
 const OracleContainer = ({ oracleId, addressData, setAddressData }) => {
   const [state, setState] = useState();
 
@@ -72,6 +70,7 @@ const OracleContainer = ({ oracleId, addressData, setAddressData }) => {
       addressData={addressData}
       signMessage={signMessage}
       state={state}
+      oracle={oracle}
     />
   );
 }

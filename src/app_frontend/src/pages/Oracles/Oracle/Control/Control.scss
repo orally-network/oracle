@@ -43,3 +43,17 @@
     width: 100%;
   }
 }
+
+.subscribeModal {
+  display: flex;
+  flex-direction: column;
+  
+  .methodInput {
+    margin-top: 20px;
+  }
+    
+  .subscribeBtn {
+    margin-top: 20px;
+    width: 100%;
+  }
+}

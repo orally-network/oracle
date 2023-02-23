@@ -7,13 +7,15 @@ import Button from 'Components/Button';
 import { truncateEthAddress } from 'Utils/addressUtils';
 
 import TopUpModal from './TopUpModal';
+import SubscribeModal from './SubscribeModal';
 import styles from './Control.scss';
 
 const MIN_BALANCE = 0.1;
 
-const Control = ({ addressData, signMessage, chain }) => {
+const Control = ({ addressData, signMessage, chain, oracle }) => {
   const [executionBalance, setExecutionBalance] = useState(null);
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
+  const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
   
   const { address } = useAccount();
   
@@ -72,6 +74,7 @@ const Control = ({ addressData, signMessage, chain }) => {
       <Button
         className={styles.subscribe}
         disabled={executionBalance?.formatted < MIN_BALANCE}
+        onClick={() => setIsSubscribeModalOpen(true)}
       >
         Subscribe
       </Button>
@@ -82,6 +85,13 @@ const Control = ({ addressData, signMessage, chain }) => {
         chain={chain}
         executionAddress={addressData.executionAddress}
         fetchBalance={fetchExecutionBalance}
+      />
+      
+      <SubscribeModal
+        isSubscribeModalOpen={isSubscribeModalOpen}
+        setIsSubscribeModalOpen={setIsSubscribeModalOpen}
+        addressData={addressData}
+        oracle={oracle}
       />
     </div>
   )

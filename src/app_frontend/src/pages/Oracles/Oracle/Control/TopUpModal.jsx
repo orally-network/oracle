@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { sendTransaction, prepareSendTransaction, getNetwork, switchNetwork, waitForTransaction } from '@wagmi/core';
+import { useSendTransaction, usePrepareSendTransaction, useSwitchNetwork, useNetwork } from 'wagmi';
 import { utils } from 'ethers';
 
 import Modal from 'Components/Modal';
@@ -12,30 +12,36 @@ import styles from './Control.scss';
 
 const DEFAULT_AMOUNT = 0.1;
 
-const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAddress, fetchBalance }) => {
+const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAddress, refetchBalance }) => {
   const [amount, setAmount] = useState(DEFAULT_AMOUNT);
+
+  const { chain: currentChain } = useNetwork();
+  const { switchNetwork } = useSwitchNetwork();
+
+  const { config } = usePrepareSendTransaction({
+    request: {
+      to: executionAddress,
+      value: utils.parseUnits(String(amount), chain.nativeCurrency.decimals),
+    },
+    chainId: chain.id,
+  });
+  const { sendTransactionAsync } = useSendTransaction(config);
+  
+  useEffect(() => {
+    if (currentChain.id !== chain.id) {
+      switchNetwork(chain.id);
+    }
+  }, []);
   
   const topUp = useCallback(async () => {
-    const { chain: currentChain } = getNetwork();
-
-    if (currentChain.id !== chain.id) {
-      await switchNetwork({
-        chainId: chain.id,
-      });
-    }
-    
-    const config = await prepareSendTransaction({
-      request: {
-        to: executionAddress,
-        value: utils.parseUnits(String(amount), chain.nativeCurrency.decimals)
-      },
-    });
-    const { hash } = await sendTransaction(config);
+    const { hash, wait } = await sendTransactionAsync();
 
     setIsTopUpModalOpen(false);
     
+    console.log({ hash, wait })
+    
     const data = await toast.promise(
-      waitForTransaction({ hash }),
+      wait,
       {
         pending: `Sending ${amount} ${chain.nativeCurrency.symbol} to ${executionAddress}`,
         success: `Sent successfully`,
@@ -51,8 +57,8 @@ const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAdd
     
     console.log({ data, hash });
     
-    await fetchBalance();
-  }, [amount, chain, executionAddress]);
+    await refetchBalance();
+  }, [amount, chain, executionAddress, sendTransactionAsync, refetchBalance]);
   
   return (
     <Modal
@@ -68,6 +74,7 @@ const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAdd
         
         <Button
           className={styles.topUpBtn}
+          disabled={currentChain.id !== chain.id}
           onClick={topUp}
         >
           Top Up

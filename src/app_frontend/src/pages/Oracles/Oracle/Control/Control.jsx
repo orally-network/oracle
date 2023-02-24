@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { useAccount } from 'wagmi';
-import { fetchBalance } from '@wagmi/core';
+import React, { useState } from 'react';
+import { useAccount, useBalance } from 'wagmi';
 
 import Connect from 'Shared/Connect';
 import Button from 'Components/Button';
@@ -13,28 +12,14 @@ import styles from './Control.scss';
 const MIN_BALANCE = 0.1;
 
 const Control = ({ addressData, signMessage, chain, oracle }) => {
-  const [executionBalance, setExecutionBalance] = useState(null);
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
   const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
   
   const { address } = useAccount();
-  
-  const fetchExecutionBalance = useCallback(async () => {
-    console.log('fetching balance', addressData.executionAddress, chain.id);
-    
-    const res = await fetchBalance({
-      address: addressData.executionAddress,
-      chainId: chain.id,
-    });
-    
-    setExecutionBalance(res);
-  }, [addressData, chain]);
-  
-  useEffect(() => {
-    if (addressData?.executionAddress && chain && address) {
-      fetchExecutionBalance();
-    }
-  }, [address]);
+  const { data: executionBalance, refetch: refetchBalance } = useBalance({
+    address: addressData?.executionAddress,
+    chainId: chain?.id,
+  });
   
   if (!address) {
     return <Connect />;
@@ -78,14 +63,16 @@ const Control = ({ addressData, signMessage, chain, oracle }) => {
       >
         Subscribe
       </Button>
-      
-      <TopUpModal
-        isTopUpModalOpen={isTopUpModalOpen}
-        setIsTopUpModalOpen={setIsTopUpModalOpen}
-        chain={chain}
-        executionAddress={addressData.executionAddress}
-        fetchBalance={fetchExecutionBalance}
-      />
+
+      {isTopUpModalOpen && (
+        <TopUpModal
+          isTopUpModalOpen={isTopUpModalOpen}
+          setIsTopUpModalOpen={setIsTopUpModalOpen}
+          chain={chain}
+          executionAddress={addressData.executionAddress}
+          refetchBalance={refetchBalance}
+        />
+      )}
       
       <SubscribeModal
         isSubscribeModalOpen={isSubscribeModalOpen}

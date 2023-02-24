@@ -6,6 +6,7 @@ import Modal from 'react-modal';
 import { WagmiConfig, createClient, configureChains } from 'wagmi';
 import { mainnet, goerli, polygon, polygonMumbai } from 'wagmi/chains';
 
+import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
 
@@ -26,7 +27,11 @@ Modal.setAppElement('#app');
 
 const { chains, provider, webSocketProvider } = configureChains(
   [mainnet, goerli, polygon, polygonMumbai],
-  [infuraProvider({ apiKey: config.INFURA_API_KEY, stallTimeout: 1_000, }), publicProvider()],
+  [
+    infuraProvider({ apiKey: config.INFURA_API_KEY, stallTimeout: 1_000, }),
+    alchemyProvider({ apiKey: config.ALCHEMY_API_KEY, stallTimeout: 1_000, }),
+    publicProvider(),
+  ],
 )
 
 // Set up client

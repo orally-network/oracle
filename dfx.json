@@ -15,6 +15,11 @@
       "package": "ecdsa_proxy",
       "type": "rust"
     },
+    "pythia": {
+      "candid": "src/pythia/pythia.did",
+      "package": "pythia",
+      "type": "rust"
+    },
     "app_frontend": {
       "dependencies": [
         "oracle"

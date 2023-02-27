@@ -20,7 +20,8 @@ const Oracle = ({ oracleId, addressData, signMessage, state, oracle }) => {
     <Card className={styles.oracle}>
       <div className={styles.header}>
         <div className={styles.chain}>
-          <img src={chain.img} alt={chain.name} />
+          {typeof chain.img === 'string' && <img className={styles.logo} src={chain.img} alt={chain.name} />}
+          {typeof chain.img !== 'string' && <chain.img className={styles.logo} />}
 
           <div>{chain.name}</div>
         </div>

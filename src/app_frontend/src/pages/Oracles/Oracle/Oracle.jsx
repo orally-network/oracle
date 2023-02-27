@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Card from 'Components/Card';
+import userIconSrc from 'Assets/user-icon.png';
 
 import Control from './Control';
 import styles from './Oracle.scss';
@@ -26,8 +27,20 @@ const Oracle = ({ oracleId, addressData, signMessage, state, oracle }) => {
           <div>{chain.name}</div>
         </div>
 
-        <div className={styles.frequency}>
-          {(Number(fetcher.frequency) / 60).toFixed(2)} mins
+        <div className={styles.info}>
+          <div className={styles.subscriptions}>
+            {subscriptions.length} 
+            {' '}
+            <img
+              className={styles.icon}
+              src={userIconSrc}
+              alt="Subscriptions"
+            />
+          </div>
+          
+          <div className={styles.frequency}>
+            {(Number(fetcher.frequency) / 60).toFixed(2)} mins
+          </div>
         </div>
       </div>
 

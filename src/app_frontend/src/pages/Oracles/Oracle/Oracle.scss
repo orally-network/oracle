@@ -24,9 +24,24 @@
         font-weight: bold;
       }
     }
+    
+    .info {
+      display: flex;
+      margin-right: 15px;
+      
+      .subscriptions {
+        display: flex;
+        
+        .icon {
+          margin-right: 5px;
+          width: 20px;
+          height: 20px;
+        }
+      }
 
-    .frequency {
+      .frequency {
 
+      }
     }
   }
 

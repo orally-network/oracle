@@ -1,4 +1,10 @@
-use ic_cdk::export::candid;
+use ic_cdk::export::{
+    candid,
+    Principal,
+};
+use ic_cdk::{
+    timer::{clear_timer, set_timer_interval, TimerId},
+};
 use ic_cdk_macros::{self, update, query, init};
 
 use canistergeek_ic_rust::{
@@ -7,14 +13,18 @@ use canistergeek_ic_rust::{
 };
 
 use std::cell::{RefCell};
+use std::time::Duration;
 
-use crate::types::Subscriptions;
+use crate::types::{Chains, Chain, Subscription};
 
 mod types;
 mod migrations;
+mod chains;
+mod utils;
+mod notify;
 
 thread_local! {
-    pub static SUBSCRIPTIONS: RefCell<Subscriptions> = RefCell::default();
+    pub static CHAINS: RefCell<Chains> = RefCell::default();
     pub static OWNER: RefCell<String> = RefCell::default();
 }
 

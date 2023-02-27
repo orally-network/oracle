@@ -3,22 +3,31 @@ use ic_cdk::export::{
     candid::CandidType,
 };
 
+use std::collections::HashMap;
+
+use crate::*;
+
 #[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
 pub struct Subscription {
-    contract_address: String,
-    method: String,
-    abi: Vec<u8>,
-    owner_address: String,
-    execution_address: String,
-    active: bool,
-    last_execution: u64,
-    is_random: bool,
+    pub contract_address: String,
+    pub method: String,
+    pub abi: Option<Vec<u8>>,
+    pub owner_address: String,
+    pub execution_address: String,
+    pub active: bool,
+    pub last_execution: u64,
+    pub is_random: bool,
 }
 
 #[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
-pub struct Subscriptions {
-    subscriptions: Vec<Subscription>,
-    rpc: String,
-    chain_id: u64,
-    frequency: u64,
+pub struct Chain {
+    pub subscriptions: Vec<Subscription>,
+    pub rpc: String,
+    pub chain_id: u64,
+    pub frequency: u64,
+    pub timer_id: TimerId,
 }
+
+// chain_id -> ChainSubscriptions
+#[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
+pub struct Chains(HashMap<String, Chain>);

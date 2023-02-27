@@ -140,14 +140,18 @@ pub async fn update_price(sub: Subscription, price: f64) -> Result<String, Strin
     let options = Options::with(|op| {
         op.nonce = Some(tx_count);
         op.gas_price = Some(gas_price);
-        op.transaction_type = Some(ic_web3::ethabi::ethereum_types::U64::from(2)) //EIP1559_TX_ID
+        op.gas = Some(ic_web3::ethabi::ethereum_types::U256::from(50000));
+        
+        // todo: make transaction typeg selectable
+        op.transaction_type = Some(ic_web3::ethabi::ethereum_types::U64::from(0)) //Legacy_TX_IDs
+        // op.transaction_type = Some(ic_web3::ethabi::ethereum_types::U64::from(2)) //EIP1559_TX_ID
     });
-
-    ic_cdk::println!("Price from oracle: {}, gas price: {}, tx_count: {}", price, gas_price, tx_count);
-    log_message(format!("Price from oracle: {}, gas price: {}, tx_count: {}", price, gas_price, tx_count));
-
+    
     let chain_id = CHAIN_ID.with(|chain_id| chain_id.borrow().clone());
-
+    
+    ic_cdk::println!("Price from oracle: {}, gas price: {}, tx_count: {}, chain_id: {}", price, gas_price, tx_count, chain_id);
+    log_message(format!("Price from oracle: {}, gas price: {}, tx_count: {}, chain_id: {}", price, gas_price, tx_count, chain_id));
+    
     let txhash = contract
         .signed_call(&sub.method, (price.to_string(),), options, canister_addr.to_string(), key_info, chain_id)
         .await

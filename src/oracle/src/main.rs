@@ -152,6 +152,36 @@ async fn stop_fetcher() -> String {
 // }
 
 #[update]
+async fn update_timer(frequency: u64) -> String {
+    ic_cdk::println!("update_timer: {:?}", frequency);
+    log_message(format!("update_timer: {:?}", frequency));
+
+    FETCHER.with(|fetcher| {
+        let f = fetcher.borrow().clone();
+        
+        let new_fetcher = f.update_timer(frequency);
+        
+        fetcher.replace(new_fetcher);
+    });
+
+    "Ok".to_string()
+}
+
+#[update]
+async fn clear_subscriptions() -> String {
+    ic_cdk::println!("clear_subscriptions");
+    log_message("clear_subscriptions".to_string());
+
+    SUBSCRIPTIONS.with(|subscriptions| {
+        let mut s = subscriptions.borrow_mut();
+
+        s.clear();
+    });
+
+    "Ok".to_string()
+}
+
+#[update]
 async fn set_factory_address(address: String) -> String {
     FACTORY_ADDRESS.with(|f| f.replace(address));
 

@@ -1,5 +1,5 @@
 use std::ffi::OsString;
-use std::ops::Sub;
+use std::ops::{Add, Sub};
 use ic_cdk::export::{
     candid::CandidType,
     serde::{Deserialize, Serialize},
@@ -9,6 +9,8 @@ use canistergeek_ic_rust::{
     logger::{log_message},
     monitor::{collect_metrics},
 };
+use futures::future::join_all;
+
 use crate::*;
 
 // todo: multi params in the future
@@ -23,6 +25,8 @@ pub struct Subscription {
     // if execution_address is not topped up enough, then the subscription will be paused
     pub active: bool,
     pub last_execution: u64,
+    
+    pub index: u64,
 }
 
 const MINIMUM_BALANCE: u128 = 10_000_000_000_000_000; // 0.01 ETH
@@ -35,21 +39,32 @@ pub async fn notify(price: f64) {
 
     ic_cdk::println!("notify subscribers");
     log_message(format!("notify subscribers"));
-
-    for subscription in subscriptions.iter() {
+    
+    let futures = subscriptions.iter().map(|subscription| {
         ic_cdk::println!("notify subscriber: {}", subscription.contract_address);
         log_message(format!("notify subscriber: {}", subscription.contract_address));
-
+    
         if !subscription.active {
             ic_cdk::api::print(&format!("subscription is not active"));
             ic_cdk::trap(&format!("subscription is not active"));
         }
-
+        
         update_price(
             subscription.clone(),
             price,
-        ).await.expect("Update price failed");
-    }
+        )
+    }).collect::<Vec<_>>();
+    
+    // join all futures and hanlde errors for tuples
+    join_all(futures).await.into_iter().for_each(|res| {
+        match res {
+            Ok(_) => {},
+            Err(e) => {
+                ic_cdk::println!("update price failed: {}", e);
+                log_message(format!("update price failed: {}", e));
+            }
+        }
+    });
 }
 
 pub async fn update_price(sub: Subscription, price: f64) -> Result<String, String> {
@@ -77,7 +92,7 @@ pub async fn update_price(sub: Subscription, price: f64) -> Result<String, Strin
     };
 
     let rpc_url = RPC.with(|rpc| rpc.borrow().clone());
-    let factory_addr = FACTORY_ADDRESS.with(|f| Principal::from_text(f.borrow().clone()).unwrap());
+    // let factory_addr = FACTORY_ADDRESS.with(|f| Principal::from_text(f.borrow().clone()).unwrap());
 
     let w3 = match ICHttp::new(&rpc_url, None, None) {
         Ok(v) => { Web3::new(v) },
@@ -104,13 +119,15 @@ pub async fn update_price(sub: Subscription, price: f64) -> Result<String, Strin
     log_message(format!("canister_addr: {}", canister_addr));
 
     // add nonce to options
-    let tx_count = w3.eth()
+    let tx_count_res = w3.eth()
         .transaction_count(canister_addr, None)
         .await
         .map_err(|e| {
             log_message(format!("get transaction count failed: {}", e));
             format!("get tx count error: {}", e)
         })?;
+    let tx_count = ic_web3::ethabi::ethereum_types::U256::from(tx_count_res.add(sub.index));
+    
     // get gas_price
     let gas_price = w3.eth()
         .gas_price()
@@ -126,8 +143,8 @@ pub async fn update_price(sub: Subscription, price: f64) -> Result<String, Strin
         op.transaction_type = Some(ic_web3::ethabi::ethereum_types::U64::from(2)) //EIP1559_TX_ID
     });
 
-    ic_cdk::println!("Price from oracle: {}", price);
-    log_message(format!("Price from oracle: {}", price));
+    ic_cdk::println!("Price from oracle: {}, gas price: {}, tx_count: {}", price, gas_price, tx_count);
+    log_message(format!("Price from oracle: {}, gas price: {}, tx_count: {}", price, gas_price, tx_count));
 
     let chain_id = CHAIN_ID.with(|chain_id| chain_id.borrow().clone());
 
@@ -135,12 +152,12 @@ pub async fn update_price(sub: Subscription, price: f64) -> Result<String, Strin
         .signed_call(&sub.method, (price.to_string(),), options, canister_addr.to_string(), key_info, chain_id)
         .await
         .map_err(|e| {
-            log_message(format!("token transfer failed: {}", e));
-            format!("token transfer failed: {}", e)
+            log_message(format!("token transfer failed: {}, contract: {}", e, sub.contract_address));
+            format!("token transfer failed: {}, contract: {}", e, sub.contract_address)
         })?;
 
-    ic_cdk::println!("txhash: {}", hex::encode(txhash));
-    log_message(format!("txhash: {}", hex::encode(txhash)));
+    ic_cdk::println!("txhash: {}, contract: {}", hex::encode(txhash), sub.contract_address);
+    log_message(format!("txhash: {}, contract: {}", hex::encode(txhash), sub.contract_address));
 
     // update last_execution
     SUBSCRIPTIONS.with(|subscriptions| {
@@ -214,7 +231,7 @@ async fn check_balance(execution_address: String) -> Result<U256, String> {
 // check_top_up_fn
 
 #[update]
-async fn subscribe(contract_address: String, method: String, message: String, signature: String) -> Result<String, String> {
+async fn subscribe(contract_address: String, method: String, abi: Vec<u8>, message: String, signature: String) -> Result<String, String> {
     // verification
     let (owner_address, execution_address) = verify_address(message, signature).await.map_err(|e| {
         ic_cdk::println!("verify address failed: {}", e);
@@ -229,15 +246,22 @@ async fn subscribe(contract_address: String, method: String, message: String, si
 
         e
     })?;
+    
+    // index of how much subscriptions with this execution wallet address
+    let index = SUBSCRIPTIONS.with(|subscriptions| {
+        let subscriptions = subscriptions.borrow();
+        subscriptions.iter().filter(|s| s.execution_address == execution_address).count()
+    });
 
     let subscription = Subscription {
         contract_address,
-        abi: ABI.to_vec(),
+        abi,
         method,
         owner_address,
         execution_address: execution_address.clone(),
         active: true,
         last_execution: 0,
+        index: index as u64,
     };
 
     SUBSCRIPTIONS.with(|subscriptions| {

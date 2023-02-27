@@ -82,7 +82,20 @@ impl Fetcher {
 
         clear_timer(timer_id);
     }
-
+    
+    pub fn update_timer(self, frequency: u64) -> Self {
+        self.clone().stop();
+        
+        let fetcher = Fetcher{
+            frequency,
+            ..self
+        };
+        
+        fetcher.clone().start();
+        
+        fetcher
+    }
+    
     async fn fetch(endpoints: Vec<Endpoint>) {
         // fetch data from endpoints
 

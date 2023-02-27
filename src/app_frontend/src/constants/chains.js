@@ -3,6 +3,7 @@ import { mainnet, goerli, polygon, polygonMumbai } from 'wagmi/chains';
 import ethereumImg from 'Assets/chains/ethereum.jpeg';
 import polygonImg from 'Assets/chains/polygon.jpeg';
 import ultronImg from 'Assets/chains/ultron.jpeg';
+import qImg from 'Assets/chains/q.svg';
 
 const CHAINS = [
   {
@@ -24,18 +25,74 @@ const CHAINS = [
   {
     id: 1231,
     name: 'Ultron',
-    img: ultronImg,
+    network: 'Ultron',
     nativeCurrency: {
-      symbol: 'ULX',
+      name: 'ULX',
+      symbol: 'TULX',
+      decimals: 18,
     },
+    rpcUrls: {
+      default: {
+        http: ['https://ultron-rpc.net']
+      },
+      public: {
+        http: ['https://ultron-rpc.net']
+      },
+    },
+    testnet: false,
+    img: ultronImg,
   },
   {
     id: 1230,
     name: 'Ultron Testnet',
-    img: ultronImg,
+    network: 'Ultron testnet',
     nativeCurrency: {
+      name: 'Testnet ULX',
       symbol: 'TULX',
+      decimals: 18,
     },
+    rpcUrls: {
+      default: {
+        http: ['https://ultron-dev.io']
+      },
+      public: {
+        http: ['https://ultron-dev.io']
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Explorer Ultron Testnet',
+        url: 'https://explorer.ultron-dev.io/',
+      },
+    },
+    testnet: true,
+    img: ultronImg,
+  },
+  {
+    id: 35443,
+    name: 'Q Testnet',
+    network: 'Q testnet',
+    nativeCurrency: {
+      name: 'Q',
+      symbol: 'Q',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://rpc.qtestnet.org']
+      },
+      public: {
+        http: ['https://rpc.qtestnet.org']
+      },
+    }, 
+    blockExplorers: {
+      default: {
+        name: 'Explorer Q Testnet', 
+        url: 'https://explorer.qtestnet.org/',
+      },
+    }, 
+    testnet: true,
+    img: qImg,
   },
 ];
 

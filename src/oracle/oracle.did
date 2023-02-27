@@ -30,11 +30,14 @@ service : {
     init_candid: (init_payload) -> (variant { Ok: null; Err: text });
     start: () -> (variant { Ok: null; Err: text });
     stop_fetcher: () -> (text);
-    subscribe: (text, text, text, text) -> (variant { Ok: text; Err: text });
+    subscribe: (text, text, vec nat8, text, text) -> (variant { Ok: text; Err: text });
 
     update_price_manual: (text, text, float64) -> (text);
     set_factory_address: (text) -> (text);
     verify_address: (text, text) -> (variant { Ok: record { text; text }; Err: text });
+    
+    update_timer: (nat64) -> (text);
+    clear_subscriptions: () -> (text);
 
     get_state: () -> (state);
 }

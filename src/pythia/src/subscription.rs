@@ -83,3 +83,31 @@ pub async fn subscribe(chain_id: u64, contract_address: String, method: String, 
     
     Ok("Subscription added".to_string())
 }
+
+// after user topped up execution wallet. 1 execution address = 1 owner = many subscriptions
+#[update]
+pub async fn renew_subscription(chain_id: u64, execution_address: String) -> Result<String, String> {
+    check_balance(execution_address.clone(), rpc).await.map_err(|e| {
+        log_message(e.clone());
+        ic_cdk::println!(e);
+        
+        e
+    })?;
+    
+    CHAINS.with(|chains| {
+        let mut chains = chains.borrow();
+        let chain = chains.get_mut(&chain_id).unwrap();
+        
+        for subscription in chain.subscriptions.iter_mut() {
+            if subscription.execution_address == execution_address {
+                subscription.active = true;
+                
+                let msg = format!("Subscription renewed: {:?}", subscription);
+                log_message(msg.clone());
+                ic_cdk::println!(msg);
+            }
+        }
+    });
+    
+    Ok("Subscriptions renewed".to_string())
+}

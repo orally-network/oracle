@@ -9,17 +9,9 @@ use ic_web3::{
     Web3,
     ic::{get_eth_addr, KeyInfo},
 };
-use canistergeek_ic_rust::{
-    logger::{log_message},
-    monitor::{collect_metrics},
-};
 
+use crate::*;
 use crate::types::{Subscription};
-
-const MINIMUM_BALANCE: u128 = 100_000_000_000_000_000; // 0.1 ETH
-
-const KEY_NAME: &str = "dfx_test_key";
-// const KEY_NAME: &str = "key_1";
 
 pub async fn check_balance(address: String, rpc: String) -> Result<U256, String> {
     let w3 = match ICHttp::new(&rpc, None, None) {
@@ -78,35 +70,35 @@ pub async fn send_signed_transaction(
     let contract = Contract::from_json(
         w3.eth(),
         Address::from_str(&subscription.contract_address).unwrap(),
-        &*subscription.abi
+        &*subscription.abi.unwrap()
     ).map_err(|e| {
         log_message(format!("Failed to create contract: {:?}", e));
         format!("init contract failed: {:?}", e);
         
-        Err(e)
+        e
     })?;
     
-    let canister_addr = get_eth_addr(key_info.proxy_canister_id, key_info.clone())
+    let execution_address = get_eth_addr(key_info.proxy_canister_id, key_info.clone())
         .await
         .map_err(|e| {
-            log_message(format!("get canister eth addr failed: {}", e));
-            format!("get canister eth addr failed: {}", e);
+            log_message(format!("get execution_address eth addr failed: {}", e));
+            format!("get execution_address eth addr failed: {}", e);
             
-            Err(e)
+            e
         })?;
     
-    ic_cdk::println!("canister_addr: {}", canister_addr);
-    log_message(format!("canister_addr: {}", canister_addr));
+    ic_cdk::println!("execution_address: {}", execution_address);
+    log_message(format!("execution_address: {}", execution_address));
     
     // add nonce to options
     let tx_count_res = w3.eth()
-        .transaction_count(canister_addr, None)
+        .transaction_count(execution_address, None)
         .await
         .map_err(|e| {
             log_message(format!("get transaction count failed: {}", e));
             format!("get tx count error: {}", e);
             
-            Err(e)
+            e
         })?;
     let tx_count = U256::from(tx_count_res.add(subscription.index));
     
@@ -118,7 +110,7 @@ pub async fn send_signed_transaction(
             log_message(format!("get gas price error: {}", e));
             format!("get gas_price error: {}", e);
             
-            Err(e)
+            e
         })?;
     // legacy transaction type is still ok
     let options = Options::with(|op| {
@@ -129,17 +121,17 @@ pub async fn send_signed_transaction(
         op.transaction_type = Some(U64::from(subscription.tx_type))
     });
     
-    ic_cdk::println!("Price from oracle: {}, gas price: {}, tx_count: {}, chain_id: {}", price, gas_price, tx_count, chain_id);
-    log_message(format!("Price from oracle: {}, gas price: {}, tx_count: {}, chain_id: {}", price, gas_price, tx_count, chain_id));
+    ic_cdk::println!("Pythia: gas price: {}, tx_count: {}, chain_id: {}", gas_price, tx_count, chain_id);
+    log_message(format!("Pythia: gas price: {}, tx_count: {}, chain_id: {}", gas_price, tx_count, chain_id));
     
     let txhash = contract
-        .signed_call(&subscription.method, (data,), options, canister_addr.to_string(), key_info, chain_id)
+        .signed_call(&subscription.method, (data,), options, execution_address.to_string(), key_info, chain_id)
         .await
         .map_err(|e| {
-            log_message(format!("token transfer failed: {}, contract: {}", e, subscription.contract_address));
-            format!("token transfer failed: {}, contract: {}", e, subscription.contract_address);
+            log_message(format!("sign and send tx failed: {}, contract: {}", e, subscription.contract_address));
+            format!("sign and send tx failed failed: {}, contract: {}", e, subscription.contract_address);
             
-            Err(e)
+            e
         })?;
     
     ic_cdk::println!("txhash: {}, contract: {}", hex::encode(txhash), subscription.contract_address);

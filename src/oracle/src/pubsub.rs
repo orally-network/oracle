@@ -13,6 +13,7 @@ use futures::future::join_all;
 
 use crate::*;
 
+// todo: use shared Subscription struct
 // todo: multi params in the future
 #[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
 pub struct Subscription {
@@ -26,6 +27,7 @@ pub struct Subscription {
     pub active: bool,
     pub last_execution: u64,
     
+    // index of subscriptions per user
     pub index: u64,
 }
 
@@ -69,6 +71,7 @@ pub async fn notify(price: f64) {
 
 pub async fn update_price(sub: Subscription, price: f64) -> Result<String, String> {
     check_balance(sub.execution_address).await.map_err(|e| {
+        // todo: change that, if fail - it doesn't mean inactive. insufficient balance means inactive.
         ic_cdk::println!("check balance failed: {}", e);
         log_message(format!("check balance failed: {}", e));
 
@@ -82,6 +85,7 @@ pub async fn update_price(sub: Subscription, price: f64) -> Result<String, Strin
         format!("check balance failed: {}", e)
     })?;
 
+    // todo: reuse it from orally-shared
     // ecdsa key info
     let derivation_path = vec![hex::decode(sub.owner_address).unwrap().to_vec()];
     let key_info = KeyInfo{ 
@@ -204,6 +208,7 @@ async fn verify_address(siwe_msg: String, siwe_sig: String) -> Result<(String,St
     Ok((hex::encode(msg.address), hex::encode(canister_addr)))
 }
 
+// todo: reuse from orally-shared::web3::check_balance
 async fn check_balance(execution_address: String) -> Result<U256, String> {
     let rpc_url = RPC.with(|rpc| rpc.borrow().clone());
 

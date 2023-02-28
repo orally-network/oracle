@@ -13,7 +13,7 @@ pub struct Subscription {
     pub active: bool,
     pub last_execution: u64,
     pub is_random: bool,
-    pub tx_type: Option<u64>,
+    pub tx_type: u64,
     // index of subscriptions per user
-    pub index: Option<u64>,
+    pub index: u64,
 }

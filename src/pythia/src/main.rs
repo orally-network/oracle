@@ -14,6 +14,7 @@ use ic_web3::{
     transports::{ICHttp},
     Web3,
     ic::{get_eth_addr, KeyInfo},
+    futures::TryFutureExt,
 };
 
 use canistergeek_ic_rust::{
@@ -32,6 +33,7 @@ mod migrations;
 mod chains;
 mod utils;
 mod notify;
+mod subscription;
 
 thread_local! {
     pub static CHAINS: RefCell<Chains> = RefCell::default();

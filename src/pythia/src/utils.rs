@@ -1,3 +1,4 @@
+use orally_shared::types::{Subscription};
 use crate::*;
 
 pub fn validate_owner_caller() -> () {

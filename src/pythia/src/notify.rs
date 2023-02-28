@@ -51,7 +51,7 @@ pub async fn notify(subscription: Subscription, chain: Chain) -> Result<String, 
     // notify
     
     // check execution balance, if not enough, deactivate subscription
-    let balance = orally_shared::web3::check_balance(
+    orally_shared::web3::check_balance(
         subscription.address.clone(), 
         subscription.rpc.clone()
     ).await.map_err(|e| {
@@ -106,9 +106,7 @@ pub async fn notify(subscription: Subscription, chain: Chain) -> Result<String, 
     let tx_hash = send_signed_transaction(
         chain.rpc.clone(),
         chain.chain_id.clone(),
-        
-        // todo: change it to state or smth connected to environment
-        Some("qsgjb-riaaa-aaaaa-aaaga-cai".to_string()),
+        Some(orally_shared::PROXY_CANISTER_ID.to_string()),
         None,
         subscription.clone(),
         data,

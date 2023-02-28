@@ -126,14 +126,14 @@ pub async fn send_signed_transaction(
         op.gas_price = Some(gas_price);
         // todo: calculate it
         op.gas = Some(U256::from(100000));
-        op.transaction_type = Some(U64::from(subscription.tx_type)) 
+        op.transaction_type = Some(U64::from(subscription.tx_type))
     });
     
     ic_cdk::println!("Price from oracle: {}, gas price: {}, tx_count: {}, chain_id: {}", price, gas_price, tx_count, chain_id);
     log_message(format!("Price from oracle: {}, gas price: {}, tx_count: {}, chain_id: {}", price, gas_price, tx_count, chain_id));
     
     let txhash = contract
-        .signed_call(&subscription.method, data, options, canister_addr.to_string(), key_info, chain_id)
+        .signed_call(&subscription.method, (data,), options, canister_addr.to_string(), key_info, chain_id)
         .await
         .map_err(|e| {
             log_message(format!("token transfer failed: {}, contract: {}", e, subscription.contract_address));

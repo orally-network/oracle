@@ -1,3 +1,4 @@
+use ic_cdk::api::management_canister::main::raw_rand;
 use orally_shared::{
     types::{Subscription},
     web3::{check_balance, send_signed_transaction},
@@ -87,6 +88,20 @@ pub async fn notify(subscription: Subscription, chain: Chain) -> Result<String, 
         });
     }).unwrap();
     
+    let data = match subscription.is_random {
+        true => {
+            let random = raw_rand().await.map_err(|e| {
+                log_message(e.1.clone());
+                ic_cdk::println!(e.1);
+                
+                Err(e.1)
+            }).unwrap().0;
+            
+            Some(random)
+        },
+        false => None
+    };
+    
     // send transaction
     let tx_hash = send_signed_transaction(
         chain.rpc.clone(),
@@ -96,8 +111,7 @@ pub async fn notify(subscription: Subscription, chain: Chain) -> Result<String, 
         Some("qsgjb-riaaa-aaaaa-aaaga-cai".to_string()),
         None,
         subscription.clone(),
-        // todo: could be with randomness
-        data: None,
+        data,
     ).await.map_err(|e| {
         log_message(e.clone());
         ic_cdk::println!(e);

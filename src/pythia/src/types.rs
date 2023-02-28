@@ -7,17 +7,7 @@ use std::collections::HashMap;
 
 use crate::*;
 
-#[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
-pub struct Subscription {
-    pub contract_address: String,
-    pub method: String,
-    pub abi: Option<Vec<u8>>,
-    pub owner_address: String,
-    pub execution_address: String,
-    pub active: bool,
-    pub last_execution: u64,
-    pub is_random: bool,
-}
+use orally_shared::types::{Subscription};
 
 #[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
 pub struct Chain {

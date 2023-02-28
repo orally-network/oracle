@@ -7,6 +7,15 @@ use ic_cdk::{
 };
 use ic_cdk_macros::{self, update, query, init};
 
+use ic_web3::{
+    contract::{Contract, Options},
+    ethabi::ethereum_types::{U64, U256},
+    types::{Address, TransactionParameters, BlockId, BlockNumber},
+    transports::{ICHttp},
+    Web3,
+    ic::{get_eth_addr, KeyInfo},
+};
+
 use canistergeek_ic_rust::{
     logger::{log_message},
     monitor::{collect_metrics},
@@ -14,6 +23,7 @@ use canistergeek_ic_rust::{
 
 use std::cell::{RefCell};
 use std::time::Duration;
+use orally_shared;
 
 use crate::types::{Chains, Chain, Subscription};
 

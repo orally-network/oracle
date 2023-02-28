@@ -1322,6 +1322,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "orally-shared"
+version = "0.1.0"
+dependencies = [
+ "candid 0.8.4",
+ "canistergeek_ic_rust",
+ "futures",
+ "hex",
+ "ic-cdk 0.6.10",
+ "ic-cdk-macros 0.6.9",
+ "ic-web3",
+ "serde",
+ "serde_bytes",
+ "serde_json",
+ "siwe",
+ "time",
+]
+
+[[package]]
 name = "parity-scale-codec"
 version = "3.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1498,6 +1516,7 @@ dependencies = [
  "ic-cdk 0.6.10",
  "ic-cdk-macros 0.6.9",
  "ic-web3",
+ "orally-shared",
  "serde",
  "serde_bytes",
  "serde_json",

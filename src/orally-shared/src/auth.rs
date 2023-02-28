@@ -16,7 +16,7 @@ pub async fn verify_address(siwe_msg: String, siwe_sig: String) -> Result<String
     let sig = <[u8; 65]>::from_hex(siwe_sig).map_err(|e| e.to_string())?;
     
     let log_msg = format!("validate_address: msg: {:?}, sig: {:?}", msg, sig);
-    ic_cdk::println!(log_msg);
+    ic_cdk::api::print(log_msg.clone());
     log_message(log_msg);
     
     msg.verify(&sig, &opts).await.map_err(|e| e.to_string())?;

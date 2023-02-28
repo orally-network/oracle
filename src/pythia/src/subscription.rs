@@ -1,5 +1,5 @@
 use orally_shared::{
-    siwe::{verify_address, generate_execution_address},
+    auth::{verify_address, generate_execution_address},
     web3::{check_balance},
     types::{Subscription},
 };

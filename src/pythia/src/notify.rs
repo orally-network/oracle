@@ -48,12 +48,10 @@ pub async fn notify(subscription: Subscription, chain: Chain) -> Result<String, 
     log_message(msg);
     ic_cdk::println!(msg);
     
-    // notify
-    
     // check execution balance, if not enough, deactivate subscription
     orally_shared::web3::check_balance(
-        subscription.address.clone(), 
-        subscription.rpc.clone()
+        subscription.execution_address.clone(), 
+        chain.rpc.clone()
     ).await.map_err(|e| {
         log_message(e);
         ic_cdk::println!(e);

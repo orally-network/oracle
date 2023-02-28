@@ -34,7 +34,8 @@ pub async fn check_balance(address: String, rpc: String) -> Result<U256, String>
         ic_cdk::println!(msg);
         log_message(msg.clone());
      
-        Err(msg)
+        // Err(msg)
+        ic_cdk::trap(&msg);
     }
     
     Ok(balance)

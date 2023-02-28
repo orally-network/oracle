@@ -8,7 +8,7 @@ use canistergeek_ic_rust::{
 
 pub mod web3;
 pub mod types;
-pub mod siwe;
+pub mod auth;
 
 // todo: change it to state or smth connected to environment
 pub const PROXY_CANISTER_ID: String = "qsgjb-riaaa-aaaaa-aaaga-cai".to_string();

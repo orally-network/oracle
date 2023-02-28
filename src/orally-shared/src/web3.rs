@@ -31,7 +31,7 @@ pub async fn check_balance(address: String, rpc: String) -> Result<U256, String>
     if balance < U256::from(MINIMUM_BALANCE) {
         let msg = format!("balance is not enough: {}, address: {}", balance, address);
         
-        ic_cdk::println!(msg);
+        ic_cdk::api::print(msg.clone());
         log_message(msg.clone());
      
         // Err(msg)
@@ -74,18 +74,16 @@ pub async fn send_signed_transaction(
         &*subscription.abi.unwrap()
     ).map_err(|e| {
         log_message(format!("Failed to create contract: {:?}", e));
-        format!("init contract failed: {:?}", e);
-        
-        e
+        ic_cdk::println!("Failed to create contract: {:?}", e);
+        format!("init contract failed: {:?}", e)
     })?;
     
     let execution_address = get_eth_addr(key_info.proxy_canister_id, key_info.clone())
         .await
         .map_err(|e| {
             log_message(format!("get execution_address eth addr failed: {}", e));
-            format!("get execution_address eth addr failed: {}", e);
-            
-            e
+            ic_cdk::println!("get execution_address eth addr failed: {}", e);
+            format!("get execution_address eth addr failed: {}", e)
         })?;
     
     ic_cdk::println!("execution_address: {}", execution_address);
@@ -97,9 +95,8 @@ pub async fn send_signed_transaction(
         .await
         .map_err(|e| {
             log_message(format!("get transaction count failed: {}", e));
-            format!("get tx count error: {}", e);
-            
-            e
+            ic_cdk::println!("get transaction count failed: {}", e);
+            format!("get tx count error: {}", e)
         })?;
     let tx_count = U256::from(tx_count_res.add(subscription.index));
     
@@ -109,9 +106,8 @@ pub async fn send_signed_transaction(
         .await
         .map_err(|e| {
             log_message(format!("get gas price error: {}", e));
-            format!("get gas_price error: {}", e);
-            
-            e
+            ic_cdk::println!("get gas price error: {}", e);
+            format!("get gas_price error: {}", e)
         })?;
     // legacy transaction type is still ok
     let options = Options::with(|op| {
@@ -130,9 +126,8 @@ pub async fn send_signed_transaction(
         .await
         .map_err(|e| {
             log_message(format!("sign and send tx failed: {}, contract: {}", e, subscription.contract_address));
-            format!("sign and send tx failed failed: {}, contract: {}", e, subscription.contract_address);
-            
-            e
+            ic_cdk::println!("sign and send tx failed: {}, contract: {}", e, subscription.contract_address);
+            format!("sign and send tx failed failed: {}, contract: {}", e, subscription.contract_address)
         })?;
     
     ic_cdk::println!("txhash: {}, contract: {}", hex::encode(txhash), subscription.contract_address);

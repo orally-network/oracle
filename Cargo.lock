@@ -521,6 +521,7 @@ name = "ecdsa_proxy"
 version = "0.1.0"
 dependencies = [
  "candid 0.8.4",
+ "canistergeek_ic_rust",
  "ic-cdk 0.8.0-beta.0",
  "ic-cdk-macros 0.6.9",
 ]
@@ -916,7 +917,7 @@ dependencies = [
 [[package]]
 name = "ic-web3"
 version = "0.1.7"
-source = "git+https://github.com/verkhohliad/ic-web3#8eb56ae2d6ef14670792c3f44dc08141cddd9e6e"
+source = "git+https://github.com/verkhohliad/ic-web3#96d0c038edbced1afad9e92d588932680a99f801"
 dependencies = [
  "arrayvec 0.7.2",
  "candid 0.8.4",

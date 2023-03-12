@@ -31,7 +31,12 @@ pub struct Subscription {
     pub index: u64,
 }
 
+// todo: remove after using shared
 const MINIMUM_BALANCE: u128 = 10_000_000_000_000_000; // 0.01 ETH
+const PROXY_ECDSA_CANISTER_ID: &str = "qsgjb-riaaa-aaaaa-aaaga-cai";
+// const PROXY_ECDSA_CANISTER_ID: &str = "bualx-bqaaa-aaaak-qb44q-cai";
+
+const ECDSA_SIGN_CYCLES: u64 = 30_000_000_000;
 
 pub async fn notify(price: f64) {
     // active subscriptions
@@ -91,8 +96,8 @@ pub async fn update_price(sub: Subscription, price: f64) -> Result<String, Strin
     let key_info = KeyInfo{ 
         derivation_path, 
         key_name: KEY_NAME.to_string(), 
-        proxy_canister_id: Some(Principal::from_text("qsgjb-riaaa-aaaaa-aaaga-cai".to_string()).unwrap()),
-        ecdsa_sign_cycles: None
+        proxy_canister_id: Some(Principal::from_text(PROXY_ECDSA_CANISTER_ID.to_string()).unwrap()),
+        ecdsa_sign_cycles: Some(ECDSA_SIGN_CYCLES),
     };
 
     let rpc_url = RPC.with(|rpc| rpc.borrow().clone());
@@ -144,7 +149,7 @@ pub async fn update_price(sub: Subscription, price: f64) -> Result<String, Strin
     let options = Options::with(|op| {
         op.nonce = Some(tx_count);
         op.gas_price = Some(gas_price);
-        op.gas = Some(ic_web3::ethabi::ethereum_types::U256::from(50000));
+        // op.gas = Some(ic_web3::ethabi::ethereum_types::U256::from(50000));
         
         // todo: make transaction typeg selectable
         op.transaction_type = Some(ic_web3::ethabi::ethereum_types::U64::from(0)) //Legacy_TX_IDs
@@ -196,8 +201,8 @@ async fn verify_address(siwe_msg: String, siwe_sig: String) -> Result<(String,St
     
     let key_info = KeyInfo{ 
         derivation_path, 
-        key_name: KEY_NAME.to_string(), 
-        proxy_canister_id: Some(Principal::from_text("qsgjb-riaaa-aaaaa-aaaga-cai".to_string()).unwrap()),
+        key_name: KEY_NAME.to_string(),
+        proxy_canister_id: Some(Principal::from_text(PROXY_ECDSA_CANISTER_ID.to_string()).unwrap()),
         ecdsa_sign_cycles: None
     };
 

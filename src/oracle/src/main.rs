@@ -47,7 +47,7 @@ use pubsub::Subscription;
 // const CHAIN_ID: u64 = 5;
 const KEY_NAME: &str = "dfx_test_key";
 // const KEY_NAME: &str = "key_1";
-const ABI: &[u8] = include_bytes!("./contracts/icp_price_abi.json");
+// const ABI: &[u8] = include_bytes!("./contracts/icp_price_abi.json");
 // const CONTRACT_ADDRESS: &str = "0xCFf00E5f685cCE94Dfc6d1a18200c764f9BCca1f";
 
 type Result<T, E> = std::result::Result<T, E>;
@@ -134,22 +134,26 @@ async fn stop_fetcher() -> String {
     "Ok".to_string()
 }
 
-// #[update]
-// async fn update_price_manual(contract_address: String, method: String, price: f64) -> String {
-//     let subscription = Subscription {
-//         contract_address: Address::from_str(&contract_address).unwrap(),
-//         method: method.clone(),
-//         abi: Vec::from(ABI),
-//         owner_address: ,
-//         execution_address: ,
-//         active: true,
-//         last_execution: 0,
-//     };
-//
-//     pubsub::update_price(contract_address, method, ABI, price).await.expect("Update price failed");
-//
-//     "Ok".to_string()
-// }
+#[update]
+async fn update_price_manual() -> String {
+    // call update_price with first subscription
+    let subscription = SUBSCRIPTIONS.with(|s| s.borrow().clone()).first().unwrap().clone();
+
+    
+    pubsub::update_price(subscription, 2222.01).await.expect("Update price failed");
+
+    "Ok".to_string()
+}
+
+#[update]
+async fn change_rpc(rpc: String) -> String {
+    ic_cdk::println!("change_rpc: {:?}", rpc);
+    log_message(format!("change_rpc: {:?}", rpc));
+
+    RPC.with(|r| r.replace(rpc));
+
+    "Ok".to_string()
+}
 
 #[update]
 async fn update_timer(frequency: u64) -> String {

@@ -32,7 +32,8 @@ service : {
     stop_fetcher: () -> (text);
     subscribe: (text, text, vec nat8, text, text) -> (variant { Ok: text; Err: text });
 
-    update_price_manual: (text, text, float64) -> (text);
+    update_price_manual: () -> (text);
+    change_rpc: (text) -> (text);
     set_factory_address: (text) -> (text);
     verify_address: (text, text) -> (variant { Ok: record { text; text }; Err: text });
     

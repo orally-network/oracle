@@ -122,7 +122,7 @@ pub async fn send_signed_transaction(
     log_message(format!("Pythia: gas price: {}, tx_count: {}, chain_id: {}", gas_price, tx_count, chain_id));
     
     let txhash = contract
-        .signed_call(&subscription.method, (data,), options, execution_address.to_string(), key_info, chain_id)
+        .signed_call(&subscription.method, (), options, execution_address.to_string(), key_info, chain_id)
         .await
         .map_err(|e| {
             log_message(format!("sign and send tx failed: {}, contract: {}", e, subscription.contract_address));

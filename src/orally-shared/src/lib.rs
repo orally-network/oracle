@@ -11,7 +11,7 @@ pub mod types;
 pub mod auth;
 
 // todo: change it to state or smth connected to environment
-pub const PROXY_CANISTER_ID: String = "qsgjb-riaaa-aaaaa-aaaga-cai".to_string();
+pub const PROXY_CANISTER_ID: &str = "qsgjb-riaaa-aaaaa-aaaga-cai";
 pub const MINIMUM_BALANCE: u128 = 100_000_000_000_000_000; // 0.1 ETH
 
 // todo: change it to state or smth connected to environment

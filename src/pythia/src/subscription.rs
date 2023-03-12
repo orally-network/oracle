@@ -13,7 +13,7 @@ pub async fn subscribe(chain_id: u64, contract_address: String, method: String, 
     ic_cdk::println!(msg);
     
     // verify signature
-    let owner_address = verify_address(message.clone(), signature.clone()).map_err(|e| {
+    let owner_address = verify_address(message.clone(), signature.clone()).await.map_err(|e| {
         let msg = format!("Verify address failed: {:?}", e);
         log_message(msg.clone());
         ic_cdk::println!(msg);
@@ -22,7 +22,7 @@ pub async fn subscribe(chain_id: u64, contract_address: String, method: String, 
     })?;
     
     // generate execution address
-    let execution_address = generate_execution_address(owner_address.clone()).map_err(|e| {
+    let execution_address = generate_execution_address(owner_address.clone()).await.map_err(|e| {
         let msg = format!("Generate execution address failed: {:?}", e);
         log_message(msg.clone());
         ic_cdk::println!(msg);

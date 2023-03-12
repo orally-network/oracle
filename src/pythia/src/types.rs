@@ -9,7 +9,7 @@ use crate::*;
 
 use orally_shared::types::{Subscription};
 
-#[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default)]
 pub struct Chain {
     pub subscriptions: Vec<Subscription>,
     pub rpc: String,
@@ -19,5 +19,5 @@ pub struct Chain {
 }
 
 // chain_id -> ChainSubscriptions
-#[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, CandidType)]
 pub struct Chains(HashMap<String, Chain>);

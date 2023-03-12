@@ -20,6 +20,11 @@
       "package": "pythia",
       "type": "rust"
     },
+    "exchange_rate_canister": {
+      "type": "custom",
+      "candid": "exchange_rate_canister.did",
+      "wasm": "exchange_rate_canister.wasm"
+    },
     "app_frontend": {
       "frontend": {
         "entrypoint": "dist/app_frontend/index.html"

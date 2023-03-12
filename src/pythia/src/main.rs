@@ -6,6 +6,7 @@ use ic_cdk::{
     timer::{clear_timer, set_timer_interval, TimerId},
 };
 use ic_cdk_macros::{self, update, query, init};
+use std::collections::HashMap;
 
 use ic_web3::{
     contract::{Contract, Options},
@@ -36,7 +37,7 @@ mod notify;
 mod subscription;
 
 thread_local! {
-    pub static CHAINS: RefCell<Chains> = RefCell::default();
+    pub static CHAINS: RefCell<HashMap<u64, Chain>> = RefCell::default();
     pub static OWNER: RefCell<String> = RefCell::default();
 }
 
@@ -44,6 +45,10 @@ thread_local! {
 fn init() {
     OWNER.with(|owner| {
         *owner.borrow_mut() = ic_cdk::caller().to_string();
+    });
+    
+    CHAINS.with(|chains| {
+        *chains.borrow_mut() = HashMap::new();
     });
 }
 

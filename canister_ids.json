@@ -7,5 +7,9 @@
   },
   "app_frontend": {
     "ic": "kclew-uiaaa-aaaal-qbuiq-cai"
+  },
+  "exchange_rate_canister": {
+    "local": "s55qq-oqaaa-aaaaa-aaakq-cai",
+    "ic": "uf6dk-hyaaa-aaaaq-qaaaq-cai"
   }
 }

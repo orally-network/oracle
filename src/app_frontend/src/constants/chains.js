@@ -4,6 +4,7 @@ import ethereumImg from 'Assets/chains/ethereum.jpeg';
 import polygonImg from 'Assets/chains/polygon.jpeg';
 import ultronImg from 'Assets/chains/ultron.jpeg';
 import qImg from 'Assets/chains/q.svg';
+import auroraImg from 'Assets/chains/aurora.png';
 
 const CHAINS = [
   {
@@ -93,6 +94,32 @@ const CHAINS = [
     }, 
     testnet: true,
     img: qImg,
+  },
+  {
+    id: 1313161555,
+    name: 'Aurora Testnet',
+    network: 'Aurora testnet',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://testnet.aurora.dev']
+      },
+      public: {
+        http: ['https://testnet.aurora.dev']
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Explorer Aurora Testnet',
+        url: 'https://testnet.aurorascan.dev/',
+      },
+    },
+    testnet: true,
+    img: auroraImg,
   },
 ];
 

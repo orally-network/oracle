@@ -21,14 +21,10 @@
       "type": "rust"
     },
     "app_frontend": {
-      "dependencies": [
-        "oracle"
-      ],
       "frontend": {
-        "entrypoint": "src/app_frontend/src/index.html"
+        "entrypoint": "dist/app_frontend/index.html"
       },
       "source": [
-        "src/app_frontend/assets",
         "dist/app_frontend/"
       ],
       "type": "assets"

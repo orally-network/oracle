@@ -1,5 +1,11 @@
 {
   "oracle_factory": {
     "ic": "3barz-kiaaa-aaaak-ad67q-cai"
+  },
+  "ecdsa_proxy": {
+    "ic": "bualx-bqaaa-aaaak-qb44q-cai"
+  },
+  "app_frontend": {
+    "ic": "kclew-uiaaa-aaaal-qbuiq-cai"
   }
 }

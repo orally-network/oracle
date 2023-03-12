@@ -16,6 +16,8 @@ use ic_cdk::api::management_canister::main::{
     CanisterInstallMode,
     install_code,
     InstallCodeArgument,
+    delete_canister,
+    stop_canister,
 };
 use canistergeek_ic_rust::{
     logger::{log_message},
@@ -38,7 +40,7 @@ pub struct InitPayload {
     rpc: String,
 }
 
-const INIT_CYCLES_BALANCE: u128 = 1_000_000_000_000; // 1T
+const INIT_CYCLES_BALANCE: u128 = 3_000_000_000_000; // 3T
 
 thread_local! {
     pub static ORACLE_IDS: RefCell<Vec<String>> = RefCell::default();
@@ -152,6 +154,44 @@ async fn update_oracles() -> Result<String, String> {
     }
 
     Ok("Updated all oracle canisters".to_string())
+}
+
+#[update]
+async fn delete_oracle(canister: String) -> Result<String, String> {
+    let canister_id = Principal::from_text(&canister).unwrap();
+
+    ic_cdk::println!("Deleting oracle canister, canister_id: {:?}", canister_id.to_string());
+    log_message(format!("Deleting oracle canister, canister_id: {:?}", canister_id.to_string()));
+    
+    let arg = CanisterIdRecord{
+        canister_id: canister_id.clone(),
+    };
+    
+    match stop_canister(arg).await {
+        Ok(()) => {
+            ic_cdk::println!("Stopped oracle canister: {:?}", canister_id.to_string());
+            log_message(format!("Stopped oracle canister: {:?}", canister_id.to_string()));
+        },
+        Err(error) => {
+            ic_cdk::trap(&format!("Failed to stop canister: {}", error.1));
+        }
+    }
+
+    match delete_canister(arg).await {
+        Ok(()) => {
+            ic_cdk::println!("Deleted oracle canister: {:?}", canister_id.to_string());
+            log_message(format!("Deleted oracle canister: {:?}", canister_id.to_string()));
+
+            ORACLE_IDS.with(|ids| {
+                ids.borrow_mut().retain(|id| id != &canister_id.to_string());
+            });
+
+            Ok(canister_id.to_string())
+        },
+        Err(error) => {
+            ic_cdk::trap(&format!("Failed to delete canister: {}", error.1));
+        }
+    }
 }
 
 #[query]

@@ -29,6 +29,7 @@ use orally_shared;
 
 use types::{};
 mod types;
+mod merkle_tree;
 
 thread_local! {
     pub static CHAINS: RefCell<Chains> = RefCell::new(Chains(HashMap::new()));

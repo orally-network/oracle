@@ -17,3 +17,4 @@ canistergeek_ic_rust = "0.3.1"
 siwe = { git = "https://github.com/domwoe/siwe-rs" }
 time = { version = "0.3.15", default-features = false }
 orally-shared = { path = "../orally-shared" }
+crypto = "0.3"

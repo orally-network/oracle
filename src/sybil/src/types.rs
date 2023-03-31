@@ -43,5 +43,5 @@ pub struct Chain {
     pub contract_address: String,
 }
 
-#[derive(Clone, Debug, Default, CandidType)]
+#[derive(Clone, Debug, Default)]
 pub struct Chains(Vec<Chain>);

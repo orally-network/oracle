@@ -1,5 +1,7 @@
 
 
 service : {
-    
+    set_exchange_rate_canister_principal: (text) -> ()
+
+    execute_fetch_common_asset_prices: () -> record { number; number }
 }

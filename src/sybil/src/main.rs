@@ -29,14 +29,34 @@ use orally_shared;
 
 use types::{};
 mod types;
-mod merkle_tree;
+
+mod price_fetcher;
+mod evm_interaction;
+mod exchange_rate_canister;
+mod queries;
+mod asset_data_store;
 
 thread_local! {
-    pub static CHAINS: RefCell<Chains> = RefCell::new(Chains(HashMap::new()));
+    // pub static CHAINS: RefCell<Chains> = RefCell::new(Chains(HashMap::new()));
+    
+    pub static EXCHANGE_RATE_CANISTER_PRINCIPAL: RefCell<Principal> = RefCell::new(
+        Principal::from_text("YOUR_CANISTER_PRINCIPAL").unwrap_or_else(|_| {
+            panic!("Invalid canister principal: {}", "YOUR_CANISTER_PRINCIPAL");
+        })
+    );
 }
 
 #[init]
 fn init() {
+}
+
+#[update]
+pub fn set_exchange_rate_canister_principal(new_principal: String) {
+    EXCHANGE_RATE_CANISTER_PRINCIPAL.with(|principal| {
+        *principal.borrow_mut() = Principal::from_text(&new_principal).unwrap_or_else(|_| {
+            panic!("Invalid canister principal: {}", new_principal);
+        })
+    });
 }
 
 fn main() {

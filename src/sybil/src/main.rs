@@ -35,6 +35,7 @@ mod evm_interaction;
 mod exchange_rate_canister;
 mod queries;
 mod asset_data_store;
+mod merkle_tree;
 
 thread_local! {
     // pub static CHAINS: RefCell<Chains> = RefCell::new(Chains(HashMap::new()));

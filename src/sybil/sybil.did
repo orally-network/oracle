@@ -4,4 +4,5 @@ service : {
     set_exchange_rate_canister_principal: (text) -> ()
 
     execute_fetch_common_asset_prices: () -> record { number; number }
+    asset_data_store_example_usage: () -> bool
 }

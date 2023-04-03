@@ -1,94 +1,110 @@
-use tiny_keccak::{Hasher, Keccak};
+use sha3::{Digest, Keccak256};
+use std::iter::once;
 
+#[derive(Default)]
 pub struct MerkleTree {
-    data: Vec<Vec<u8>>,
+    pub root: Vec<u8>,
+    pub nodes: Vec<Vec<u8>>,
+    pub levels: Vec<Vec<Vec<u8>>>,
 }
 
 impl MerkleTree {
-    pub fn new(data: &[Vec<u8>]) -> Self {
-        let mut tree = MerkleTree { data: vec![] };
-        tree.build(data);
-        tree
-    }
-    
-    fn build(&mut self, data: &[Vec<u8>]) {
-        let mut current_level = data.to_vec();
-        while current_level.len() > 1 {
-            let mut next_level = vec![];
-            
-            for i in (0..current_level.len()).step_by(2) {
-                let left = &current_level[i];
-                let right = if i + 1 < current_level.len() {
-                    &current_level[i + 1]
-                } else {
-                    &current_level[i]
-                };
-                
-                let mut hasher = Keccak::v256();
-                hasher.update(left);
-                hasher.update(right);
-                let mut hash = [0u8; 32];
-                hasher.finalize(&mut hash);
-                
-                next_level.push(hash.to_vec());
-            }
-            
-            current_level = next_level;
+    pub fn new(leaves: &[Vec<u8>]) -> Self {
+        let mut nodes = leaves
+            .iter()
+            .map(|leaf| {
+                let mut hasher = Keccak256::new();
+                hasher.update(leaf);
+                hasher.finalize().to_vec()
+            })
+            .collect::<Vec<Vec<u8>>>();
+        
+        let mut levels = vec![nodes.clone()];
+        
+        while nodes.len() > 1 {
+            nodes = nodes
+                .chunks(2)
+                .map(|pair| match pair {
+                    [a, b] => hash_pair(a, b),
+                    [a] => hash_pair(a, a),
+                    _ => unreachable!(),
+                })
+                .collect();
+            levels.push(nodes.clone());
         }
         
-        self.data = current_level;
+        let root = nodes[0].clone();
+        MerkleTree { root, nodes: levels[0].clone(), levels }
     }
     
-    pub fn root(&self) -> Option<Vec<u8>> {
-        self.data.first().cloned()
+    pub fn hash(data: Vec<u8>) -> Vec<u8> {
+        let mut hasher = Keccak256::new();
+        hasher.update(data);
+        hasher.finalize().to_vec()
     }
     
-    pub fn gen_proof(&self, index: usize) -> Vec<Vec<u8>> {
-        let mut path = vec![];
+    pub fn verify_proof(&self, proof: &[Vec<u8>], root: &[u8], leaf: Vec<u8>) -> bool {
+        let leaf_hash = MerkleTree::hash(leaf);
         
-        let mut current_level: &[Vec<u8>] = &self.data;
-        let mut current_index = index;
-        
-        while current_level.len() > 1 {
-            let sibling_index = if current_index % 2 == 0 {
-                current_index + 1
-            } else {
-                current_index - 1
-            };
-            
-            if sibling_index < current_level.len() {
-                path.push(current_level[sibling_index].clone());
-            }
-            
-            current_index /= 2;
-            current_level = &current_level[current_index..];
-        }
-        
-        path
-    }
-    
-    pub fn verify_proof(
-        &self,
-        data_hash: &[u8],
-        proof: &[Vec<u8>],
-        expected_root: &[u8],
-    ) -> bool {
-        let mut computed_hash = data_hash.to_vec();
+        let mut computed_hash = leaf_hash.clone();
         
         for sibling in proof {
-            let mut hasher = Keccak::v256();
-            if computed_hash < *sibling {
-                hasher.update(&computed_hash);
-                hasher.update(sibling);
+            computed_hash = if computed_hash < *sibling {
+                hash_pair(&computed_hash, sibling)
             } else {
-                hasher.update(sibling);
-                hasher.update(&computed_hash);
-            }
-            
-            computed_hash.resize(32, 0);
-            hasher.finalize(&mut computed_hash);
+                hash_pair(sibling, &computed_hash)
+            };
         }
         
-        computed_hash.as_slice() == expected_root
+        computed_hash.as_slice() == root
     }
+    
+    
+    pub fn generate_proof(&self, leaf: Vec<u8>) -> Option<Vec<Vec<u8>>> {
+        let leaf_hash = MerkleTree::hash(leaf);
+        let leaf_position = self.nodes.iter().position(|n| n == &leaf_hash)?;
+        
+        let mut proof = vec![];
+        let mut current_position = leaf_position;
+        
+        for level in self.levels.iter().skip(1) {
+            let sibling_position = if current_position % 2 == 0 {
+                current_position + 1
+            } else {
+                current_position - 1
+            };
+            
+            if let Some(sibling) = level.get(sibling_position) {
+                proof.push(sibling.clone());
+            }
+            
+            current_position /= 2;
+        }
+        
+        Some(proof)
+    }
+}
+
+fn hash_pair(a: &[u8], b: &[u8]) -> Vec<u8> {
+    let mut hasher = Keccak256::new();
+    hasher.update(a);
+    hasher.update(b);
+    hasher.finalize().to_vec()
+}
+
+fn main() {
+    let leaves = vec![
+        b"element1".to_vec(),
+        b"element2".to_vec(),
+        b"element3".to_vec(),
+        b"element4".to_vec(),
+    ];
+    
+    let tree = MerkleTree::new(&leaves);
+    
+    let proof = tree.generate_proof(leaves[0].clone()).unwrap();
+    let is_valid = tree.verify_proof(&proof, &tree.root, leaves[0].clone());
+    
+    println!("Generated proof: {:?}", proof);
+    println!("Proof is valid: {}", is_valid);
 }

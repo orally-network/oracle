@@ -27,3 +27,7 @@ bytes = "1.4.0"
 rs_merkle = "1.3.0"
 tiny-keccak = "2.0.2"
 sha3 = "0.10.6"
+
+merkle_light = "0.4.0"
+ethers-rs = "0.2.3"
+crypto = "0.4.0"

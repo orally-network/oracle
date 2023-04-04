@@ -1,3 +1,5 @@
+extern crate core;
+
 use ic_cdk::export::{
     candid,
     Principal,
@@ -34,9 +36,10 @@ mod price_fetcher;
 mod evm_interaction;
 mod exchange_rate_canister;
 mod queries;
+mod asset_data_store_final3;
 // mod asset_data_store_new2;
-mod merkle_tree;
-mod asset_data_store_final;
+// mod merkle_tree;
+// mod asset_data_store_final;
 
 thread_local! {
     // pub static CHAINS: RefCell<Chains> = RefCell::new(Chains(HashMap::new()));

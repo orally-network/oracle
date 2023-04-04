@@ -4,17 +4,11 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 contract MerkleProofVerifier {
-//    function hashAssetData(
-//        string memory symbol,
-//        uint64 price,
-//        uint64 timestamp
-//    ) public pure returns (bytes32) {
-//        bytes32 symbolHash = keccak256(abi.encodePacked(symbol));
-//        bytes32 priceHash = keccak256(abi.encodePacked(price));
-//        bytes32 timestampHash = keccak256(abi.encodePacked(timestamp));
-//
-//        return keccak256(abi.encodePacked(symbolHash, priceHash, timestampHash));
-//    }
+    bytes32 public root;
+
+    function setRoot(bytes32 _root) external {
+        root = _root;
+    }
 
     function hashAssetData(
         string memory symbol,

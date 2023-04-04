@@ -1,298 +1,191 @@
-use ic_cdk::export::{
-    serde::{Deserialize, Serialize},
-    candid::CandidType,
-};
-use eth_trie::{EthTrie, MemoryDB, Trie, TrieError};
-// use primitive_types::H256;
-use keccak_hash::{H256, keccak};
-use rlp::{encode, Rlp, Encodable, RlpStream, Decodable, DecoderError};
+use ic_cdk::export::candid::{CandidType, Deserialize};
+use rs_merkle::{Hasher, MerkleTree, MerkleProof};
+use serde::{Deserialize as SerdeDeserialize, Serialize};
 use std::collections::HashMap;
-use std::sync::Arc;
-use bytes::BytesMut;
-use std::fmt;
+use ethers_rs::keccak256;
+use hex;
 
+type Hash = [u8; 32];
 
-use crate::*;
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, SerdeDeserialize, CandidType, PartialEq)]
 pub struct AssetData {
     symbol: String,
-    price: f64,
+    price: u64,
     timestamp: u64,
 }
 
-impl Encodable for AssetData {
-    fn rlp_append(&self, stream: &mut RlpStream) {
-        // You can choose how to encode the fields of the struct
-        stream.begin_list(3);
-        stream.append(&self.symbol);
-        stream.append(&self.price.to_be_bytes().to_vec());
-        stream.append(&self.timestamp);
-    }
-}
-
-impl Decodable for AssetData {
-    fn decode(rlp: &Rlp) -> Result<Self, DecoderError> {
-        if rlp.item_count()? != 3 {
-            return Err(DecoderError::RlpIncorrectListLen);
-        }
-        
-        let symbol: String = rlp.val_at(0)?;
-        let price_bytes: Vec<u8> = rlp.val_at(1)?;
-        let timestamp: u64 = rlp.val_at(2)?;
-        
-        let price = f64::from_be_bytes(<[u8; 8]>::try_from(price_bytes.as_slice()).map_err(|_| DecoderError::RlpInvalidLength)?);
-        
-        Ok(AssetData {
-            symbol,
-            price,
-            timestamp,
-        })
-    }
-}
-
-// impl Decodable for AssetData {
-//     fn decode(rlp: &Rlp) -> Result<Self, rlp::DecoderError> {
-//         // You can choose how to decode the fields of the struct
-//         Ok(AssetData {
-//             symbol: rlp.val_at(0)?,
-//             price: f64::from_be_bytes(rlp.val_at(1)?),
-//             timestamp: rlp.val_at(2)?,
-//         })
-//     }
-// }
-
 impl AssetData {
-    // fn to_key(&self) -> [u8; 32] {
-    //     let mut data = [0u8; 32];
-    //     data[..self.symbol.len()].copy_from_slice(self.symbol.as_bytes());
-    //     
-    //     // H256::from_slice(&data)
-    //     data
-    // }
-    
-    fn to_key(&self) -> [u8; 32] {
-        let rlp_encoded = rlp::encode(self);
-        let mut keccak = keccak::v256();
-        let mut output = [0u8; 32];
-        keccak.update(&rlp_encoded);
-        keccak.finalize(&mut output);
+    fn to_leaf(&self) -> [u8; 32] {
+        let mut buffer = Vec::new();
+        buffer.extend_from_slice(self.symbol.as_bytes());
+        buffer.extend_from_slice(&self.price.to_be_bytes());
+        buffer.extend_from_slice(&self.timestamp.to_be_bytes());
         
-        output
+        Keccak256Algorithm::hash(&buffer)
     }
+}
+
+#[derive(Clone)]
+pub struct Keccak256Algorithm {}
+
+impl Hasher for Keccak256Algorithm {
+    type Hash = [u8; 32];
     
-    fn to_value(&self) -> BytesMut {
-        let mut bytes = BytesMut::new();
-        bytes.extend_from_slice(encode(self).as_ref());
-        bytes
+    fn hash(data: &[u8]) -> Hash {
+        keccak256(data)
     }
 }
 
-impl fmt::Display for AssetData {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "symbol: {}, price: {:.2}, timestamp: {}",
-            self.symbol, self.price, self.timestamp
-        )
-    }
-}
-
+// Define the AssetDataStore structure
 pub struct AssetDataStore {
-    data: HashMap<String, AssetData>,
-    trie: EthTrie<MemoryDB>,
+    merkle_tree: MerkleTree<Keccak256Algorithm>,
+    data_store: HashMap<String, AssetData>,
+    symbol_index: HashMap<String, usize>,
 }
 
 impl AssetDataStore {
     pub fn new() -> Self {
-        let memdb = Arc::new(Default::default());
-        let mut trie = EthTrie::new(memdb);
-        
-        AssetDataStore {
-            data: HashMap::new(),
-            trie,
+        Self {
+            merkle_tree: MerkleTree::new(),
+            data_store: HashMap::new(),
+            symbol_index: HashMap::new(),
         }
     }
     
-    pub fn upsert(&mut self, asset_data: AssetData) {
-        let key = asset_data.to_key();
-        let value = asset_data.to_value();
-        self.trie.insert(&key, &value).unwrap();
-        self.data.insert(asset_data.symbol.clone(), asset_data);
-    }
-    
-    pub fn get(&self, symbol: &str) -> Option<&AssetData> {
-        self.data.get(symbol)
-    }
-    
-    pub fn root(&mut self) -> H256 {
-        self.trie.root_hash().unwrap()
-    }
-    
-    pub fn generate_proof(&mut self, symbol: &str) -> Option<Vec<Vec<u8>>> {
-        self.data.get(symbol).map(|asset_data| {
-            let key = asset_data.to_key();
-            let proof = self.trie.get_proof(&key).unwrap();
-            proof
-        })
-    }
-    
-    // pub fn verify_proof(&mut self, asset_data: &AssetData, proof: Vec<Vec<u8>>) -> Result<bool, TrieError> {
-    //     let key = asset_data.to_key();
-    //     let value = asset_data.to_value();
-    //     let root = self.root();
-    //     
-    //     self.trie.verify_proof(root, &key, proof)
-    // }
-    
-    pub fn verify_proof(&mut self, asset_data: AssetData, proof: Vec<Vec<u8>>) -> Option<Vec<u8>> {
-        let key = asset_data.to_key();
-        let root: H256 = self.root();
+    pub fn add_batch_asset_data(&mut self, batch_asset_data: Vec<AssetData>) {
+        let mut batch_data = Vec::new();
         
-        match self.trie.verify_proof(root, &key, proof) {
-            Ok(value) => Some(value.unwrap()),
-            Err(_) => None,
+        for asset_data in batch_asset_data {
+            let asset_data_hash = asset_data.to_leaf();
+            
+            let index = self.data_store.len();
+            self.data_store.insert(asset_data.symbol.clone(), asset_data.clone());
+            self.symbol_index.insert(asset_data.symbol.clone(), index);
+            
+            batch_data.push(asset_data_hash);
         }
+        
+        self.merkle_tree.append(&mut batch_data);
+        self.merkle_tree.commit();
+    }
+    
+    // todo: get_asset_data_batch
+    pub fn get_asset_data(&self, symbol: &str) -> Option<&AssetData> {
+        self.data_store.get(symbol)
+    }
+    
+    pub fn get_root(&self) -> Option<Hash> {
+        self.merkle_tree.root()
+    }
+    
+    // todo: implement generate_proof_batch
+    pub fn generate_proof(&self, symbol: &str) -> Option<Vec<u8>> {
+        let index = self.symbol_index.get(symbol)?;
+        
+        println!("index: {:?}", index);
+        // println!("proof(1): {:?}", self.merkle_tree.proof(&[*index]).proof_hashes());
+        // println!("proof(1): {:?}", self.merkle_tree.proof(&[*index]).proof_hashes()[0]);
+        
+        // Some(self.merkle_tree.proof(&[*index]).proof_hashes()[0])
+        Some(self.merkle_tree.proof(&[*index]).to_bytes())
+    }
+    
+    pub fn verify_proof(&self, proof_hashes: Vec<u8>, root: Hash, symbol: &str) -> Option<bool> {
+        let index = self.symbol_index.get(symbol)?;
+        let asset_data = self.data_store.get(symbol)?;
+        let leaf = asset_data.to_leaf();
+        // let leaf = asset_data.to_leaf();
+        
+        let proof = MerkleProof::<Keccak256Algorithm>::from_bytes(proof_hashes.as_slice()).ok()?;
+        
+        println!("asset_data: {:?}", asset_data);
+        println!("symbol: {:?}", symbol);
+        println!("proof(2): {:?}", proof.proof_hashes());
+        println!("root: {:?}", root);
+    
+        // let proof_hex = hex::encode(proof.proof_hashes_hex());
+        println!("proof_hex: {:?}", proof.proof_hashes_hex());
+        let root_hex = hex::encode(root);
+        println!("root_hex: {:?}", root_hex);
+        let root_hex2 = self.merkle_tree.root_hex();
+        println!("root_hex2: {:?}", root_hex2);
+        
+        println!("leaf: {:?}", hex::encode(leaf));
+        
+        Some(proof.verify(root, &[*index], &[leaf], self.data_store.len()))
     }
 }
-
-// #[update]
-// pub fn asset_data_store_example_usage() -> bool {
-//     let mut store = AssetDataStore::new();
-//     
-//     let asset_data = AssetData {
-//         symbol: "BTC/USD".to_string(),
-//         price: 50000.0,
-//         timestamp: 1626854678,
-//     };
-//     
-//     store.upsert(asset_data);
-//     
-//     let asset_data = store.get("BTC/USD").unwrap();
-//     println!("{:?}", asset_data);
-//     
-//     let updated_data = AssetData {
-//         symbol: "BTC/USD".to_string(),
-//         price: 55000.0,
-//         timestamp: 1626855678,
-//     };
-//     store.upsert(updated_data);
-//     
-//     let proof = store.generate_proof("BTC/USD").unwrap();
-//     
-//     // Verify the proof
-//     let is_proof_valid = {
-//         let updated_data = store.get("BTC/USD").unwrap();
-//         
-//         match store.verify_proof(updated_data.clone(), proof) {
-//             Some(value) => {
-//                 let rlp = Rlp::new(&value);
-//                 let decoded_data = AssetData {
-//                     symbol: rlp.val_at(0).unwrap(),
-//                     price: f64::from_be_bytes(rlp.val_at(1).unwrap()),
-//                     timestamp: rlp.val_at(2).unwrap(),
-//                 };
-//                 
-//                 decoded_data == *updated_data
-//             },
-//             None => false,
-//         }
-//     };
-//     
-//     is_proof_valid
-// }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use rlp::{decode, encode};
     
-    #[test]
-    fn asset_data_encoding_decoding() {
-        let asset_data = AssetData {
-            symbol: "BTC/USD".to_string(),
-            price: 45000.0,
-            timestamp: 1630000000,
-        };
-        
-        let encoded = encode(&asset_data);
-        let decoded: AssetData = decode(&encoded).unwrap();
-        
-        assert_eq!(asset_data.symbol, decoded.symbol);
-        assert_eq!(asset_data.price, decoded.price);
-        assert_eq!(asset_data.timestamp, decoded.timestamp);
+    fn create_sample_data() -> Vec<AssetData> {
+        vec![
+            AssetData {
+                symbol: "LTC".to_string(),
+                price: 22,
+                timestamp: 1_000_003,
+            },
+            AssetData {
+                symbol: "BTC".to_string(),
+                price: 45000,
+                timestamp: 1_000_000,
+            },
+            AssetData {
+                symbol: "ICP".to_string(),
+                price: 10,
+                timestamp: 1_000_009,
+            },
+            AssetData {
+                symbol: "ETH".to_string(),
+                price: 3000,
+                timestamp: 1000000,
+            },
+            AssetData {
+                symbol: "WWW".to_string(),
+                price: 300,
+                timestamp: 1_000_010,
+            },
+        ]
     }
     
     #[test]
-    fn asset_data_store_insert_and_get() {
+    fn test_add_batch_asset_data() {
         let mut store = AssetDataStore::new();
-        let asset_data = AssetData {
-            symbol: "BTC/USD".to_string(),
-            price: 45000.0,
-            timestamp: 1630000000,
-        };
+        let data = create_sample_data();
         
-        store.upsert(asset_data.clone());
-        let retrieved_data = store.get(&asset_data.symbol).unwrap();
+        store.add_batch_asset_data(data.clone());
         
-        assert_eq!(asset_data.symbol, retrieved_data.symbol);
-        assert_eq!(asset_data.price, retrieved_data.price);
-        assert_eq!(asset_data.timestamp, retrieved_data.timestamp);
+        assert_eq!(store.get_asset_data("BTC"), Some(&data[1]));
+        assert_eq!(store.get_asset_data("ETH"), Some(&data[3]));
     }
     
     #[test]
-    fn asset_data_store_proof_generation_and_verification() {
+    fn test_generate_and_verify_proof() {
         let mut store = AssetDataStore::new();
-        let asset_data = AssetData {
-            symbol: "BTC/USD".to_string(),
-            price: 45000.0,
-            timestamp: 1630000000,
-        };
+        let data = create_sample_data();
         
-        store.upsert(asset_data.clone());
-    
-        let asset_data_another = AssetData {
-            symbol: "BTC/USD".to_string(),
-            price: 451111.0,
-            timestamp: 1630000000,
-        };
+        store.add_batch_asset_data(data.clone());
         
-        let proof = store.generate_proof(&asset_data_another.symbol).unwrap();
-        let verified_value = store.verify_proof(asset_data_another.clone(), proof).unwrap();
+        let root = store.get_root().unwrap();
         
-        let decoded_asset_data: AssetData = decode(&verified_value).unwrap();
+        let proof_btc = store.generate_proof("BTC").unwrap();
+        let proof_eth = store.generate_proof("ETH").unwrap();
+        let proof_icp = store.generate_proof("ICP").unwrap();
         
-        // log everything
-        println!("asset_data: {:?}", asset_data);
-        println!("asset_data_another: {:?}", asset_data_another);
-        println!("verified_value: {:?}", verified_value);
-        println!("decoded_asset_data: {:?}", decoded_asset_data);
-        
-        assert_eq!(asset_data.symbol, decoded_asset_data.symbol);
-        assert_eq!(asset_data.price, decoded_asset_data.price);
-        assert_eq!(asset_data.timestamp, decoded_asset_data.timestamp);
-    }
-    
-    #[test]
-    fn test_invalid_proof() {
-        let mut store = AssetDataStore::new();
-        
-        let asset_data = AssetData {
-            symbol: "BTC/USD".to_string(),
-            price: 50000.0,
-            timestamp: 1629450100,
-        };
-        
-        store.upsert(asset_data.clone());
-        
-        // let proof = vec![
-        //     vec![1, 2, 3, 4],
-        //     vec![5, 6, 7, 8],
-        //     vec![9, 10, 11, 12],
-        // ];
-        let proof = store.generate_proof(&asset_data.symbol).unwrap();
-    
-    
-        assert!(store.verify_proof(asset_data, proof).is_none());
+        assert_eq!(
+            store.verify_proof(proof_btc, root, "BTC"),
+            Some(true)
+        );
+        assert_eq!(
+            store.verify_proof(proof_eth, root, "ETH"),
+            Some(true)
+        );
+        assert_eq!(
+            store.verify_proof(proof_icp, root, "ICP"),
+            Some(true)
+        );
     }
 }
+

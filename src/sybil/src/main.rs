@@ -20,11 +20,6 @@ use ic_web3::{
     futures::TryFutureExt,
 };
 
-use canistergeek_ic_rust::{
-    logger::{log_message},
-    monitor::{collect_metrics},
-};
-
 use std::cell::{RefCell};
 use std::time::Duration;
 use orally_shared;
@@ -38,6 +33,7 @@ mod evm_interaction;
 mod exchange_rate_canister;
 mod asset_data_store;
 mod state;
+mod migration;
 
 #[init]
 fn init() {

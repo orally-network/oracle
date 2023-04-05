@@ -5,21 +5,21 @@ use crate::*;
 fn pre_upgrade() {
     let state = STATE.with(|state| state.borrow().clone());
     
-    let exchange_rate_canister_principal = state.exchange_rate_canister_principal;
+    let exchange_rate_canister = state.exchange_rate_canister;
     let chains = state.chains;
     let pairs = state.pairs;
     let custom_pairs = state.custom_pairs;
     
     ic_cdk::println!(
-        "pre_upgrade: exchange_rate_canister_principal: {:?}, chains: {:?}, pairs: {:?}, custom_pairs: {:?}",
-        exchange_rate_canister_principal,
+        "pre_upgrade: exchange_rate_canister: {:?}, chains: {:?}, pairs: {:?}, custom_pairs: {:?}",
+        exchange_rate_canister,
         chains,
         pairs,
         custom_pairs,
     );
     canistergeek_ic_rust::logger::log_message(format!(
-        "pre_upgrade: exchange_rate_canister_principal: {:?}, chains: {:?}, pairs: {:?}, custom_pairs: {:?}",
-        exchange_rate_canister_principal,
+        "pre_upgrade: exchange_rate_canister: {:?}, chains: {:?}, pairs: {:?}, custom_pairs: {:?}",
+        exchange_rate_canister,
         chains,
         pairs,
         custom_pairs,
@@ -30,7 +30,7 @@ fn pre_upgrade() {
     let logger_stable_data = canistergeek_ic_rust::logger::pre_upgrade_stable_data();
     
     storage::stable_save((
-        exchange_rate_canister_principal,
+        exchange_rate_canister,
         chains,
         pairs,
         custom_pairs,
@@ -44,14 +44,14 @@ fn pre_upgrade() {
 fn post_upgrade() {
     // Restore states
     let (
-        exchange_rate_canister_principal,
+        exchange_rate_canister,
         chains,
         pairs,
         custom_pairs,
         monitor_stable_data,
         logger_stable_data,
     ): (
-        Principal,
+        String,
         Chains,
         Pairs,
         CustomPairs,
@@ -60,15 +60,15 @@ fn post_upgrade() {
     ) = storage::stable_restore().expect("failed to restore from stable storage");
     
     ic_cdk::println!(
-        "post_upgrade: exchange_rate_canister_principal: {:?}, chains: {:?}, pairs: {:?}, custom_pairs: {:?}",
-        exchange_rate_canister_principal,
+        "post_upgrade: exchange_rate_canister: {:?}, chains: {:?}, pairs: {:?}, custom_pairs: {:?}",
+        exchange_rate_canister,
         chains,
         pairs,
         custom_pairs,
     );
     canistergeek_ic_rust::logger::log_message(format!(
-        "post_upgrade: exchange_rate_canister_principal: {:?}, chains: {:?}, pairs: {:?}, custom_pairs: {:?}",
-        exchange_rate_canister_principal,
+        "post_upgrade: exchange_rate_canister: {:?}, chains: {:?}, pairs: {:?}, custom_pairs: {:?}",
+        exchange_rate_canister,
         chains,
         pairs,
         custom_pairs,
@@ -80,7 +80,7 @@ fn post_upgrade() {
     
     STATE.with(|state| {
         let mut state_mut = state.borrow_mut();
-        state_mut.exchange_rate_canister_principal = exchange_rate_canister_principal;
+        state_mut.exchange_rate_canister = exchange_rate_canister;
         state_mut.chains = chains;
         state_mut.pairs = pairs;
         state_mut.custom_pairs = custom_pairs;

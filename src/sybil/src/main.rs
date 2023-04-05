@@ -3,11 +3,13 @@ extern crate core;
 use ic_cdk::export::{
     candid,
     Principal,
+    serde::{Deserialize, Serialize},
+    candid::CandidType,
 };
 use ic_cdk::{
     timer::{clear_timer, set_timer_interval, TimerId},
 };
-use ic_cdk_macros::{self, update, query, init, import};
+use ic_cdk_macros::{self, update, query, init, import, pre_upgrade, post_upgrade};
 use std::collections::HashMap;
 
 use ic_web3::{

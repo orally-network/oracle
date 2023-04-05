@@ -1,8 +1,3 @@
-use ic_cdk::export::{
-    serde::{Deserialize, Serialize},
-    candid::CandidType,
-};
-
 use crate::*;
 
 #[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
@@ -19,8 +14,7 @@ pub struct CustomPair {
     // pub subscription: Subscription,
 }
 
-#[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
-pub struct CustomPairs(Vec<CustomPair>);
+pub type CustomPairs = Vec<CustomPair>;
 
 #[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
 pub struct Pair {
@@ -32,15 +26,13 @@ pub struct Pair {
     pub timestamp: u64,
 }
 
-#[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
-pub struct Pairs(Vec<Pair>);
+pub type Pairs = Vec<Pair>;
 
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
 pub struct Chain {
     pub rpc: String,
     pub chain_id: u64,
     pub contract_address: String,
 }
 
-#[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
-pub struct Chains(Vec<Chain>);
+pub type Chains = Vec<Chain>;

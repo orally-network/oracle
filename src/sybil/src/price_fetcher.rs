@@ -66,11 +66,11 @@ async fn fetch_common_asset_prices(
 
 #[update]
 async fn execute_fetch_common_asset_prices() -> (f64, f64) {
-    let canister_principal: Principal = EXCHANGE_RATE_CANISTER_PRINCIPAL.with(|principal| {
-        *principal.borrow()
-    });
+    let canister_principal = STATE.with(|s| s.borrow().exchange_rate_canister.clone());
     
-    let service = exchange_rate_canister::SERVICE(canister_principal);
+    let service = exchange_rate_canister::SERVICE(
+        Principal::from_text(canister_principal).unwrap()
+    );
     
     let trading_pairs = vec!["BTC/USD".to_string(), "ETH/USD".to_string()];
     

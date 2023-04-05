@@ -3,7 +3,7 @@ use crate::*;
 
 #[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
 pub struct State {
-    pub exchange_rate_canister_principal: Principal,
+    pub exchange_rate_canister: String,
     pub chains: Chains,
     pub pairs: Pairs,
     pub custom_pairs: CustomPairs,
@@ -37,15 +37,13 @@ pub fn set_exchange_rate_canister_principal(new_principal: String) {
     validate_caller();
     
     STATE.with(|state| {
-        state.borrow_mut().exchange_rate_canister_principal = Principal::from_text(&new_principal).unwrap_or_else(|_| {
-            panic!("Invalid canister principal: {}", new_principal);
-        })
+        state.borrow_mut().exchange_rate_canister = new_principal;
     });
 }
 
 #[query]
 pub fn get_exchange_rate_canister_principal() -> String {
-    STATE.with(|state| state.borrow().exchange_rate_canister_principal.to_text())
+    STATE.with(|state| state.borrow().exchange_rate_canister.clone())
 }
 
 #[update]

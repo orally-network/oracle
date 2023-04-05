@@ -8,7 +8,6 @@ use crate::*;
 #[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
 pub struct CustomPair {
     pub id: String,
-    pub name: String,
     pub base: String,
     pub quote: String,
     
@@ -21,9 +20,11 @@ pub struct CustomPair {
 }
 
 #[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
+pub struct CustomPairs(Vec<CustomPair>);
+
+#[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
 pub struct Pair {
     pub id: String,
-    pub name: String,
     pub base: String,
     pub quote: String,
     
@@ -38,10 +39,8 @@ pub struct Pairs(Vec<Pair>);
 pub struct Chain {
     pub rpc: String,
     pub chain_id: u64,
-    pub frequency: u64,
-    pub timer_id: TimerId,
     pub contract_address: String,
 }
 
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
 pub struct Chains(Vec<Chain>);

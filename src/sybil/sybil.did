@@ -1,8 +1,44 @@
+type CustomPair = record {
+    id: text;
+    base: text;
+    quote: text;
+    price: nat64;
+    timestamp: nat64;
+    sources: vec text;
+};
 
+type CustomPairs = vec CustomPair;
+
+type Pair = record {
+    id: text;
+    base: text;
+    quote: text;
+    price: nat64;
+    timestamp: nat64;
+};
+
+type Pairs = vec Pair;
+
+type Chain = record {
+    rpc: text;
+    chain_id: nat64;
+    contract_address: text;
+};
+
+type Chains = vec Chain;
 
 service : {
-    set_exchange_rate_canister_principal: (text) -> ()
-
-    execute_fetch_common_asset_prices: () -> record { number; number }
-    asset_data_store_example_usage: () -> bool
+    set_exchange_rate_canister_principal: (text) -> ();
+    get_exchange_rate_canister_principal: () -> (text);
+    add_custom_pair: (CustomPair) -> ();
+    remove_custom_pair: (text) -> ();
+    get_custom_pairs: () -> (CustomPairs);
+    add_pair: (Pair) -> ();
+    remove_pair: (text) -> ();
+    get_pairs: () -> (Pairs);
+    add_chain: (Chain) -> ();
+    remove_chain: (nat64) -> ();
+    get_chains: () -> (Chains);
+    
+    execute_fetch_common_asset_prices: () -> (record { nat64; nat64 })
 }

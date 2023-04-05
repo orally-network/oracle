@@ -2,7 +2,7 @@ use ic_cdk::export::candid::{CandidType, Deserialize};
 use rs_merkle::{Hasher, MerkleTree, MerkleProof};
 use serde::{Deserialize as SerdeDeserialize, Serialize};
 use std::collections::HashMap;
-use ethers_rs::keccak256;
+use sha3::{Digest, Keccak256};
 use hex;
 
 type Hash = [u8; 32];
@@ -32,7 +32,11 @@ impl Hasher for Keccak256Algorithm {
     type Hash = [u8; 32];
     
     fn hash(data: &[u8]) -> Hash {
-        keccak256(data)
+        let mut hasher = Keccak256::new();
+    
+        hasher.update(data.as_ref());
+    
+        hasher.finalize().into()
     }
 }
 
@@ -94,7 +98,6 @@ impl AssetDataStore {
         let index = self.symbol_index.get(symbol)?;
         let asset_data = self.data_store.get(symbol)?;
         let leaf = asset_data.to_leaf();
-        // let leaf = asset_data.to_leaf();
         
         let proof = MerkleProof::<Keccak256Algorithm>::from_bytes(proof_hashes.as_slice()).ok()?;
         
@@ -107,8 +110,6 @@ impl AssetDataStore {
         println!("proof_hex: {:?}", proof.proof_hashes_hex());
         let root_hex = hex::encode(root);
         println!("root_hex: {:?}", root_hex);
-        let root_hex2 = self.merkle_tree.root_hex();
-        println!("root_hex2: {:?}", root_hex2);
         
         println!("leaf: {:?}", hex::encode(leaf));
         

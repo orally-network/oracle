@@ -1,13 +1,21 @@
 use crate::*;
 
 #[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
+pub struct RateData {
+    pub price: u64,
+    pub timestamp: u64,
+    pub decimals: u32,
+    pub base_asset_num_received_rates: u64,
+    pub base_asset_num_queried_sources: u64,
+}
+
+#[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
 pub struct CustomPair {
     pub id: String,
     pub base: String,
     pub quote: String,
     
-    pub price: u64,
-    pub timestamp: u64,
+    pub rate_data: Option<RateData>,
     
     pub sources: Vec<String>,
     // subscription for listing this pair
@@ -22,8 +30,7 @@ pub struct Pair {
     pub base: String,
     pub quote: String,
     
-    pub price: u64,
-    pub timestamp: u64,
+    pub rate_data: Option<RateData>,
 }
 
 pub type Pairs = Vec<Pair>;

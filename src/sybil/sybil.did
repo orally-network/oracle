@@ -40,5 +40,5 @@ service : {
     remove_chain: (nat64) -> ();
     get_chains: () -> (Chains);
     
-    execute_fetch_common_asset_prices: () -> (record { nat64; nat64 })
+    execute_fetch_common_asset_prices: () -> (nat64);
 }

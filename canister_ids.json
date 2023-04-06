@@ -11,5 +11,8 @@
   "exchange_rate_canister": {
     "local": "s55qq-oqaaa-aaaaa-aaakq-cai",
     "ic": "uf6dk-hyaaa-aaaaq-qaaaq-cai"
+  },
+  "sybil": {
+    "local": "su63m-yyaaa-aaaaa-aaala-cai"
   }
 }

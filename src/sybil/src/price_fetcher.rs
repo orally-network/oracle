@@ -12,8 +12,8 @@ pub mod exchange_rate_canister {
 async fn fetch_common_asset_prices(
     service: &exchange_rate_canister::SERVICE,
     pairs: Vec<String>,
-) -> Result<HashMap<String, f64>, String> {
-    let mut prices: HashMap<String, f64> = HashMap::new();
+) -> Result<HashMap<String, u64>, String> {
+    let mut prices: HashMap<String, u64> = HashMap::new();
     
     for pair in pairs {
         let assets: Vec<&str> = pair.split('/').collect();
@@ -36,19 +36,15 @@ async fn fetch_common_asset_prices(
             },
         };
         
-        // let mut args = ArgumentEncoder::new();
-        // args.encode(&request);
-        
         match service.get_exchange_rate(request).await {
             Ok((result,)) => match result {
-                // let result: GetExchangeRateResult = serde_candid::from_slice(&result).unwrap();
-    
                 exchange_rate_canister::GetExchangeRateResult::Ok(exchange_rate) => {
-                    prices.insert(pair.clone(), exchange_rate.rate as f64);
+                    ic_cdk::println!("Fetched exchange rate for {}: {:?}", pair, exchange_rate);
+                    
+                    prices.insert(pair.clone(), exchange_rate.rate);
                 }
                 exchange_rate_canister::GetExchangeRateResult::Err(err) => {
-                    // missing err
-                    return Err(format!("Error fetching exchange rate for {}", pair));
+                    return Err(format!("Error fetching exchange rate for {}, {:?}", pair, err));
                 }
             },
             Err((code, msg)) => {
@@ -65,7 +61,7 @@ async fn fetch_common_asset_prices(
 }
 
 #[update]
-async fn execute_fetch_common_asset_prices() -> (f64, f64) {
+async fn execute_fetch_common_asset_prices() -> u64 {
     let canister_principal = STATE.with(|s| s.borrow().exchange_rate_canister.clone());
     
     let service = exchange_rate_canister::SERVICE(
@@ -76,17 +72,17 @@ async fn execute_fetch_common_asset_prices() -> (f64, f64) {
     
     match fetch_common_asset_prices(&service, trading_pairs).await {
         Ok(prices) => {
-            println!("Fetched prices: {:?}", prices);
+            ic_cdk::println!("Fetched prices: {:?}", prices);
             
             let btc_price = prices.get("BTC/USD").unwrap();
             let eth_price = prices.get("ETH/USD").unwrap();
             
-            (btc_price.clone(), eth_price.clone())
+            btc_price.clone()
         }
         Err(err) => {
-            eprintln!("Error fetching prices: {}", err);
+            ic_cdk::println!("Error fetching prices: {}", err);
     
-            (0.0, 0.0)
+            0.0
         }
     }
 }

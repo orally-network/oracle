@@ -8,20 +8,20 @@ use crate::*;
 
 pub const CYCLES_TO_SEND: u64 = 10_000_000_000;
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug)]
 pub enum AssetClass { Cryptocurrency, FiatCurrency }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug)]
 pub struct Asset { pub(crate) class: AssetClass, pub(crate) symbol: String }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug)]
 pub struct GetExchangeRateRequest {
     pub(crate) timestamp: Option<u64>,
     pub(crate) quote_asset: Asset,
     pub(crate) base_asset: Asset,
 }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug)]
 pub struct ExchangeRateMetadata {
     decimals: u32,
     forex_timestamp: Option<u64>,
@@ -32,7 +32,7 @@ pub struct ExchangeRateMetadata {
     quote_asset_num_queried_sources: u64,
 }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug)]
 pub struct ExchangeRate {
     metadata: ExchangeRateMetadata,
     pub(crate) rate: u64,
@@ -41,7 +41,7 @@ pub struct ExchangeRate {
     base_asset: Asset,
 }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug)]
 pub enum ExchangeRateError {
     AnonymousPrincipalNotAllowed,
     CryptoQuoteAssetNotFound,
@@ -61,7 +61,7 @@ pub enum ExchangeRateError {
     Pending,
 }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug)]
 pub enum GetExchangeRateResult { Ok(ExchangeRate), Err(ExchangeRateError) }
 
 pub struct SERVICE(pub Principal);

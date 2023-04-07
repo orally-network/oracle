@@ -47,13 +47,20 @@ pub fn get_exchange_rate_canister_principal() -> String {
 }
 
 #[update]
-pub fn add_pair(pair: Pair) {
+pub fn add_pair(pair_id: String) {
     validate_caller();
     
-    // let assets: Vec<&str> = pair.split('/').collect();
-    // if assets.len() != 2 {
-    //     return Err(format!("Invalid trading pair format: {}", pair));
-    // }
+    let assets: Vec<&str> = pair_id.split('/').collect();
+    if assets.len() != 2 {
+        ic_cdk::trap(&format!("Invalid trading pair format: {}", pair_id));
+    }
+    
+    let pair = Pair {
+        id: pair_id.clone(),
+        base: assets[0].to_string(),
+        quote: assets[1].to_string(),
+        rate_data: None,
+    };
     
     STATE.with(|state| {
         state.borrow_mut().pairs.push(pair);

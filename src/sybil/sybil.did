@@ -1,9 +1,16 @@
+type RateData = record {
+    rate: nat64;
+    timestamp: nat64;
+    decimals: nat32;
+    base_asset_num_received_rates: nat64;
+    base_asset_num_queried_sources: nat64;
+};
+
 type CustomPair = record {
     id: text;
     base: text;
     quote: text;
-    price: nat64;
-    timestamp: nat64;
+    rate_data: opt RateData;
     sources: vec text;
 };
 
@@ -13,8 +20,7 @@ type Pair = record {
     id: text;
     base: text;
     quote: text;
-    price: nat64;
-    timestamp: nat64;
+    rate_data: opt RateData;
 };
 
 type Pairs = vec Pair;
@@ -33,7 +39,7 @@ service : {
     add_custom_pair: (CustomPair) -> ();
     remove_custom_pair: (text) -> ();
     get_custom_pairs: () -> (CustomPairs);
-    add_pair: (Pair) -> ();
+    add_pair: (text) -> ();
     remove_pair: (text) -> ();
     get_pairs: () -> (Pairs);
     add_chain: (Chain) -> ();

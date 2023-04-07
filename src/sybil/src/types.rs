@@ -2,7 +2,7 @@ use crate::*;
 
 #[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
 pub struct RateData {
-    pub price: u64,
+    pub rate: u64,
     pub timestamp: u64,
     pub decimals: u32,
     pub base_asset_num_received_rates: u64,

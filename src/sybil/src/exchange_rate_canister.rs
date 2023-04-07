@@ -23,20 +23,20 @@ pub struct GetExchangeRateRequest {
 
 #[derive(CandidType, Deserialize, Debug)]
 pub struct ExchangeRateMetadata {
-    decimals: u32,
+    pub decimals: u32,
     forex_timestamp: Option<u64>,
     quote_asset_num_received_rates: u64,
-    base_asset_num_received_rates: u64,
-    base_asset_num_queried_sources: u64,
+    pub base_asset_num_received_rates: u64,
+    pub base_asset_num_queried_sources: u64,
     standard_deviation: u64,
     quote_asset_num_queried_sources: u64,
 }
 
 #[derive(CandidType, Deserialize, Debug)]
 pub struct ExchangeRate {
-    metadata: ExchangeRateMetadata,
+    pub metadata: ExchangeRateMetadata,
     pub(crate) rate: u64,
-    timestamp: u64,
+    pub timestamp: u64,
     quote_asset: Asset,
     base_asset: Asset,
 }

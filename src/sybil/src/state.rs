@@ -50,6 +50,11 @@ pub fn get_exchange_rate_canister_principal() -> String {
 pub fn add_pair(pair: Pair) {
     validate_caller();
     
+    // let assets: Vec<&str> = pair.split('/').collect();
+    // if assets.len() != 2 {
+    //     return Err(format!("Invalid trading pair format: {}", pair));
+    // }
+    
     STATE.with(|state| {
         state.borrow_mut().pairs.push(pair);
     });

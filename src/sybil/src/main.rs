@@ -26,7 +26,7 @@ use std::cell::{RefCell};
 use std::time::Duration;
 use orally_shared;
 
-use types::{Chain, Chains, Pair, Pairs, CustomPair, CustomPairs};
+use types::{Chain, Chains, Pair, Pairs, CustomPair, CustomPairs, RateData};
 use state::{STATE, State};
 mod types;
 

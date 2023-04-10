@@ -13,19 +13,21 @@ contract MerkleProofVerifier {
     function hashAssetData(
         string memory symbol,
         uint64 price,
-        uint64 timestamp
+        uint64 timestamp,
+        uint64 decimals
     ) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(symbol, price, timestamp));
+        return keccak256(abi.encodePacked(symbol, price, timestamp, decimals));
     }
 
     function verifyProof(
         bytes32[] memory proof,
-        bytes32 root,
         string memory symbol,
         uint64 price,
-        uint64 timestamp
-    ) public pure returns (bool) {
-        bytes32 leaf = hashAssetData(symbol, price, timestamp);
+        uint64 timestamp,
+        uint64 decimals
+    ) public view returns (bool) {
+        bytes32 leaf = hashAssetData(symbol, price, timestamp, decimals);
+
         return MerkleProof.verify(proof, root, leaf);
     }
 }

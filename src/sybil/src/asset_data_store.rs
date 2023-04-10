@@ -12,6 +12,7 @@ pub struct AssetData {
     symbol: String,
     price: u64,
     timestamp: u64,
+    decimals: u64,
 }
 
 impl AssetData {
@@ -20,6 +21,7 @@ impl AssetData {
         buffer.extend_from_slice(self.symbol.as_bytes());
         buffer.extend_from_slice(&self.price.to_be_bytes());
         buffer.extend_from_slice(&self.timestamp.to_be_bytes());
+        buffer.extend_from_slice(&self.decimals.to_be_bytes());
         
         Keccak256Algorithm::hash(&buffer)
     }
@@ -127,26 +129,31 @@ mod tests {
                 symbol: "LTC".to_string(),
                 price: 22,
                 timestamp: 1_000_003,
+                decimals: 2,
             },
             AssetData {
                 symbol: "BTC".to_string(),
                 price: 45000,
                 timestamp: 1_000_000,
+                decimals: 2,
             },
             AssetData {
                 symbol: "ICP".to_string(),
                 price: 10,
                 timestamp: 1_000_009,
+                decimals: 2,
             },
             AssetData {
                 symbol: "ETH".to_string(),
                 price: 3000,
                 timestamp: 1000000,
+                decimals: 2,
             },
             AssetData {
                 symbol: "WWW".to_string(),
                 price: 300,
                 timestamp: 1_000_010,
+                decimals: 2,
             },
         ]
     }

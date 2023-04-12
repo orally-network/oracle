@@ -33,7 +33,7 @@ fn validate_caller() -> () {
 }
 
 #[update]
-pub fn set_exchange_rate_canister_principal(new_principal: String) {
+pub fn set_exchange_rate_canister(new_principal: String) {
     validate_caller();
     
     STATE.with(|state| {
@@ -42,7 +42,7 @@ pub fn set_exchange_rate_canister_principal(new_principal: String) {
 }
 
 #[query]
-pub fn get_exchange_rate_canister_principal() -> String {
+pub fn get_exchange_rate_canister() -> String {
     STATE.with(|state| state.borrow().exchange_rate_canister.clone())
 }
 

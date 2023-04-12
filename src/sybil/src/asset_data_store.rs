@@ -9,10 +9,10 @@ type Hash = [u8; 32];
 
 #[derive(Clone, Debug, Serialize, SerdeDeserialize, CandidType, PartialEq)]
 pub struct AssetData {
-    symbol: String,
-    price: u64,
-    timestamp: u64,
-    decimals: u64,
+    pub symbol: String,
+    pub price: u64,
+    pub timestamp: u64,
+    pub decimals: u64,
 }
 
 impl AssetData {
@@ -72,7 +72,17 @@ impl AssetDataStore {
         }
         
         self.merkle_tree.append(&mut batch_data);
+        // self.merkle_tree.commit();
+    }
+    
+    pub fn commit(&mut self) {
         self.merkle_tree.commit();
+    }
+    
+    pub fn clear(&mut self) {
+        self.merkle_tree.clear();
+        self.data_store.clear();
+        self.symbol_index.clear();
     }
     
     // todo: get_asset_data_batch
@@ -82,6 +92,18 @@ impl AssetDataStore {
     
     pub fn get_root(&self) -> Option<Hash> {
         self.merkle_tree.root()
+    }
+    
+    pub fn get_root_hex(&self) -> Option<String> {
+        self.merkle_tree.root_hex()
+    }
+    
+    pub fn get_uncommitted_root(&self) -> Option<Hash> {
+        self.merkle_tree.uncommitted_root()
+    }
+    
+    pub fn get_uncommitted_root_hex(&self) -> Option<String> {
+        self.merkle_tree.uncommitted_root_hex()
     }
     
     // todo: implement generate_proof_batch
@@ -94,6 +116,12 @@ impl AssetDataStore {
         
         // Some(self.merkle_tree.proof(&[*index]).proof_hashes()[0])
         Some(self.merkle_tree.proof(&[*index]).to_bytes())
+    }
+    
+    pub fn generate_proof_hex(&self, symbol: &str) -> Option<Vec<String>> {
+        let index = self.symbol_index.get(symbol)?;
+        
+        Some(self.merkle_tree.proof(&[*index]).proof_hashes_hex().clone())
     }
     
     pub fn verify_proof(&self, proof_hashes: Vec<u8>, root: Hash, symbol: &str) -> Option<bool> {

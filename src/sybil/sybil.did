@@ -34,8 +34,8 @@ type Chain = record {
 type Chains = vec Chain;
 
 service : {
-    set_exchange_rate_canister_principal: (text) -> ();
-    get_exchange_rate_canister_principal: () -> (text);
+    set_exchange_rate_canister: (text) -> ();
+    get_exchange_rate_canister: () -> (text);
     add_custom_pair: (CustomPair) -> ();
     remove_custom_pair: (text) -> ();
     get_custom_pairs: () -> (CustomPairs);

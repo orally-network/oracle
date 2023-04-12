@@ -9,12 +9,13 @@ pub mod exchange_rate_canister {
     include!("exchange_rate_canister.rs");
 }
 
-async fn fetch_common_asset_prices(
+pub async fn fetch_common_asset_prices(
     service: &exchange_rate_canister::SERVICE,
     pairs: Pairs,
 ) -> Result<Pairs, String> {
     let mut pairs_with_prices: Pairs = Pairs::new();
     
+    // todo: make it parallel
     for mut pair in pairs {
         let request = exchange_rate_canister::GetExchangeRateRequest {
             timestamp: None,

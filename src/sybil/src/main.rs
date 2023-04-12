@@ -27,7 +27,7 @@ use std::time::Duration;
 use orally_shared;
 
 use types::{Chain, Chains, Pair, Pairs, CustomPair, CustomPairs, RateData};
-use state::{STATE, State};
+use state::{STATE, State, };
 mod types;
 
 mod price_fetcher;
@@ -36,6 +36,7 @@ mod exchange_rate_canister;
 mod asset_data_store;
 mod state;
 mod migration;
+mod timer;
 
 #[init]
 fn init() {

@@ -47,4 +47,6 @@ service : {
     get_chains: () -> (Chains);
     
     execute_fetch_common_asset_prices: () -> (nat64);
+
+    test_sending_transaction: (text) -> (vec text);
 }

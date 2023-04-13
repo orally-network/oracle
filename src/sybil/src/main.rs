@@ -21,6 +21,7 @@ use ic_web3::{
     ic::{get_eth_addr, KeyInfo},
     futures::TryFutureExt,
 };
+use std::str::FromStr;
 
 use std::cell::{RefCell};
 use std::time::Duration;
@@ -37,6 +38,7 @@ mod asset_data_store;
 mod state;
 mod migration;
 mod timer;
+mod processing;
 
 #[init]
 fn init() {

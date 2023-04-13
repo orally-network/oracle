@@ -80,9 +80,9 @@ impl AssetDataStore {
     }
     
     pub fn clear(&mut self) {
-        self.merkle_tree.clear();
-        self.data_store.clear();
-        self.symbol_index.clear();
+        self.merkle_tree = MerkleTree::new();
+        self.data_store = HashMap::new();
+        self.symbol_index = HashMap::new();
     }
     
     // todo: get_asset_data_batch

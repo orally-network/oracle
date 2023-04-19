@@ -203,6 +203,7 @@ mod tests {
         let data = create_sample_data();
         
         store.add_batch_asset_data(data.clone());
+        store.commit();
         
         let root = store.get_root().unwrap();
         

@@ -19,6 +19,29 @@ thread_local! {
     pub static STATE: RefCell<State> = RefCell::new(State::new());
 }
 
+// fn is_owner() -> Result<(), String> {
+//     STATE.with(|s| {
+//         let state = s.borrow();
+//         if state.owner == ic_cdk::api::caller() {
+//             Ok(())
+//         } else {
+//             Err("unauthorized".to_string())
+//         }
+//     })
+// }
+// 
+// fn is_authorized() -> Result<(), String> {
+//     STATE.with(|s| {
+//         let state = s.borrow();
+//         let caller = ic_cdk::api::caller();
+//         if state.owner == caller || state.controllers.contains(&caller){
+//             Ok(())
+//         } else {
+//             Err("unauthorized".to_string())
+//         }
+//     })
+// }
+
 fn validate_caller() -> () {
     let caller = ic_cdk::api::caller();
     

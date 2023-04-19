@@ -1,11 +1,13 @@
 use ic_web3::{
     contract::{Contract, Options},
     ethabi::ethereum_types::{U64, U256},
+    ethabi::{Token, ParamType},
     types::{Address, TransactionParameters, BlockId, BlockNumber, TransactionReceipt},
     transports::{ICHttp},
     Web3,
     ic::{get_eth_addr, KeyInfo},
 };
+use ic_web3::contract::tokens::Tokenizable;
 
 use crate::*;
 use crate::state::get_chains;
@@ -18,13 +20,21 @@ pub const KEY_NAME: &str = "dfx_test_key";
 
 pub const ABI: &[u8] = include_bytes!("./evm/abi.json");
 
+fn string_to_bytes32(s: &str) -> [u8; 32] {
+    let mut bytes = [0u8; 32];
+    let string_bytes = s.as_bytes();
+    let len = string_bytes.len().min(32);
+    bytes[..len].copy_from_slice(&string_bytes[..len]);
+    bytes
+}
+
 pub async fn send_signed_transaction(
     chain: Chain,
     root_hash: String,
 ) -> Result<String, String> {
-    // ecdsa key info
+    // ecdsa key info 
     let key_info = KeyInfo{
-        derivation_path: vec![],
+        derivation_path: vec![ic_cdk::id().as_slice().to_vec()],
         key_name: KEY_NAME.to_string(),
         proxy_canister_id: None,
         ecdsa_sign_cycles: Some(ECDSA_SIGN_CYCLES),
@@ -46,7 +56,8 @@ pub async fn send_signed_transaction(
         format!("init contract failed: {:?}", e)
     })?;
     
-    let execution_address = get_eth_addr(key_info.proxy_canister_id, key_info.clone())
+    // let execution_address = get_eth_addr(key_info.proxy_canister_id, key_info.clone())
+    let execution_address = get_eth_addr(Some(ic_cdk::id()), key_info.clone())
         .await
         .map_err(|e| {
             canistergeek_ic_rust::logger::log_message(format!("get execution_address eth addr failed: {}", e));
@@ -94,15 +105,30 @@ pub async fn send_signed_transaction(
         op.nonce = Some(tx_count);
         op.gas_price = Some(gas_price);
         // todo: calculate it
-        // op.gas = Some(U256::from(100000));
+        op.gas = Some(U256::from(100000));
         op.transaction_type = Some(U64::from(0)) // lagacy. use 2 for eip-1559 (some l2 doesn't support it)
     });
     
-    ic_cdk::println!("Sybil-light: gas price: {}, tx_count: {}, chain_id: {}", gas_price, tx_count, chain.chain_id);
+    ic_cdk::println!("Sybil-light: gas price: {}, tx_count: {}, chain_id: {}, root_hash: {}", gas_price, tx_count, chain.chain_id, root_hash);
     canistergeek_ic_rust::logger::log_message(format!("Sybil-light: gas price: {}, tx_count: {}, chain_id: {}", gas_price, tx_count, chain.chain_id));
     
-    let receipt: TransactionReceipt = contract
-        .signed_call_with_confirmations("setRoot", root_hash, options, execution_address.to_string(), 3, key_info, chain.chain_id)
+    // let receipt: TransactionReceipt = contract
+    //     .signed_call_with_confirmations("setRoot", (root_hash.to_string(),), options, execution_address.to_string(), 3, key_info, chain.chain_id)
+    //     .await
+    //     .map_err(|e| {
+    //         canistergeek_ic_rust::logger::log_message(format!("sign and send tx failed: {}, contract: {}", e, chain.contract_address));
+    //         ic_cdk::println!("sign and send tx failed: {}, contract: {}", e, chain.contract_address);
+    //         ic_cdk::trap(&*format!("sign and send tx failed failed: {}, contract: {}", e, chain.contract_address));
+    //         format!("sign and send tx failed failed: {}, contract: {}", e, chain.contract_address)
+    //     })?;
+    // 
+    // ic_cdk::println!("txhash: {}, contract: {}, receipt: {:?}", hex::encode(receipt.transaction_hash), chain.contract_address, receipt);
+    // canistergeek_ic_rust::logger::log_message(format!("txhash: {}, contract: {}, receipt: {:?}", hex::encode(receipt.transaction_hash), chain.contract_address, receipt));
+    // 
+    // Ok(hex::encode(receipt.transaction_hash))
+    
+    let txhash = contract
+        .signed_call("setRoot", (string_to_bytes32(&*root_hash),), options, hex::encode(execution_address), key_info, chain.chain_id)
         .await
         .map_err(|e| {
             canistergeek_ic_rust::logger::log_message(format!("sign and send tx failed: {}, contract: {}", e, chain.contract_address));
@@ -111,10 +137,9 @@ pub async fn send_signed_transaction(
             format!("sign and send tx failed failed: {}, contract: {}", e, chain.contract_address)
         })?;
     
-    ic_cdk::println!("txhash: {}, contract: {}, receipt: {:?}", hex::encode(receipt.transaction_hash), chain.contract_address, receipt);
-    canistergeek_ic_rust::logger::log_message(format!("txhash: {}, contract: {}, receipt: {:?}", hex::encode(receipt.transaction_hash), chain.contract_address, receipt));
+    ic_cdk::println!("txhash: {}, contract: {}", hex::encode(txhash), chain.contract_address);
     
-    Ok(hex::encode(receipt.transaction_hash))
+    Ok(hex::encode(txhash))
 }
 
 pub async fn send_transactions(chains: Chains, root_hash: String) -> Result<Vec<String>, String> {

@@ -4,10 +4,23 @@ use serde::{Deserialize as SerdeDeserialize, Serialize};
 use std::collections::HashMap;
 use sha3::{Digest, Keccak256};
 use hex;
+use ic_web3::ethabi::{
+    encode, Token,
+    ethereum_types::{U256}
+};
 
-type Hash = [u8; 32];
+pub type Hash = [u8; 32];
 
-#[derive(Clone, Debug, Serialize, SerdeDeserialize, CandidType, PartialEq)]
+#[derive(Clone, Default)]
+struct MerkleTreeC(MerkleTree<Keccak256Algorithm>);
+
+impl MerkleTreeC {
+    fn new() -> Self {
+        MerkleTreeC(MerkleTree::new())
+    }
+}
+
+#[derive(Clone, Debug, Default, Serialize, CandidType, SerdeDeserialize, PartialEq)]
 pub struct AssetData {
     pub symbol: String,
     pub price: u64,
@@ -15,15 +28,36 @@ pub struct AssetData {
     pub decimals: u64,
 }
 
+const ASSET_DATA_LEAF_ENCODING: &[&str] = &["string", "uint64", "uint64", "uint64"];
+
 impl AssetData {
+    // fn to_leaf(&self) -> [u8; 32] {
+    //     let mut buffer = Vec::new();
+    //     buffer.extend_from_slice(self.symbol.as_bytes());
+    //     buffer.extend_from_slice(&self.price.to_be_bytes());
+    //     buffer.extend_from_slice(&self.timestamp.to_be_bytes());
+    //     buffer.extend_from_slice(&self.decimals.to_be_bytes());
+    //     
+    //     Keccak256Algorithm::hash(&buffer)
+    // }
+    
     fn to_leaf(&self) -> [u8; 32] {
-        let mut buffer = Vec::new();
-        buffer.extend_from_slice(self.symbol.as_bytes());
-        buffer.extend_from_slice(&self.price.to_be_bytes());
-        buffer.extend_from_slice(&self.timestamp.to_be_bytes());
-        buffer.extend_from_slice(&self.decimals.to_be_bytes());
+        let value = vec![
+            Token::String(self.symbol.clone()),
+            Token::Uint(U256::from(self.price)),
+            Token::Uint(U256::from(self.timestamp)),
+            Token::Uint(U256::from(self.decimals)),
+        ];
         
-        Keccak256Algorithm::hash(&buffer)
+        let encoded = encode(&value);
+        let mut hasher = Keccak256::new();
+        hasher.update(&encoded);
+        let inner_hash = hasher.finalize_reset();
+        
+        hasher.update(&inner_hash);
+        let outer_hash = hasher.finalize();
+        
+        outer_hash.into()
     }
 }
 
@@ -43,8 +77,9 @@ impl Hasher for Keccak256Algorithm {
 }
 
 // Define the AssetDataStore structure
+#[derive(Clone, Default)]
 pub struct AssetDataStore {
-    merkle_tree: MerkleTree<Keccak256Algorithm>,
+    merkle_tree: MerkleTreeC,
     data_store: HashMap<String, AssetData>,
     symbol_index: HashMap<String, usize>,
 }
@@ -52,7 +87,7 @@ pub struct AssetDataStore {
 impl AssetDataStore {
     pub fn new() -> Self {
         Self {
-            merkle_tree: MerkleTree::new(),
+            merkle_tree: MerkleTreeC::new(),
             data_store: HashMap::new(),
             symbol_index: HashMap::new(),
         }
@@ -71,16 +106,20 @@ impl AssetDataStore {
             batch_data.push(asset_data_hash);
         }
         
-        self.merkle_tree.append(&mut batch_data);
-        // self.merkle_tree.commit();
+        self.merkle_tree.0.append(&mut batch_data);
+        // self.merkle_tree.commit()
+    
+        // for (index, leaf) in self.merkle_tree.leaves().unwrap().iter().enumerate() {
+        //     println!("leaf[{}]: {:?}", index, hex::encode(leaf));
+        // }
     }
     
     pub fn commit(&mut self) {
-        self.merkle_tree.commit();
+        self.merkle_tree.0.commit();
     }
     
     pub fn clear(&mut self) {
-        self.merkle_tree = MerkleTree::new();
+        self.merkle_tree = MerkleTreeC::new();
         self.data_store = HashMap::new();
         self.symbol_index = HashMap::new();
     }
@@ -91,19 +130,19 @@ impl AssetDataStore {
     }
     
     pub fn get_root(&self) -> Option<Hash> {
-        self.merkle_tree.root()
+        self.merkle_tree.0.root()
     }
     
     pub fn get_root_hex(&self) -> Option<String> {
-        self.merkle_tree.root_hex()
+        self.merkle_tree.0.root_hex()
     }
     
     pub fn get_uncommitted_root(&self) -> Option<Hash> {
-        self.merkle_tree.uncommitted_root()
+        self.merkle_tree.0.uncommitted_root()
     }
     
     pub fn get_uncommitted_root_hex(&self) -> Option<String> {
-        self.merkle_tree.uncommitted_root_hex()
+        self.merkle_tree.0.uncommitted_root_hex()
     }
     
     // todo: implement generate_proof_batch
@@ -115,13 +154,13 @@ impl AssetDataStore {
         // println!("proof(1): {:?}", self.merkle_tree.proof(&[*index]).proof_hashes()[0]);
         
         // Some(self.merkle_tree.proof(&[*index]).proof_hashes()[0])
-        Some(self.merkle_tree.proof(&[*index]).to_bytes())
+        Some(self.merkle_tree.0.proof(&[*index]).to_bytes())
     }
     
     pub fn generate_proof_hex(&self, symbol: &str) -> Option<Vec<String>> {
         let index = self.symbol_index.get(symbol)?;
         
-        Some(self.merkle_tree.proof(&[*index]).proof_hashes_hex().clone())
+        Some(self.merkle_tree.0.proof(&[*index]).proof_hashes_hex().clone())
     }
     
     pub fn verify_proof(&self, proof_hashes: Vec<u8>, root: Hash, symbol: &str) -> Option<bool> {
@@ -142,7 +181,9 @@ impl AssetDataStore {
         println!("root_hex: {:?}", root_hex);
         
         println!("leaf: {:?}", hex::encode(leaf));
-        
+    
+        println!("data_store: {:?}, symbol_index: {:?}", self.data_store, self.symbol_index);
+    
         Some(proof.verify(root, &[*index], &[leaf], self.data_store.len()))
     }
 }
@@ -154,31 +195,31 @@ mod tests {
     fn create_sample_data() -> Vec<AssetData> {
         vec![
             AssetData {
-                symbol: "LTC".to_string(),
+                symbol: "LTC/USD".to_string(),
                 price: 22,
                 timestamp: 1_000_003,
                 decimals: 2,
             },
             AssetData {
-                symbol: "BTC".to_string(),
+                symbol: "BTC/USD".to_string(),
                 price: 45000,
                 timestamp: 1_000_000,
                 decimals: 2,
             },
             AssetData {
-                symbol: "ICP".to_string(),
+                symbol: "ICP/USD".to_string(),
                 price: 10,
                 timestamp: 1_000_009,
                 decimals: 2,
             },
             AssetData {
-                symbol: "ETH".to_string(),
+                symbol: "ETH/USD".to_string(),
                 price: 3000,
                 timestamp: 1000000,
                 decimals: 2,
             },
             AssetData {
-                symbol: "WWW".to_string(),
+                symbol: "WWW/USD".to_string(),
                 price: 300,
                 timestamp: 1_000_010,
                 decimals: 2,
@@ -193,8 +234,8 @@ mod tests {
         
         store.add_batch_asset_data(data.clone());
         
-        assert_eq!(store.get_asset_data("BTC"), Some(&data[1]));
-        assert_eq!(store.get_asset_data("ETH"), Some(&data[3]));
+        assert_eq!(store.get_asset_data("BTC/USD"), Some(&data[1]));
+        assert_eq!(store.get_asset_data("ETH/USD"), Some(&data[3]));
     }
     
     #[test]
@@ -207,22 +248,31 @@ mod tests {
         
         let root = store.get_root().unwrap();
         
-        let proof_btc = store.generate_proof("BTC").unwrap();
-        let proof_eth = store.generate_proof("ETH").unwrap();
-        let proof_icp = store.generate_proof("ICP").unwrap();
+        let proof_ltc = store.generate_proof("LTC/USD").unwrap();
+        let proof_btc = store.generate_proof("BTC/USD").unwrap();
+        let proof_eth = store.generate_proof("ETH/USD").unwrap();
+        let proof_icp = store.generate_proof("ICP/USD").unwrap();
+        let proof_www = store.generate_proof("WWW/USD").unwrap();
         
         assert_eq!(
-            store.verify_proof(proof_btc, root, "BTC"),
+            store.verify_proof(proof_ltc, root, "LTC/USD"),
             Some(true)
         );
         assert_eq!(
-            store.verify_proof(proof_eth, root, "ETH"),
+            store.verify_proof(proof_btc, root, "BTC/USD"),
             Some(true)
         );
         assert_eq!(
-            store.verify_proof(proof_icp, root, "ICP"),
+            store.verify_proof(proof_eth, root, "ETH/USD"),
+            Some(true)
+        );
+        assert_eq!(
+            store.verify_proof(proof_icp, root, "ICP/USD"),
+            Some(true)
+        );
+        assert_eq!(
+            store.verify_proof(proof_www, root, "WWW/USD"),
             Some(true)
         );
     }
 }
-

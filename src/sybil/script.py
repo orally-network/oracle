@@ -1,7 +1,0 @@
-from eth_account import Account
-
-raw_tx = "0xf88c80850b165100c3830186a0946d39f07311ffe509de23f360858570116239154680a4dab5f34032000000000000000000000000000000000000000000000000000000000000008301150aa0b84adc4e5a460830984f83315a9c76fa4f2f0b54a288de467395104a59c457dba0274a09ce3393a30098bf9ef648c0c1c4453fdf83abc4b3e409d4c22f72b3116f"
-decoded_tx = Account.decode_transaction(raw_tx)
-sender_address = Account.recover_transaction(raw_tx)
-
-print(f"Sender's address: {sender_address}")

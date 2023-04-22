@@ -33,6 +33,13 @@ type Chain = record {
 
 type Chains = vec Chain;
 
+type AssetData = record {
+    symbol: text;
+    price: nat64;
+    timestamp: nat64;
+    decimals: nat64;
+};
+
 service : {
     set_exchange_rate_canister: (text) -> ();
     get_exchange_rate_canister: () -> (text);
@@ -49,4 +56,8 @@ service : {
     execute_fetch_common_asset_prices: () -> (nat64);
 
     test_sending_transaction: (text) -> (vec text);
+
+    run_root_updater: (nat64) -> ();
+
+    get_asset_data_with_proof: (text) -> (opt record { AssetData; vec text });
 }

@@ -1,12 +1,16 @@
 // use ic_cdk::api::caller;
 use crate::*;
 
-#[derive(Clone, Debug, Default, CandidType, Serialize, Deserialize)]
+use timer::{fetch_prices_and_send_transactions};
+
+#[derive(Clone, Default)]
 pub struct State {
     pub exchange_rate_canister: String,
     pub chains: Chains,
     pub pairs: Pairs,
     pub custom_pairs: CustomPairs,
+    
+    pub asset_data_store: AssetDataStore,
 }
 
 impl State {
@@ -53,6 +57,37 @@ fn validate_caller() -> () {
     } else {
         ic_cdk::api::trap("Invalid caller");
     };
+}
+
+#[update]
+pub async fn run_root_updater(interval: u64) {
+    if interval < 60 {
+        ic_cdk::api::trap("Interval should be more than 60 seconds");
+    }
+    
+    validate_caller();
+    
+    // run_timer(interval);
+    fetch_prices_and_send_transactions().await;
+    
+    println!("Timer started");
+}
+
+// everyone can reach this function
+#[query]
+pub fn get_asset_data_with_proof(symbol: String) -> Option<(AssetData, Vec<String>)> { 
+    let asset_data_store = STATE.with(|state| state.borrow().asset_data_store.clone());
+    
+    let asset_data = match asset_data_store.get_asset_data(&symbol.clone()) {
+        Some(asset_data) => asset_data.clone(),
+        None => {
+            ic_cdk::trap(&format!("Asset data for symbol {} not found", symbol));
+        },
+    };
+        
+    let proof = asset_data_store.generate_proof_hex(&symbol.clone()).unwrap();
+        
+    Some((asset_data, proof))
 }
 
 #[update]
@@ -107,6 +142,13 @@ pub fn get_pairs() -> Pairs {
     STATE.with(|state| state.borrow().pairs.clone())
 }
 
+// internal
+pub fn set_pairs(_pairs: Pairs) {
+    STATE.with(|state| {
+        state.borrow_mut().pairs = _pairs;
+    });
+}
+
 #[update]
 pub fn add_custom_pair(custom_pair: CustomPair) {
     validate_caller();
@@ -157,4 +199,16 @@ pub fn remove_chain(chain_id: u64) {
 #[query]
 pub fn get_chains() -> Chains {
     STATE.with(|state| state.borrow().chains.clone())
+}
+
+// internal
+pub fn get_asset_data_store() -> AssetDataStore {
+    STATE.with(|state| state.borrow().asset_data_store.clone())
+}
+
+// internal
+pub fn update_asset_data_store(asset_data_store: AssetDataStore) {
+    STATE.with(|state| {
+        state.borrow_mut().asset_data_store = asset_data_store;
+    });
 }

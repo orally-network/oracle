@@ -1,12 +1,10 @@
 use std::time::Duration;
 use std::sync::{Arc, Mutex};
-use rs_merkle::{MerkleProof};
-use rs_merkle::utils::collections::{to_hex_string};
 
 use crate::*;
 use crate::state::{get_exchange_rate_canister, get_pairs, get_chains, get_asset_data_store, update_asset_data_store, set_pairs};
 use crate::price_fetcher::{exchange_rate_canister, fetch_common_asset_prices};
-use crate::asset_data_store::{AssetData, AssetDataStore, Keccak256Algorithm};
+use crate::asset_data_store::{AssetData, AssetDataStore};
 use crate::evm_interaction::{send_transactions};
 
 // pub struct Timer {
@@ -70,25 +68,19 @@ pub async fn fetch_prices_and_send_transactions() {
     ic_cdk::println!("asset_data: {:?}, pairs_with_prices.: {:?}", asset_data, pairs_with_prices.clone());
     
     // store prices in merkle tree
-    // self.asset_data_store.clear();
-    let mut asset_data_store = AssetDataStore::new();
-    asset_data_store.add_batch_asset_data(asset_data);
-    asset_data_store.commit();
+    let mut asset_data_store = AssetDataStore::new(asset_data);
     
-    // commit merkle tree after root applied to all chains
-    // let root = asset_data_store.get_uncommitted_root_hex().unwrap();
-    // let root = asset_data_store.get_uncommitted_root().unwrap();
-    let root = asset_data_store.get_root().unwrap();
+    let root = asset_data_store.get_root();
     
-    // -- test
-    let proof_btc = asset_data_store.generate_proof("ICP/USD").unwrap();
-    let proof = MerkleProof::<Keccak256Algorithm>::from_bytes(proof_btc.as_slice()).ok().unwrap();
-    
-    let data_btc = asset_data_store.get_asset_data("ICP/USD").unwrap();
-    
-    ic_cdk::println!("proof_hex: {:?}, data_btc: {:?}, root1: {:?}", proof.proof_hashes_hex(), data_btc, hex::encode(root.clone()));
-    // println!("proof: {:?}", proof_btc);
-    // --
+    // // -- test
+    // let proof_btc = asset_data_store.generate_proof("ICP/USD").unwrap();
+    // let proof = MerkleProof::<Keccak256Algorithm>::from_bytes(proof_btc.as_slice()).ok().unwrap();
+    // 
+    // let data_btc = asset_data_store.get_asset_data("ICP/USD").unwrap();
+    // 
+    // ic_cdk::println!("proof_hex: {:?}, data_btc: {:?}, root1: {:?}", proof.proof_hashes_hex(), data_btc, hex::encode(root.clone()));
+    // // println!("proof: {:?}", proof_btc);
+    // // --
     
     // send transactions to chains with new root hash
     let chains = get_chains();

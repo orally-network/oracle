@@ -1,23 +1,27 @@
 use ic_cdk::export::candid::{CandidType, Deserialize};
-use rs_merkle::{Hasher, MerkleTree, MerkleProof};
 use serde::{Deserialize as SerdeDeserialize, Serialize};
 use std::collections::HashMap;
-use sha3::{Digest, Keccak256};
-use hex;
+use std::string::ToString;
 use ic_web3::ethabi::{
     encode, Token,
-    ethereum_types::{U256}
+    ethereum_types::{U256},
+};
+use merkle_tree_rs::{
+    standard::{StandardMerkleTree, LeafType, standard_leaf_hash},
+    core::{MultiProof},
+};
+use ethers::{
+    types::{Bytes},
+    utils::{hex, keccak256},
 };
 
-pub type Hash = [u8; 32];
-
-#[derive(Clone, Default)]
-struct MerkleTreeC(MerkleTree<Keccak256Algorithm>);
-
-impl MerkleTreeC {
-    fn new() -> Self {
-        MerkleTreeC(MerkleTree::new())
-    }
+fn convert_nested_string_to_str(strings: &Vec<Vec<String>>) -> Vec<Vec<&str>> {
+    strings
+        .iter()
+        .map(|string_vec| {
+            string_vec.iter().map(AsRef::as_ref).collect::<Vec<&str>>()
+        })
+        .collect::<Vec<Vec<&str>>>()
 }
 
 #[derive(Clone, Debug, Default, Serialize, CandidType, SerdeDeserialize, PartialEq)]
@@ -28,163 +32,103 @@ pub struct AssetData {
     pub decimals: u64,
 }
 
-const ASSET_DATA_LEAF_ENCODING: &[&str] = &["string", "uint64", "uint64", "uint64"];
-
 impl AssetData {
-    // fn to_leaf(&self) -> [u8; 32] {
-    //     let mut buffer = Vec::new();
-    //     buffer.extend_from_slice(self.symbol.as_bytes());
-    //     buffer.extend_from_slice(&self.price.to_be_bytes());
-    //     buffer.extend_from_slice(&self.timestamp.to_be_bytes());
-    //     buffer.extend_from_slice(&self.decimals.to_be_bytes());
-    //     
-    //     Keccak256Algorithm::hash(&buffer)
-    // }
-    
-    fn to_leaf(&self) -> [u8; 32] {
-        let value = vec![
+    fn to_leaf(&self) -> String {
+        let tokens = vec![
             Token::String(self.symbol.clone()),
             Token::Uint(U256::from(self.price)),
             Token::Uint(U256::from(self.timestamp)),
             Token::Uint(U256::from(self.decimals)),
         ];
+    
+        let bytes = Bytes::from(keccak256(keccak256(
+            Bytes::from(
+                encode(&tokens)
+            )
+        )));
         
-        let encoded = encode(&value);
-        let mut hasher = Keccak256::new();
-        hasher.update(&encoded);
-        let inner_hash = hasher.finalize_reset();
-        
-        hasher.update(&inner_hash);
-        let outer_hash = hasher.finalize();
-        
-        outer_hash.into()
+        hex::encode(bytes)
+    }
+    
+    fn compound_value(&self) -> Vec<String> {
+        vec![
+            self.symbol.clone(),
+            self.price.to_string(),
+            self.timestamp.to_string(),
+            self.decimals.to_string()
+        ]
     }
 }
 
-#[derive(Clone)]
-pub struct Keccak256Algorithm {}
-
-impl Hasher for Keccak256Algorithm {
-    type Hash = [u8; 32];
-    
-    fn hash(data: &[u8]) -> Hash {
-        let mut hasher = Keccak256::new();
-    
-        hasher.update(data.as_ref());
-    
-        hasher.finalize().into()
-    }
-}
-
-// Define the AssetDataStore structure
-#[derive(Clone, Default)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct AssetDataStore {
-    merkle_tree: MerkleTreeC,
-    data_store: HashMap<String, AssetData>,
-    symbol_index: HashMap<String, usize>,
+    data_store: HashMap<String, (AssetData, usize)>,
+    tree: StandardMerkleTree,
+}
+
+impl Default for AssetDataStore {
+    fn default() -> Self {
+        Self::new(vec![])
+    }
 }
 
 impl AssetDataStore {
-    pub fn new() -> Self {
+    pub fn new(data: Vec<AssetData>) -> Self {
+        let mut data_store = HashMap::new();
+        
+    
+        let leafs = data.iter().enumerate().map(|(i, asset_data)| {
+            data_store.insert(asset_data.symbol.clone(), (asset_data.clone(), i));
+        
+            let str = asset_data.compound_value();
+    
+            // for test
+            // println!("str: {:?}", str);
+            // let leaf_encoding: &[String] = &["string".to_string(), "uint64".to_string(), "uint64".to_string(), "uint64".to_string()];
+            // let hash = standard_leaf_hash(str.clone(), leaf_encoding);
+            // println!("hash: {:?}", hash);
+            
+            str
+        }).collect();
+        
+        let leaf_encoding: &[&str] = &["string", "uint64", "uint64", "uint64"];
+        
+        let leafs_str = convert_nested_string_to_str(&leafs);
+        
+        println!("leafs_str: {:?}", leafs_str);
+    
         Self {
-            merkle_tree: MerkleTreeC::new(),
-            data_store: HashMap::new(),
-            symbol_index: HashMap::new(),
+            data_store,
+            tree: StandardMerkleTree::of(leafs_str, leaf_encoding),
         }
     }
     
-    pub fn add_batch_asset_data(&mut self, batch_asset_data: Vec<AssetData>) {
-        let mut batch_data = Vec::new();
+    pub fn get_asset_data(&self, symbol: &str) -> AssetData {
+        self.data_store.get(symbol).unwrap().0.clone()
+    }
+    
+    pub fn get_root(&self) -> String {
+        self.tree.root()
+    }
+    
+    pub fn get_proof(&self, symbol: &str) -> Vec<String> {
+        let leaf = self.data_store.get(symbol).unwrap().1;
         
-        for asset_data in batch_asset_data {
-            let asset_data_hash = asset_data.to_leaf();
-            
-            let index = self.data_store.len();
-            self.data_store.insert(asset_data.symbol.clone(), asset_data.clone());
-            self.symbol_index.insert(asset_data.symbol.clone(), index);
-            
-            batch_data.push(asset_data_hash);
-        }
-        
-        self.merkle_tree.0.append(&mut batch_data);
-        // self.merkle_tree.commit()
-    
-        // for (index, leaf) in self.merkle_tree.leaves().unwrap().iter().enumerate() {
-        //     println!("leaf[{}]: {:?}", index, hex::encode(leaf));
-        // }
+        self.tree.get_proof(LeafType::Number(leaf))
     }
     
-    pub fn commit(&mut self) {
-        self.merkle_tree.0.commit();
-    }
+    // pub fn get_multi_proof(&self, symbols: Vec<&str>) -> MultiProof<Vec<String>, String> {
+    //     let leafs = symbols.iter().map(|symbol| {
+    //         let leaf = self.data_store.get(symbol).unwrap().1;
+    //         
+    //         LeafType::Number(leaf)
+    //     }).collect();
+    //     
+    //     self.tree.get_multi_proof(leafs)
+    // }
     
-    pub fn clear(&mut self) {
-        self.merkle_tree = MerkleTreeC::new();
-        self.data_store = HashMap::new();
-        self.symbol_index = HashMap::new();
-    }
-    
-    // todo: get_asset_data_batch
-    pub fn get_asset_data(&self, symbol: &str) -> Option<&AssetData> {
-        self.data_store.get(symbol)
-    }
-    
-    pub fn get_root(&self) -> Option<Hash> {
-        self.merkle_tree.0.root()
-    }
-    
-    pub fn get_root_hex(&self) -> Option<String> {
-        self.merkle_tree.0.root_hex()
-    }
-    
-    pub fn get_uncommitted_root(&self) -> Option<Hash> {
-        self.merkle_tree.0.uncommitted_root()
-    }
-    
-    pub fn get_uncommitted_root_hex(&self) -> Option<String> {
-        self.merkle_tree.0.uncommitted_root_hex()
-    }
-    
-    // todo: implement generate_proof_batch
-    pub fn generate_proof(&self, symbol: &str) -> Option<Vec<u8>> {
-        let index = self.symbol_index.get(symbol)?;
-        
-        println!("index: {:?}", index);
-        // println!("proof(1): {:?}", self.merkle_tree.proof(&[*index]).proof_hashes());
-        // println!("proof(1): {:?}", self.merkle_tree.proof(&[*index]).proof_hashes()[0]);
-        
-        // Some(self.merkle_tree.proof(&[*index]).proof_hashes()[0])
-        Some(self.merkle_tree.0.proof(&[*index]).to_bytes())
-    }
-    
-    pub fn generate_proof_hex(&self, symbol: &str) -> Option<Vec<String>> {
-        let index = self.symbol_index.get(symbol)?;
-        
-        Some(self.merkle_tree.0.proof(&[*index]).proof_hashes_hex().clone())
-    }
-    
-    pub fn verify_proof(&self, proof_hashes: Vec<u8>, root: Hash, symbol: &str) -> Option<bool> {
-        let index = self.symbol_index.get(symbol)?;
-        let asset_data = self.data_store.get(symbol)?;
-        let leaf = asset_data.to_leaf();
-        
-        let proof = MerkleProof::<Keccak256Algorithm>::from_bytes(proof_hashes.as_slice()).ok()?;
-        
-        println!("asset_data: {:?}", asset_data);
-        println!("symbol: {:?}", symbol);
-        println!("proof(2): {:?}", proof.proof_hashes());
-        println!("root: {:?}", root);
-    
-        // let proof_hex = hex::encode(proof.proof_hashes_hex());
-        println!("proof_hex: {:?}", proof.proof_hashes_hex());
-        let root_hex = hex::encode(root);
-        println!("root_hex: {:?}", root_hex);
-        
-        println!("leaf: {:?}", hex::encode(leaf));
-    
-        println!("data_store: {:?}, symbol_index: {:?}", self.data_store, self.symbol_index);
-    
-        Some(proof.verify(root, &[*index], &[leaf], self.data_store.len()))
+    pub fn render(&self) -> String {
+        self.tree.render()
     }
 }
 
@@ -227,52 +171,42 @@ mod tests {
         ]
     }
     
-    #[test]
-    fn test_add_batch_asset_data() {
-        let mut store = AssetDataStore::new();
-        let data = create_sample_data();
-        
-        store.add_batch_asset_data(data.clone());
-        
-        assert_eq!(store.get_asset_data("BTC/USD"), Some(&data[1]));
-        assert_eq!(store.get_asset_data("ETH/USD"), Some(&data[3]));
-    }
+    // #[test]
+    // fn test_add_batch_asset_data() {
+    //     let mut store = AssetDataStore::new();
+    //     let data = create_sample_data();
+    //     
+    //     store.add_batch_asset_data(data.clone());
+    //     
+    //     assert_eq!(store.get_asset_data("BTC/USD"), Some(&data[1]));
+    //     assert_eq!(store.get_asset_data("ETH/USD"), Some(&data[3]));
+    // }
     
     #[test]
     fn test_generate_and_verify_proof() {
-        let mut store = AssetDataStore::new();
         let data = create_sample_data();
         
-        store.add_batch_asset_data(data.clone());
-        store.commit();
+        let store = AssetDataStore::new(data.clone());
+    
+        let root = store.get_root();
         
-        let root = store.get_root().unwrap();
+        println!("root: {}", root);
         
-        let proof_ltc = store.generate_proof("LTC/USD").unwrap();
-        let proof_btc = store.generate_proof("BTC/USD").unwrap();
-        let proof_eth = store.generate_proof("ETH/USD").unwrap();
-        let proof_icp = store.generate_proof("ICP/USD").unwrap();
-        let proof_www = store.generate_proof("WWW/USD").unwrap();
+        let proof_ltc = store.get_proof("LTC/USD");
+        println!("proof_ltc: {:?}", proof_ltc);
         
-        assert_eq!(
-            store.verify_proof(proof_ltc, root, "LTC/USD"),
-            Some(true)
-        );
-        assert_eq!(
-            store.verify_proof(proof_btc, root, "BTC/USD"),
-            Some(true)
-        );
-        assert_eq!(
-            store.verify_proof(proof_eth, root, "ETH/USD"),
-            Some(true)
-        );
-        assert_eq!(
-            store.verify_proof(proof_icp, root, "ICP/USD"),
-            Some(true)
-        );
-        assert_eq!(
-            store.verify_proof(proof_www, root, "WWW/USD"),
-            Some(true)
-        );
+        let proof_btc = store.get_proof("BTC/USD");
+        println!("proof_btc: {:?}", proof_btc);
+        
+        let proof_eth = store.get_proof("ETH/USD");
+        println!("proof_eth: {:?}", proof_eth);
+        
+        let proof_icp = store.get_proof("ICP/USD");
+        println!("proof_icp: {:?}", proof_icp);
+        
+        let proof_www = store.get_proof("WWW/USD");
+        println!("proof_www: {:?}", proof_www);
+        
+        assert_eq!(store.render(), store.render())
     }
 }

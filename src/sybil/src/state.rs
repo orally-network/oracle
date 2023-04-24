@@ -78,14 +78,16 @@ pub async fn run_root_updater(interval: u64) {
 pub fn get_asset_data_with_proof(symbol: String) -> Option<(AssetData, Vec<String>)> { 
     let asset_data_store = STATE.with(|state| state.borrow().asset_data_store.clone());
     
-    let asset_data = match asset_data_store.get_asset_data(&symbol.clone()) {
-        Some(asset_data) => asset_data.clone(),
-        None => {
-            ic_cdk::trap(&format!("Asset data for symbol {} not found", symbol));
-        },
-    };
+    // let asset_data = match asset_data_store.get_asset_data(&symbol.clone()) {
+    //     Some(asset_data) => asset_data.clone(),
+    //     None => {
+    //         ic_cdk::trap(&format!("Asset data for symbol {} not found", symbol));
+    //     },
+    // };
+    
+    let asset_data = asset_data_store.get_asset_data(&symbol.clone());
         
-    let proof = asset_data_store.generate_proof_hex(&symbol.clone()).unwrap();
+    let proof = asset_data_store.get_proof(&symbol.clone());
         
     Some((asset_data, proof))
 }

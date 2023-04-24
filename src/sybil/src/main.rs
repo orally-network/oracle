@@ -29,7 +29,7 @@ use orally_shared;
 
 use types::{Chain, Chains, Pair, Pairs, CustomPair, CustomPairs, RateData};
 use state::{STATE, State, };
-use timer::{run_timer};
+// use timer::{run_timer};
 use asset_data_store::{AssetDataStore, AssetData};
 mod types;
 

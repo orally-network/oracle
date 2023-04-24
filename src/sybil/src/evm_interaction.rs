@@ -8,11 +8,13 @@ use ic_web3::{
     ic::{get_eth_addr, KeyInfo},
 };
 use ic_web3::contract::tokens::Tokenizable;
-use rs_merkle::utils::collections::{to_hex_string};
+use ethers::{
+    types::{Bytes},
+    utils::{hex, keccak256},
+};
 
 use crate::*;
 use crate::state::get_chains;
-use crate::asset_data_store::{Hash};
 
 const ECDSA_SIGN_CYCLES: u64 = 30_000_000_000;
 
@@ -32,7 +34,7 @@ fn string_to_bytes32(s: &str) -> [u8; 32] {
 
 pub async fn send_signed_transaction(
     chain: Chain,
-    root_hash: Hash,
+    root_hash: String,
 ) -> Result<String, String> {
     // ecdsa key info 
     let key_info = KeyInfo{
@@ -111,7 +113,7 @@ pub async fn send_signed_transaction(
         op.transaction_type = Some(U64::from(0)) // lagacy. use 2 for eip-1559 (some l2 doesn't support it)
     });
     
-    ic_cdk::println!("Sybil-light: gas price: {}, tx_count: {}, chain_id: {}, root_hash: {}, root_hash2: {}", gas_price, tx_count, chain.chain_id, hex::encode(root_hash), to_hex_string(&root_hash));
+    ic_cdk::println!("Sybil-light: gas price: {}, tx_count: {}, chain_id: {}, root_hash: {}", gas_price, tx_count, chain.chain_id, root_hash);
     canistergeek_ic_rust::logger::log_message(format!("Sybil-light: gas price: {}, tx_count: {}, chain_id: {}", gas_price, tx_count, chain.chain_id));
     
     // let receipt: TransactionReceipt = contract
@@ -130,7 +132,7 @@ pub async fn send_signed_transaction(
     // Ok(hex::encode(receipt.transaction_hash))
     
     let txhash = contract
-        .signed_call("setRoot", (root_hash,), options, hex::encode(execution_address), key_info, chain.chain_id)
+        .signed_call("setRoot", (hex::decode(root_hash.split_at(2).1).unwrap(),), options, hex::encode(execution_address), key_info, chain.chain_id)
         .await
         .map_err(|e| {
             canistergeek_ic_rust::logger::log_message(format!("sign and send tx failed: {}, contract: {}", e, chain.contract_address));
@@ -144,7 +146,7 @@ pub async fn send_signed_transaction(
     Ok(hex::encode(txhash))
 }
 
-pub async fn send_transactions(chains: Chains, root_hash: Hash) -> Result<Vec<String>, String> {
+pub async fn send_transactions(chains: Chains, root_hash: String) -> Result<Vec<String>, String> {
     let mut futures = Vec::new();
     for chain in chains {
         futures.push(
@@ -172,7 +174,7 @@ pub async fn send_transactions(chains: Chains, root_hash: Hash) -> Result<Vec<St
 }
 
 #[update]
-pub async fn test_sending_transaction(root_hash: Hash) -> Result<Vec<String>, String> {
+pub async fn test_sending_transaction(root_hash: String) -> Result<Vec<String>, String> {
     let chains = get_chains();
     
     match send_transactions(chains, root_hash).await {

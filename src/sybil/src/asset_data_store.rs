@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use std::string::ToString;
 use ic_web3::ethabi::{
     encode, Token,
-    ethereum_types::{U256},
+    ethereum_types::{U256, H256},
 };
 use crate::merkle_tree::{
     standard::{StandardMerkleTree, LeafType, standard_leaf_hash},
@@ -69,7 +69,16 @@ pub struct AssetDataStore {
 
 impl Default for AssetDataStore {
     fn default() -> Self {
-        Self::new(vec![])
+        let default_asset_data = vec![
+            AssetData {
+                symbol: "symbol".to_string(),
+                price: 0,
+                timestamp: 0,
+                decimals: 0,
+            },
+        ];
+        
+        Self::new(default_asset_data)
     }
 }
 
@@ -105,7 +114,10 @@ impl AssetDataStore {
     }
     
     pub fn get_asset_data(&self, symbol: &str) -> AssetData {
-        self.data_store.get(symbol).unwrap().0.clone()
+        match self.data_store.get(symbol) {
+            Some(data) => data.0.clone(),
+            None => panic!("Asset data not found"),
+        }
     }
     
     pub fn get_root(&self) -> String {

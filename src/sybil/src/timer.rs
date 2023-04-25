@@ -30,7 +30,7 @@ fn map_pairs_to_asset_data(pairs: Pairs) -> Vec<AssetData> {
     asset_data
 }
 
-pub fn run_timer(interval: u64) {
+pub fn run_timer(interval: u64) -> TimerId {
     let timer_func = {
         move || ic_cdk::spawn(
             fetch_prices_and_send_transactions()
@@ -39,7 +39,7 @@ pub fn run_timer(interval: u64) {
     
     timer_func();
     
-    set_timer_interval(Duration::from_secs(interval), timer_func);
+    set_timer_interval(Duration::from_secs(interval), timer_func)
 }
 
 pub async fn fetch_prices_and_send_transactions() {

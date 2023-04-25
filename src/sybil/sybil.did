@@ -58,6 +58,7 @@ service : {
     test_sending_transaction: (text) -> (vec text);
 
     run_root_updater: (nat64) -> ();
+    stop_timer: () -> ();
 
     get_asset_data_with_proof: (text) -> (opt record { AssetData; vec text });
 }

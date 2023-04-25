@@ -55,6 +55,7 @@ pub fn keccak256<T: AsRef<[u8]>>(bytes: T) -> [u8; 32] {
 
 #[init]
 fn init() {
+    ic_cdk::println!("Initializing sybil");
     STATE.with(|state| {
         *state.borrow_mut() = State::new();
     });

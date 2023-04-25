@@ -1,7 +1,7 @@
 use ic_web3::{
     contract::{Contract, Options},
-    ethabi::ethereum_types::{U64, U256},
-    ethabi::{Token, ParamType},
+    ethabi::ethereum_types::{U64, U256, H256},
+    ethabi::{Token, ParamType, Hash},
     types::{Address, TransactionParameters, BlockId, BlockNumber, TransactionReceipt},
     transports::{ICHttp},
     Web3,
@@ -129,8 +129,10 @@ pub async fn send_signed_transaction(
     // 
     // Ok(hex::encode(receipt.transaction_hash))
     
+    ic_cdk::println!("root_hash.split_at(2).1: {}, hex::decode(root_hash.split_at(2).1).unwrap(): {:?}", root_hash.split_at(2).1, hex::decode(root_hash.split_at(2).1).unwrap());
+    
     let txhash = contract
-        .signed_call("setRoot", (hex::decode(root_hash.split_at(2).1).unwrap(),), options, hex::encode(execution_address), key_info, chain.chain_id)
+        .signed_call("setRoot", (Token::FixedBytes(hex::decode(root_hash.split_at(2).1).unwrap()),), options, hex::encode(execution_address), key_info, chain.chain_id)
         .await
         .map_err(|e| {
             canistergeek_ic_rust::logger::log_message(format!("sign and send tx failed: {}, contract: {}", e, chain.contract_address));

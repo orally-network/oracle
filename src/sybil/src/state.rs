@@ -1,7 +1,7 @@
 // use ic_cdk::api::caller;
 use crate::*;
 
-use timer::{fetch_prices_and_send_transactions};
+use timer::{fetch_prices_and_send_transactions, run_timer};
 
 #[derive(Clone, Default)]
 pub struct State {
@@ -11,6 +11,7 @@ pub struct State {
     pub custom_pairs: CustomPairs,
     
     pub asset_data_store: AssetDataStore,
+    pub timer_id: TimerId,
 }
 
 impl State {
@@ -67,10 +68,25 @@ pub async fn run_root_updater(interval: u64) {
     
     validate_caller();
     
-    // run_timer(interval);
-    fetch_prices_and_send_transactions().await;
+    let timer_id = run_timer(interval);
+    // fetch_prices_and_send_transactions().await;
+    
+    STATE.with(|state| {
+        state.borrow_mut().timer_id = timer_id;
+    });
     
     println!("Timer started");
+}
+
+#[update]
+pub fn stop_timer() {
+    validate_caller();
+    
+    STATE.with(|state| {
+        let timer_id = state.borrow().timer_id;
+    
+        clear_timer(timer_id);
+    });
 }
 
 // everyone can reach this function
@@ -214,3 +230,5 @@ pub fn update_asset_data_store(asset_data_store: AssetDataStore) {
         state.borrow_mut().asset_data_store = asset_data_store;
     });
 }
+
+

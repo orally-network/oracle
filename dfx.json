@@ -20,6 +20,11 @@
       "package": "pythia",
       "type": "rust"
     },
+    "sybil": {
+      "candid": "src/sybil/sybil.did",
+      "package": "sybil",
+      "type": "rust"
+    },
     "exchange_rate_canister": {
       "type": "custom",
       "candid": "exchange_rate_canister.did",

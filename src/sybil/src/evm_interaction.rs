@@ -17,8 +17,8 @@ use crate::state::get_chains;
 const ECDSA_SIGN_CYCLES: u64 = 30_000_000_000;
 
 // todo: change it to state or smth connected to environment
-pub const KEY_NAME: &str = "dfx_test_key";
-// const KEY_NAME: &str = "key_1";
+// pub const KEY_NAME: &str = "dfx_test_key";
+const KEY_NAME: &str = "key_1";
 
 pub const ABI: &[u8] = include_bytes!("./evm/abi.json");
 

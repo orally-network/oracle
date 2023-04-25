@@ -33,6 +33,7 @@ pub async fn fetch_common_asset_prices(
             Ok((result,)) => match result {
                 exchange_rate_canister::GetExchangeRateResult::Ok(exchange_rate) => {
                     ic_cdk::println!("Fetched exchange rate for {:?}: {:?}", pair, exchange_rate);
+                    canistergeek_ic_rust::logger::log_message(format!("Fetched exchange rate for {:?}: {:?}", pair, exchange_rate));
                     
                     let rate_data = RateData {
                         rate: exchange_rate.rate,
@@ -89,12 +90,14 @@ async fn execute_fetch_common_asset_prices() -> u64 {
     match fetch_common_asset_prices(&service, trading_pairs).await {
         Ok(prices) => {
             ic_cdk::println!("Fetched prices: {:?}", prices);
+            canistergeek_ic_rust::logger::log_message(format!("Fetched prices: {:?}", prices));
             
             // return btc price
             prices[0].rate_data.clone().unwrap().rate
         }
         Err(err) => {
             ic_cdk::println!("Error fetching prices: {}", err);
+            canistergeek_ic_rust::logger::log_message(format!("Error fetching prices: {}", err));
     
             0
         }

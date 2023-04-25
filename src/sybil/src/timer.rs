@@ -53,6 +53,7 @@ pub async fn fetch_prices_and_send_transactions() {
     let pairs_with_prices = match fetch_common_asset_prices(&service, pairs).await {
         Ok(prices) => {
             ic_cdk::println!("Fetched prices:! {:?}", prices);
+            canistergeek_ic_rust::logger::log_message(format!("Fetched prices: {:?}", prices));
             
             prices
         }
@@ -66,6 +67,7 @@ pub async fn fetch_prices_and_send_transactions() {
     let asset_data = map_pairs_to_asset_data(pairs_with_prices.clone());
     
     ic_cdk::println!("asset_data: {:?}, pairs_with_prices.: {:?}", asset_data, pairs_with_prices.clone());
+    canistergeek_ic_rust::logger::log_message(format!("asset_data: {:?}, pairs_with_prices.: {:?}", asset_data, pairs_with_prices.clone()));
     
     // store prices in merkle tree
     let mut asset_data_store = AssetDataStore::new(asset_data);
@@ -88,11 +90,15 @@ pub async fn fetch_prices_and_send_transactions() {
     let result_hashes = send_transactions(chains, root).await;
     
     ic_cdk::println!("Sent transactions: {:?}", result_hashes);
+    canistergeek_ic_rust::logger::log_message(format!("Sent transactions: {:?}", result_hashes));
     
     // commit merkle tree (only after transactions are sent and applied)
     // asset_data_store.commit();
     
     update_asset_data_store(asset_data_store);
+    
+    canistergeek_ic_rust::logger::log_message(format!("Collect metrics"));
+    canistergeek_ic_rust::monitor::collect_metrics();
 }
 
 // impl Timer {

@@ -76,6 +76,7 @@ pub async fn run_root_updater(interval: u64) {
     });
     
     println!("Timer started");
+    canistergeek_ic_rust::logger::log_message("Timer started".to_string());
 }
 
 #[update]
@@ -86,6 +87,7 @@ pub fn stop_timer() {
         let timer_id = state.borrow().timer_id;
     
         clear_timer(timer_id);
+        canistergeek_ic_rust::logger::log_message("Timer stopped".to_string());
     });
 }
 

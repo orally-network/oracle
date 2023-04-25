@@ -8,10 +8,8 @@ use ic_web3::{
     ic::{get_eth_addr, KeyInfo},
 };
 use ic_web3::contract::tokens::Tokenizable;
-use ethers::{
-    types::{Bytes},
-    utils::{hex, keccak256},
-};
+
+use hex;
 
 use crate::*;
 use crate::state::get_chains;

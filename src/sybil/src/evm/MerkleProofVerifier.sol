@@ -16,7 +16,7 @@ contract MerkleProofVerifier {
         uint64 timestamp,
         uint64 decimals
     ) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(symbol, price, timestamp, decimals));
+        return keccak256(bytes.concat(keccak256(abi.encode(symbol, price, timestamp, decimals))));
     }
 
     function verifyProof(

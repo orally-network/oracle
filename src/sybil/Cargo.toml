@@ -14,8 +14,6 @@ serde = "1.0.126"
 serde_bytes = "0.11.7"
 futures = "0.3.25"
 canistergeek_ic_rust = "0.3.1"
-siwe = { git = "https://github.com/domwoe/siwe-rs" }
 time = { version = "0.3.15", default-features = false }
-orally-shared = { path = "../orally-shared" }
-merkle-tree-rs = { git = "https://github.com/literallymarvellous/merkle-tree-rs" }
-ethers = "2.0.3"
+bytes = { verison = "1.4.0", features = ["serde"] }
+tiny-keccak = "2.0.2"

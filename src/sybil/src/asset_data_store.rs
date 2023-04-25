@@ -6,14 +6,15 @@ use ic_web3::ethabi::{
     encode, Token,
     ethereum_types::{U256},
 };
-use merkle_tree_rs::{
+use crate::merkle_tree::{
     standard::{StandardMerkleTree, LeafType, standard_leaf_hash},
     core::{MultiProof},
 };
-use ethers::{
-    types::{Bytes},
-    utils::{hex, keccak256},
-};
+use crate::{keccak256};
+use crate::bytesc::Bytes;
+
+// use bytes::Bytes;
+use hex;
 
 fn convert_nested_string_to_str(strings: &Vec<Vec<String>>) -> Vec<Vec<&str>> {
     strings

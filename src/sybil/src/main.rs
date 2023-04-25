@@ -1,4 +1,3 @@
-extern crate core;
 
 use ic_cdk::export::{
     candid,
@@ -22,10 +21,10 @@ use ic_web3::{
     futures::TryFutureExt,
 };
 use std::str::FromStr;
+use tiny_keccak::{Hasher, Keccak};
 
 use std::cell::{RefCell};
 use std::time::Duration;
-use orally_shared;
 
 use types::{Chain, Chains, Pair, Pairs, CustomPair, CustomPairs, RateData};
 use state::{STATE, State, };
@@ -41,6 +40,18 @@ mod state;
 mod migration;
 mod timer;
 mod processing;
+mod merkle_tree;
+mod bytesc;
+
+pub fn keccak256<T: AsRef<[u8]>>(bytes: T) -> [u8; 32] {
+    let mut output = [0u8; 32];
+    
+    let mut hasher = Keccak::v256();
+    hasher.update(bytes.as_ref());
+    hasher.finalize(&mut output);
+    
+    output
+}
 
 #[init]
 fn init() {

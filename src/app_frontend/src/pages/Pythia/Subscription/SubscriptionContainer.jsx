@@ -12,9 +12,6 @@ import Subscription from './Subscription';
 import NewSubscription from './NewSubscription';
 
 /*
-- deploy pythia to local replica [done]
-- finish with signing message [done]
-- finish with readable Subscription card 
 - implement NewSubscription card
 - use pythia subs 
 - implement subscribe

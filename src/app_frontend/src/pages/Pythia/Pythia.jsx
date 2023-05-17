@@ -62,7 +62,7 @@ const Pythia = () => {
 
   useEffect(() => {
     if (address) {
-      setAddressData(getLocalStorageAddress(address.toLowerCase(), PYTHIA_PREFIX));
+      setAddressData(getLocalStorageAddress(address, PYTHIA_PREFIX));
     }
   }, [address]);
   

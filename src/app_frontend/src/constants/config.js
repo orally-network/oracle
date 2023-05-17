@@ -2,7 +2,7 @@ import { canisterId as oracleFactoryCanisterId } from '../../../declarations/ora
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
-const HOST = isDevelopment ? 'http://127.0.0.1:8000' : 'https://mainnet.dfinity.network';
+const HOST = isDevelopment ? 'http://127.0.0.1:4943' : 'https://mainnet.dfinity.network';
 
 export default {
   oracleFactoryCanisterId,
@@ -13,4 +13,6 @@ export default {
   ALCHEMY_API_KEY: process.env.ALCHEMY_API_KEY,
   INFURA_API_KEY: process.env.INFURA_API_KEY,
   env: process.env.NODE_ENV,
+  
+  pythia_canister_id: isDevelopment ? 'be2us-64aaa-aaaaa-qaabq-cai' : '',
 };

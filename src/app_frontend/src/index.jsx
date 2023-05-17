@@ -71,23 +71,21 @@ const root = createRoot(container);
 import('./rollbar').then(() => {
   root.render(
     <ErrorBoundary>
-      <BrowserRouter>
-        <WagmiConfig client={client}>
-          <App />
+      <WagmiConfig client={client}>
+        <App />
 
-          <ToastContainer
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-          />
-        </WagmiConfig>
-      </BrowserRouter>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
+      </WagmiConfig>
     </ErrorBoundary>
   );
 });

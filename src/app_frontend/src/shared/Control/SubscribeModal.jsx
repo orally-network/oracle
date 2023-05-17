@@ -12,7 +12,7 @@ import styles from './Control.scss';
 
 const fileTypes = ["JSON"];
 
-const SubscribeModal = ({ isSubscribeModalOpen, setIsSubscribeModalOpen, addressData, oracle }) => {
+const SubscribeModal = ({ isSubscribeModalOpen, setIsSubscribeModalOpen, addressData, subscribe }) => {
   const [abi, setAbi] = useState(null);
   const [destinationAddress, setDestinationAddress] = useState('');
   const [methodName, setMethodName] = useState('');
@@ -29,13 +29,15 @@ const SubscribeModal = ({ isSubscribeModalOpen, setIsSubscribeModalOpen, address
     reader.readAsArrayBuffer(file);
   }, []);
 
-  const subscribe = useCallback(async () => {
+  const subscribeHandler = useCallback(async () => {
     setIsSubscribeModalOpen(false);
     
     console.log({ destinationAddress, methodName, abi: [...abi], addressData })
-    
+
+    // (chain_id: nat, contract_addr: text, method_abi: text, frequency: nat, is_random: bool)
     const res = await toast.promise(
-      oracle.subscribe(destinationAddress, methodName, [...abi], addressData.message, remove0x(addressData.signature)),
+      // oracle.subscribe(destinationAddress, methodName, [...abi], addressData.message, remove0x(addressData.signature)),
+      subscribe({ destinationAddress, methodName, abi: [...abi], msg: addressData.message, sig: remove0x(addressData.signature) }),
       {
         pending: `Subscribe ${destinationAddress}:${methodName} to oracle`,
         success: `Subscribed successfully`,
@@ -89,7 +91,7 @@ const SubscribeModal = ({ isSubscribeModalOpen, setIsSubscribeModalOpen, address
 
         <Button
           className={styles.subscribeBtn}
-          onClick={subscribe}
+          onClick={subscribeHandler}
         >
           Subscribe
         </Button>

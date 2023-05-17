@@ -75,6 +75,7 @@ module.exports = {
       Declarations: path.resolve(__dirname, './src/declarations/'),
       Shared: path.resolve(__dirname, './src/app_frontend/src/shared/'),
       Pages: path.resolve(__dirname, './src/app_frontend/src/pages/'),
+      OD: path.resolve(__dirname, './src/app_frontend/src/outerDeclarations/'),
     },
   },
   output: {
@@ -146,7 +147,7 @@ module.exports = {
   devServer: {
     proxy: {
       "/api": {
-        target: "http://127.0.0.1:8000",
+        target: "http://127.0.0.1:4943",
         changeOrigin: true,
         pathRewrite: {
           "^/api": "/api",

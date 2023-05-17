@@ -11,7 +11,7 @@ import styles from './Control.scss';
 
 const MIN_BALANCE = 0.1;
 
-const Control = ({ addressData, signMessage, chain, oracle }) => {
+const Control = ({ addressData, signMessage, chain, subscribe }) => {
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
   const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
   
@@ -78,7 +78,7 @@ const Control = ({ addressData, signMessage, chain, oracle }) => {
         isSubscribeModalOpen={isSubscribeModalOpen}
         setIsSubscribeModalOpen={setIsSubscribeModalOpen}
         addressData={addressData}
-        oracle={oracle}
+        subscribe={subscribe}
       />
     </div>
   )

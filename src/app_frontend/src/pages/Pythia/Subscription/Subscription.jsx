@@ -58,7 +58,20 @@ const Subscription = ({ sub, addressData, signMessage, subscribe }) => {
         </div>
       </div>
 
+      {is_random && (
+        <div className={styles.stat}>
+          <div className={styles.label}>
+            Data
+          </div>
+
+          <div className={styles.val}>
+            Random vector of bytes
+          </div>
+        </div>
+      )}
+
       <Control
+        subscribed
         addressData={addressData}
         signMessage={signMessage}
         chain={chain}

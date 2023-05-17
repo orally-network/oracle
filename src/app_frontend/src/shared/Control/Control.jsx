@@ -11,7 +11,8 @@ import styles from './Control.scss';
 
 const MIN_BALANCE = 0.1;
 
-const Control = ({ addressData, signMessage, chain, subscribe }) => {
+// todo: subscribed will have `stop` and `withdraw` methods
+const Control = ({ addressData, signMessage, chain, subscribe, subscribed }) => {
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
   const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
   
@@ -58,10 +59,10 @@ const Control = ({ addressData, signMessage, chain, subscribe }) => {
       
       <Button
         className={styles.subscribe}
-        disabled={executionBalance?.formatted < MIN_BALANCE}
+        disabled={executionBalance?.formatted < MIN_BALANCE || subscribed}
         onClick={() => setIsSubscribeModalOpen(true)}
       >
-        Subscribe
+        Subscribe{subscribed && 'd'}
       </Button>
 
       {isTopUpModalOpen && (

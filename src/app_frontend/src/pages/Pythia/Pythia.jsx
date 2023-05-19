@@ -40,9 +40,25 @@ const mockSubs = [
     is_random: true,
   },
 ];
-  
+
+const mockChains = [
+  {
+    chain_id: 5,
+  },
+  {
+    chain_id: 80001,
+  },
+  {
+    chain_id: 35443,
+  },
+  {
+    chain_id: 1313161555,
+  },
+]
+
 const Pythia = () => {
   const [subs, setSubs] = useState([]);
+  const [chains, setChains] = useState([]);
   const [addressData, setAddressData] = useState();
 
   const { address } = useAccount();
@@ -52,7 +68,9 @@ const Pythia = () => {
       return new Promise(resolve => {
         setTimeout(() => {
           setSubs(mockSubs);
-          resolve(mockSubs);
+          setChains(mockChains);
+          
+          resolve([mockSubs, mockChains]);
         }, 100);
       })
     };
@@ -71,7 +89,7 @@ const Pythia = () => {
       <>
         {subs.map((sub, i) => <Subscription key={i} sub={sub} addressData={addressData} setAddressData={setAddressData} />)}
 
-        <Subscription isNew addressData={addressData} setAddressData={setAddressData} />
+        <Subscription isNew addressData={addressData} setAddressData={setAddressData} chains={chains} />
       </>
     </div>
   );

@@ -12,7 +12,7 @@ import styles from './Control.scss';
 const MIN_BALANCE = 0.1;
 
 // todo: subscribed will have `stop` and `withdraw` methods
-const Control = ({ addressData, signMessage, chain, subscribe, subscribed }) => {
+const Control = ({ addressData, signMessage, chain, subscribe = () => {}, subscribed }) => {
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
   const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
   

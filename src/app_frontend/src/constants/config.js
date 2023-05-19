@@ -2,7 +2,7 @@ import { canisterId as oracleFactoryCanisterId } from '../../../declarations/ora
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
-const HOST = isDevelopment ? 'http://127.0.0.1:4943' : 'https://mainnet.dfinity.network';
+const HOST = isDevelopment ? 'http://127.0.0.1:8000' : 'https://mainnet.dfinity.network';
 
 export default {
   oracleFactoryCanisterId,

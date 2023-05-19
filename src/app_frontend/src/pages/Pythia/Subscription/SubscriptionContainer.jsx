@@ -17,7 +17,7 @@ import NewSubscription from './NewSubscription';
 - implement subscribe
  */
 
-const SubscriptionContainer = ({ isNew, sub, addressData, setAddressData }) => {
+const SubscriptionContainer = ({ isNew, sub, addressData, setAddressData, chains }) => {
   const { address } = useAccount();
   const { signMessageAsync } = useSignMessage();
 
@@ -54,9 +54,9 @@ const SubscriptionContainer = ({ isNew, sub, addressData, setAddressData }) => {
   }, [address, signMessageAsync, setAddressData, sub]);
   
   return isNew ? (
-    <NewSubscription addressData={addressData} />
+    <NewSubscription addressData={addressData} signMessage={signMessage} subscribe={() => {}} chains={chains} />
   ) : (
-    <Subscription sub={sub} addressData={addressData} signMessage={signMessage} subscribe={() => {}} />
+    <Subscription sub={sub} addressData={addressData} signMessage={signMessage} />
   );
 };
 

@@ -3,11 +3,12 @@ import React from 'react';
 import Card from 'Components/Card';
 import Control from 'Shared/Control';
 import { CHAINS_MAP } from 'Constants/chains';
+import ChainLogo from 'Shared/ChainLogo';
 
 import styles from './Subscription.scss';
 
 // todo: future options to stop, remove subscription or withdraw funds
-const Subscription = ({ sub, addressData, signMessage, subscribe }) => {
+const Subscription = ({ sub, addressData, signMessage }) => {
   const { chain_id, contract_addr, method_abi, frequency, is_random } = sub;
   
   const chain = CHAINS_MAP[chain_id];
@@ -19,8 +20,7 @@ const Subscription = ({ sub, addressData, signMessage, subscribe }) => {
     <Card className={styles.subscription}>
       <div className={styles.header}>
         <div className={styles.chain}>
-          {typeof chain.img === 'string' && <img className={styles.logo} src={chain.img} alt={chain.name} />}
-          {typeof chain.img !== 'string' && <chain.img className={styles.logo} />}
+          <ChainLogo chain={chain} />
 
           <div>{chain.name}</div>
         </div>
@@ -75,7 +75,6 @@ const Subscription = ({ sub, addressData, signMessage, subscribe }) => {
         addressData={addressData}
         signMessage={signMessage}
         chain={chain}
-        subscribe={subscribe}
       />
     </Card>
   )

@@ -12,7 +12,7 @@ import styles from './Control.scss';
 const MIN_BALANCE = 0.1;
 
 // todo: subscribed will have `stop` and `withdraw` methods
-const Control = ({ addressData, signMessage, chain, subscribe = () => {}, subscribed }) => {
+const Control = ({ addressData, signMessage, chain, subscribe = () => {}, subscribed, disabled }) => {
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
   const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
   
@@ -45,7 +45,7 @@ const Control = ({ addressData, signMessage, chain, subscribe = () => {}, subscr
           </div>
           
           <div className={styles.balance}>
-            {Number(executionBalance?.formatted).toFixed(3) ?? '-'} {chain.nativeCurrency.symbol}
+            {Number(executionBalance?.formatted).toFixed(3) ?? '-'} {chain?.nativeCurrency?.symbol}
           </div>
         </div>
 
@@ -59,8 +59,8 @@ const Control = ({ addressData, signMessage, chain, subscribe = () => {}, subscr
       
       <Button
         className={styles.subscribe}
-        disabled={executionBalance?.formatted < MIN_BALANCE || subscribed}
-        onClick={() => setIsSubscribeModalOpen(true)}
+        disabled={executionBalance?.formatted < MIN_BALANCE || subscribed || disabled}
+        onClick={subscribe}
       >
         Subscribe{subscribed && 'd'}
       </Button>
@@ -75,12 +75,12 @@ const Control = ({ addressData, signMessage, chain, subscribe = () => {}, subscr
         />
       )}
       
-      <SubscribeModal
-        isSubscribeModalOpen={isSubscribeModalOpen}
-        setIsSubscribeModalOpen={setIsSubscribeModalOpen}
-        addressData={addressData}
-        subscribe={subscribe}
-      />
+      {/*<SubscribeModal*/}
+      {/*  isSubscribeModalOpen={isSubscribeModalOpen}*/}
+      {/*  setIsSubscribeModalOpen={setIsSubscribeModalOpen}*/}
+      {/*  addressData={addressData}*/}
+      {/*  subscribe={subscribe}*/}
+      {/*/>*/}
     </div>
   )
 };

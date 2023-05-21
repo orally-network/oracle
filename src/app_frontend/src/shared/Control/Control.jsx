@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useAccount, useBalance } from 'wagmi';
 
 import Connect from 'Shared/Connect';
@@ -22,6 +22,10 @@ const Control = ({ addressData, signMessage, chain, subscribe = () => {}, subscr
     chainId: chain?.id,
   });
   
+  const signMessageHandler = useCallback(() => {
+    return signMessage(chain?.id);
+  }, [chain]);
+  
   if (!address) {
     return <Connect />;
   }
@@ -29,7 +33,7 @@ const Control = ({ addressData, signMessage, chain, subscribe = () => {}, subscr
   if (!addressData) {
     return (
       <Button
-        onClick={signMessage}
+        onClick={signMessageHandler}
       >
         Sign message
       </Button>

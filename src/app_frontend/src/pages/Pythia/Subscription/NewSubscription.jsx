@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import Select, { components } from 'react-select';
+import { toast } from 'react-toastify';
 
 import Card from 'Components/Card';
 import Control from 'Shared/Control';
@@ -7,6 +8,7 @@ import { CHAINS_MAP } from 'Constants/chains';
 import ChainLogo from 'Shared/ChainLogo';
 import Input from 'Components/Input';
 import Button from 'Components/Button';
+import logger from 'Utils/logger';
 
 import styles from './Subscription.scss';
 
@@ -58,10 +60,10 @@ const Option = (props) => {
 
 const getStrMethodArgs = (isRandom, isFeed) => {
   if (isRandom) {
-    return '(bytes32)';
+    return '(uint64)';
   }
   if (isFeed) {
-    return '(string, uint256, uint256, uint256)';
+    return '(uint64)';
   }
   
   return '()';
@@ -78,28 +80,43 @@ const NewSubscription = ({ addressData, signMessage, subscribe, chains }) => {
   
   const chainOptions = useMemo(() => mapChainsToOptions(chains), [chains]);
   
-  const subscribeHandler = useCallback(() => {
-    subscribe({
-      chainId,
-      methodName,
-      addressToCall,
-      frequency,
-      isRandom,
-      feed,
-    });
+  const subscribeHandler = useCallback(async () => {
+    const res = await toast.promise(
+      subscribe({
+        chainId,
+        methodName: `${methodName}${getStrMethodArgs(isRandom, Boolean(feed))}`,
+        addressToCall,
+        frequency,
+        isRandom,
+        feed,
+      }),
+      {
+        pending: `Subscribe ${addressToCall}:${methodName} to Pythia`,
+        success: `Subscribed successfully`,
+        error: {
+          render({ error }) {
+            logger.error(`Subscribe ${addressToCall}:${methodName} to Pythia`, error);
+
+            return 'Something went wrong. Try again later.';
+          }
+        },
+      }
+    );
     
-    // refetch subs
-    // clear state
-    setChainId(chains[0]?.chain_id);
-    setMethodName('');
-    setAddressToCall('');
-    setFrequency(60);
-    setIsRandom(false);
-    setFeed(null);
-    setIsEdit(true);
-  }, [chainId, methodName, addressToCall, frequency, isRandom, feed]);
-  
-  console.log({ chianId: chainId, methodName, addressToCall, frequency, isRandom, feed});
+    console.log({ res });
+    
+    if (!res.Err) {
+      // refetch subs
+      // clear state
+      setChainId(chains[0]?.chain_id);
+      setMethodName('');
+      setAddressToCall('');
+      setFrequency(60);
+      setIsRandom(false);
+      setFeed(null);
+      setIsEdit(true);
+    }
+  }, [chainId, methodName, addressToCall, frequency, isRandom, feed, chains]);
   
   const nextHandler = useCallback(() => setIsEdit(!isEdit), [isEdit]);
   
@@ -187,7 +204,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, chains }) => {
               className={styles.input}
               checked={isRandom}
               type="checkbox"
-              onChange={useCallback((e) => { setIsRandom(e.target.checked); }, [])}
+              onChange={useCallback((e) => { { setIsRandom(e.target.checked); setFeed(null); } }, [])}
             />
           </div>
         </div>
@@ -204,7 +221,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, chains }) => {
               isDisabled={!isEdit}
               isClearable
               options={FEED_OPTIONS_MOCK}
-              onChange={useCallback((e) => setFeed(e?.value), [])}
+              onChange={useCallback((e) => { setFeed(e?.value); setIsRandom(false) }, [])}
             />
           </div>
         </div>

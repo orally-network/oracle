@@ -2,7 +2,7 @@ import { HttpAgent, Actor } from '@dfinity/agent';
 
 import config from 'Constants/config';
 
-import { idlFactory as pythiaIdl } from './pythia_backend.did';
+import { idlFactory as pythiaIdl } from './pythia.did';
 
 const NAME_IDL_MAP = {
   'pythia': pythiaIdl,

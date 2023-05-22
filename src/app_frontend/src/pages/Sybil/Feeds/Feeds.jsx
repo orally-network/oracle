@@ -1,27 +1,19 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Card } from 'antd';
 import cn from 'classnames';
 import { CopyBlock, atomOneLight } from 'react-code-blocks';
+import { Spin } from 'antd';
 
 import config from 'Constants/config';
 
+import sybilCanister from '../sybilCanister'
+
 import styles from './Feeds.scss';
 
-const MOCK_FEEDS = [
-  {
-    pair_id: 'BTC/USD',
-  },
-  {
-    pair_id: 'ETH/USD',
-  },
-  {
-    pair_id: 'ICP/USD',
-  },
-]
+const NANO_MILLI_DIFFERENCE = Math.pow(10, 6);
 
-// todo: integrate with Sybil and show real data from pairs
 const getCodeText = (selectedFeed) => {
-  const url = `http${config.isDevelopment ? '' : 's'}://${config.sybil_canister_id}.${config.DOMAIN}/get_asset_data_with_proof?pair_id=${selectedFeed}`;
+  const url = `http${config.isDevelopment ? '' : 's'}://${config.sybil_canister_id}.${config.DOMAIN}/get_asset_data_with_proof?pair_id=${selectedFeed?.id ?? '{pair_id}'}`;
   
   return `// fetch price feed
   const url = '${url}';
@@ -30,54 +22,68 @@ const getCodeText = (selectedFeed) => {
   // response example:
   {
     "data": {
-      "symbol": string,
-      "rate": number,
-      "timestamp": number,
-      "decimals": number
-    }
+      "symbol": "${selectedFeed?.id ?? 'string'}",
+      "rate": ${selectedFeed?.data?.rate ?? 'number'},
+      "timestamp": ${selectedFeed?.data?.timestamp ?? 'number'}, // ${new Date(Number(selectedFeed?.data?.timestamp) / NANO_MILLI_DIFFERENCE).toGMTString()}
+      "decimals": ${selectedFeed?.data?.decimals ?? 'number'}
+    },
     "signature": string
   }
   `;
 }
 
 const Feeds = () => {
-  const [feeds, setFeeds] = useState(MOCK_FEEDS);
-  const [selectedFeed, setSelectedFeed] = useState(MOCK_FEEDS[0]);
+  const [feeds, setFeeds] = useState([]);
+  const [selectedFeed, setSelectedFeed] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  useEffect(() => {
+    const fetchPairs = async () => {
+      const pairs = await sybilCanister.get_pairs();
+      
+      console.log({ pairs });
+      setFeeds(pairs);
+      setSelectedFeed(pairs[0]);
+      setIsLoading(false);
+    };
+    
+    fetchPairs();
+  }, []);
   
   const codeText = useMemo(() => {
-    // return `${config.HOST}/get_asset_data_with_proof?pair_id=${selectedFeed}`
-    
     return getCodeText(selectedFeed);
   }, [selectedFeed]);
   
-  const handleFeedClick = useCallback((ev) => {
-    setSelectedFeed(ev.target.innerText);
+  const handleFeedClick = useCallback((feed) => {
+    setSelectedFeed(feed);
   }, []);
   
   return (
     <div className={styles.feedsWrapper}>
-      <div className={styles.feeds}>
-        {feeds.map((feed) => (
-          <Card
-            className={cn([styles.feed, feed.pair_id === selectedFeed && styles.selected])}
-            key={feed.pair_id}
-            onClick={handleFeedClick}
-          >
-            {feed.pair_id}
-          </Card>
-        ))}
-      </div>
+      <Spin spinning={isLoading}>
+        <div className={styles.feeds}>
+          {feeds.map((feed) => (
+            <Card
+              className={cn([styles.feed, feed.id === selectedFeed.id && styles.selected])}
+              key={feed.id}
+              onClick={handleFeedClick.bind(null, feed)}
+            >
+              {feed.id}
+            </Card>
+          ))}
+        </div>
+      </Spin>
 
-      <div className={styles.feedDetails}>
-        <CopyBlock
-          text={codeText}
-          language={'typescript'}
-          // showLineNumbers={showLineNumbers}
-          // startingLineNumber={startingLineNumber}
-          theme={atomOneLight}
-          codeBlock
-        />
-      </div>
+      <Spin spinning={isLoading}>
+        <div className={styles.feedDetails}>
+          <CopyBlock
+            text={codeText}
+            language={'typescript'}
+            theme={atomOneLight}
+            codeBlock
+          />
+        </div>
+      </Spin>
     </div>
   )
 };

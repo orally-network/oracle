@@ -112,7 +112,7 @@ const Pythia = () => {
       <>
         {subs.map((sub, i) => <Subscription key={i} sub={sub} addressData={addressData} signMessage={signMessage} />)}
 
-        <NewSubscription signMessage={signMessage} subscribe={subscribe} addressData={addressData} chains={chains} />
+        <NewSubscription signMessage={signMessage} subscribe={subscribe} addressData={addressData} chains={chains} fetchSubs={fetchSubs} />
       </>
     </div>
   );

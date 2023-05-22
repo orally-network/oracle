@@ -69,7 +69,7 @@ const getStrMethodArgs = (isRandom, isFeed) => {
   return '()';
 };
 
-const NewSubscription = ({ addressData, signMessage, subscribe, chains }) => {
+const NewSubscription = ({ addressData, signMessage, subscribe, chains, fetchSubs }) => {
   const [chainId, setChainId] = useState(chains[0]?.chain_id);
   const [methodName, setMethodName] = useState('');
   const [addressToCall, setAddressToCall] = useState('');
@@ -86,7 +86,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, chains }) => {
         chainId,
         methodName: `${methodName}${getStrMethodArgs(isRandom, Boolean(feed))}`,
         addressToCall,
-        frequency,
+        frequency: Number(frequency),
         isRandom,
         feed,
       }),
@@ -107,6 +107,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, chains }) => {
     
     if (!res.Err) {
       // refetch subs
+      fetchSubs();
       // clear state
       setChainId(chains[0]?.chain_id);
       setMethodName('');
@@ -116,7 +117,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, chains }) => {
       setFeed(null);
       setIsEdit(true);
     }
-  }, [chainId, methodName, addressToCall, frequency, isRandom, feed, chains]);
+  }, [chainId, methodName, addressToCall, frequency, isRandom, feed, chains, subscribe, fetchSubs]);
   
   const nextHandler = useCallback(() => setIsEdit(!isEdit), [isEdit]);
   

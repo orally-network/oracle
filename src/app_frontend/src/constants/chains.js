@@ -5,6 +5,7 @@ import polygonImg from 'Assets/chains/polygon.jpeg';
 import ultronImg from 'Assets/chains/ultron.jpeg';
 import qImg from 'Assets/chains/q.svg';
 import auroraImg from 'Assets/chains/aurora.png';
+import lineaImg from 'Assets/chains/linea.svg';
 
 const CHAINS = [
   {
@@ -120,6 +121,32 @@ const CHAINS = [
     },
     testnet: true,
     img: auroraImg,
+  },
+  {
+    id: 59140,
+    name: 'Linea Testnet',
+    network: 'Linea testnet',
+    nativeCurrency: {
+      name: 'Linea ETH',
+      symbol: 'LETH',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://rpc.goerli.linea.build']
+      },
+      public: {
+        http: ['https://rpc.goerli.linea.build']
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Explorer Linea Testnet',
+        url: 'https://explorer.goerli.linea.build',
+      },
+    },
+    testnet: true,
+    img: lineaImg,
   },
 ];
 

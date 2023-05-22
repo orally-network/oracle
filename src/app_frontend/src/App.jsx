@@ -1,34 +1,57 @@
 import React from 'react';
+import { Space, Spin } from 'antd';
 import {
   createBrowserRouter,
   RouterProvider,
 } from 'react-router-dom';
 
 import Header from 'Components/Header';
-import Oracles from 'Pages/Oracles';
+// import Oracles from 'Pages/Oracles';
 import Pythia from 'Pages/Pythia';
+import Sybil from 'Pages/Sybil';
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <div>Orally</div>,
   },
+  // {
+  //   path: "/oracles",
+  //   element: <Oracles />,
+  // },
   {
-    path: "/oracles",
-    element: <Oracles />,
+    path: 'sybil',
+    element: (
+      <>
+        <Header />
+        
+        <Sybil />
+      </>
+    ),
   },
   {
     path: 'pythia',
-    element: <Pythia />,
+    element: (
+      <>
+        <Header />
+
+        <Pythia />
+      </>
+    ),
   },
 ]);
 
 const App = () => {
   return (
     <div>
-      <Header />
-
-      <RouterProvider router={router} />
+      <RouterProvider
+        router={router}
+        fallbackElement={(
+          <Space size="large">
+            <Spin size="large" />
+          </Space>
+        )}
+      />
     </div>
   );
 }

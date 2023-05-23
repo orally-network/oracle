@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useAccount, useSignMessage } from 'wagmi';
 import { SiweMessage } from 'siwe';
-import { Layout, Spin } from 'antd';
+import { Layout, Spin, Space } from 'antd';
 
 import { getLocalStorageAddress, setLocalStorageAddress } from 'Utils/localStorageAddress';
 import { remove0x } from 'Utils/addressUtils';
@@ -21,7 +21,6 @@ const Pythia = () => {
   const [isChainsLoading, setIsChainsLoading] = useState(false);
   const [addressData, setAddressData] = useState();
   const [isSubscribing, setIsSubscribing] = useState(false);
-  const [isSigningMessage, setIsSigningMessage] = useState(false);
   const { isLoading: isPairsLoading, pairs } = useSybilPairs();
 
   const { address } = useAccount();
@@ -61,8 +60,6 @@ const Pythia = () => {
   }, [address]);
 
   const signMessage = useCallback(async (chainId) => {
-    setIsSigningMessage(true);
-    
     const message = new SiweMessage({
       domain: window.location.host,
       address,
@@ -83,7 +80,10 @@ const Pythia = () => {
     // add user and verify signature through pythia
     const res = await pythiaCanister.add_user(messageString, remove0x(signature));
 
-    setIsSigningMessage(false);
+    if (res.Err) {
+      throw new Error(res.Err);
+    }
+
     const executionAddress = res?.Ok;
     console.log({ message, messageString, signature, executionAddress, res });
 
@@ -126,12 +126,45 @@ const Pythia = () => {
     return res;
   }, [addressData]);
   
-  return (
-    <Spin spinning={isChainsLoading || isSubsLoading || isSubscribing || isSigningMessage || isPairsLoading}>
-      <Layout.Content className={styles.pythia}>
-        {subs.map((sub, i) => <Subscription key={i} sub={sub} addressData={addressData} signMessage={signMessage} />)}
+  const stopSubscription = useCallback(async (subId) => {
+    const res = await pythiaCanister.stop_sub(subId, addressData.message, remove0x(addressData.signature));
+    console.log({ res });
+    
+    if (res.Err) {
+      throw new Error(res.Err);
+    }
+    
+    return res;
+  }, [addressData]);
   
-        <NewSubscription signMessage={signMessage} subscribe={subscribe} addressData={addressData} chains={chains} fetchSubs={fetchSubs} pairs={pairs} />
+  const withdraw = useCallback(async (chainId) => {
+    const res = await pythiaCanister.withdraw(chainId, addressData.message, remove0x(addressData.signature), address);
+    console.log({ res });
+    
+    if (res.Err) {
+      throw new Error(res.Err);
+    }
+    
+    return res;
+  }, [addressData, address]);
+  
+  return (
+    <Spin spinning={isChainsLoading || isSubsLoading || isSubscribing || isPairsLoading}>
+      <Layout.Content className={styles.pythia}>
+        <Space wrap className={styles.subs}>
+          {subs.map((sub, i) => <Subscription
+            key={i}
+            sub={sub}
+            addressData={addressData}
+            signMessage={signMessage}
+            stopSubscription={stopSubscription}
+            withdraw={withdraw}
+          />)}
+        </Space>
+  
+        <Space>
+          <NewSubscription signMessage={signMessage} subscribe={subscribe} addressData={addressData} chains={chains} fetchSubs={fetchSubs} pairs={pairs} />
+        </Space>
       </Layout.Content>
     </Spin>
   );

@@ -28,6 +28,14 @@
     }
   }
   
+  .actionBtns {
+    display: flex;
+    
+    .actionBtn {
+      margin-left: 5px;
+    }
+  }
+  
   .subscribe {
     //width: -webkit-fill-available;
     width: 290px;
@@ -56,4 +64,8 @@
     margin-top: 20px;
     width: 100%;
   }
+}
+
+.signMessage {
+  width: 100%;
 }

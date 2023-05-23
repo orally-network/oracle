@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom';
 
 import { SybilPairsProvider } from 'Providers/SybilPairs';
+import { PythiaDataProvider } from 'Providers/PythiaData';
 import Header from 'Components/Header';
 // import Oracles from 'Pages/Oracles';
 import Pythia from 'Pages/Pythia';
@@ -44,16 +45,18 @@ const router = createBrowserRouter([
 
 const App = () => {
   return (
-    <SybilPairsProvider>
-      <RouterProvider
-        router={router}
-        fallbackElement={(
-          <Space size="large">
-            <Spin size="large" />
-          </Space>
-        )}
-      />
-    </SybilPairsProvider>
+    <PythiaDataProvider>
+      <SybilPairsProvider>
+        <RouterProvider
+          router={router}
+          fallbackElement={(
+            <Space size="large">
+              <Spin size="large" />
+            </Space>
+          )}
+        />
+      </SybilPairsProvider>
+    </PythiaDataProvider>
   );
 }
 

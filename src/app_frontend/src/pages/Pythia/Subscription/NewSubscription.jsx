@@ -8,6 +8,7 @@ import { CHAINS_MAP } from 'Constants/chains';
 import ChainLogo from 'Shared/ChainLogo';
 import Button from 'Components/Button';
 import logger from 'Utils/logger';
+import { usePythiaData } from 'Providers/PythiaData';
 
 import styles from './Subscription.scss';
 
@@ -62,7 +63,7 @@ const getStrMethodArgs = (isRandom, isFeed) => {
 };
 
 // todo: move NewSubscription to Modal?
-const NewSubscription = ({ addressData, signMessage, subscribe, chains, fetchSubs, pairs }) => {
+const NewSubscription = ({ addressData, signMessage, subscribe, chains, pairs }) => {
   const [chainId, setChainId] = useState(null);
   const [methodName, setMethodName] = useState('');
   const [addressToCall, setAddressToCall] = useState('');
@@ -70,6 +71,8 @@ const NewSubscription = ({ addressData, signMessage, subscribe, chains, fetchSub
   const [isRandom, setIsRandom] = useState(false);
   const [feed, setFeed] = useState(null);
   const [isEdit, setIsEdit] = useState(true);
+  
+  const { fetchSubs } = usePythiaData();
   
   const subscribeHandler = useCallback(async () => {
     const res = await toast.promise(
@@ -121,8 +124,9 @@ const NewSubscription = ({ addressData, signMessage, subscribe, chains, fetchSub
 
           <div className={styles.val}>
             <Select
+              setValue={setChainId}
+              value={chainId ? { label: chainId, value: chainId } : null}
               className={styles.chainSelect}
-              // defaultValue={chainOptions[0]?.value}
               isDisabled={!isEdit}
               styles={{
                 singleValue: (base) => ({

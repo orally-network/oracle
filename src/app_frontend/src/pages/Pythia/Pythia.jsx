@@ -6,8 +6,9 @@ import { Layout, Spin, Space } from 'antd';
 import { getLocalStorageAddress, setLocalStorageAddress } from 'Utils/localStorageAddress';
 import { remove0x } from 'Utils/addressUtils';
 import { useSybilPairs } from 'Providers/SybilPairs';
+import { usePythiaData } from 'Providers/PythiaData';
 
-import pythiaCanister from './pythiaCanister';
+import pythiaCanister from 'Canisters/pythiaCanister';
 import Subscription from './Subscription/Subscription';
 import NewSubscription from './Subscription/NewSubscription';
 import styles from './Pythia.scss';
@@ -15,43 +16,13 @@ import styles from './Pythia.scss';
 export const PYTHIA_PREFIX = 'pythia-';
 
 const Pythia = () => {
-  const [subs, setSubs] = useState([]);
-  const [isSubsLoading, setIsSubsLoading] = useState(false);
-  const [chains, setChains] = useState([]);
-  const [isChainsLoading, setIsChainsLoading] = useState(false);
   const [addressData, setAddressData] = useState();
   const [isSubscribing, setIsSubscribing] = useState(false);
+  const { subs, chains, isSubsLoading, isChainsLoading } = usePythiaData();
   const { isLoading: isPairsLoading, pairs } = useSybilPairs();
 
   const { address } = useAccount();
   const { signMessageAsync } = useSignMessage();
-
-  const fetchSubs = useCallback(async () => {
-    if (address) {
-      setIsSubsLoading(true);
-      
-      const subs = await pythiaCanister.get_subs(address);
-      console.log({subs})
-      
-      setIsSubsLoading(false);
-      if (subs.Ok) setSubs(subs.Ok);
-    }
-  }, [address]);
-  
-  const fetchChains = useCallback(async () => {
-    setIsChainsLoading(true);
-    
-    const chains = await pythiaCanister.get_chains();
-    console.log({chains});
-    
-    setIsChainsLoading(false);
-    if (chains.Ok) setChains(chains.Ok);
-  }, []);
-
-  useEffect(() => {
-    fetchSubs();
-    fetchChains();
-  }, [address]);
 
   useEffect(() => {
     if (address) {
@@ -163,7 +134,7 @@ const Pythia = () => {
         </Space>
   
         <Space>
-          <NewSubscription signMessage={signMessage} subscribe={subscribe} addressData={addressData} chains={chains} fetchSubs={fetchSubs} pairs={pairs} />
+          <NewSubscription signMessage={signMessage} subscribe={subscribe} addressData={addressData} chains={chains} pairs={pairs} />
         </Space>
       </Layout.Content>
     </Spin>

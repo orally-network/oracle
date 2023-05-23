@@ -2,9 +2,9 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useSendTransaction, usePrepareSendTransaction, useSwitchNetwork, useNetwork } from 'wagmi';
 import { utils } from 'ethers';
+import { Input } from 'antd';
 
 import Modal from 'Components/Modal';
-import Input from 'Components/Input';
 import Button from 'Components/Button';
 import logger from 'Utils/logger';
 

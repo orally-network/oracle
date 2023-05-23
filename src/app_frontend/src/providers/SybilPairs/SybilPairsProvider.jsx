@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 
-import sybilCanister from 'Pages/Sybil/sybilCanister';
+import sybilCanister from 'Canisters/sybilCanister';
 import SybilPairsContext from './SybilPairsContext';
 
 const SybilPairsProvider = ({ children }) => {

@@ -15,7 +15,6 @@ export const idlFactory = ({ IDL }) => {
     'id' : IDL.Nat,
     'contract_addr' : IDL.Text,
     'method_abi' : IDL.Text,
-    'is_random' : IDL.Bool,
     'chain_id' : IDL.Nat,
     'method_name' : IDL.Text,
     'frequency' : IDL.Nat,
@@ -29,10 +28,10 @@ export const idlFactory = ({ IDL }) => {
     'add_user' : IDL.Func([IDL.Text, IDL.Text], [Result], []),
     'get_chain_rpc' : IDL.Func([IDL.Nat], [Result], []),
     'get_chains' : IDL.Func([], [GetChainsResponse], []),
-    'get_controllers' : IDL.Func([], [IDL.Vec(IDL.Principal)], []),
     'get_subs' : IDL.Func([IDL.Text], [GetSubsResult], []),
     'refresh_subs' : IDL.Func([IDL.Nat, IDL.Text, IDL.Text], [Error], []),
     'remove_chain' : IDL.Func([IDL.Nat], [Error], []),
+    'stop_sub' : IDL.Func([IDL.Nat, IDL.Text, IDL.Text], [Error], []),
     'subscribe' : IDL.Func(
         [
           IDL.Nat,
@@ -49,7 +48,9 @@ export const idlFactory = ({ IDL }) => {
       ),
     'update_chain_min_balance' : IDL.Func([IDL.Nat, IDL.Nat], [Error], []),
     'update_chain_rpc' : IDL.Func([IDL.Nat, IDL.Text], [Error], []),
+    'update_controllers' : IDL.Func([], [IDL.Vec(IDL.Principal)], []),
     'update_tx_fee' : IDL.Func([IDL.Nat], [Error], []),
+    'withdraw' : IDL.Func([IDL.Nat, IDL.Text, IDL.Text, IDL.Text], [Error], []),
   });
 };
 export const init = ({ IDL }) => { return []; };

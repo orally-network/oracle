@@ -56,6 +56,7 @@ const Control = ({ addressData, signMessage, chain, subscribe = () => {}, subscr
         <Button
           className={styles.topUp}
           onClick={() => setIsTopUpModalOpen(true)}
+          type="primary"
         >
           Top up
         </Button>
@@ -65,6 +66,7 @@ const Control = ({ addressData, signMessage, chain, subscribe = () => {}, subscr
         className={styles.subscribe}
         disabled={executionBalance?.formatted < MIN_BALANCE || subscribed || disabled}
         onClick={subscribe}
+        type="primary"
       >
         Subscribe{subscribed && 'd'}
       </Button>

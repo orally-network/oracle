@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { Space, Layout } from 'antd';
 
 import Connect from 'Shared/Connect';
 import Button from 'Components/Button';
@@ -9,41 +10,43 @@ import styles from './Header.scss';
 
 const Header = () => {
   return (
-    <div className={styles.header}>
-      <div className={styles.logo}>
+    <Layout.Header className={styles.header}>
+      <Space className={styles.logo}>
         <img src={logoSrc} className={styles.logoImg} alt="Orally" />
-      </div>
-      
-      <div className={styles.nav}>
-        <Button
-          className={styles.navButton}
-        >
+      </Space>
+
+      <Space>
+        <div className={styles.nav}>
           <NavLink
             to="/sybil"
             className={({ isActive, isPending }) =>
               isPending ? styles.pending : isActive ? styles.active : ""
             }
           >
-            Sybil
+            <Button
+              className={styles.navButton}
+            >
+              Sybil
+            </Button>
           </NavLink>
-        </Button>
 
-        <Button
-          className={styles.navButton}
-        >
           <NavLink
             to="/pythia"
             className={({ isActive, isPending }) =>
               isPending ? styles.pending : isActive ? styles.active : ""
             }
           >
-            Pythia
+            <Button
+              className={styles.navButton}
+            >
+              Pythia
+            </Button>
           </NavLink>
-        </Button>
-      </div>
+        </div>
 
-      <Connect className={styles.connect} />
-    </div>
+        <Connect className={styles.connect} />
+      </Space>
+    </Layout.Header>
   )
 };
 

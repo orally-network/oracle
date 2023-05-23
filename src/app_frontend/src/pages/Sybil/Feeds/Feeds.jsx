@@ -5,12 +5,11 @@ import { CopyBlock, atomOneLight } from 'react-code-blocks';
 import { Spin } from 'antd';
 
 import config from 'Constants/config';
-
-import sybilCanister from '../sybilCanister'
+import { useSybilPairs } from 'Providers/SybilPairs';
 
 import styles from './Feeds.scss';
 
-const NANO_MILLI_DIFFERENCE = Math.pow(10, 6);
+const MILLI = Math.pow(10, 3);
 
 const getCodeText = (selectedFeed) => {
   const url = `http${config.isDevelopment ? '' : 's'}://${config.sybil_canister_id}.${config.DOMAIN}/get_asset_data_with_proof?pair_id=${selectedFeed?.id ?? '{pair_id}'}`;
@@ -24,7 +23,7 @@ const getCodeText = (selectedFeed) => {
     "data": {
       "symbol": "${selectedFeed?.id ?? 'string'}",
       "rate": ${selectedFeed?.data?.rate ?? 'number'},
-      "timestamp": ${selectedFeed?.data?.timestamp ?? 'number'}, // ${new Date(Number(selectedFeed?.data?.timestamp) / NANO_MILLI_DIFFERENCE).toGMTString()}
+      "timestamp": ${selectedFeed?.data?.timestamp ?? 'number'}, // ${new Date(Number(selectedFeed?.data?.timestamp) * MILLI).toGMTString()}
       "decimals": ${selectedFeed?.data?.decimals ?? 'number'}
     },
     "signature": string
@@ -33,22 +32,14 @@ const getCodeText = (selectedFeed) => {
 }
 
 const Feeds = () => {
-  const [feeds, setFeeds] = useState([]);
+  const { pairs, isLoading } = useSybilPairs();
   const [selectedFeed, setSelectedFeed] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
-    const fetchPairs = async () => {
-      const pairs = await sybilCanister.get_pairs();
-      
-      console.log({ pairs });
-      setFeeds(pairs);
+    if (pairs.length > 0) {
       setSelectedFeed(pairs[0]);
-      setIsLoading(false);
-    };
-    
-    fetchPairs();
-  }, []);
+    }
+  }, [pairs]);
   
   const codeText = useMemo(() => {
     return getCodeText(selectedFeed);
@@ -62,9 +53,9 @@ const Feeds = () => {
     <div className={styles.feedsWrapper}>
       <Spin spinning={isLoading}>
         <div className={styles.feeds}>
-          {feeds.map((feed) => (
+          {pairs.map((feed) => (
             <Card
-              className={cn([styles.feed, feed.id === selectedFeed.id && styles.selected])}
+              className={cn([styles.feed, feed.id === selectedFeed?.id && styles.selected])}
               key={feed.id}
               onClick={handleFeedClick.bind(null, feed)}
             >

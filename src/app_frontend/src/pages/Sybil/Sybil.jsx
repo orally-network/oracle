@@ -1,4 +1,5 @@
 import React from 'react';
+import { Layout } from 'antd';
 
 import Feeds from './Feeds';
 
@@ -6,9 +7,9 @@ import styles from './Sybil.scss';
 
 const Sybil = () => {
   return (
-    <div className={styles.sybil}>
+    <Layout.Content className={styles.sybil}>
       <Feeds />
-    </div>
+    </Layout.Content>
   )
 };
 

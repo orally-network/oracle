@@ -1,15 +1,16 @@
 import React from 'react';
+import { Card } from 'antd';
 
-import Card from 'Components/Card';
 import Control from 'Shared/Control';
 import { CHAINS_MAP } from 'Constants/chains';
 import ChainLogo from 'Shared/ChainLogo';
+import { add0x } from 'Utils/addressUtils';
 
 import styles from './Subscription.scss';
 
 // todo: future options to stop, remove subscription or withdraw funds
-const Subscription = ({ sub, addressData, signMessage }) => {
-  const { chain_id, contract_addr, method_abi, frequency, is_random } = sub;
+const Subscription = ({ sub, addressData, signMessage, stopSubscription, withdraw }) => {
+  const { chain_id, contract_addr, method_name, frequency, is_random, id } = sub;
   
   const chain = CHAINS_MAP[chain_id];
   
@@ -26,11 +27,13 @@ const Subscription = ({ sub, addressData, signMessage }) => {
         </div>
 
         <div className={styles.info}>
-          <div className={styles.executions}>
+          {false && (
+            <div className={styles.executions}>
             {executions}
             {' '}
             Executions
           </div>
+          )}
 
           <div className={styles.frequency}>
             {(Number(frequency) / 60).toFixed(2)} mins
@@ -44,7 +47,7 @@ const Subscription = ({ sub, addressData, signMessage }) => {
         </div>
   
         <div className={styles.val}>
-          {contract_addr}
+          {add0x(contract_addr)}
         </div>
       </div>
       
@@ -54,7 +57,7 @@ const Subscription = ({ sub, addressData, signMessage }) => {
         </div>
 
         <div className={styles.val}>
-          {method_abi}
+          {method_name}
         </div>
       </div>
 
@@ -75,6 +78,9 @@ const Subscription = ({ sub, addressData, signMessage }) => {
         addressData={addressData}
         signMessage={signMessage}
         chain={chain}
+        subId={id}
+        stopSubscription={stopSubscription}
+        withdraw={withdraw}
       />
     </Card>
   )

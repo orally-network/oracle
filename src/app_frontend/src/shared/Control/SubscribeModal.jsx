@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { FileUploader } from "react-drag-drop-files";
+import { Input } from 'antd';
 
 import Modal from 'Components/Modal';
-import Input from 'Components/Input';
 import Button from 'Components/Button';
 import logger from 'Utils/logger';
 import { remove0x } from 'Utils/addressUtils';

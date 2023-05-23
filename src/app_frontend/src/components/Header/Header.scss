@@ -4,14 +4,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 80px;
-  color: $text-color;
   background-color: $background-secondary-color;
+  padding-inline: 30px;
 
   .logo {
-    margin-left: 30px;
-    
     .logoImg {
+      display: flex;
       width: 140px;
     }
   }
@@ -19,21 +17,20 @@
   .nav {
     
     .navButton {
-      margin-right: 20px;
+      &:first-child {
+        margin-right: 20px;
+      }
+    }
 
-      .active {
-        border-bottom: 2px solid $background-color;
-        border-radius: 25%;
-      }
-      
-      .pending {
-        
-      }
-      
+    .active {
+      display: none;
+    }
+
+    .pending {
+
     }
   }
 
   .connect {
-    margin-right: 30px;
   }
 }

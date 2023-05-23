@@ -3,11 +3,12 @@
 }
 
 .feeds {
-  margin-top: 30px;
+  margin-top: 10px;
   padding: 20px;
   display: flex;
   justify-content: center;
   min-height: 100px;
+  flex-wrap: wrap;
   
   .feed {
     width: 200px;
@@ -37,5 +38,6 @@
 
 .feedDetails {
   width: 800px;
+  max-width: 100%;
   margin: auto;
 }

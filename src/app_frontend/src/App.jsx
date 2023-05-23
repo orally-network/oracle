@@ -5,6 +5,7 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 
+import { SybilPairsProvider } from 'Providers/SybilPairs';
 import Header from 'Components/Header';
 // import Oracles from 'Pages/Oracles';
 import Pythia from 'Pages/Pythia';
@@ -43,7 +44,7 @@ const router = createBrowserRouter([
 
 const App = () => {
   return (
-    <div>
+    <SybilPairsProvider>
       <RouterProvider
         router={router}
         fallbackElement={(
@@ -52,7 +53,7 @@ const App = () => {
           </Space>
         )}
       />
-    </div>
+    </SybilPairsProvider>
   );
 }
 

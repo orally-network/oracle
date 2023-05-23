@@ -1,31 +1,15 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import Select, { components } from 'react-select';
 import { toast } from 'react-toastify';
+import { Card, Input, Switch } from 'antd';
 
-import Card from 'Components/Card';
 import Control from 'Shared/Control';
 import { CHAINS_MAP } from 'Constants/chains';
 import ChainLogo from 'Shared/ChainLogo';
-import Input from 'Components/Input';
 import Button from 'Components/Button';
 import logger from 'Utils/logger';
 
 import styles from './Subscription.scss';
-
-const FEED_OPTIONS_MOCK = [
-  {
-    value: 'BTC/USD',
-    label: 'BTC/USD',
-  },
-  {
-    value: 'ETH/USD',
-    label: 'ETH/USD',
-  },
-  {
-    value: 'ICP/USD',
-    label: 'ICP/USD',
-  },
-];
 
 const mapChainsToOptions = (chains) => {
   return chains.map((chain) => ({
@@ -33,6 +17,13 @@ const mapChainsToOptions = (chains) => {
     label: chain.chain_id,
   }));
 }
+
+const mapPairsToOptions = (pairs) => {
+  return pairs.map((pair) => ({
+    value: pair.id,
+    label: pair.id,
+  }));
+};
 
 const SingleValue = ({ children, ...props }) => (
   <components.SingleValue {...props}>
@@ -58,28 +49,27 @@ const Option = (props) => {
   );
 };
 
+// (string, uint256, uint256, uint256), ([string|bytes*|uint*|int*]), ()
 const getStrMethodArgs = (isRandom, isFeed) => {
   if (isRandom) {
     return '(uint64)';
   }
   if (isFeed) {
-    return '(uint64)';
+    return '(string, uint256, uint256, uint256)';
   }
   
   return '()';
 };
 
-// todo: move NewSubscription to Modal
-const NewSubscription = ({ addressData, signMessage, subscribe, chains, fetchSubs }) => {
-  const [chainId, setChainId] = useState(chains[0]?.chain_id);
+// todo: move NewSubscription to Modal?
+const NewSubscription = ({ addressData, signMessage, subscribe, chains, fetchSubs, pairs }) => {
+  const [chainId, setChainId] = useState(null);
   const [methodName, setMethodName] = useState('');
   const [addressToCall, setAddressToCall] = useState('');
   const [frequency, setFrequency] = useState(60); // seconds
   const [isRandom, setIsRandom] = useState(false);
   const [feed, setFeed] = useState(null);
   const [isEdit, setIsEdit] = useState(true);
-  
-  const chainOptions = useMemo(() => mapChainsToOptions(chains), [chains]);
   
   const subscribeHandler = useCallback(async () => {
     const res = await toast.promise(
@@ -107,7 +97,6 @@ const NewSubscription = ({ addressData, signMessage, subscribe, chains, fetchSub
     console.log({ res });
     
     if (!res.Err) {
-      // refetch subs
       fetchSubs();
       // clear state
       setChainId(chains[0]?.chain_id);
@@ -124,24 +113,31 @@ const NewSubscription = ({ addressData, signMessage, subscribe, chains, fetchSub
   
   return (
     <Card className={styles.subscription}>
-      <div className={styles.chainSelect}>
-        <Select
-          // defaultValue={chainOptions[0]?.value}
-          isDisabled={!isEdit}
-          styles={{
-            singleValue: (base) => ({
-              ...base,
-              borderRadius: 5,
-              display: 'flex',
-            }),
-          }}
-          components={{ SingleValue, Option }}
-          options={chainOptions}
-          onChange={useCallback((e) => setChainId(e.value), [])}
-        />
-      </div>
-      
       <div className={styles.inputs}>
+        <div className={styles.stat}>
+          <div className={styles.label}>
+            Chain
+          </div>
+
+          <div className={styles.val}>
+            <Select
+              className={styles.chainSelect}
+              // defaultValue={chainOptions[0]?.value}
+              isDisabled={!isEdit}
+              styles={{
+                singleValue: (base) => ({
+                  ...base,
+                  borderRadius: 5,
+                  display: 'flex',
+                }),
+              }}
+              components={{ SingleValue, Option }}
+              options={useMemo(() => mapChainsToOptions(chains), [chains])}
+              onChange={useCallback((e) => setChainId(e.value), [])}
+            />
+          </div>
+        </div>
+        
         <div className={styles.stat}>
           <div className={styles.label}>
             Address
@@ -201,12 +197,11 @@ const NewSubscription = ({ addressData, signMessage, subscribe, chains, fetchSub
           </div>
 
           <div className={styles.val}>
-            <Input
+            <Switch
               disabled={!isEdit}
               className={styles.input}
               checked={isRandom}
-              type="checkbox"
-              onChange={useCallback((e) => { { setIsRandom(e.target.checked); setFeed(null); } }, [])}
+              onChange={useCallback((checked) => { { setIsRandom(checked); setFeed(null); } }, [])}
             />
           </div>
         </div>
@@ -220,9 +215,13 @@ const NewSubscription = ({ addressData, signMessage, subscribe, chains, fetchSub
 
           <div className={styles.val}>
             <Select
+              className={styles.chainSelect}
+              setValue={setFeed}
+              clearValue={() => setFeed(null)}
               isDisabled={!isEdit}
+              value={feed ? { label: feed, value: feed } : null}
               isClearable
-              options={FEED_OPTIONS_MOCK}
+              options={useMemo(() => mapPairsToOptions(pairs), [pairs])}
               onChange={useCallback((e) => { setFeed(e?.value); setIsRandom(false) }, [])}
             />
           </div>
@@ -231,9 +230,9 @@ const NewSubscription = ({ addressData, signMessage, subscribe, chains, fetchSub
 
       {isEdit ? (
         <Button
-          // className={styles.topUp}
           disabled={!chainId || !methodName || !addressToCall || !frequency}
           onClick={nextHandler}
+          type="primary"
         >
           Next
         </Button>
@@ -241,6 +240,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, chains, fetchSub
         <Button
           className={styles.back}
           onClick={nextHandler}
+          type="primary"
         >
           Back
         </Button>

@@ -14,19 +14,17 @@ const MILLI = Math.pow(10, 3);
 const getCodeText = (selectedFeed) => {
   const url = `http${config.isDevelopment ? '' : 's'}://${config.sybil_canister_id}.${config.DOMAIN}/get_asset_data_with_proof?pair_id=${selectedFeed?.id ?? '{pair_id}'}`;
   
-  return `// fetch price feed
+  return ` // fetch price feed
   const url = '${url}';
   const response = await fetch(url);
   
   // response example:
   {
-    "data": {
-      "symbol": "${selectedFeed?.id ?? 'string'}",
-      "rate": ${selectedFeed?.data?.rate ?? 'number'},
-      "timestamp": ${selectedFeed?.data?.timestamp ?? 'number'}, // ${new Date(Number(selectedFeed?.data?.timestamp) * MILLI).toGMTString()}
-      "decimals": ${selectedFeed?.data?.decimals ?? 'number'}
-    },
-    "signature": string
+    "symbol": "${selectedFeed?.id ?? 'string'}",
+    "rate": ${selectedFeed?.data?.rate ?? 'number'},
+    "timestamp": ${selectedFeed?.data?.timestamp ?? 'number'}, // ${new Date(Number(selectedFeed?.data?.timestamp) * MILLI).toGMTString()}
+    "decimals": ${selectedFeed?.data?.decimals ?? 'number'}
+    "signature": "${selectedFeed?.data?.signature}"
   }
   `;
 }

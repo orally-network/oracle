@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from 'antd';
+import { Card, Tooltip } from 'antd';
 
 import Control from 'Shared/Control';
 import { CHAINS_MAP } from 'Constants/chains';
@@ -9,8 +9,8 @@ import { add0x } from 'Utils/addressUtils';
 import styles from './Subscription.scss';
 
 // todo: future options to stop, remove subscription or withdraw funds
-const Subscription = ({ sub, addressData, signMessage, stopSubscription, withdraw }) => {
-  const { chain_id, contract_addr, method_name, frequency, is_random, id } = sub;
+const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSubscription, withdraw }) => {
+  const { chain_id, contract_addr, method_name, frequency, is_random, id, is_active } = sub;
   
   const chain = CHAINS_MAP[chain_id];
   
@@ -37,6 +37,14 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, withdra
 
           <div className={styles.frequency}>
             {(Number(frequency) / 60).toFixed(2)} mins
+          </div>
+          
+          <div className={styles.status}>
+            <Tooltip title={`Subscription is ${is_active ? '' : 'in'}active`}>
+              <div
+                className={is_active ? styles.active : styles.inactive}
+              />
+            </Tooltip>
           </div>
         </div>
       </div>
@@ -75,10 +83,12 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, withdra
 
       <Control
         subscribed
+        is_active={is_active}
         addressData={addressData}
         signMessage={signMessage}
         chain={chain}
         subId={id}
+        startSubscription={startSubscription}
         stopSubscription={stopSubscription}
         withdraw={withdraw}
       />

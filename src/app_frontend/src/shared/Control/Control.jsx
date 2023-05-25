@@ -16,11 +16,12 @@ const MIN_BALANCE = 0.1;
 const EMPTY_BALANCE = 0.001;
 
 // todo: subscribed will have `stop` and `withdraw` methods
-const Control = ({ addressData, signMessage, chain, subscribe = () => {}, subscribed, disabled, subId, stopSubscription, withdraw }) => {
+const Control = ({ addressData, signMessage, chain, subscribe = () => {}, subscribed, disabled, subId, stopSubscription, startSubscription, withdraw, is_active }) => {
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
   const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
   const [isSigning, setIsSigning] = useState(false);
   const [isStopping, setIsStopping] = useState(false);
+  const [isStarting, setIsStarting] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   
   const { address } = useAccount();
@@ -70,6 +71,28 @@ const Control = ({ addressData, signMessage, chain, subscribe = () => {}, subscr
       );
     } finally {
       setIsStopping(false);
+    }
+  }, [subId]);
+  
+  const startHandler = useCallback(async () => {
+    setIsStarting(true);
+    try {
+      await toast.promise(
+        startSubscription(subId),
+        {
+          pending: `Starting subscription...`,
+          success: `Subscription started`,
+          error: {
+            render({ error }) {
+              logger.error(`Start subscription`, error);
+
+              return 'Something went wrong. Try again later.';
+            }
+          },
+        }
+      );
+    } finally {
+      setIsStarting(false);
     }
   }, [subId]);
   
@@ -139,15 +162,27 @@ const Control = ({ addressData, signMessage, chain, subscribe = () => {}, subscr
 
       {subscribed ? (
         <div className={styles.actionBtns}>
-          <Spin spinning={isStopping}>
-            <Button
-              className={styles.actionBtn}
-              type="primary"
-              onClick={stopHandler}
-            >
-              Stop
-            </Button>
-          </Spin>
+          {is_active ? (
+            <Spin spinning={isStopping}>
+              <Button
+                className={styles.actionBtn}
+                type="primary"
+                onClick={stopHandler}
+              >
+                Stop
+              </Button>
+            </Spin>
+          ) : (
+            <Spin spinning={isStarting}>
+              <Button
+                className={styles.actionBtn}
+                type="primary"
+                onClick={startHandler}
+              >
+                Start
+              </Button>
+            </Spin>
+          )}
           
           <Spin spinning={isWithdrawing}>
             <Button

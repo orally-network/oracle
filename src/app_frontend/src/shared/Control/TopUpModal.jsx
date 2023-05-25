@@ -21,7 +21,7 @@ const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAdd
   const { config } = usePrepareSendTransaction({
     request: {
       to: executionAddress,
-      value: utils.parseUnits(String(amount), chain.nativeCurrency.decimals),
+      value: utils.parseUnits(String(amount || 0), chain.nativeCurrency.decimals),
     },
     chainId: chain.id,
   });
@@ -74,7 +74,7 @@ const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAdd
         
         <Button
           className={styles.topUpBtn}
-          disabled={currentChain.id !== chain.id}
+          disabled={currentChain.id !== chain.id || amount < DEFAULT_AMOUNT}
           onClick={topUp}
         >
           Top Up

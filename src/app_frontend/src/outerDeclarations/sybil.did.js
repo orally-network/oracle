@@ -1,6 +1,7 @@
 export const idlFactory = ({ IDL }) => {
   const RateDataLight = IDL.Record({
     'decimals' : IDL.Nat64,
+    'signature' : IDL.Opt(IDL.Text),
     'rate' : IDL.Nat64,
     'timestamp' : IDL.Nat64,
     'symbol' : IDL.Text,
@@ -27,12 +28,8 @@ export const idlFactory = ({ IDL }) => {
     'Ok' : RateDataLight,
     'Err' : IDL.Text,
   });
-  const CustomPairData = IDL.Record({
-    'signature' : IDL.Text,
-    'data' : RateDataLight,
-  });
   const GetAssetDataWithProofResponse = IDL.Variant({
-    'Ok' : CustomPairData,
+    'Ok' : RateDataLight,
     'Err' : IDL.Text,
   });
   const Endpoint = IDL.Record({
@@ -66,6 +63,7 @@ export const idlFactory = ({ IDL }) => {
     'get_proxy_ecdsa_canister' : IDL.Func([], [IDL.Text], []),
     'get_siwe_signer_canister' : IDL.Func([], [IDL.Text], []),
     'get_treasurer_canister' : IDL.Func([], [IDL.Text], []),
+    'init_controllers' : IDL.Func([], [], []),
     'is_pair_exists' : IDL.Func([IDL.Text], [IDL.Bool], []),
     'remove_custom_pair' : IDL.Func([IDL.Text], [], []),
     'remove_pair' : IDL.Func([IDL.Text], [], []),

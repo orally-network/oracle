@@ -22,6 +22,28 @@
         font-weight: bold;
       }
     }
+    
+    .status {
+      position: relative;
+      height: 0px;
+      width: 0px;
+      left: 13px;
+      bottom: 10px;
+      
+      .active {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: #00FF00;
+      }
+      
+      .inactive {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: #FF0000;
+      }
+    }
 
     .info {
       display: flex;

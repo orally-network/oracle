@@ -67,7 +67,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, chains, pairs })
   const [chainId, setChainId] = useState(null);
   const [methodName, setMethodName] = useState('');
   const [addressToCall, setAddressToCall] = useState('');
-  const [frequency, setFrequency] = useState(60); // seconds
+  const [frequency, setFrequency] = useState(10); // mins
   const [isRandom, setIsRandom] = useState(false);
   const [feed, setFeed] = useState(null);
   const [isEdit, setIsEdit] = useState(true);
@@ -80,7 +80,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, chains, pairs })
         chainId,
         methodName: `${methodName}${getStrMethodArgs(isRandom, Boolean(feed))}`,
         addressToCall,
-        frequency: Number(frequency),
+        frequency: Number(frequency) * 60,
         isRandom,
         feed,
       }),
@@ -105,7 +105,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, chains, pairs })
       setChainId(chains[0]?.chain_id);
       setMethodName('');
       setAddressToCall('');
-      setFrequency(60);
+      setFrequency(10);
       setIsRandom(false);
       setFeed(null);
       setIsEdit(true);
@@ -186,10 +186,13 @@ const NewSubscription = ({ addressData, signMessage, subscribe, chains, pairs })
               disabled={!isEdit}
               className={styles.input}
               value={frequency}
+              min={5}
               type="number"
               placeholder="frequency"
               onChange={useCallback((e) => setFrequency(e.target.value), [])}
             />
+            
+            mins
           </div>
         </div>
       </div>

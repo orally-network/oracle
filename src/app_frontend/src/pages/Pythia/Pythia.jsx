@@ -108,6 +108,17 @@ const Pythia = () => {
     return res;
   }, [addressData]);
   
+  const startSubscription = useCallback(async (subId) => {
+    const res = await pythiaCanister.start_sub(subId, addressData.message, remove0x(addressData.signature));
+    console.log({ res });
+    
+    if (res.Err) {
+      throw new Error(res.Err);
+    }
+    
+    return res;
+  }, [addressData]);
+  
   const withdraw = useCallback(async (chainId) => {
     const res = await pythiaCanister.withdraw(chainId, addressData.message, remove0x(addressData.signature), address);
     console.log({ res });
@@ -128,6 +139,7 @@ const Pythia = () => {
             sub={sub}
             addressData={addressData}
             signMessage={signMessage}
+            startSubscription={startSubscription}
             stopSubscription={stopSubscription}
             withdraw={withdraw}
           />)}

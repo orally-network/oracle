@@ -45,6 +45,7 @@
     "last 2 edge version"
   ],
   "dependencies": {
+    "@ant-design/icons": "^5.1.2",
     "@dfinity/auth-client": "^0.15.1",
     "@dfinity/authentication": "^0.14.2",
     "@dfinity/identity": "^0.15.1",

@@ -1,10 +1,12 @@
 import React from 'react';
 import { Card, Tooltip } from 'antd';
+import { LinkOutlined } from '@ant-design/icons';
 
 import Control from 'Shared/Control';
 import { CHAINS_MAP } from 'Constants/chains';
 import ChainLogo from 'Shared/ChainLogo';
 import { add0x } from 'Utils/addressUtils';
+import IconLink from 'Components/IconLink';
 
 import styles from './Subscription.scss';
 
@@ -13,6 +15,8 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSu
   const { chain_id, contract_addr, method_name, frequency, is_random, id, is_active } = sub;
   
   const chain = CHAINS_MAP[chain_id];
+  
+  console.log({ chain })
   
   // todo: calculate from exec_address + contract + method_abi. And last execution time.
   const executions = Math.floor(Math.random() * 15) + 3;
@@ -56,6 +60,13 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSu
   
         <div className={styles.val}>
           {add0x(contract_addr)}
+          {' '}
+          {chain?.blockExplorers?.default?.url && (
+            <IconLink
+              link={`${chain.blockExplorers.default.url}/address/${add0x(contract_addr)}`}
+              IconComponent={LinkOutlined}
+            />
+          )}
         </div>
       </div>
       

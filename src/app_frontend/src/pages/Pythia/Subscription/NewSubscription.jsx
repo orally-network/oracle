@@ -62,7 +62,6 @@ const getStrMethodArgs = (isRandom, isFeed) => {
   return '()';
 };
 
-// todo: move NewSubscription to Modal?
 const NewSubscription = ({ addressData, signMessage, subscribe, chains, pairs }) => {
   const [chainId, setChainId] = useState(null);
   const [methodName, setMethodName] = useState('');

@@ -42,6 +42,7 @@ const CustomPair = () => {
     
     try {
       const amount = Number(executionBalance?.formatted);
+      console.log({ amount });
 
       const depositResult = await toast.promise(
         treasurerCanister.deposit({

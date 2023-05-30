@@ -16,7 +16,20 @@ const MIN_BALANCE = 0.1;
 const EMPTY_BALANCE = 0.001;
 
 // todo: subscribed will have `stop` and `withdraw` methods
-const Control = ({ addressData, signMessage, chain, subscribe = () => {}, subscribed, disabled, subId, stopSubscription, startSubscription, withdraw, is_active }) => {
+const Control = ({
+                   addressData,
+                   signMessage,
+                   chain,
+                   subscribe,
+                   subscribed,
+                   disabled,
+                   subId,
+                   stopSubscription,
+                   startSubscription,
+                   withdraw,
+                   is_active,
+  token,
+}) => {
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
   const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
   const [isSigning, setIsSigning] = useState(false);
@@ -28,6 +41,7 @@ const Control = ({ addressData, signMessage, chain, subscribe = () => {}, subscr
   const { data: executionBalance, refetch: refetchBalance } = useBalance({
     address: addressData?.executionAddress,
     chainId: chain?.id,
+    token,
   });
   
   const signMessageHandler = useCallback(async () => {
@@ -147,7 +161,7 @@ const Control = ({ addressData, signMessage, chain, subscribe = () => {}, subscr
           </div>
           
           <div className={styles.balance}>
-            {Number(executionBalance?.formatted).toFixed(3) ?? '-'} {chain?.nativeCurrency?.symbol}
+            {Number(executionBalance?.formatted).toFixed(3) ?? '-'} {executionBalance?.symbol}
           </div>
         </div>
 
@@ -195,7 +209,7 @@ const Control = ({ addressData, signMessage, chain, subscribe = () => {}, subscr
             </Button>
           </Spin>
         </div>
-      ) : (
+      ) : subscribe && (
         <Button
           className={styles.subscribe}
           disabled={executionBalance?.formatted < MIN_BALANCE || subscribed || disabled}
@@ -213,6 +227,9 @@ const Control = ({ addressData, signMessage, chain, subscribe = () => {}, subscr
           chain={chain}
           executionAddress={addressData.executionAddress}
           refetchBalance={refetchBalance}
+          token={token}
+          decimals={executionBalance?.decimals}
+          symbol={executionBalance?.symbol}
         />
       )}
       

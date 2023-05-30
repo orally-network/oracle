@@ -1,70 +1,26 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { useAccount, useSignMessage } from 'wagmi';
-import { SiweMessage } from 'siwe';
+import React, { useState, useCallback } from 'react';
 import { Layout, Spin, Space } from 'antd';
+import { useAccount } from 'wagmi';
 
-import { getLocalStorageAddress, setLocalStorageAddress } from 'Utils/localStorageAddress';
 import { remove0x } from 'Utils/addressUtils';
 import { useSybilPairs } from 'Providers/SybilPairs';
 import { usePythiaData } from 'Providers/PythiaData';
-
+import { useGlobalState } from 'Providers/GlobalState';
 import pythiaCanister from 'Canisters/pythiaCanister';
+import useSignature from 'Shared/useSignature';
+
 import Subscription from './Subscription/Subscription';
 import NewSubscription from './Subscription/NewSubscription';
 import styles from './Pythia.scss';
 
-export const PYTHIA_PREFIX = 'pythia-';
-
 const Pythia = () => {
-  const [addressData, setAddressData] = useState();
   const [isSubscribing, setIsSubscribing] = useState(false);
   const { subs, chains, isSubsLoading, isChainsLoading } = usePythiaData();
   const { isLoading: isPairsLoading, pairs } = useSybilPairs();
+  const { addressData } = useGlobalState();
 
+ const { signMessage } = useSignature();
   const { address } = useAccount();
-  const { signMessageAsync } = useSignMessage();
-
-  useEffect(() => {
-    if (address) {
-      setAddressData(getLocalStorageAddress(address, PYTHIA_PREFIX));
-    }
-  }, [address]);
-
-  const signMessage = useCallback(async (chainId) => {
-    const message = new SiweMessage({
-      domain: window.location.host,
-      address,
-      statement: 'Sign in with Ethereum to the Pythia.',
-      uri: window.location.origin,
-      version: '1',
-      chainId: String(chainId),
-    });
-    const messageString = message.prepareMessage();
-
-    const signature = await signMessageAsync({
-      message: messageString,
-    });
-
-    console.log({message, messageString, signature: remove0x(signature)});
-
-    // verify signature
-    // add user and verify signature through pythia
-    const res = await pythiaCanister.add_user(messageString, remove0x(signature));
-
-    if (res.Err) {
-      throw new Error(res.Err);
-    }
-
-    const executionAddress = res?.Ok;
-    console.log({ message, messageString, signature, executionAddress, res });
-
-    if (executionAddress) {
-      const data = setLocalStorageAddress(address, messageString, signature, executionAddress, PYTHIA_PREFIX);
-
-      console.log({ data });
-      setAddressData(data);
-    }
-  }, [address, signMessageAsync, setAddressData, chains]);
 
   const subscribe = useCallback(async ({
                                          chainId,

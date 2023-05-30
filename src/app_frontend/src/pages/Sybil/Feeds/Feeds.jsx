@@ -24,7 +24,7 @@ const getCodeText = (selectedFeed) => {
     "rate": ${selectedFeed?.data?.rate ?? 'number'},
     "timestamp": ${selectedFeed?.data?.timestamp ?? 'number'}, // ${new Date(Number(selectedFeed?.data?.timestamp) * MILLI).toGMTString()}
     "decimals": ${selectedFeed?.data?.decimals ?? 'number'}
-    "signature": "${selectedFeed?.data?.signature}"
+    "signature": "${selectedFeed?.data?.signature ?? 'string'}"
   }
   `;
 }

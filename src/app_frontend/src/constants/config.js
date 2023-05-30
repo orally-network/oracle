@@ -18,4 +18,5 @@ export default {
   
   pythia_canister_id: isDevelopment ? 'avqkn-guaaa-aaaaa-qaaea-cai' : 'ettff-uaaaa-aaaag-abpcq-cai',
   sybil_canister_id: isDevelopment ? 'by6od-j4aaa-aaaaa-qaadq-cai' : 'wth3l-tiaaa-aaaap-aa5uq-cai',
+  treasurer_canister_id: isDevelopment ? 'by6od-j4aaa-aaaaa-qaadq-cai' : 'dvx6a-4aaaa-aaaag-qcbqq-cai',
 };

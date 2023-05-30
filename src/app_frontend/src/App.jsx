@@ -7,6 +7,7 @@ import {
 
 import { SybilPairsProvider } from 'Providers/SybilPairs';
 import { PythiaDataProvider } from 'Providers/PythiaData';
+import { GlobalStateProvider } from 'Providers/GlobalState';
 import Header from 'Components/Header';
 // import Oracles from 'Pages/Oracles';
 import Pythia from 'Pages/Pythia';
@@ -45,18 +46,20 @@ const router = createBrowserRouter([
 
 const App = () => {
   return (
-    <PythiaDataProvider>
-      <SybilPairsProvider>
-        <RouterProvider
-          router={router}
-          fallbackElement={(
-            <Space size="large">
-              <Spin size="large" />
-            </Space>
-          )}
-        />
-      </SybilPairsProvider>
-    </PythiaDataProvider>
+    <GlobalStateProvider>
+      <PythiaDataProvider>
+        <SybilPairsProvider>
+          <RouterProvider
+            router={router}
+            fallbackElement={(
+              <Space size="large">
+                <Spin size="large" />
+              </Space>
+            )}
+          />
+        </SybilPairsProvider>
+      </PythiaDataProvider>
+    </GlobalStateProvider>
   );
 }
 

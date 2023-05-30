@@ -19,7 +19,7 @@ const Pythia = () => {
   const { isLoading: isPairsLoading, pairs } = useSybilPairs();
   const { addressData } = useGlobalState();
 
- const { signMessage } = useSignature();
+  const { signMessage } = useSignature();
   const { address } = useAccount();
 
   const subscribe = useCallback(async ({

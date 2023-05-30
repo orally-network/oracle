@@ -2,15 +2,18 @@ import { add0x } from 'Utils/addressUtils';
 
 const localStorageAddressKey = 'address';
 
-export const setLocalStorageAddress = (address, message, signature, executionAddress, keyPrefix = '') => {
+export const setLocalStorageAddress = (address, message, signature, executionAddress) => {
   const addressData = {
     address,
     message,
     signature,
     executionAddress: add0x(executionAddress),
   };
+  
+  const currentLocalStorageAddress = getLocalStorageAddress(address);
 
-  localStorage.setItem(`${keyPrefix}${localStorageAddressKey}`, JSON.stringify({
+  localStorage.setItem(localStorageAddressKey, JSON.stringify({
+    ...currentLocalStorageAddress,
     [address]: addressData,
   }));
 
@@ -18,5 +21,5 @@ export const setLocalStorageAddress = (address, message, signature, executionAdd
 };
 
 export const getLocalStorageAddress = (address, keyPrefix = '') => {
-  return JSON.parse(localStorage.getItem(`${keyPrefix}${localStorageAddressKey}`))?.[address];
+  return JSON.parse(localStorage.getItem(localStorageAddressKey))?.[address];
 }

@@ -33,14 +33,16 @@ export const idlFactory = ({ IDL }) => {
   });
   return IDL.Service({
     'add_chain' : IDL.Func([IDL.Nat, IDL.Text, IDL.Nat, IDL.Text], [Error], []),
-    'add_user' : IDL.Func([IDL.Text, IDL.Text], [Result], []),
     'get_chain_rpc' : IDL.Func([IDL.Nat], [Result], []),
     'get_chains' : IDL.Func([], [GetChainsResponse], []),
+    'get_exec_addr' : IDL.Func([IDL.Text, IDL.Text], [Result], []),
     'get_subs' : IDL.Func([IDL.Text], [GetSubsResult], []),
     'refresh_subs' : IDL.Func([IDL.Nat, IDL.Text, IDL.Text], [Error], []),
     'remove_chain' : IDL.Func([IDL.Nat], [Error], []),
+    'remove_subs' : IDL.Func([], [Error], []),
     'start_sub' : IDL.Func([IDL.Nat, IDL.Text, IDL.Text], [Error], []),
     'stop_sub' : IDL.Func([IDL.Nat, IDL.Text, IDL.Text], [Error], []),
+    'stop_subs' : IDL.Func([], [Error], []),
     'subscribe' : IDL.Func(
         [
           IDL.Nat,

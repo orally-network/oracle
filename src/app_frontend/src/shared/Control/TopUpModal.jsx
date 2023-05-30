@@ -1,10 +1,10 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { useSendTransaction, usePrepareSendTransaction, useSwitchNetwork, useNetwork } from 'wagmi';
+import { useSendTransaction, usePrepareSendTransaction, useSwitchNetwork, useNetwork, usePrepareContractWrite } from 'wagmi';
 import { utils } from 'ethers';
-import { Input } from 'antd';
+import { Input, Modal } from 'antd';
 
-import Modal from 'Components/Modal';
+// import Modal from 'Components/Modal';
 import Button from 'Components/Button';
 import logger from 'Utils/logger';
 
@@ -12,7 +12,7 @@ import styles from './Control.scss';
 
 const DEFAULT_AMOUNT = 0.1;
 
-const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAddress, refetchBalance }) => {
+const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAddress, refetchBalance, token, decimals, symbol }) => {
   const [amount, setAmount] = useState(DEFAULT_AMOUNT);
 
   const { chain: currentChain } = useNetwork();
@@ -21,11 +21,41 @@ const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAdd
   const { config } = usePrepareSendTransaction({
     request: {
       to: executionAddress,
-      value: utils.parseUnits(String(amount || 0), chain.nativeCurrency.decimals),
+      value: utils.parseUnits(String(amount || 0), decimals),
     },
     chainId: chain.id,
+    enabled: !token,
   });
-  const { sendTransactionAsync } = useSendTransaction(config);
+  const { config: tokenSendConfig } = usePrepareContractWrite({
+    address: token,
+    abi: [
+      {
+        name: 'transfer',
+        type: 'function',
+        stateMutability: 'nonpayable',
+        inputs: [
+          {
+            "name": "_to",
+            "type": "address"
+          },
+          {
+            "name": "_value",
+            "type": "uint256"
+          }
+        ],
+        outputs: [
+          {
+            "name": "",
+            "type": "bool"
+          }
+        ],
+      },
+    ],
+    functionName: 'transfer',
+    args: [executionAddress, utils.parseUnits(String(amount || 0), decimals)],
+    enabled: Boolean(token),
+  })
+  const { sendTransactionAsync } = useSendTransaction(token ? tokenSendConfig : config);
   
   useEffect(() => {
     if (currentChain.id !== chain.id) {
@@ -43,11 +73,11 @@ const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAdd
     const data = await toast.promise(
       wait,
       {
-        pending: `Sending ${amount} ${chain.nativeCurrency.symbol} to ${executionAddress}`,
+        pending: `Sending ${amount} ${symbol} to ${executionAddress}`,
         success: `Sent successfully`,
         error: {
           render({ error }) {
-            logger.error(`Sending ${chain.nativeCurrency.symbol}`, error);
+            logger.error(`Sending ${symbol}`, error);
 
             return 'Something went wrong. Try again later.';
           }
@@ -62,8 +92,11 @@ const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAdd
   
   return (
     <Modal
-      isOpen={isTopUpModalOpen}
-      onClose={useCallback(() => setIsTopUpModalOpen(false), [])}
+      title="Top Up"
+      okButtonProps={{ disabled: currentChain.id !== chain.id || amount < DEFAULT_AMOUNT }}
+      onOk={topUp}
+      open={isTopUpModalOpen}
+      onCancel={useCallback(() => setIsTopUpModalOpen(false), [])}
     >
       <div className={styles.topUpModal}>
         <Input
@@ -72,13 +105,13 @@ const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAdd
           onChange={useCallback((e) => setAmount(e.target.value), [])}
         />
         
-        <Button
-          className={styles.topUpBtn}
-          disabled={currentChain.id !== chain.id || amount < DEFAULT_AMOUNT}
-          onClick={topUp}
-        >
-          Top Up
-        </Button>
+        {/*<Button*/}
+        {/*  className={styles.topUpBtn}*/}
+        {/*  disabled={currentChain.id !== chain.id || amount < DEFAULT_AMOUNT}*/}
+        {/*  onClick={topUp}*/}
+        {/*>*/}
+        {/*  Top Up*/}
+        {/*</Button>*/}
       </div>
     </Modal>
   )

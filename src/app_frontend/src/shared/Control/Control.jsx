@@ -64,7 +64,7 @@ const Control = ({
     } finally {
       setIsSigning(false);
     }
-  }, [chain]);
+  }, [chain, signMessage]);
   
   const stopHandler = useCallback(async () => {
     setIsStopping(true);
@@ -86,7 +86,7 @@ const Control = ({
     } finally {
       setIsStopping(false);
     }
-  }, [subId]);
+  }, [subId, stopSubscription]);
   
   const startHandler = useCallback(async () => {
     setIsStarting(true);
@@ -108,7 +108,7 @@ const Control = ({
     } finally {
       setIsStarting(false);
     }
-  }, [subId]);
+  }, [subId, startSubscription]);
   
   const withdrawHandler = useCallback(async () => {
     setIsWithdrawing(true);
@@ -132,7 +132,7 @@ const Control = ({
     } finally {
       setIsWithdrawing(false);
     }
-  }, [chain, refetchBalance]);
+  }, [chain, refetchBalance, withdraw]);
   
   if (!address) {
     return <Connect />;

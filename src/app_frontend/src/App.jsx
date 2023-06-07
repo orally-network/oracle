@@ -9,19 +9,20 @@ import { SybilPairsProvider } from 'Providers/SybilPairs';
 import { PythiaDataProvider } from 'Providers/PythiaData';
 import { GlobalStateProvider } from 'Providers/GlobalState';
 import Header from 'Components/Header';
-// import Oracles from 'Pages/Oracles';
 import Pythia from 'Pages/Pythia';
 import Sybil from 'Pages/Sybil';
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <div>Orally</div>,
+    element: (
+      <>
+        <Header />
+
+        <Sybil />
+      </>
+    ),
   },
-  // {
-  //   path: "/oracles",
-  //   element: <Oracles />,
-  // },
   {
     path: 'sybil',
     element: (

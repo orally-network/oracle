@@ -27,7 +27,7 @@ import '!style-loader!css-loader!react-toastify/dist/ReactToastify.css';
 Modal.setAppElement('#app');
 
 const { chains, provider, webSocketProvider } = configureChains(
-  [mainnet, goerli, polygon, polygonMumbai, CHAINS_MAP[35443], CHAINS_MAP[1230], CHAINS_MAP[1231]],
+  [mainnet, goerli, polygon, polygonMumbai, CHAINS_MAP[35443], CHAINS_MAP[1230], CHAINS_MAP[1231], CHAINS_MAP[59140]],
   [
     infuraProvider({ apiKey: config.INFURA_API_KEY, stallTimeout: 1_000, }),
     alchemyProvider({ apiKey: config.ALCHEMY_API_KEY, stallTimeout: 1_000, }),
@@ -71,23 +71,21 @@ const root = createRoot(container);
 import('./rollbar').then(() => {
   root.render(
     <ErrorBoundary>
-      <BrowserRouter>
-        <WagmiConfig client={client}>
-          <App />
+      <WagmiConfig client={client}>
+        <App />
 
-          <ToastContainer
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-          />
-        </WagmiConfig>
-      </BrowserRouter>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
+      </WagmiConfig>
     </ErrorBoundary>
   );
 });

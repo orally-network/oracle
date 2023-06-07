@@ -75,6 +75,9 @@ module.exports = {
       Declarations: path.resolve(__dirname, './src/declarations/'),
       Shared: path.resolve(__dirname, './src/app_frontend/src/shared/'),
       Pages: path.resolve(__dirname, './src/app_frontend/src/pages/'),
+      OD: path.resolve(__dirname, './src/app_frontend/src/outerDeclarations/'),
+      Providers: path.resolve(__dirname, './src/app_frontend/src/providers/'),
+      Canisters: path.resolve(__dirname, './src/app_frontend/src/canisters/'),
     },
   },
   output: {
@@ -146,7 +149,7 @@ module.exports = {
   devServer: {
     proxy: {
       "/api": {
-        target: "http://127.0.0.1:8000",
+        target: "https://ic0.app",
         changeOrigin: true,
         pathRewrite: {
           "^/api": "/api",

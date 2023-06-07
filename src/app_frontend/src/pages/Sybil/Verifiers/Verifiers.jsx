@@ -39,6 +39,31 @@ const verifiers = [
     name: 'Optimism Goerli Testnet',
     verifierAddress: '0xCFf00E5f685cCE94Dfc6d1a18200c764f9BCca1f',
   },
+  {
+    id: 421613,
+    name: 'Arbitrum Goerli Testnet',
+    verifierAddress: '0xCFf00E5f685cCE94Dfc6d1a18200c764f9BCca1f',
+  },
+  {
+    id: 10200,
+    name: 'Gnosis Chiado Testnet',
+    verifierAddress: '0xCFf00E5f685cCE94Dfc6d1a18200c764f9BCca1f',
+  },
+  {
+    id: 1313161555,
+    name: 'Aurora Testnet',
+    verifierAddress: '0x447e7fd904325e5aD65c05EE84E3d6775789b9Da',
+  },
+  {
+    id: 355113,
+    name: 'Bitfinity Testnet',
+    verifierAddress: '0xb0Ca868a53A55E678F35D2a78ebE27b574567385',
+  },
+  {
+    id: 43113,
+    name: 'Avalanche Fuji Testnet',
+    verifierAddress: '0x447e7fd904325e5aD65c05EE84E3d6775789b9Da',
+  }
 ];
 
 const columns = [

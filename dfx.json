@@ -16,12 +16,12 @@
       "type": "rust"
     },
     "pythia": {
-      "candid": "src/pythia/pythia.did",
+      "candid": "src/pythia-old/pythia.did",
       "package": "pythia",
       "type": "rust"
     },
     "sybil": {
-      "candid": "src/sybil/sybil.did",
+      "candid": "src/sybil-old/sybil.did",
       "package": "sybil",
       "type": "rust"
     },

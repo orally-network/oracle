@@ -46,6 +46,10 @@ const OracleContainer = ({ oracleId, addressData, setAddressData }) => {
       setAddressData(data);
     }
   }, [address, oracle, currentChain, signMessageAsync, setAddressData]);
+  
+  const subscribe = useCallback(async ({ destinationAddress, methodName, abi, msg, sig }) => {
+    return await oracle.subscribe(destinationAddress, methodName, abi, msg, sig);
+  }, []);
 
   useEffect(() => {
     const fetch = async () => {
@@ -70,7 +74,7 @@ const OracleContainer = ({ oracleId, addressData, setAddressData }) => {
       addressData={addressData}
       signMessage={signMessage}
       state={state}
-      oracle={oracle}
+      subscribe={subscribe}
     />
   );
 }

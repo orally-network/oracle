@@ -1,5 +1,14 @@
+@use 'Utils/variables' as v;
+
 .verifiers {
-  display: flex;
-  justify-content: center;
   margin: 40px;
+
+  @media screen and (max-width: v.$phone) {
+    margin: 20px;
+
+    :global(.ant-table-content) {
+      overflow: scroll;
+    }
+  }
+
 }

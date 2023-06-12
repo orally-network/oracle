@@ -1,8 +1,8 @@
-import React from 'react';
-import cn from 'classnames';
-import { Button as AntdButton } from 'antd';
+import React from "react";
+import cn from "classnames";
+import { Button as AntdButton } from "antd";
 
-import styles from './Button.scss';
+import styles from "./Button.scss";
 
 const Button = ({ disabled = false, children, onClick, className, type }) => {
   return (
@@ -14,7 +14,7 @@ const Button = ({ disabled = false, children, onClick, className, type }) => {
     >
       {children}
     </AntdButton>
-  )
+  );
 };
 
 export default Button;

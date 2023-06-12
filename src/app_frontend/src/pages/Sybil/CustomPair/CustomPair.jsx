@@ -110,6 +110,7 @@ const CustomPair = () => {
   return (
     <Space className={styles.customPair}>
       <Button
+        disabled
         type="primary"
         onClick={() => setIsModalVisible(true)}
       >

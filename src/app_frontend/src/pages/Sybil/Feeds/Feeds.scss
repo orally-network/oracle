@@ -1,4 +1,4 @@
-@use 'Utils/variables' as v;
+@import 'Styles/variables';
 
 .feeds {
   margin-top: 10px;
@@ -39,7 +39,7 @@
   max-width: 100%;
   margin: auto;
 
-  @media screen and (max-width: v.$phone) {
+  @media screen and (max-width: $break-point-mobile) {
     margin: 20px;
     width: auto;
   }

@@ -33,16 +33,17 @@ const router = createBrowserRouter([
       </>
     ),
   },
-  {
-    path: 'pythia',
-    element: (
-      <>
-        <Header />
-
-        <Pythia />
-      </>
-    ),
-  },
+  // todo: unhide when pythia is ready
+  // {
+  //   path: 'pythia',
+  //   element: (
+  //     <>
+  //       <Header />
+  //
+  //       <Pythia />
+  //     </>
+  //   ),
+  // },
 ]);
 
 const App = () => {

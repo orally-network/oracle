@@ -1,3 +1,5 @@
+import rollbar from "../rollbar";
+
 export default {
   log(...args) {
     console.log(...args);
@@ -9,16 +11,16 @@ export default {
 
     const [error, ...details] = args;
 
-    window.rollbar.error(error, { ...details });
+    rollbar.error(error, { ...details });
   },
   critical(error, scope) {
     console.error(error, scope);
 
-    window.rollbar.error(error, { scope });
+    rollbar.error(error, { scope });
   },
   warn(...args) {
     console.warn(...args);
 
-    window.rollbar.warn(...args);
+    rollbar.warn(...args);
   },
 };

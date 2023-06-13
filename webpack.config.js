@@ -3,7 +3,7 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
-const Dotenv = require('dotenv-webpack');
+const Dotenv = require("dotenv-webpack");
 
 function initCanisterEnv() {
   let localCanisters, prodCanisters;
@@ -66,18 +66,18 @@ module.exports = {
       util: require.resolve("util/"),
     },
     alias: {
-      Components: path.resolve(__dirname, './src/app_frontend/src/components/'),
-      Services: path.resolve(__dirname, './src/app_frontend/src/services/'),
-      Constants: path.resolve(__dirname, './src/app_frontend/src/constants/'),
-      Utils: path.resolve(__dirname, './src/app_frontend/src/utils/'),
-      Styles: path.resolve(__dirname, './src/app_frontend/src/styles/'),
-      Assets: path.resolve(__dirname, './src/app_frontend/assets/'),
-      Declarations: path.resolve(__dirname, './src/declarations/'),
-      Shared: path.resolve(__dirname, './src/app_frontend/src/shared/'),
-      Pages: path.resolve(__dirname, './src/app_frontend/src/pages/'),
-      OD: path.resolve(__dirname, './src/app_frontend/src/outerDeclarations/'),
-      Providers: path.resolve(__dirname, './src/app_frontend/src/providers/'),
-      Canisters: path.resolve(__dirname, './src/app_frontend/src/canisters/'),
+      Components: path.resolve(__dirname, "./src/app_frontend/src/components/"),
+      Services: path.resolve(__dirname, "./src/app_frontend/src/services/"),
+      Constants: path.resolve(__dirname, "./src/app_frontend/src/constants/"),
+      Utils: path.resolve(__dirname, "./src/app_frontend/src/utils/"),
+      Styles: path.resolve(__dirname, "./src/app_frontend/src/styles/"),
+      Assets: path.resolve(__dirname, "./src/app_frontend/assets/"),
+      Declarations: path.resolve(__dirname, "./src/declarations/"),
+      Shared: path.resolve(__dirname, "./src/app_frontend/src/shared/"),
+      Pages: path.resolve(__dirname, "./src/app_frontend/src/pages/"),
+      OD: path.resolve(__dirname, "./src/app_frontend/src/outerDeclarations/"),
+      Providers: path.resolve(__dirname, "./src/app_frontend/src/providers/"),
+      Canisters: path.resolve(__dirname, "./src/app_frontend/src/canisters/"),
     },
   },
   output: {
@@ -86,15 +86,20 @@ module.exports = {
   },
   module: {
     rules: [
-      { test: /\.(js)x?$/, loader: "ts-loader", exclude: /node_modules/, options: { transpileOnly: true } },
+      {
+        test: /\.(js)x?$/,
+        loader: "ts-loader",
+        exclude: /node_modules/,
+        options: { transpileOnly: true },
+      },
       {
         test: /\.(s[ac]|c)ss$/i,
         use: [
           // Creates `style` nodes from JS strings
-          'style-loader',
+          "style-loader",
           // Translates CSS into CommonJS
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               modules: true,
             },
@@ -114,13 +119,19 @@ module.exports = {
       },
       {
         test: /\.svg$/,
-        use: ['@svgr/webpack'],
+        use: ["@svgr/webpack"],
       },
       {
         test: /\.(png|jpe?g|gif)$/i,
-        type: 'asset/resource',
+        type: "asset/resource",
       },
-    ]
+    ],
+  },
+  // TODO: Temp to remove perfomance warning. Validate and optimise later.
+  performance: {
+    hints: false,
+    maxEntrypointSize: 10000,
+    maxAssetSize: 250000,
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -136,7 +147,6 @@ module.exports = {
       ],
     }),
     new webpack.EnvironmentPlugin({
-      NODE_ENV: "development",
       ...canisterEnvVariables,
     }),
     new webpack.ProvidePlugin({

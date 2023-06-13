@@ -90,6 +90,7 @@ const Verifiers = () => {
       className={styles.verifiers}
       columns={columns}
       dataSource={verifiers}
+      pagination={false} 
     />
   )
 };

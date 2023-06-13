@@ -1,6 +1,4 @@
-.feedsWrapper {
-  
-}
+@import 'Styles/variables';
 
 .feeds {
   margin-top: 10px;
@@ -9,7 +7,7 @@
   justify-content: center;
   min-height: 100px;
   flex-wrap: wrap;
-  
+
   .feed {
     width: 200px;
     text-align: center;
@@ -20,9 +18,9 @@
     border-radius: 0.5rem;
     background-color: #fff;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-    
+
     transition: all 0.3s ease-in-out;
-    
+
     &:hover {
       background-color: #f5f5f5;
       cursor: pointer;
@@ -40,4 +38,11 @@
   width: 800px;
   max-width: 100%;
   margin: auto;
+
+  @media screen and (max-width: $break-point-mobile) {
+    margin: 20px;
+    width: auto;
+  }
 }
+
+

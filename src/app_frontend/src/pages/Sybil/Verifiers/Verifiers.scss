@@ -1,5 +1,14 @@
+@import 'Styles/variables';
+
 .verifiers {
-  display: flex;
-  justify-content: center;
   margin: 40px;
+
+  @media screen and (max-width: $break-point-mobile) {
+    margin: 20px;
+
+    :global(.ant-table-content) {
+      overflow: scroll;
+    }
+  }
+
 }

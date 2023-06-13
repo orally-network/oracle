@@ -36,10 +36,11 @@ const router = createBrowserRouter([
         path: ROUTES.SYBIL,
         element: <Sybil />,
       },
-      {
-        path: ROUTES.PYTHIA,
-        element: <Pythia />,
-      },
+      // TODO: Show when pythia is ready
+      // {
+      //   path: ROUTES.PYTHIA,
+      //   element: <Pythia />,
+      // },
     ],
   },
 ]);

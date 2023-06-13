@@ -111,7 +111,7 @@ const CustomPair = () => {
 
   return (
     <Space className={styles.customPair}>
-      <Button type="primary" onClick={() => setIsModalVisible(true)}>
+      <Button disabled type="primary" onClick={() => setIsModalVisible(true)}>
         Create custom pair
       </Button>
 

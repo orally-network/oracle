@@ -6,6 +6,7 @@ import {
   Navigate,
   Outlet,
 } from "react-router-dom";
+import { Provider as RollbarProvider, ErrorBoundary } from "@rollbar/react";
 
 import { SybilPairsProvider } from "Providers/SybilPairs";
 import { PythiaDataProvider } from "Providers/PythiaData";
@@ -13,7 +14,8 @@ import { GlobalStateProvider } from "Providers/GlobalState";
 import Header from "Components/Header";
 import Pythia from "Pages/Pythia";
 import Sybil from "Pages/Sybil";
-import ROUTES from "./constants/routes";
+import ROUTES from "Constants/routes";
+import rollbar from "./rollbar";
 
 const router = createBrowserRouter([
   {
@@ -45,20 +47,24 @@ const router = createBrowserRouter([
 
 const App = () => {
   return (
-    <GlobalStateProvider>
-      <PythiaDataProvider>
-        <SybilPairsProvider>
-          <RouterProvider
-            router={router}
-            fallbackElement={
-              <Space size="large">
-                <Spin size="large" />
-              </Space>
-            }
-          />
-        </SybilPairsProvider>
-      </PythiaDataProvider>
-    </GlobalStateProvider>
+    <RollbarProvider instance={rollbar}>
+      <ErrorBoundary>
+        <GlobalStateProvider>
+          <PythiaDataProvider>
+            <SybilPairsProvider>
+              <RouterProvider
+                router={router}
+                fallbackElement={
+                  <Space size="large">
+                    <Spin size="large" />
+                  </Space>
+                }
+              />
+            </SybilPairsProvider>
+          </PythiaDataProvider>
+        </GlobalStateProvider>
+      </ErrorBoundary>
+    </RollbarProvider>
   );
 };
 

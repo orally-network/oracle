@@ -63,6 +63,11 @@ const verifiers = [
     id: 43113,
     name: 'Avalanche Fuji Testnet',
     verifierAddress: '0x447e7fd904325e5aD65c05EE84E3d6775789b9Da',
+  },
+  {
+    id: 167005,
+    name: 'Taiko (Alpha-3 Testnet)',
+    verifierAddress: '0xCFf00E5f685cCE94Dfc6d1a18200c764f9BCca1f',
   }
 ];
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import Select, { components } from 'react-select';
 import { toast } from 'react-toastify';
 import { Card, Input, Switch } from 'antd';
@@ -62,16 +62,29 @@ const getStrMethodArgs = (isRandom, isFeed) => {
   return '()';
 };
 
-const NewSubscription = ({ addressData, signMessage, subscribe, chains, pairs }) => {
+const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
   const [chainId, setChainId] = useState(null);
   const [methodName, setMethodName] = useState('');
   const [addressToCall, setAddressToCall] = useState('');
   const [frequency, setFrequency] = useState(10); // mins
+  const [gasLimit, setGasLimit] = useState(null);
   const [isRandom, setIsRandom] = useState(false);
   const [feed, setFeed] = useState(null);
   const [isEdit, setIsEdit] = useState(true);
   
-  const { fetchSubs } = usePythiaData();
+  const [balance, setBalance] = useState(0);
+  
+  const { fetchSubs, chains, fetchBalance, pma, isBalanceLoading } = usePythiaData();
+  
+  const refetchBalance = useCallback(async () => {
+    setBalance(await fetchBalance(chainId, addressData.address));
+  }, [chainId, addressData]);
+  
+  useEffect(() => {
+    if (chainId && addressData) {
+      refetchBalance();
+    }
+  }, [chainId, addressData]);
   
   const subscribeHandler = useCallback(async () => {
     const res = await toast.promise(
@@ -80,6 +93,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, chains, pairs })
         methodName: `${methodName}${getStrMethodArgs(isRandom, Boolean(feed))}`,
         addressToCall,
         frequency: Number(frequency) * 60,
+        gasLimit,
         isRandom,
         feed,
       }),
@@ -105,11 +119,12 @@ const NewSubscription = ({ addressData, signMessage, subscribe, chains, pairs })
       setMethodName('');
       setAddressToCall('');
       setFrequency(10);
+      setGasLimit(null);
       setIsRandom(false);
       setFeed(null);
       setIsEdit(true);
     }
-  }, [chainId, methodName, addressToCall, frequency, isRandom, feed, chains, subscribe, fetchSubs]);
+  }, [chainId, methodName, addressToCall, frequency, isRandom, feed, chains, subscribe, fetchSubs, gasLimit]);
   
   const nextHandler = useCallback(() => setIsEdit(!isEdit), [isEdit]);
   
@@ -194,6 +209,23 @@ const NewSubscription = ({ addressData, signMessage, subscribe, chains, pairs })
             mins
           </div>
         </div>
+
+        <div className={styles.stat}>
+          <div className={styles.label}>
+            Gas Limit
+          </div>
+
+          <div className={styles.val}>
+            <Input
+              disabled={!isEdit}
+              className={styles.input}
+              value={gasLimit}
+              type="number"
+              placeholder="21000"
+              onChange={useCallback((e) => setGasLimit(e.target.value), [])}
+            />
+          </div>
+        </div>
       </div>
       
       <div className={styles.data}>
@@ -258,6 +290,10 @@ const NewSubscription = ({ addressData, signMessage, subscribe, chains, pairs })
           subscribe={subscribeHandler}
           signMessage={signMessage}
           addressData={addressData}
+          balance={balance}
+          executionAddress={pma}
+          refetchBalance={refetchBalance}
+          isBalanceLoading={isBalanceLoading}
           chain={CHAINS_MAP[chainId]}
         />
       )}

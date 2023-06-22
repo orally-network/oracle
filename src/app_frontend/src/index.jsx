@@ -3,8 +3,9 @@ import { createRoot } from 'react-dom/client';
 import { ToastContainer } from 'react-toastify';
 import { BrowserRouter } from 'react-router-dom';
 import Modal from 'react-modal';
-import { WagmiConfig, createClient, configureChains } from 'wagmi';
+import { WagmiConfig, createConfig, configureChains } from 'wagmi';
 import { mainnet, goerli, polygon, polygonMumbai } from 'wagmi/chains';
+import { createPublicClient, http } from 'viem';
 
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { infuraProvider } from 'wagmi/providers/infura'
@@ -26,8 +27,8 @@ import '!style-loader!css-loader!react-toastify/dist/ReactToastify.css';
 
 Modal.setAppElement('#app');
 
-const { chains, provider, webSocketProvider } = configureChains(
-  [mainnet, goerli, polygon, polygonMumbai, CHAINS_MAP[35443], CHAINS_MAP[1230], CHAINS_MAP[1231], CHAINS_MAP[59140]],
+const { chains, provider, webSocketPublicClient, publicClient } = configureChains(
+  [mainnet, goerli, polygon, polygonMumbai, CHAINS_MAP[35443], CHAINS_MAP[35441], CHAINS_MAP[1230], CHAINS_MAP[1231], CHAINS_MAP[59140], CHAINS_MAP[1313161554], CHAINS_MAP[355113], CHAINS_MAP[1313161555]],
   [
     infuraProvider({ apiKey: config.INFURA_API_KEY, stallTimeout: 1_000, }),
     alchemyProvider({ apiKey: config.ALCHEMY_API_KEY, stallTimeout: 1_000, }),
@@ -36,22 +37,24 @@ const { chains, provider, webSocketProvider } = configureChains(
 )
 
 // Set up client
-const client = createClient({
+const wagmiConfig = createConfig({
   autoConnect: true,
+  publicClient,
   connectors: [
     new MetaMaskConnector({ chains }),
-    new CoinbaseWalletConnector({
-      chains,
-      options: {
-        appName: 'orally',
-      },
-    }),
-    new WalletConnectConnector({
-      chains,
-      options: {
-        qrcode: true,
-      },
-    }),
+    // new CoinbaseWalletConnector({
+    //   chains,
+    //   options: {
+    //     appName: 'orally',
+    //     projectId: 'orally',
+    //   },
+    // }),
+    // new WalletConnectConnector({
+    //   chains,
+    //   options: {
+    //     qrcode: true,
+    //   },
+    // }),
     new InjectedConnector({
       chains,
       options: {
@@ -61,7 +64,7 @@ const client = createClient({
     }),
   ],
   provider,
-  webSocketProvider,
+  webSocketPublicClient,
 })
 
 const container = document.getElementById('app');
@@ -71,7 +74,7 @@ const root = createRoot(container);
 import('./rollbar').then(() => {
   root.render(
     <ErrorBoundary>
-      <WagmiConfig client={client}>
+      <WagmiConfig config={wagmiConfig}>
         <App />
 
         <ToastContainer

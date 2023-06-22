@@ -8,6 +8,7 @@ import { usePythiaData } from 'Providers/PythiaData';
 import { useGlobalState } from 'Providers/GlobalState';
 import pythiaCanister from 'Canisters/pythiaCanister';
 import useSignature from 'Shared/useSignature';
+import logger from 'Utils/logger';
 
 import Subscription from './Subscription/Subscription';
 import NewSubscription from './Subscription/NewSubscription';
@@ -15,7 +16,7 @@ import styles from './Pythia.scss';
 
 const Pythia = () => {
   const [isSubscribing, setIsSubscribing] = useState(false);
-  const { subs, chains, isSubsLoading, isChainsLoading } = usePythiaData();
+  const { subs, isSubsLoading, isChainsLoading } = usePythiaData();
   const { isLoading: isPairsLoading, pairs } = useSybilPairs();
   const { addressData } = useGlobalState();
 
@@ -27,26 +28,40 @@ const Pythia = () => {
                                          methodName,
                                          addressToCall,
                                          frequency,
+                                         gasLimit,
                                          isRandom,
                                          feed,
                                        }) => {
-    // chain_id: Nat,
-    //   pair_id: Option<String>,
-    //   contract_addr: String,
-    //   method_abi: String,
-    //   frequency: Nat,
-    //   is_random: bool,
-    //   msg: String,
-    //   sig: String,
+    // chain_id : nat;
+    // pair_id : opt text;
+    // contract_addr : text;
+    // method_abi : text;
+    // frequency : nat;
+    // is_random : bool;
+    // gas_limit : nat;
+    // msg : text;
+    // sig : text;
 
     setIsSubscribing(true);
 
-    const res = await pythiaCanister.subscribe(chainId, feed ? [feed] : [], remove0x(addressToCall), methodName, frequency, isRandom, addressData.message, remove0x(addressData.signature));
-
+    const res = await pythiaCanister.subscribe({
+      chain_id: chainId,
+      pair_id: feed ? [feed] : null,
+      contract_addr: remove0x(addressToCall),
+      method_abi: methodName,
+      frequency: frequency,
+      is_random: isRandom,
+      gas_limit: Number(gasLimit),
+      msg: addressData.message,
+      sig: remove0x(addressData.signature),
+    });
+    
     setIsSubscribing(false);
     console.log({ res });
 
     if (res.Err) {
+      logger.error(`Failed to subscribe to ${addressToCall}, ${res.Err}`);
+      
       throw new Error(res.Err);
     }
 
@@ -102,7 +117,7 @@ const Pythia = () => {
         </Space>
   
         <Space>
-          <NewSubscription signMessage={signMessage} subscribe={subscribe} addressData={addressData} chains={chains} pairs={pairs} />
+          <NewSubscription signMessage={signMessage} subscribe={subscribe} addressData={addressData} pairs={pairs} />
         </Space>
       </Layout.Content>
     </Spin>

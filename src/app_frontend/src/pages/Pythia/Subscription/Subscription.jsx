@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Card, Tooltip } from 'antd';
 import { LinkOutlined } from '@ant-design/icons';
 
@@ -7,15 +7,30 @@ import { CHAINS_MAP } from 'Constants/chains';
 import ChainLogo from 'Shared/ChainLogo';
 import { add0x } from 'Utils/addressUtils';
 import IconLink from 'Components/IconLink';
+import { usePythiaData } from 'Providers/PythiaData';
 
 import styles from './Subscription.scss';
 
 // todo: future options to stop, remove subscription or withdraw funds
 const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSubscription, withdraw }) => {
-  const { chain_id, contract_addr, method_name, frequency, is_random, id, is_active } = sub;
+  const { method: { chain_id, name: method_name }, contract_addr, frequency, is_random, id, status: { is_active } } = sub;
   
   const chain = CHAINS_MAP[chain_id];
   
+  const [balance, setBalance] = useState(0);
+
+  const { pma, isBalanceLoading, fetchBalance } = usePythiaData();
+
+  const refetchBalance = useCallback(async () => {
+    setBalance(await fetchBalance(chain_id, addressData.address));
+  }, [chain_id, addressData]);
+
+  useEffect(() => {
+    if (chain_id && addressData) {
+      refetchBalance();
+    }
+  }, [chain_id, addressData]);
+
   console.log({ chain })
   
   // todo: calculate from exec_address + contract + method_abi. And last execution time.
@@ -99,6 +114,9 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSu
         signMessage={signMessage}
         chain={chain}
         subId={id}
+        balance={balance}
+        executionAddress={pma}
+        isBalanceLoading={isBalanceLoading}
         startSubscription={startSubscription}
         stopSubscription={stopSubscription}
         withdraw={withdraw}

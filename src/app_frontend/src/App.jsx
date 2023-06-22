@@ -17,6 +17,13 @@ import Sybil from "Pages/Sybil";
 import ROUTES from "Constants/routes";
 import rollbar from "./rollbar";
 
+/*
+- Integrate to new interface 
+- Deploy contracts chain-link like contracts to Linea, Q, Bitfinity 
+- Setup subs 
+- Make updates
+ */
+
 const router = createBrowserRouter([
   {
     path: ROUTES.ROOT,
@@ -37,10 +44,10 @@ const router = createBrowserRouter([
         element: <Sybil />,
       },
       // TODO: Show when pythia is ready
-      // {
-      //   path: ROUTES.PYTHIA,
-      //   element: <Pythia />,
-      // },
+      {
+        path: ROUTES.PYTHIA,
+        element: <Pythia />,
+      },
     ],
   },
 ]);

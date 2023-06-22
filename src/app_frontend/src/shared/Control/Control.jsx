@@ -28,6 +28,10 @@ const Control = ({
                    startSubscription,
                    withdraw,
                    is_active,
+                   balance, 
+                   executionAddress,
+                   refetchBalance,
+                   isBalanceLoading,
   token,
 }) => {
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
@@ -38,11 +42,6 @@ const Control = ({
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   
   const { address } = useAccount();
-  const { data: executionBalance, refetch: refetchBalance } = useBalance({
-    address: addressData?.executionAddress,
-    chainId: chain?.id,
-    token,
-  });
   
   const signMessageHandler = useCallback(async () => {
     setIsSigning(true);
@@ -155,15 +154,17 @@ const Control = ({
   return (
     <div className={styles.control}>
       <div className={styles.executionAddress}>
-        <div className={styles.executionAddressInfo}>
-          <div className={styles.address} onClick={() => navigator.clipboard.writeText(addressData.executionAddress)}>
-            {truncateEthAddress(addressData.executionAddress)}
+        <Spin spinning={isBalanceLoading}>
+          <div className={styles.executionAddressInfo}>
+            <div className={styles.address} onClick={() => navigator.clipboard.writeText(executionAddress)}>
+              {truncateEthAddress(executionAddress)}
+            </div>
+            
+            <div className={styles.balance}>
+              {(Number(balance) / Math.pow(10, chain.nativeCurrency.decimals)).toFixed(3) ?? '-'} {chain.nativeCurrency.symbol}
+            </div>
           </div>
-          
-          <div className={styles.balance}>
-            {Number(executionBalance?.formatted).toFixed(3) ?? '-'} {executionBalance?.symbol}
-          </div>
-        </div>
+        </Spin>
 
         <Button
           className={styles.topUp}
@@ -203,7 +204,7 @@ const Control = ({
               className={styles.actionBtn}
               type="primary"
               onClick={withdrawHandler}
-              disabled={executionBalance?.formatted < EMPTY_BALANCE}
+              disabled={balance < EMPTY_BALANCE}
             >
               Withdraw
             </Button>
@@ -212,7 +213,7 @@ const Control = ({
       ) : subscribe && (
         <Button
           className={styles.subscribe}
-          disabled={executionBalance?.formatted < MIN_BALANCE || subscribed || disabled}
+          disabled={balance < MIN_BALANCE || subscribed || disabled}
           onClick={subscribe}
           type="primary"
         >
@@ -225,11 +226,11 @@ const Control = ({
           isTopUpModalOpen={isTopUpModalOpen}
           setIsTopUpModalOpen={setIsTopUpModalOpen}
           chain={chain}
-          executionAddress={addressData.executionAddress}
+          executionAddress={executionAddress}
           refetchBalance={refetchBalance}
           token={token}
-          decimals={executionBalance?.decimals}
-          symbol={executionBalance?.symbol}
+          decimals={chain.nativeCurrency.decimals}
+          symbol={chain.nativeCurrency.symbol}
         />
       )}
       

@@ -30,27 +30,10 @@ const useSignature = ({ canister = 'pythia' } = {}) => {
       message: messageString,
     });
 
-    console.log({message, messageString, signature: remove0x(signature)});
+    const data = setLocalStorageAddress(address, messageString, signature);
 
-    const verifyUserMethod = canister === 'pythia' ? pythiaCanister.get_exec_addr : treasurerCanister.register_taxpayer;
-    
-    console.log({ messageString, signature })
-    
-    const res = await verifyUserMethod(messageString, remove0x(signature));
-
-    if (res.Err) {
-      throw new Error(res.Err);
-    }
-
-    const executionAddress = res?.Ok;
-    console.log({ message, messageString, signature, executionAddress, res });
-
-    if (executionAddress) {
-      const data = setLocalStorageAddress(address, messageString, signature, executionAddress);
-
-      console.log({ data });
-      setAddressData(data);
-    }
+    console.log({ data });
+    setAddressData(data);
   }, [address, signMessageAsync, setAddressData, chains, canister]);
   
   return {

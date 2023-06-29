@@ -3,10 +3,12 @@ import { toast } from 'react-toastify';
 import { useSendTransaction, usePrepareSendTransaction, useSwitchNetwork, useNetwork, usePrepareContractWrite } from 'wagmi';
 import { utils } from 'ethers';
 import { Input, Modal } from 'antd';
+import { waitForTransaction } from '@wagmi/core'
 
 // import Modal from 'Components/Modal';
 import Button from 'Components/Button';
 import logger from 'Utils/logger';
+import { usePythiaData } from 'Providers/PythiaData';
 
 import styles from './Control.scss';
 
@@ -17,14 +19,21 @@ const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAdd
 
   const { chain: currentChain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
-
-  const { config } = usePrepareSendTransaction({
-    request: {
-      to: executionAddress,
-      value: utils.parseUnits(String(amount || 0), decimals),
-    },
+  const { deposit } = usePythiaData();
+  
+  console.log({
+    chain,
+    executionAddress,
+    decimals,
+    amount,
+  })
+  
+  console.log({ amount });
+  
+  const config = usePrepareSendTransaction({
+    to: executionAddress,
+    value: utils.parseUnits(String(amount || 0), decimals),
     chainId: chain.id,
-    enabled: !token,
   });
   const { config: tokenSendConfig } = usePrepareContractWrite({
     address: token,
@@ -55,7 +64,11 @@ const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAdd
     args: [executionAddress, utils.parseUnits(String(amount || 0), decimals)],
     enabled: Boolean(token),
   })
-  const { sendTransactionAsync } = useSendTransaction(token ? tokenSendConfig : config);
+  console.log({ config });
+  const { sendTransactionAsync } = useSendTransaction({
+    ...config.data ?? {},
+    value: config.data?.value?.hex,
+  });
   
   useEffect(() => {
     if (currentChain.id !== chain.id) {
@@ -64,14 +77,16 @@ const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAdd
   }, []);
   
   const topUp = useCallback(async () => {
-    const { hash, wait } = await sendTransactionAsync();
+    const { hash } = await sendTransactionAsync();
 
     setIsTopUpModalOpen(false);
     
-    console.log({ hash, wait })
-    
+    console.log({ hash })
+
     const data = await toast.promise(
-      wait,
+      waitForTransaction({
+        hash,
+      }),
       {
         pending: `Sending ${amount} ${symbol} to ${executionAddress}`,
         success: `Sent successfully`,
@@ -86,6 +101,21 @@ const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAdd
     );
     
     console.log({ data, hash });
+    
+    await toast.promise(
+      deposit(chain.id, hash),
+      {
+        pending: `Deposit ${amount} ${symbol} to canister`,
+        success: `Deposited successfully`,
+        error: {
+          render({ error }) {
+            logger.error(`Depositing ${symbol}`, error);
+
+            return 'Something went wrong. Try again later.';
+          }
+        },
+      }
+    );
     
     await refetchBalance();
   }, [amount, chain, executionAddress, sendTransactionAsync, refetchBalance]);

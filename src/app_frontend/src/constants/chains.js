@@ -1,4 +1,4 @@
-import { mainnet, goerli, polygon, polygonMumbai } from 'wagmi/chains';
+import { mainnet, goerli, polygon, polygonMumbai, sepolia } from 'wagmi/chains';
 
 import ethereumImg from 'Assets/chains/ethereum.jpeg';
 import polygonImg from 'Assets/chains/polygon.jpeg';
@@ -6,6 +6,7 @@ import ultronImg from 'Assets/chains/ultron.jpeg';
 import qImg from 'Assets/chains/q.svg';
 import auroraImg from 'Assets/chains/aurora.png';
 import lineaImg from 'Assets/chains/linea.svg';
+import bitfinityImg from 'Assets/chains/bitfinity.svg';
 
 const CHAINS = [
   {
@@ -14,6 +15,10 @@ const CHAINS = [
   },
   {
     ...goerli,
+    img: ethereumImg,
+  },
+  {
+    ...sepolia,
     img: ethereumImg,
   },
   {
@@ -97,6 +102,31 @@ const CHAINS = [
     img: qImg,
   },
   {
+    id: 35441,
+    name: 'Q chain',
+    network: 'Q chain',
+    nativeCurrency: {
+      name: 'Q',
+      symbol: 'Q',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://rpc.q.org']
+      },
+      public: {
+        http: ['https://rpc.q.org']
+      },
+    }, 
+    blockExplorers: {
+      default: {
+        name: 'Explorer Q', 
+        url: 'https://explorer.q.org',
+      },
+    }, 
+    img: qImg,
+  },
+  {
     id: 1313161555,
     name: 'Aurora Testnet',
     network: 'Aurora testnet',
@@ -120,6 +150,31 @@ const CHAINS = [
       },
     },
     testnet: true,
+    img: auroraImg,
+  },
+  {
+    id: 1313161554,
+    name: 'Aurora',
+    network: 'Aurora',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://rpc.orally.network/?rpc=https://aurora-mainnet.infura.io/v3/4621bacc25114af6b6400009c55f6a9e']
+      },
+      public: {
+        http: ['https://rpc.orally.network/?rpc=https://aurora-mainnet.infura.io/v3/4621bacc25114af6b6400009c55f6a9e']
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Explorer Aurora',
+        url: 'https://aurorascan.dev',
+      },
+    },
     img: auroraImg,
   },
   {
@@ -147,6 +202,32 @@ const CHAINS = [
     },
     testnet: true,
     img: lineaImg,
+  },
+  {
+    id: 355113,
+    name: 'Bitfinity Testnet',
+    network: 'Bitfinity testnet',
+    nativeCurrency: {
+      name: 'BFT',
+      symbol: 'BFT',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://testnet.bitfinity.network/']
+      },
+      public: {
+        http: ['https://testnet.bitfinity.network/']
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Explorer Bitfinity Testnet',
+        url: '',
+      },
+    },
+    testnet: true,
+    img: bitfinityImg,
   },
 ];
 

@@ -6,12 +6,11 @@ const getLoclStorageAddresses = () => {
   return JSON.parse(localStorage.getItem(localStorageAddressKey));
 }
 
-export const setLocalStorageAddress = (address, message, signature, executionAddress) => {
+export const setLocalStorageAddress = (address, message, signature) => {
   const addressData = {
     address,
     message,
     signature,
-    executionAddress: add0x(executionAddress),
   };
   
   const currentLocalStorageAddress = getLoclStorageAddresses() || {};

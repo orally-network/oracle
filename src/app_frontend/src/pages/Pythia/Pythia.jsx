@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Layout, Spin, Space } from 'antd';
 import { useAccount } from 'wagmi';
 
@@ -8,53 +8,87 @@ import { usePythiaData } from 'Providers/PythiaData';
 import { useGlobalState } from 'Providers/GlobalState';
 import pythiaCanister from 'Canisters/pythiaCanister';
 import useSignature from 'Shared/useSignature';
+import logger from 'Utils/logger';
 
 import Subscription from './Subscription/Subscription';
 import NewSubscription from './Subscription/NewSubscription';
 import styles from './Pythia.scss';
 
 const Pythia = () => {
+  const [isWhitelisted, setIsWhitelisted] = useState(true);
   const [isSubscribing, setIsSubscribing] = useState(false);
-  const { subs, chains, isSubsLoading, isChainsLoading } = usePythiaData();
+  const { subs, isSubsLoading, isChainsLoading } = usePythiaData();
   const { isLoading: isPairsLoading, pairs } = useSybilPairs();
   const { addressData } = useGlobalState();
 
   const { signMessage } = useSignature();
   const { address } = useAccount();
+  
+  useEffect(() => {
+    const checkWhitelisted = async () => {
+      if (address) {
+        const res = await pythiaCanister.is_whitelisted(remove0x(address));
+
+        console.log({ res });
+
+        if (res.Err) {
+          throw new Error(res.Err);
+        }
+
+        setIsWhitelisted(res.Ok);
+      }
+    };
+    
+    checkWhitelisted();
+  }, [address]);
 
   const subscribe = useCallback(async ({
                                          chainId,
                                          methodName,
                                          addressToCall,
                                          frequency,
+                                         gasLimit,
                                          isRandom,
                                          feed,
                                        }) => {
-    // chain_id: Nat,
-    //   pair_id: Option<String>,
-    //   contract_addr: String,
-    //   method_abi: String,
-    //   frequency: Nat,
-    //   is_random: bool,
-    //   msg: String,
-    //   sig: String,
+    // chain_id : nat;
+    // pair_id : opt text;
+    // contract_addr : text;
+    // method_abi : text;
+    // frequency : nat;
+    // is_random : bool;
+    // gas_limit : nat;
+    // msg : text;
+    // sig : text;
 
     setIsSubscribing(true);
 
-    const res = await pythiaCanister.subscribe(chainId, feed ? [feed] : [], remove0x(addressToCall), methodName, frequency, isRandom, addressData.message, remove0x(addressData.signature));
-
+    const res = await pythiaCanister.subscribe({
+      chain_id: chainId,
+      pair_id: feed ? [feed] : [],
+      contract_addr: remove0x(addressToCall),
+      method_abi: methodName,
+      frequency: frequency,
+      is_random: isRandom,
+      gas_limit: Number(gasLimit),
+      msg: addressData.message,
+      sig: remove0x(addressData.signature),
+    });
+    
     setIsSubscribing(false);
     console.log({ res });
 
     if (res.Err) {
+      logger.error(`Failed to subscribe to ${addressToCall}, ${res.Err}`);
+      
       throw new Error(res.Err);
     }
 
     return res;
   }, [addressData]);
   
-  const stopSubscription = useCallback(async (subId) => {
-    const res = await pythiaCanister.stop_sub(subId, addressData.message, remove0x(addressData.signature));
+  const stopSubscription = useCallback(async (chainId, subId) => {
+    const res = await pythiaCanister.stop_subscription(chainId, subId, addressData.message, remove0x(addressData.signature));
     console.log({ res });
     
     if (res.Err) {
@@ -64,8 +98,8 @@ const Pythia = () => {
     return res;
   }, [addressData]);
   
-  const startSubscription = useCallback(async (subId) => {
-    const res = await pythiaCanister.start_sub(subId, addressData.message, remove0x(addressData.signature));
+  const startSubscription = useCallback(async (chainId, subId) => {
+    const res = await pythiaCanister.start_subscription(chainId, subId, addressData.message, remove0x(addressData.signature));
     console.log({ res });
     
     if (res.Err) {
@@ -88,6 +122,8 @@ const Pythia = () => {
   
   return (
     <Spin spinning={isChainsLoading || isSubsLoading || isSubscribing || isPairsLoading}>
+      {!isWhitelisted && <div className={styles.notWhitelisted}>Not whitelisted</div>}
+      
       <Layout.Content className={styles.pythia}>
         <Space wrap className={styles.subs}>
           {subs.map((sub, i) => <Subscription
@@ -102,7 +138,7 @@ const Pythia = () => {
         </Space>
   
         <Space>
-          <NewSubscription signMessage={signMessage} subscribe={subscribe} addressData={addressData} chains={chains} pairs={pairs} />
+          <NewSubscription signMessage={signMessage} subscribe={subscribe} addressData={addressData} pairs={pairs} />
         </Space>
       </Layout.Content>
     </Spin>

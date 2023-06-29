@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Layout, Spin, Space } from 'antd';
 import { useAccount } from 'wagmi';
 
@@ -15,6 +15,7 @@ import NewSubscription from './Subscription/NewSubscription';
 import styles from './Pythia.scss';
 
 const Pythia = () => {
+  const [isWhitelisted, setIsWhitelisted] = useState(true);
   const [isSubscribing, setIsSubscribing] = useState(false);
   const { subs, isSubsLoading, isChainsLoading } = usePythiaData();
   const { isLoading: isPairsLoading, pairs } = useSybilPairs();
@@ -22,6 +23,24 @@ const Pythia = () => {
 
   const { signMessage } = useSignature();
   const { address } = useAccount();
+  
+  useEffect(() => {
+    const checkWhitelisted = async () => {
+      if (address) {
+        const res = await pythiaCanister.is_whitelisted(remove0x(address));
+
+        console.log({ res });
+
+        if (res.Err) {
+          throw new Error(res.Err);
+        }
+
+        setIsWhitelisted(res.Ok);
+      }
+    };
+    
+    checkWhitelisted();
+  }, [address]);
 
   const subscribe = useCallback(async ({
                                          chainId,
@@ -46,7 +65,7 @@ const Pythia = () => {
 
     const res = await pythiaCanister.subscribe({
       chain_id: chainId,
-      pair_id: feed ? [feed] : null,
+      pair_id: feed ? [feed] : [],
       contract_addr: remove0x(addressToCall),
       method_abi: methodName,
       frequency: frequency,
@@ -68,8 +87,8 @@ const Pythia = () => {
     return res;
   }, [addressData]);
   
-  const stopSubscription = useCallback(async (subId) => {
-    const res = await pythiaCanister.stop_sub(subId, addressData.message, remove0x(addressData.signature));
+  const stopSubscription = useCallback(async (chainId, subId) => {
+    const res = await pythiaCanister.stop_subscription(chainId, subId, addressData.message, remove0x(addressData.signature));
     console.log({ res });
     
     if (res.Err) {
@@ -79,8 +98,8 @@ const Pythia = () => {
     return res;
   }, [addressData]);
   
-  const startSubscription = useCallback(async (subId) => {
-    const res = await pythiaCanister.start_sub(subId, addressData.message, remove0x(addressData.signature));
+  const startSubscription = useCallback(async (chainId, subId) => {
+    const res = await pythiaCanister.start_subscription(chainId, subId, addressData.message, remove0x(addressData.signature));
     console.log({ res });
     
     if (res.Err) {
@@ -103,6 +122,8 @@ const Pythia = () => {
   
   return (
     <Spin spinning={isChainsLoading || isSubsLoading || isSubscribing || isPairsLoading}>
+      {!isWhitelisted && <div className={styles.notWhitelisted}>Not whitelisted</div>}
+      
       <Layout.Content className={styles.pythia}>
         <Space wrap className={styles.subs}>
           {subs.map((sub, i) => <Subscription

@@ -34,6 +34,7 @@ const Control = ({
                    isBalanceLoading,
   token,
 }) => {
+  console.log({balance}, 'in control');
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
   const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
   const [isSigning, setIsSigning] = useState(false);
@@ -69,7 +70,7 @@ const Control = ({
     setIsStopping(true);
     try {
       await toast.promise(
-        stopSubscription(subId),
+        stopSubscription(chain?.id, subId),
         {
           pending: `Stopping subscription...`,
           success: `Subscription stopped`,
@@ -91,7 +92,7 @@ const Control = ({
     setIsStarting(true);
     try {
       await toast.promise(
-        startSubscription(subId),
+        startSubscription(chain?.id, subId),
         {
           pending: `Starting subscription...`,
           success: `Subscription started`,

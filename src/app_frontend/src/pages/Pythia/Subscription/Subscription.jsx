@@ -13,7 +13,7 @@ import styles from './Subscription.scss';
 
 // todo: future options to stop, remove subscription or withdraw funds
 const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSubscription, withdraw }) => {
-  const { method: { chain_id, name: method_name }, contract_addr, frequency, is_random, id, status: { is_active } } = sub;
+  const { method: { chain_id, name: method_name }, contract_addr, frequency, is_random, id, status: { is_active, last_update } } = sub;
   
   const chain = CHAINS_MAP[chain_id];
   
@@ -95,6 +95,16 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSu
         </div>
       </div>
 
+      <div className={styles.stat}>
+        <div className={styles.label}>
+          Last execution
+        </div>
+
+        <div className={styles.val}>
+          {last_update ? new Date(Number(last_update) * 1000).toLocaleString() : 'Never'}
+        </div>
+      </div>
+
       {is_random && (
         <div className={styles.stat}>
           <div className={styles.label}>
@@ -118,6 +128,7 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSu
         executionAddress={pma}
         isBalanceLoading={isBalanceLoading}
         startSubscription={startSubscription}
+        refetchBalance={refetchBalance}
         stopSubscription={stopSubscription}
         withdraw={withdraw}
       />

@@ -1,4 +1,4 @@
-import { mainnet, goerli, polygon, polygonMumbai } from 'wagmi/chains';
+import { mainnet, goerli, polygon, polygonMumbai, sepolia } from 'wagmi/chains';
 
 import ethereumImg from 'Assets/chains/ethereum.jpeg';
 import polygonImg from 'Assets/chains/polygon.jpeg';
@@ -15,6 +15,10 @@ const CHAINS = [
   },
   {
     ...goerli,
+    img: ethereumImg,
+  },
+  {
+    ...sepolia,
     img: ethereumImg,
   },
   {

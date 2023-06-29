@@ -28,6 +28,8 @@ const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAdd
     amount,
   })
   
+  console.log({ amount });
+  
   const config = usePrepareSendTransaction({
     to: executionAddress,
     value: utils.parseUnits(String(amount || 0), decimals),
@@ -115,8 +117,7 @@ const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAdd
       }
     );
     
-    // todo: remove refetch balance and passing it, cause deposit do it
-    // await refetchBalance();
+    await refetchBalance();
   }, [amount, chain, executionAddress, sendTransactionAsync, refetchBalance]);
   
   return (

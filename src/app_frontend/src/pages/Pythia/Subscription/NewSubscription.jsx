@@ -66,7 +66,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
   const [chainId, setChainId] = useState(null);
   const [methodName, setMethodName] = useState('');
   const [addressToCall, setAddressToCall] = useState('');
-  const [frequency, setFrequency] = useState(10); // mins
+  const [frequency, setFrequency] = useState(60); // mins
   const [gasLimit, setGasLimit] = useState(null);
   const [isRandom, setIsRandom] = useState(false);
   const [feed, setFeed] = useState(null);

@@ -56,6 +56,8 @@ const PythiaDataProvider = ({ children }) => {
       return balance.Ok;
     } else {
       logger.error(`Failed to get balance for ${address}, ${balance.Err}`)
+      
+      return 0;
     }
   }, []);
   
@@ -73,10 +75,9 @@ const PythiaDataProvider = ({ children }) => {
   const deposit = useCallback(async (chainId, tx_hash) => {
     const res = await pythiaCanister.deposit(chainId, tx_hash, addressData.message, remove0x(addressData.signature));
     
+    console.log('deposit res', res);
     if (res.Err) {
-      logger.error(`Failed to deposit ${tx_hash}, ${res.Err}`)
-    } else {
-      await fetchBalance(chainId, addressData.address);
+      logger.error(`Failed to deposit ${tx_hash}, ${res.Err}`);
     }
   }, [addressData]);
   

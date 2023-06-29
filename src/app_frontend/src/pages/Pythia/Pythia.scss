@@ -9,3 +9,14 @@
     justify-content: center;
   }
 }
+
+.notWhitelisted {
+  background-color: red;
+  width: 110px;
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+  margin-top: 5px;
+  position: absolute;
+  right: 35px;
+}

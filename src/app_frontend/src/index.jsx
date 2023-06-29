@@ -4,7 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import { BrowserRouter } from 'react-router-dom';
 import Modal from 'react-modal';
 import { WagmiConfig, createConfig, configureChains } from 'wagmi';
-import { mainnet, goerli, polygon, polygonMumbai } from 'wagmi/chains';
+import { mainnet, goerli, polygon, polygonMumbai, sepolia } from 'wagmi/chains';
 import { createPublicClient, http } from 'viem';
 
 import { alchemyProvider } from 'wagmi/providers/alchemy'
@@ -28,7 +28,7 @@ import '!style-loader!css-loader!react-toastify/dist/ReactToastify.css';
 Modal.setAppElement('#app');
 
 const { chains, provider, webSocketPublicClient, publicClient } = configureChains(
-  [mainnet, goerli, polygon, polygonMumbai, CHAINS_MAP[35443], CHAINS_MAP[35441], CHAINS_MAP[1230], CHAINS_MAP[1231], CHAINS_MAP[59140], CHAINS_MAP[1313161554], CHAINS_MAP[355113], CHAINS_MAP[1313161555]],
+  [mainnet, goerli, sepolia, polygon, polygonMumbai, CHAINS_MAP[35443], CHAINS_MAP[35441], CHAINS_MAP[1230], CHAINS_MAP[1231], CHAINS_MAP[59140], CHAINS_MAP[1313161554], CHAINS_MAP[355113], CHAINS_MAP[1313161555]],
   [
     infuraProvider({ apiKey: config.INFURA_API_KEY, stallTimeout: 1_000, }),
     alchemyProvider({ apiKey: config.ALCHEMY_API_KEY, stallTimeout: 1_000, }),

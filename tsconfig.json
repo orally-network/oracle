@@ -21,6 +21,7 @@
     "ignoreDeprecations": "5.0",
     "paths": {
       "~/*": ["*"]
-    }
+    },
+    "outDir": "./dist"
   }
 }

@@ -1,8 +1,0 @@
-[workspace]
-members = [
-    "src/oracle",
-    "src/oracle_factory",
-    "src/ecdsa_proxy",
-    "src/pythia-old",
-    "src/sybil-old",
-]

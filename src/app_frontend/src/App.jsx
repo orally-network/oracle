@@ -12,6 +12,7 @@ import { SybilPairsProvider } from "Providers/SybilPairs";
 import { PythiaDataProvider } from "Providers/PythiaData";
 import { GlobalStateProvider } from "Providers/GlobalState";
 import Header from "Components/Header";
+import Footer from "Components/Footer";
 import Pythia from "Pages/Pythia";
 import Sybil from "Pages/Sybil";
 import ROUTES from "Constants/routes";
@@ -31,6 +32,7 @@ const router = createBrowserRouter([
       <>
         <Header />
         <Outlet />
+        <Footer />
       </>
     ),
     children: [

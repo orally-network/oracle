@@ -53,13 +53,13 @@ const Option = (props) => {
 // (string, uint256, uint256, uint256), ([string|bytes*|uint*|int*]), ()
 const getStrMethodArgs = (isRandom, isFeed) => {
   if (isRandom) {
-    return '(uint64)';
+    return 'uint64';
   }
   if (isFeed) {
-    return '(string, uint256, uint256, uint256)';
+    return 'string | uint256 | uint256 | uint256';
   }
   
-  return '()';
+  return '';
 };
 
 const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
@@ -183,10 +183,9 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
               className={styles.input}
               value={methodName}
               placeholder="method_name"
+              addonAfter={getStrMethodArgs(isRandom, Boolean(feed))}
               onChange={useCallback((e) => setMethodName(e.target.value), [])}
             />
-
-            {getStrMethodArgs(isRandom, Boolean(feed))}
           </div>
         </div>
 

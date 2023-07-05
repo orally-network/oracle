@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import Select, { components } from 'react-select';
 import { toast } from 'react-toastify';
-import { Card, Input, Switch } from 'antd';
+import { Card, Input, InputNumber, Switch } from 'antd';
 
 import Control from 'Shared/Control';
 import { CHAINS_MAP } from 'Constants/chains';
@@ -196,17 +196,15 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
           </div>
 
           <div className={styles.val}>
-            <Input
+            <InputNumber
               disabled={!isEdit}
               className={styles.input}
               value={frequency}
-              min={5}
-              type="number"
+              min={30}
               placeholder="frequency"
-              onChange={useCallback((e) => setFrequency(e.target.value), [])}
+              addonAfter="mins"
+              onChange={setFrequency}
             />
-            
-            mins
           </div>
         </div>
 

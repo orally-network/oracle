@@ -184,15 +184,15 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
           </div>
 
           <div className={styles.val}>
-            <InputNumber
-              disabled={!isEdit}
-              className={styles.input}
-              value={frequency}
-              min={30}
-              placeholder="frequency"
-              addonAfter="mins"
-              onChange={setFrequency}
-            />
+          <AntdSelect
+            value={frequency}
+            onChange={setFrequency}
+            addonAfter="mins"
+            options={[
+              { value: 30, label: "30 min" },
+              { value: 60, label: "60 min" },
+            ]}
+          />
           </div>
         </div>
 

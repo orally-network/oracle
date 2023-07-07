@@ -121,10 +121,10 @@ const Pythia = () => {
   }, [addressData, address]);
   
   return (
-    <Spin spinning={isChainsLoading || isSubsLoading || isSubscribing || isPairsLoading}>
-      {!isWhitelisted && <div className={styles.notWhitelisted}>Not whitelisted</div>}
+    <Layout.Content className={styles.pythia}>
+      <Spin spinning={isChainsLoading || isSubsLoading || isSubscribing || isPairsLoading}>
+        {!isWhitelisted && <div className={styles.notWhitelisted}>Not whitelisted</div>}
       
-      <Layout.Content className={styles.pythia}>
         <Space wrap className={styles.subs}>
           {subs.map((sub, i) => <Subscription
             key={i}
@@ -140,8 +140,8 @@ const Pythia = () => {
         <Space>
           <NewSubscription signMessage={signMessage} subscribe={subscribe} addressData={addressData} pairs={pairs} />
         </Space>
-      </Layout.Content>
-    </Spin>
+      </Spin>
+    </Layout.Content>
   );
 };
 

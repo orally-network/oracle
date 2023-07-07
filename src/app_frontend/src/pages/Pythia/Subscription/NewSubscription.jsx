@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import Select, { components } from 'react-select';
 import { toast } from 'react-toastify';
-import { Card, Input, Switch } from 'antd';
+import { Card, Input, InputNumber, Switch, Select as AntdSelect } from 'antd';
 
 import Control from 'Shared/Control';
 import { CHAINS_MAP } from 'Constants/chains';
@@ -10,21 +10,9 @@ import Button from 'Components/Button';
 import logger from 'Utils/logger';
 import { usePythiaData } from 'Providers/PythiaData';
 
+import { mapChainsToOptions, mapPairsToOptions, getStrMethodArgs, RAND_METHOD_TYPES } from './helper';
+
 import styles from './Subscription.scss';
-
-const mapChainsToOptions = (chains) => {
-  return chains.map((chain) => ({
-    value: chain.chain_id,
-    label: chain.chain_id,
-  }));
-}
-
-const mapPairsToOptions = (pairs) => {
-  return pairs.map((pair) => ({
-    value: pair.id,
-    label: pair.id,
-  }));
-};
 
 const SingleValue = ({ children, ...props }) => (
   <components.SingleValue {...props}>
@@ -50,21 +38,12 @@ const Option = (props) => {
   );
 };
 
-// (string, uint256, uint256, uint256), ([string|bytes*|uint*|int*]), ()
-const getStrMethodArgs = (isRandom, isFeed) => {
-  if (isRandom) {
-    return '(uint64)';
-  }
-  if (isFeed) {
-    return '(string, uint256, uint256, uint256)';
-  }
-  
-  return '()';
-};
+
 
 const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
   const [chainId, setChainId] = useState(null);
   const [methodName, setMethodName] = useState('');
+  const [methodArg, setMethodArg] = useState(RAND_METHOD_TYPES[0]);
   const [addressToCall, setAddressToCall] = useState('');
   const [frequency, setFrequency] = useState(60); // mins
   const [gasLimit, setGasLimit] = useState(null);
@@ -90,7 +69,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
     const res = await toast.promise(
       subscribe({
         chainId,
-        methodName: `${methodName}${getStrMethodArgs(isRandom, Boolean(feed))}`,
+        methodName: `${methodName}${feed ? getStrMethodArgs(feed) : methodArg}`,
         addressToCall,
         frequency: Number(frequency) * 60,
         gasLimit,
@@ -125,7 +104,17 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
       setIsEdit(true);
     }
   }, [chainId, methodName, addressToCall, frequency, isRandom, feed, chains, subscribe, fetchSubs, gasLimit]);
-  
+
+  const getMethodAddon = () => {
+    return isRandom ? (
+      <AntdSelect value={methodArg} onChange={setMethodArg}>
+        {RAND_METHOD_TYPES.map(type => <AntdSelect.Option value={type}>{type}</AntdSelect.Option>)}
+      </AntdSelect>
+    ) : (
+      getStrMethodArgs(Boolean(feed))
+    )
+  }
+
   const nextHandler = useCallback(() => setIsEdit(!isEdit), [isEdit]);
   
   return (
@@ -183,10 +172,9 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
               className={styles.input}
               value={methodName}
               placeholder="method_name"
+              addonAfter={getMethodAddon()}
               onChange={useCallback((e) => setMethodName(e.target.value), [])}
             />
-
-            {getStrMethodArgs(isRandom, Boolean(feed))}
           </div>
         </div>
 
@@ -196,17 +184,15 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
           </div>
 
           <div className={styles.val}>
-            <Input
+            <InputNumber
               disabled={!isEdit}
               className={styles.input}
               value={frequency}
-              min={5}
-              type="number"
+              min={30}
               placeholder="frequency"
-              onChange={useCallback((e) => setFrequency(e.target.value), [])}
+              addonAfter="mins"
+              onChange={setFrequency}
             />
-            
-            mins
           </div>
         </div>
 

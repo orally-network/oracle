@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import Select, { components } from 'react-select';
 import { toast } from 'react-toastify';
-import { Card, Input, InputNumber, Switch, Select as AntdSelect } from 'antd';
+import { Card, Input, Switch, Select as AntdSelect } from 'antd';
 
 import Control from 'Shared/Control';
 import { CHAINS_MAP } from 'Constants/chains';
@@ -10,11 +10,12 @@ import Button from 'Components/Button';
 import logger from 'Utils/logger';
 import { usePythiaData } from 'Providers/PythiaData';
 
-import { mapChainsToOptions, mapPairsToOptions, getStrMethodArgs, RAND_METHOD_TYPES } from './helper';
+import { mapChainsToOptions, mapPairsToOptions, getStrMethodArgs, RAND_METHOD_TYPES } from '../helper';
 
 import styles from './Subscription.scss';
 
-const SingleValue = ({ children, ...props }) => (
+// TODO: Refactor Chain selector.
+export const SingleValue = ({ children, ...props }) => (
   <components.SingleValue {...props}>
     <div className={styles.flex}>
       <ChainLogo
@@ -26,7 +27,7 @@ const SingleValue = ({ children, ...props }) => (
   </components.SingleValue>
 );
 
-const Option = (props) => {
+export const Option = (props) => {
   return (
     <components.Option {...props}>
       <div className={styles.flex}>

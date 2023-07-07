@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Card, Tooltip } from 'antd';
 import { LinkOutlined } from '@ant-design/icons';
+import { useAccount } from 'wagmi';
 
 import Control from 'Shared/Control';
 import { CHAINS_MAP } from 'Constants/chains';
@@ -13,7 +14,29 @@ import styles from './Subscription.scss';
 
 // todo: future options to stop, remove subscription or withdraw funds
 const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSubscription, withdraw }) => {
-  const { method: { chain_id, name: method_name }, contract_addr, frequency, is_random, id, status: { is_active, last_update } } = sub;
+  const { address } = useAccount();
+
+  const {
+    status: { is_active, last_update },
+    method: {
+      chain_id,
+      name: method_name,
+      gas_limit,
+      method_type: {
+        Pair: pair,
+        Random: random,
+      }
+    },
+    owner,
+    contract_addr,
+    frequency,
+    // TODO: Outdated?
+    is_random,
+    id,
+  } = sub;
+  
+
+  console.log({gas_limit})
   
   const chain = CHAINS_MAP[chain_id];
   
@@ -32,6 +55,12 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSu
   }, [chain_id, addressData]);
 
   console.log({ chain })
+
+  const getData = () => {
+    return pair
+      ? pair
+      : `Random (${random})`
+  }
   
   // todo: calculate from exec_address + contract + method_abi. And last execution time.
   const executions = Math.floor(Math.random() * 15) + 3;
@@ -84,6 +113,16 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSu
           )}
         </div>
       </div>
+
+      <div className={styles.stat}>
+        <div className={styles.label}>
+          Owner
+        </div>
+
+        <div className={styles.val}>
+          {owner === address ? "Me" : owner}
+        </div>
+      </div>
       
       <div className={styles.stat}>
         <div className={styles.label}>
@@ -92,6 +131,26 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSu
 
         <div className={styles.val}>
           {method_name}
+        </div>
+      </div>
+
+      <div className={styles.stat}>
+        <div className={styles.label}>
+          Data
+        </div>
+
+        <div className={styles.val}>
+          {getData()}
+        </div>
+      </div>
+
+      <div className={styles.stat}>
+        <div className={styles.label}>
+          Gas limit
+        </div>
+
+        <div className={styles.val}>
+          {Number(gas_limit)}
         </div>
       </div>
 

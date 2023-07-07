@@ -24,7 +24,7 @@ const PythiaDataProvider = ({ children }) => {
     if (address) {
       setIsSubsLoading(true);
 
-      const subs = await pythiaCanister.get_subscriptions([remove0x(address)]);
+      const subs = await pythiaCanister.get_subscriptions([]);
       console.log({subs})
 
       setIsSubsLoading(false);

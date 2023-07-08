@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { Layout, Spin, Space } from "antd";
 import { useAccount } from "wagmi";
 
@@ -6,6 +6,7 @@ import { remove0x } from "Utils/addressUtils";
 import { useSybilPairs } from "Providers/SybilPairs";
 import { usePythiaData } from "Providers/PythiaData";
 import { useGlobalState } from "Providers/GlobalState";
+import { useSubscriptionsFilters } from "Providers/SubscriptionsFilters";
 import pythiaCanister from "Canisters/pythiaCanister";
 import useSignature from "Shared/useSignature";
 import logger from "Utils/logger";
@@ -20,8 +21,13 @@ const Pythia = () => {
   const [isSubscribing, setIsSubscribing] = useState(false);
   const { subs, isSubsLoading, isChainsLoading } = usePythiaData();
   const { isLoading: isPairsLoading, pairs } = useSybilPairs();
+  const {
+    showAll: showAllFilter,
+    showPair: showPairFilter,
+    chainId: chainIdFilter,
+    showInactive: showInactiveFilter,
+  } = useSubscriptionsFilters();
   const { addressData } = useGlobalState();
-
   const { signMessage } = useSignature();
   const { address } = useAccount();
 
@@ -148,6 +154,25 @@ const Pythia = () => {
     [addressData, address]
   );
 
+  const filteredSubs = useMemo(() => {
+    if (subs.length) {
+      return subs
+        .filter((sub) => (showAllFilter ? true : sub.owner === address))
+        .filter((sub) =>
+          showPairFilter
+            ? !!sub.method?.method_type?.Random
+            : !!sub.method?.method_type?.Pair
+        )
+        .filter((sub) =>
+          chainIdFilter ? sub?.method?.chain_id === chainIdFilter : true
+        )
+        .filter((sub) =>
+          showInactiveFilter ? true : !!sub?.status?.is_active
+        );
+    }
+    return [];
+  }, [showAllFilter, showPairFilter, showInactiveFilter, chainIdFilter]);
+
   return (
     <Layout.Content className={styles.pythia}>
       <Spin
@@ -160,7 +185,7 @@ const Pythia = () => {
         )}
         {subs.length ? <FiltersBar /> : null}
         <Space wrap className={styles.subs}>
-          {subs.map((sub, i) => (
+          {filteredSubs.map((sub, i) => (
             <Subscription
               key={i}
               sub={sub}

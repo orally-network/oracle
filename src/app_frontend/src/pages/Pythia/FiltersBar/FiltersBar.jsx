@@ -3,6 +3,7 @@ import { Col, Row, Radio, Switch } from "antd";
 import Select from "react-select";
 
 import { usePythiaData } from "Providers/PythiaData";
+import { useSubscriptionsFilters } from "Providers/SubscriptionsFilters";
 import { SingleValue, Option } from "../Subscription/NewSubscription";
 import { mapChainsToOptions } from "../helper";
 
@@ -11,10 +12,16 @@ import styles from "./FiltersBar.scss";
 const FiltersBar = ({}) => {
   const { chains } = usePythiaData();
 
-  const [showAll, setShowAll] = useState(false);
-  const [showPair, setShowPair] = useState(false);
-  const [chainId, setChainId] = useState(false);
-  const [showInactive, setShowInactive] = useState(false);
+  const {
+    showAll,
+    showPair,
+    chainId,
+    showInactive,
+    setShowAll,
+    setShowPair,
+    setChainId,
+    setShowInactive,
+  } = useSubscriptionsFilters();
 
   return (
     <Row gutter={[16]} align="middle" className={styles.container}>

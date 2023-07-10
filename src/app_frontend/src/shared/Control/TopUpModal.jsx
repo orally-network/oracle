@@ -28,13 +28,12 @@ const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAdd
     amount,
   })
   
-  console.log({ amount });
-  
-  const config = usePrepareSendTransaction({
-    to: executionAddress,
-    value: utils.parseUnits(String(amount || 0), decimals),
-    chainId: chain.id,
-  });
+  // const config = usePrepareSendTransaction({
+  //   to: executionAddress,
+  //   value: utils.parseUnits(String(amount || 0), decimals),
+  //   chainId: chain.id,
+  // });
+  /*
   const { config: tokenSendConfig } = usePrepareContractWrite({
     address: token,
     abi: [
@@ -64,10 +63,16 @@ const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAdd
     args: [executionAddress, utils.parseUnits(String(amount || 0), decimals)],
     enabled: Boolean(token),
   })
-  console.log({ config });
+   */
+  // const { sendTransactionAsync } = useSendTransaction({
+  //   ...config.data ?? {},
+  //   value: config.data?.value?.hex,
+  // });
+  
   const { sendTransactionAsync } = useSendTransaction({
-    ...config.data ?? {},
-    value: config.data?.value?.hex,
+    to: executionAddress,
+    value: utils.parseUnits(String(amount || 0), decimals),
+    chainId: chain.id,
   });
   
   useEffect(() => {

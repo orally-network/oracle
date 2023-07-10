@@ -21,15 +21,13 @@ const PythiaDataProvider = ({ children }) => {
   const { address } = useAccount();
 
   const fetchSubs = useCallback(async () => {
-    if (address) {
-      setIsSubsLoading(true);
+    setIsSubsLoading(true);
 
-      const subs = await pythiaCanister.get_subscriptions([]);
-      console.log({subs})
+    const subs = await pythiaCanister.get_subscriptions([]);
+    console.log({subs})
 
-      setIsSubsLoading(false);
-      if (Array.isArray(subs)) setSubs(subs);
-    }
+    setIsSubsLoading(false);
+    if (Array.isArray(subs)) setSubs(subs);
   }, [address]);
 
   const fetchChains = useCallback(async () => {
@@ -82,12 +80,9 @@ const PythiaDataProvider = ({ children }) => {
   }, [addressData]);
   
   useEffect(() => {
-    fetchSubs();
-  }, [address]);
-  
-  useEffect(() => {
     fetchChains();
     fetchPma();
+    fetchSubs();
   }, []);
   
   const value = useMemo(() => {

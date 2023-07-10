@@ -70,7 +70,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
     const res = await toast.promise(
       subscribe({
         chainId,
-        methodName: `${methodName}${feed ? getStrMethodArgs(feed) : methodArg}`,
+        methodName: `${methodName}(${feed ? getStrMethodArgs(feed) : methodArg})`,
         addressToCall,
         frequency: Number(frequency) * 60,
         gasLimit,

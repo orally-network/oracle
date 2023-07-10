@@ -1,4 +1,12 @@
 export const idlFactory = ({ IDL }) => {
+  const CreateChainRequest = IDL.Record({
+    'fee' : IDL.Nat,
+    'rpc' : IDL.Text,
+    'chain_id' : IDL.Nat,
+    'block_gas_limit' : IDL.Nat,
+    'min_balance' : IDL.Nat,
+    'symbol' : IDL.Text,
+  });
   const Error = IDL.Variant({ 'Ok' : IDL.Null, 'Err' : IDL.Text });
   const GetBalanceResponse = IDL.Variant({ 'Ok' : IDL.Nat, 'Err' : IDL.Text });
   const GetChainRPCResponse = IDL.Variant({
@@ -6,15 +14,18 @@ export const idlFactory = ({ IDL }) => {
     'Err' : IDL.Text,
   });
   const Chain = IDL.Record({
+    'fee' : IDL.Opt(IDL.Nat),
     'rpc' : IDL.Text,
     'chain_id' : IDL.Nat,
     'block_gas_limit' : IDL.Nat,
     'min_balance' : IDL.Nat,
+    'symbol' : IDL.Opt(IDL.Text),
   });
   const GetPMAResponse = IDL.Variant({ 'Ok' : IDL.Text, 'Err' : IDL.Text });
   const SubscriptionStatus = IDL.Record({
     'is_active' : IDL.Bool,
     'last_update' : IDL.Nat,
+    'executions_counter' : IDL.Nat,
   });
   const MethodType = IDL.Variant({
     'Empty' : IDL.Null,
@@ -74,7 +85,7 @@ export const idlFactory = ({ IDL }) => {
     'frequency' : IDL.Opt(IDL.Nat),
   });
   return IDL.Service({
-    'add_chain' : IDL.Func([IDL.Nat, IDL.Text, IDL.Nat, IDL.Nat], [Error], []),
+    'add_chain' : IDL.Func([CreateChainRequest], [Error], []),
     'add_to_whitelist' : IDL.Func([IDL.Text], [Error], []),
     'blacklist' : IDL.Func([IDL.Text], [Error], []),
     'deposit' : IDL.Func([IDL.Nat, IDL.Text, IDL.Text, IDL.Text], [Error], []),
@@ -93,6 +104,7 @@ export const idlFactory = ({ IDL }) => {
     'is_whitelisted' : IDL.Func([IDL.Text], [IsWhitelistedResponse], []),
     'remove_chain' : IDL.Func([IDL.Nat], [Error], []),
     'remove_from_whitelist' : IDL.Func([IDL.Text], [Error], []),
+    'remove_subscription' : IDL.Func([IDL.Nat], [Error], []),
     'remove_subscriptions' : IDL.Func([], [Error], []),
     'start_subscription' : IDL.Func(
         [IDL.Nat, IDL.Nat, IDL.Text, IDL.Text],
@@ -105,17 +117,25 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'stop_subscriptions' : IDL.Func([], [Error], []),
+    'stop_timer' : IDL.Func([], [Error], []),
     'subscribe' : IDL.Func([SubscribeRequest], [SubscribeResponse], []),
     'unblacklist' : IDL.Func([IDL.Text], [Error], []),
+    'update_chain_block_gas_limit' : IDL.Func([IDL.Nat, IDL.Nat], [Error], []),
+    'update_chain_fee_and_symbol' : IDL.Func(
+        [IDL.Nat, IDL.Nat, IDL.Text],
+        [Error],
+        [],
+      ),
     'update_chain_min_balance' : IDL.Func([IDL.Nat, IDL.Nat], [Error], []),
     'update_chain_rpc' : IDL.Func([IDL.Nat, IDL.Text], [Error], []),
-    'update_controllers' : IDL.Func([], [Error], []),
     'update_subs_limit_total' : IDL.Func([IDL.Nat], [Error], []),
     'update_subs_limit_wallet' : IDL.Func([IDL.Nat], [Error], []),
     'update_subscription' : IDL.Func([UpdateSubscriptionRequest], [Error], []),
     'update_timer_frequency' : IDL.Func([IDL.Nat], [Error], []),
     'update_tx_fee' : IDL.Func([IDL.Nat], [Error], []),
     'withdraw' : IDL.Func([IDL.Nat, IDL.Text, IDL.Text, IDL.Text], [Error], []),
+    'withdraw_all_balance' : IDL.Func([IDL.Nat, IDL.Text], [Error], []),
+    'withdraw_fee' : IDL.Func([IDL.Nat, IDL.Text], [Error], []),
   });
 };
 export const init = ({ IDL }) => { return []; };

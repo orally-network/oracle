@@ -12,12 +12,11 @@ import { usePythiaData } from 'Providers/PythiaData';
 
 import styles from './Subscription.scss';
 
-// todo: future options to stop, remove subscription or withdraw funds
 const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSubscription, withdraw }) => {
   const { address } = useAccount();
 
   const {
-    status: { is_active, last_update },
+    status: { is_active, last_update, executions_counter },
     method: {
       chain_id,
       name: method_name,
@@ -30,14 +29,10 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSu
     owner,
     contract_addr,
     frequency,
-    // TODO: Outdated?
-    is_random,
     id,
   } = sub;
   
 
-  console.log({gas_limit})
-  
   const chain = CHAINS_MAP[chain_id];
   
   const [balance, setBalance] = useState(0);
@@ -54,16 +49,11 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSu
     }
   }, [chain_id, addressData]);
 
-  console.log({ chain })
-
   const getData = () => {
     return pair
       ? pair
       : `Random (${random})`
   }
-  
-  // todo: calculate from exec_address + contract + method_abi. And last execution time.
-  const executions = Math.floor(Math.random() * 15) + 3;
   
   return (
     <Card className={styles.subscription}>
@@ -75,13 +65,11 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSu
         </div>
 
         <div className={styles.info}>
-          {false && (
-            <div className={styles.executions}>
-            {executions}
+          <div className={styles.executions}>
+            {Number(executions_counter)}
             {' '}
             Executions
           </div>
-          )}
 
           <div className={styles.frequency}>
             {(Number(frequency) / 60).toFixed(2)} mins
@@ -164,33 +152,23 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSu
         </div>
       </div>
 
-      {is_random && (
-        <div className={styles.stat}>
-          <div className={styles.label}>
-            Data
-          </div>
-
-          <div className={styles.val}>
-            Random vector of bytes
-          </div>
-        </div>
+      {owner === address?.toLowerCase() && (
+        <Control
+          subscribed
+          is_active={is_active}
+          addressData={addressData}
+          signMessage={signMessage}
+          chain={chain}
+          subId={id}
+          balance={balance}
+          executionAddress={pma}
+          isBalanceLoading={isBalanceLoading}
+          startSubscription={startSubscription}
+          refetchBalance={refetchBalance}
+          stopSubscription={stopSubscription}
+          withdraw={withdraw}
+        />
       )}
-
-      <Control
-        subscribed
-        is_active={is_active}
-        addressData={addressData}
-        signMessage={signMessage}
-        chain={chain}
-        subId={id}
-        balance={balance}
-        executionAddress={pma}
-        isBalanceLoading={isBalanceLoading}
-        startSubscription={startSubscription}
-        refetchBalance={refetchBalance}
-        stopSubscription={stopSubscription}
-        withdraw={withdraw}
-      />
     </Card>
   )
 };

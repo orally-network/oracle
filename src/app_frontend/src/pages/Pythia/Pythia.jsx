@@ -24,8 +24,9 @@ const Pythia = () => {
   const {
     showAll: showAllFilter,
     showPair: showPairFilter,
-    chainId: chainIdFilter,
+    showRandom: showRandomFilter,
     showInactive: showInactiveFilter,
+    chainId: chainIdFilter,
   } = useSubscriptionsFilters();
   const { addressData } = useGlobalState();
   const { signMessage } = useSignature();
@@ -158,20 +159,15 @@ const Pythia = () => {
     if (subs.length) {
       return subs
         .filter((sub) => (showAllFilter ? true : sub.owner === address))
-        .filter((sub) =>
-          showPairFilter
-            ? !!sub.method?.method_type?.Random
-            : !!sub.method?.method_type?.Pair
-        )
-        .filter((sub) =>
-          chainIdFilter ? sub?.method?.chain_id === chainIdFilter : true
-        )
-        .filter((sub) =>
-          showInactiveFilter ? true : !!sub?.status?.is_active
-        );
+        .filter((sub) => (showPairFilter ? true : !sub.method?.method_type?.Pair))
+        .filter((sub) => (showRandomFilter ? true : !sub.method?.method_type?.Random))
+        .filter((sub) => (chainIdFilter ? sub?.method?.chain_id === chainIdFilter : true))
+        .filter((sub) => (showInactiveFilter ? true : !!sub?.status?.is_active));
     }
     return [];
-  }, [showAllFilter, showPairFilter, showInactiveFilter, chainIdFilter]);
+  }, [subs, showAllFilter, showPairFilter, showInactiveFilter, chainIdFilter]);
+  
+  console.log({ filteredSubs});
 
   return (
     <Layout.Content className={styles.pythia}>
@@ -183,28 +179,33 @@ const Pythia = () => {
         {!isWhitelisted && (
           <div className={styles.notWhitelisted}>Not whitelisted</div>
         )}
-        {subs.length ? <FiltersBar /> : null}
-        <Space wrap className={styles.subs}>
-          {filteredSubs.map((sub, i) => (
-            <Subscription
-              key={i}
-              sub={sub}
-              addressData={addressData}
+        
+        <Space align="center" direction="vertical">
+          {subs.length ? <FiltersBar /> : null}
+        
+          <Space wrap className={styles.subs}>
+            {filteredSubs.map((sub, i) => (
+              <Subscription
+                key={i}
+                sub={sub}
+                addressData={addressData}
+                signMessage={signMessage}
+                startSubscription={startSubscription}
+                stopSubscription={stopSubscription}
+                withdraw={withdraw}
+              />
+            ))}
+          </Space>
+  
+          <Space align="center">
+            <NewSubscription
               signMessage={signMessage}
-              startSubscription={startSubscription}
-              stopSubscription={stopSubscription}
-              withdraw={withdraw}
+              subscribe={subscribe}
+              addressData={addressData}
+              pairs={pairs}
             />
-          ))}
-        </Space>
-
-        <Space>
-          <NewSubscription
-            signMessage={signMessage}
-            subscribe={subscribe}
-            addressData={addressData}
-            pairs={pairs}
-          />
+          </Space>
+          
         </Space>
       </Spin>
     </Layout.Content>

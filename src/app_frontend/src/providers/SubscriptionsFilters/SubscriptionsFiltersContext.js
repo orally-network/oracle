@@ -1,14 +1,16 @@
 import { createContext } from "react";
 
 const SubscriptionsFiltersContext = createContext({
-  showAll: false,
-  showPair: false,
-  chainId: null,
+  showAll: true,
+  showPair: true,
+  showRandom: true,
   showInactive: false,
+  chainId: null,
   setShowAll: () => {},
   setShowPair: () => {},
-  setChainId: () => {},
+  setShowRandom: () => {},
   setShowInactive: () => {},
+  setChainId: () => {},
 });
 
 export default SubscriptionsFiltersContext;

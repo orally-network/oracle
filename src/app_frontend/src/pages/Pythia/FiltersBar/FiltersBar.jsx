@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useCallback } from "react";
 import { Col, Row, Radio, Switch } from "antd";
 import Select from "react-select";
+import Button from "Components/Button";
 
 import { usePythiaData } from "Providers/PythiaData";
 import { useSubscriptionsFilters } from "Providers/SubscriptionsFilters";
@@ -17,12 +18,14 @@ const FiltersBar = ({}) => {
     showPair,
     chainId,
     showInactive,
+    showRandom,
     setShowAll,
     setShowPair,
-    setChainId,
+    setShowRandom,
     setShowInactive,
+    setChainId,
   } = useSubscriptionsFilters();
-
+  
   return (
     <Row gutter={[16]} align="middle" className={styles.container}>
       <Col>
@@ -37,15 +40,28 @@ const FiltersBar = ({}) => {
         />
       </Col>
       <Col>
-        <Radio.Group
-          value={showPair}
-          onChange={({ target: { value } }) => setShowPair(value)}
-          options={[
-            { label: "Pairs", value: false },
-            { label: "Random", value: true },
-          ]}
-          optionType="button"
-        />
+        <Button
+          type={showPair ? 'primary' : 'dashed'}
+          onClick={() => setShowPair(!showPair)}
+        >
+          Pairs
+        </Button>
+      </Col>
+      <Col>
+        <Button
+          type={showRandom ? 'primary' : 'dashed'}
+          onClick={() => setShowRandom(!showRandom)}
+        >
+          Random
+        </Button>
+      </Col>
+      <Col>
+        <Button
+          type={showInactive ? 'primary' : 'dashed'}
+          onClick={() => setShowInactive(!showInactive)}
+        >
+          Inactive
+        </Button>
       </Col>
       <Col>
         <Select
@@ -63,12 +79,6 @@ const FiltersBar = ({}) => {
           options={mapChainsToOptions(chains)}
           onChange={(e) => setChainId(e.value)}
         />
-      </Col>
-      <Col>
-        <Row align="middle">
-          <div>Show inactive: </div>
-          <Switch checked={showInactive} onChange={setShowInactive} />
-        </Row>
       </Col>
     </Row>
   );

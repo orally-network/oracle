@@ -104,7 +104,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
       setFeed(null);
       setIsEdit(true);
     }
-  }, [chainId, methodName, addressToCall, frequency, isRandom, feed, chains, subscribe, fetchSubs, gasLimit]);
+  }, [chainId, methodName, addressToCall, frequency, isRandom, feed, chains, subscribe, fetchSubs, gasLimit, methodArg]);
 
   const getMethodAddon = () => {
     return isRandom ? (

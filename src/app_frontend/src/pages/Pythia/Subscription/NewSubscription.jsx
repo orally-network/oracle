@@ -67,16 +67,20 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
   }, [chainId, addressData]);
   
   const subscribeHandler = useCallback(async () => {
+    const payload = {
+      chainId,
+      methodName: `${methodName}(${feed ? getStrMethodArgs(feed) : methodArg})`,
+      addressToCall,
+      frequency: Number(frequency) * 60,
+      gasLimit,
+      isRandom,
+      feed,
+    };
+    
+    console.log({ payload });
+    
     const res = await toast.promise(
-      subscribe({
-        chainId,
-        methodName: `${methodName}(${feed ? getStrMethodArgs(feed) : methodArg})`,
-        addressToCall,
-        frequency: Number(frequency) * 60,
-        gasLimit,
-        isRandom,
-        feed,
-      }),
+      subscribe(payload),
       {
         pending: `Subscribe ${addressToCall}:${methodName} to Pythia`,
         success: `Subscribed successfully`,

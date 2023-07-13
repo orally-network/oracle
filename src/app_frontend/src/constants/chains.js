@@ -7,6 +7,7 @@ import qImg from 'Assets/chains/q.svg';
 import auroraImg from 'Assets/chains/aurora.png';
 import lineaImg from 'Assets/chains/linea.svg';
 import bitfinityImg from 'Assets/chains/bitfinity.svg';
+import taikoImg from 'Assets/chains/taiko.svg';
 
 const CHAINS = [
   {
@@ -163,10 +164,10 @@ const CHAINS = [
     },
     rpcUrls: {
       default: {
-        http: ['https://rpc.orally.network/?rpc=https://aurora-mainnet.infura.io/v3/4621bacc25114af6b6400009c55f6a9e']
+        http: ['https://mainnet.aurora.dev']
       },
       public: {
-        http: ['https://rpc.orally.network/?rpc=https://aurora-mainnet.infura.io/v3/4621bacc25114af6b6400009c55f6a9e']
+        http: ['https://mainnet.aurora.dev']
       },
     },
     blockExplorers: {
@@ -228,6 +229,32 @@ const CHAINS = [
     },
     testnet: true,
     img: bitfinityImg,
+  },
+  {
+    id: 167005,
+    name: 'Taiko Alpha-3 Testnet',
+    network: 'Taiko Alpha-3 Testnet',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://rpc.test.taiko.xyz']
+      },
+      public: {
+        http: ['https://rpc.test.taiko.xyz']
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Explorer Taiko Alpha-3 Testnet',
+        url: 'https://explorer.test.taiko.xyz',
+      },
+    },
+    testnet: true,
+    img: taikoImg,
   },
 ];
 

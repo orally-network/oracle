@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Card, Tooltip } from 'antd';
 import { LinkOutlined } from '@ant-design/icons';
+import { useAccount } from 'wagmi';
 
 import Control from 'Shared/Control';
 import { CHAINS_MAP } from 'Constants/chains';
@@ -11,10 +12,27 @@ import { usePythiaData } from 'Providers/PythiaData';
 
 import styles from './Subscription.scss';
 
-// todo: future options to stop, remove subscription or withdraw funds
 const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSubscription, withdraw }) => {
-  const { method: { chain_id, name: method_name }, contract_addr, frequency, is_random, id, status: { is_active, last_update } } = sub;
+  const { address } = useAccount();
+
+  const {
+    status: { is_active, last_update, executions_counter },
+    method: {
+      chain_id,
+      name: method_name,
+      gas_limit,
+      method_type: {
+        Pair: pair,
+        Random: random,
+      }
+    },
+    owner,
+    contract_addr,
+    frequency,
+    id,
+  } = sub;
   
+
   const chain = CHAINS_MAP[chain_id];
   
   const [balance, setBalance] = useState(0);
@@ -31,10 +49,11 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSu
     }
   }, [chain_id, addressData]);
 
-  console.log({ chain })
-  
-  // todo: calculate from exec_address + contract + method_abi. And last execution time.
-  const executions = Math.floor(Math.random() * 15) + 3;
+  const getData = () => {
+    return pair
+      ? pair
+      : `Random (${random})`
+  }
   
   return (
     <Card className={styles.subscription}>
@@ -46,13 +65,11 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSu
         </div>
 
         <div className={styles.info}>
-          {false && (
-            <div className={styles.executions}>
-            {executions}
+          <div className={styles.executions}>
+            {Number(executions_counter)}
             {' '}
             Executions
           </div>
-          )}
 
           <div className={styles.frequency}>
             {(Number(frequency) / 60).toFixed(2)} mins
@@ -84,6 +101,16 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSu
           )}
         </div>
       </div>
+
+      <div className={styles.stat}>
+        <div className={styles.label}>
+          Owner
+        </div>
+
+        <div className={styles.val}>
+          {owner === address ? "Me" : owner}
+        </div>
+      </div>
       
       <div className={styles.stat}>
         <div className={styles.label}>
@@ -97,6 +124,26 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSu
 
       <div className={styles.stat}>
         <div className={styles.label}>
+          Data
+        </div>
+
+        <div className={styles.val}>
+          {getData()}
+        </div>
+      </div>
+
+      <div className={styles.stat}>
+        <div className={styles.label}>
+          Gas limit
+        </div>
+
+        <div className={styles.val}>
+          {Number(gas_limit)}
+        </div>
+      </div>
+
+      <div className={styles.stat}>
+        <div className={styles.label}>
           Last execution
         </div>
 
@@ -105,33 +152,23 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSu
         </div>
       </div>
 
-      {is_random && (
-        <div className={styles.stat}>
-          <div className={styles.label}>
-            Data
-          </div>
-
-          <div className={styles.val}>
-            Random vector of bytes
-          </div>
-        </div>
+      {owner === address?.toLowerCase() && (
+        <Control
+          subscribed
+          is_active={is_active}
+          addressData={addressData}
+          signMessage={signMessage}
+          chain={chain}
+          subId={id}
+          balance={balance}
+          executionAddress={pma}
+          isBalanceLoading={isBalanceLoading}
+          startSubscription={startSubscription}
+          refetchBalance={refetchBalance}
+          stopSubscription={stopSubscription}
+          withdraw={withdraw}
+        />
       )}
-
-      <Control
-        subscribed
-        is_active={is_active}
-        addressData={addressData}
-        signMessage={signMessage}
-        chain={chain}
-        subId={id}
-        balance={balance}
-        executionAddress={pma}
-        isBalanceLoading={isBalanceLoading}
-        startSubscription={startSubscription}
-        refetchBalance={refetchBalance}
-        stopSubscription={stopSubscription}
-        withdraw={withdraw}
-      />
     </Card>
   )
 };

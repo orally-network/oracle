@@ -1,4 +1,4 @@
-export const RAND_METHOD_TYPES = ["string", "bytes*", "uint*", "int*"];
+export const RAND_METHOD_TYPES = ["string", "bytes64", "bytes256", "uint64", "uint256", "int64", "int256"];
 
 export const mapChainsToOptions = (chains) => {
   return chains.map((chain) => ({
@@ -15,5 +15,5 @@ export const mapPairsToOptions = (pairs) => {
 };
 
 export const getStrMethodArgs = (isFeed) => {
-  return isFeed ? "string | uint256 | uint256 | uint256" : "";
+  return isFeed ? "string, uint256, uint256, uint256" : "";
 };

@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import Select, { components } from 'react-select';
 import { toast } from 'react-toastify';
-import { Card, Input, InputNumber, Switch, Select as AntdSelect } from 'antd';
+import { Card, Input, Switch, Select as AntdSelect } from 'antd';
 
 import Control from 'Shared/Control';
 import { CHAINS_MAP } from 'Constants/chains';
@@ -10,11 +10,12 @@ import Button from 'Components/Button';
 import logger from 'Utils/logger';
 import { usePythiaData } from 'Providers/PythiaData';
 
-import { mapChainsToOptions, mapPairsToOptions, getStrMethodArgs, RAND_METHOD_TYPES } from './helper';
+import { mapChainsToOptions, mapPairsToOptions, getStrMethodArgs, RAND_METHOD_TYPES } from '../helper';
 
 import styles from './Subscription.scss';
 
-const SingleValue = ({ children, ...props }) => (
+// TODO: Refactor Chain selector.
+export const SingleValue = ({ children, ...props }) => (
   <components.SingleValue {...props}>
     <div className={styles.flex}>
       <ChainLogo
@@ -26,7 +27,7 @@ const SingleValue = ({ children, ...props }) => (
   </components.SingleValue>
 );
 
-const Option = (props) => {
+export const Option = (props) => {
   return (
     <components.Option {...props}>
       <div className={styles.flex}>
@@ -66,16 +67,20 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
   }, [chainId, addressData]);
   
   const subscribeHandler = useCallback(async () => {
+    const payload = {
+      chainId,
+      methodName: `${methodName}(${feed ? getStrMethodArgs(feed) : methodArg})`,
+      addressToCall,
+      frequency: Number(frequency) * 60,
+      gasLimit,
+      isRandom,
+      feed,
+    };
+    
+    console.log({ payload });
+    
     const res = await toast.promise(
-      subscribe({
-        chainId,
-        methodName: `${methodName}${feed ? getStrMethodArgs(feed) : methodArg}`,
-        addressToCall,
-        frequency: Number(frequency) * 60,
-        gasLimit,
-        isRandom,
-        feed,
-      }),
+      subscribe(payload),
       {
         pending: `Subscribe ${addressToCall}:${methodName} to Pythia`,
         success: `Subscribed successfully`,
@@ -103,7 +108,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
       setFeed(null);
       setIsEdit(true);
     }
-  }, [chainId, methodName, addressToCall, frequency, isRandom, feed, chains, subscribe, fetchSubs, gasLimit]);
+  }, [chainId, methodName, addressToCall, frequency, isRandom, feed, chains, subscribe, fetchSubs, gasLimit, methodArg]);
 
   const getMethodAddon = () => {
     return isRandom ? (
@@ -184,15 +189,15 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
           </div>
 
           <div className={styles.val}>
-            <InputNumber
-              disabled={!isEdit}
-              className={styles.input}
-              value={frequency}
-              min={30}
-              placeholder="frequency"
-              addonAfter="mins"
-              onChange={setFrequency}
-            />
+          <AntdSelect
+            value={frequency}
+            onChange={setFrequency}
+            addonAfter="mins"
+            options={[
+              { value: 30, label: "30 min" },
+              { value: 60, label: "60 min" },
+            ]}
+          />
           </div>
         </div>
 

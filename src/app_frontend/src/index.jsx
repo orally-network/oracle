@@ -28,7 +28,10 @@ import '!style-loader!css-loader!react-toastify/dist/ReactToastify.css';
 Modal.setAppElement('#app');
 
 const { chains, provider, webSocketPublicClient, publicClient } = configureChains(
-  [mainnet, goerli, sepolia, polygon, polygonMumbai, CHAINS_MAP[35443], CHAINS_MAP[35441], CHAINS_MAP[1230], CHAINS_MAP[1231], CHAINS_MAP[59140], CHAINS_MAP[1313161554], CHAINS_MAP[355113], CHAINS_MAP[1313161555], CHAINS_MAP[167005]],
+  [
+    mainnet, goerli, sepolia, polygon, polygonMumbai, CHAINS_MAP[35443], CHAINS_MAP[35441], CHAINS_MAP[1230], CHAINS_MAP[1231], CHAINS_MAP[59140], CHAINS_MAP[1313161554], CHAINS_MAP[355113], CHAINS_MAP[1313161555], CHAINS_MAP[167005],
+    CHAINS_MAP[59144],
+  ],
   [
     infuraProvider({ apiKey: config.INFURA_API_KEY, stallTimeout: 1_000, }),
     alchemyProvider({ apiKey: config.ALCHEMY_API_KEY, stallTimeout: 1_000, }),

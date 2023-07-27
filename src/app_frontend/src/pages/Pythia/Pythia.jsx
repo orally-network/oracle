@@ -158,7 +158,7 @@ const Pythia = () => {
   const filteredSubs = useMemo(() => {
     if (subs.length) {
       return subs
-        .filter((sub) => (showAllFilter ? true : sub.owner === address))
+        .filter((sub) => (showAllFilter ? true : sub.owner === address?.toLowerCase?.()))
         .filter((sub) => (showPairFilter ? true : !sub.method?.method_type?.Pair))
         .filter((sub) => (showRandomFilter ? true : !sub.method?.method_type?.Random))
         .filter((sub) => (chainIdFilter ? sub?.method?.chain_id === chainIdFilter : true))

@@ -2,6 +2,7 @@ import React, { useState, useCallback } from "react";
 import { Space, Modal, Input } from "antd";
 import { useBalance } from "wagmi";
 import { toast } from "react-toastify";
+import jsonSize from 'json-size';
 
 import Button from "Components/Button";
 import useSignature from "Shared/useSignature";
@@ -15,8 +16,8 @@ import { remove0x } from "Utils/addressUtils";
 
 import styles from "./CustomPair.scss";
 
-const TREASURER_CHAIN = CHAINS_MAP[59140];
-const USDT_TOKEN_LINEA = "0xf56dc6695cf1f5c364edebc7dc7077ac9b586068";
+const TREASURER_CHAIN = CHAINS_MAP[137];
+const USDT_TOKEN_POLYGON = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
 
 const CustomPair = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -25,6 +26,9 @@ const CustomPair = () => {
 
   const [symbol, setSymbol] = useState("");
   const [frequency, setFrequency] = useState(30); // mins
+  
+  // source: { uri: text; resolver: text; bytes_amount: number; }
+  const [sources, setSources] = useState([{ uri: "", resolver: "", bytes_amount: 0, locked: false, isLoading: false, isInvalid: false }]);
   const [uri, setUri] = useState("");
   const [resolver, setResolver] = useState("");
 
@@ -34,7 +38,7 @@ const CustomPair = () => {
   const { data: executionBalance } = useBalance({
     address: addressData?.executionAddress,
     chainId: TREASURER_CHAIN.id,
-    token: USDT_TOKEN_LINEA,
+    token: USDT_TOKEN_POLYGON,
   });
 
   const createCustomPair = useCallback(async () => {
@@ -108,10 +112,69 @@ const CustomPair = () => {
   const nextHandler = useCallback(() => setIsEdit(!isEdit), [isEdit]);
 
   const closeModal = () => setIsModalVisible(false);
+  
+  const getMethods = useCallback((index) => {
+    const handleChangeUri = useCallback((e) => setSources(
+      sources.map((source, i) => {
+        console.log({ source, i, index, sources }, e.target.value)
+          if (index === i) return { ...source, uri: e.target.value };
+          return source;
+        }
+      )), [sources]);
+
+    const handleChangeResolver = useCallback((e) => setSources(
+      sources.map((source, i) => {
+          if (index === i) return { ...source, resolver: e.target.value };
+          return source;
+        }
+      )), [sources]);
+
+    const handleSubmitSource = useCallback(async () => {
+      setSources(sources.map((source, i) => {
+        if (index === i) return { ...source, isLoading: true };
+        return source;
+      }));
+
+      try {
+        console.log(sources[index].uri);
+        const res = await fetch(sources[index].uri);
+        const json = await res.json();
+
+        console.log({ json });
+
+        const bytes = jsonSize(json);
+        
+        // const bytes = jsonSize({
+        //   "symbol": "BTC/USD",
+        //   "rate": 30339151529742,
+        //   "decimals": 9,
+        //   "timestamp": 1689440693,
+        //   "signature": "bb85cac6aed9ece09091862517f63d2299568a974942cbcdc2bd15bce1a68de6129b68e2660e8025fba36414d392f338b958cf72bdfe885775e5fdb5edd9295f1b"
+        // })
+        
+        console.log({ bytes });
+      } catch (e) {
+        console.error(e);
+        
+        setSources(sources.map((source, i) => {
+          if (index === i) return { ...source, isLoading: false, isInvalid: true };
+          return source;
+        }));
+      }
+    }, [sources]);
+    
+    return {
+      handleChangeUri,
+      handleChangeResolver,
+      handleSubmitSource,
+    };
+  }, [sources]);
+  
+  console.log({ addressData });
 
   return (
     <Space className={styles.customPair}>
-      <Button disabled type="primary" onClick={() => setIsModalVisible(true)}>
+      <Button disabled={addressData?.address !== '0x654DFF41D51c230FA400205A633101C5C1f1969C'} type="primary" onClick={() => setIsModalVisible(true)}>
         Create custom pair
       </Button>
 
@@ -162,32 +225,65 @@ const CustomPair = () => {
               </div>
             </div>
 
-            <div className={styles.stat}>
-              <div className={styles.label}>URI</div>
+            <div className={styles.sources}>
+              {sources.map((source, index) => {
+                
+                const {
+                  handleChangeResolver,
+                  handleChangeUri,
+                  handleSubmitSource,
+                } = getMethods(index);
 
-              <div className={styles.val}>
-                <Input
-                  disabled={!isEdit}
-                  className={styles.input}
-                  value={uri}
-                  placeholder="https://endpoint.dev?symbol={symbol}"
-                  onChange={useCallback((e) => setUri(e.target.value), [])}
-                />
-              </div>
-            </div>
-
-            <div className={styles.stat}>
-              <div className={styles.label}>Resolver</div>
-
-              <div className={styles.val}>
-                <Input
-                  disabled={!isEdit}
-                  className={styles.input}
-                  value={resolver}
-                  placeholder="/data/0/rate"
-                  onChange={useCallback((e) => setResolver(e.target.value), [])}
-                />
-              </div>
+                return (
+                  <div className={styles.source}>
+                    <div className={styles.stat}>
+                      <div className={styles.label}>URI</div>
+  
+                      <div className={styles.val}>
+                        <Input
+                          disabled={!isEdit || source.locked}
+                          className={styles.input}
+                          value={source.uri}
+                          placeholder="https://endpoint.dev?symbol={symbol}"
+                          onChange={handleChangeUri}
+                          addonAfter={(
+                            <Button onClick={handleSubmitSource.bind(null, source)}>
+                              {source.locked ? 'Change' : 'Add'}
+                            </Button>
+                          )}
+                        />
+                      </div>
+                    </div>
+  
+                    <div className={styles.stat}>
+                      <div className={styles.label}>Resolver</div>
+  
+                      <div className={styles.val}>
+                        <Input
+                          disabled={!isEdit || source.locked}
+                          className={styles.input}
+                          value={source.resolver}
+                          placeholder="/data/0/rate"
+                          onChange={handleChangeResolver}
+                        />
+                      </div>
+                    </div>
+  
+                    <div className={styles.stat}>
+                      <div className={styles.label}>Bytes amount</div>
+  
+                      <div className={styles.val}>
+                        <Input
+                          disabled
+                          className={styles.input}
+                          value={source.bytes_amount}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+              
             </div>
           </div>
 
@@ -215,7 +311,7 @@ const CustomPair = () => {
               signMessage={signMessage}
               addressData={addressData}
               chain={TREASURER_CHAIN}
-              token={USDT_TOKEN_LINEA}
+              token={USDT_TOKEN_POLYGON}
             />
           )}
         </Space>

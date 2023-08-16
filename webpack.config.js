@@ -159,7 +159,7 @@ module.exports = {
   devServer: {
     proxy: {
       "/api": {
-        target: "https://ic0.app",
+        target: "https://icp0.io",
         changeOrigin: true,
         pathRewrite: {
           "^/api": "/api",

@@ -232,8 +232,8 @@ const CHAINS = [
   },
   {
     id: 167005,
-    name: 'Taiko Alpha-3 Testnet',
-    network: 'Taiko Alpha-3 Testnet',
+    name: 'Taiko Grimsvotn L2',
+    network: 'Taiko Grimsvotn L2',
     nativeCurrency: {
       name: 'ETH',
       symbol: 'ETH',
@@ -249,7 +249,7 @@ const CHAINS = [
     },
     blockExplorers: {
       default: {
-        name: 'Explorer Taiko Alpha-3 Testnet',
+        name: 'Explorer Taiko Grimsvotn L2',
         url: 'https://explorer.test.taiko.xyz',
       },
     },
@@ -280,6 +280,32 @@ const CHAINS = [
       },
     },
     img: lineaImg,
+  },
+  {
+    id: 167006,
+    name: 'Taiko Eldfell L3',
+    network: 'Taiko Eldfell L3',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://rpc.l3test.taiko.xyz']
+      },
+      public: {
+        http: ['https://rpc.l3test.taiko.xyz']
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Explorer Taiko Alpha-3 Grimsvotn',
+        url: 'https://explorer.l3test.taiko.xyz',
+      },
+    },
+    testnet: true,
+    img: taikoImg,
   },
 ];
 

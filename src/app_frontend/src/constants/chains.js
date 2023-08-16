@@ -256,6 +256,31 @@ const CHAINS = [
     testnet: true,
     img: taikoImg,
   },
+  {
+    id: 59144,
+    name: 'Linea Mainnet',
+    network: 'Linea Mainnet',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://linea-mainnet.infura.io/v3/{key}']
+      },
+      public: {
+        http: ['https://linea-mainnet.infura.io/v3/{key}']
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Explorer Linea Mainnet',
+        url: 'https://explorer.linea.build/',
+      },
+    },
+    img: lineaImg,
+  },
 ];
 
 export const CHAINS_MAP = CHAINS.reduce((acc, chain) => {

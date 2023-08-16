@@ -25,12 +25,12 @@ const getCodeText = (selectedFeed) => {
   // response example:
   {
     "symbol": "${selectedFeed?.id ?? "string"}",
-    "rate": ${selectedFeed?.data?.rate ?? "number"},
-    "timestamp": ${selectedFeed?.data?.timestamp ?? "number"}, // ${new Date(
-    Number(selectedFeed?.data?.timestamp) * MILLI
+    "rate": ${selectedFeed?.data?.[0]?.rate ?? "number"},
+    "timestamp": ${selectedFeed?.data?.[0]?.timestamp ?? "number"}, // ${new Date(
+    Number(selectedFeed?.data?.[0]?.timestamp) * MILLI
   ).toGMTString()}
-    "decimals": ${selectedFeed?.data?.decimals ?? "number"}
-    "signature": "${selectedFeed?.data?.signature ?? "string"}"
+    "decimals": ${selectedFeed?.data?.[0]?.decimals ?? "number"}
+    "signature": "${selectedFeed?.data?.[0]?.signature ?? "string"}"
   }
   `;
 };

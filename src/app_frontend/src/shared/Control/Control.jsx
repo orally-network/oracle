@@ -34,7 +34,6 @@ const Control = ({
                    isBalanceLoading,
   token,
 }) => {
-  console.log({balance}, 'in control');
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
   const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
   const [isSigning, setIsSigning] = useState(false);

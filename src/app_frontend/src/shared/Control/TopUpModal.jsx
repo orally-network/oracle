@@ -86,7 +86,7 @@ const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAdd
 
     setIsTopUpModalOpen(false);
     
-    console.log({ hash })
+    console.log({ hash, id: chain.id })
 
     const data = await toast.promise(
       waitForTransaction({

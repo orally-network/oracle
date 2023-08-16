@@ -45,9 +45,9 @@ const PythiaDataProvider = ({ children }) => {
   const fetchBalance = useCallback(async (chainId, address) => {
     setIsBalanceLoading(true);
     
-    console.log({chainId, address});
+    // console.log({chainId, address});
     const balance = await pythiaCanister.get_balance(chainId, remove0x(address));
-    console.log({balance});
+    // console.log({balance});
     
     setIsBalanceLoading(false);
     if (balance.Ok) {

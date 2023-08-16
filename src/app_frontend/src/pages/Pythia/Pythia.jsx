@@ -78,6 +78,8 @@ const Pythia = () => {
         contract_addr: remove0x(addressToCall),
         method_abi: methodName,
         frequency: frequency,
+        // frequency_condition: [frequency],
+        // price_mutation_cond_req: [],
         is_random: isRandom,
         gas_limit: Number(gasLimit),
         msg: addressData.message,

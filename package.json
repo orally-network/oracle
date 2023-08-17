@@ -9,14 +9,14 @@
     "Canister"
   ],
   "scripts": {
-    "build:canisters:local": "dfx build oracle && cp ./.dfx/local/canisters/oracle/oracle.wasm ./src/oracle_factory/src/build/ && gzip ./src/oracle_factory/src/build/oracle.wasm --force && dfx build oracle_factory && dfx canister install oracle_factory --mode=upgrade",
-    "build:canisters:ic": "dfx build oracle && cp ./.dfx/local/canisters/oracle/oracle.wasm ./src/oracle_factory/src/build/ && gzip ./src/oracle_factory/src/build/oracle.wasm --force && dfx build oracle_factory --network ic && dfx canister install oracle_factory --mode=upgrade --network ic",
     "optimize": "ic-cdk-optimizer .wasm -o -opt.wasm",
     "build": "webpack --mode production --env production",
     "prebuild": "npm run generate",
     "start": "webpack serve --mode production --env production",
     "prestart": "npm run generate",
-    "generate": "dfx generate"
+    "generate": "dfx generate",
+    "deploy-ic": "dfx build app_frontend --network ic && dfx canister install app_frontend --network ic -m reinstall",
+    "deploy-firebase": "firebase deploy --only hosting:app-orally"
   },
   "devDependencies": {
     "@dfinity/agent": "0.15.1",
@@ -26,6 +26,7 @@
     "buffer": "6.0.3",
     "copy-webpack-plugin": "^11.0.0",
     "events": "3.3.0",
+    "firebase-tools": "^12.4.8",
     "html-webpack-plugin": "5.5.0",
     "process": "0.11.10",
     "stream-browserify": "3.0.0",

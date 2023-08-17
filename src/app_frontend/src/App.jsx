@@ -40,7 +40,7 @@ const router = createBrowserRouter([
       {
         // Default route navigation
         index: true,
-        element: <Navigate to={`/${ROUTES.SYBIL}`} replace />,
+        element: <Navigate to={`/${ROUTES.PYTHIA}`} replace />,
       },
       {
         path: ROUTES.SYBIL,

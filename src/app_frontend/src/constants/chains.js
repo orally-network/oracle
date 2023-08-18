@@ -1,4 +1,4 @@
-import { mainnet, goerli, polygon, polygonMumbai, sepolia } from 'wagmi/chains';
+import { mainnet, goerli, polygon, polygonMumbai, sepolia, zkSync, zkSyncTestnet, polygonZkEvm } from 'wagmi/chains';
 
 import ethereumImg from 'Assets/chains/ethereum.jpeg';
 import polygonImg from 'Assets/chains/polygon.jpeg';
@@ -8,6 +8,8 @@ import auroraImg from 'Assets/chains/aurora.png';
 import lineaImg from 'Assets/chains/linea.svg';
 import bitfinityImg from 'Assets/chains/bitfinity.svg';
 import taikoImg from 'Assets/chains/taiko.svg';
+import zkSyncImg from 'Assets/chains/zkSync.png';
+import artheraImg from 'Assets/chains/arthera.png';
 
 const CHAINS = [
   {
@@ -29,6 +31,14 @@ const CHAINS = [
   {
     ...polygonMumbai,
     img: polygonImg,
+  },
+  {
+    ...zkSync,
+    img: zkSyncImg,
+  },
+  {
+    ...zkSyncTestnet,
+    img: zkSyncImg,
   },
   {
     id: 1231,
@@ -306,6 +316,32 @@ const CHAINS = [
     },
     testnet: true,
     img: taikoImg,
+  },
+  {
+    id: 10243,
+    name: 'Arthera Testnet',
+    network: 'Arthera Testnet',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://rpc-test.arthera.net']
+      },
+      public: {
+        http: ['https://rpc-test.arthera.net']
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Explorer Arthera Testnet',
+        url: 'https://explorer-test.arthera.net/',
+      },
+    },
+    testnet: true,
+    img: artheraImg,
   },
 ];
 

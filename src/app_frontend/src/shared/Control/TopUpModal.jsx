@@ -12,7 +12,7 @@ import { usePythiaData } from 'Providers/PythiaData';
 
 import styles from './Control.scss';
 
-const DEFAULT_AMOUNT = 0.1;
+const DEFAULT_AMOUNT = 0.01;
 
 const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAddress, refetchBalance, token, decimals, symbol }) => {
   const [amount, setAmount] = useState(DEFAULT_AMOUNT);

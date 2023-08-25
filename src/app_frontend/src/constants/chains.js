@@ -322,8 +322,8 @@ const CHAINS = [
     name: 'Arthera Testnet',
     network: 'Arthera Testnet',
     nativeCurrency: {
-      name: 'ETH',
-      symbol: 'ETH',
+      name: 'AA',
+      symbol: 'AA',
       decimals: 18,
     },
     rpcUrls: {

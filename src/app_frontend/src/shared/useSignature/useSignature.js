@@ -4,7 +4,6 @@ import { useAccount, useSignMessage } from 'wagmi';
 
 import { remove0x } from 'Utils/addressUtils';
 import pythiaCanister from 'Canisters/pythiaCanister';
-import treasurerCanister from 'Canisters/treasurerCanister';
 import { setLocalStorageAddress } from 'Utils/localStorageAddress';
 import { useGlobalState } from 'Providers/GlobalState';
 import { usePythiaData } from 'Providers/PythiaData';

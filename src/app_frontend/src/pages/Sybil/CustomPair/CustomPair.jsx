@@ -9,7 +9,6 @@ import useSignature from "Shared/useSignature";
 import { useGlobalState } from "Providers/GlobalState";
 import { CHAINS_MAP } from "Constants/chains";
 import Control from "Shared/Control";
-import treasurerCanister from "Canisters/treasurerCanister";
 import sybilCanister from "Canisters/sybilCanister";
 import logger from "Utils/logger";
 import { remove0x } from "Utils/addressUtils";
@@ -49,7 +48,7 @@ const CustomPair = () => {
       console.log({ amount });
 
       const depositResult = await toast.promise(
-        treasurerCanister.deposit({
+        sybilCanister.deposit({
           amount,
           taxpayer: addressData?.address,
           deposit_type: {

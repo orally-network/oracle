@@ -1,4 +1,5 @@
 const isDevelopment = false;
+const isStaging = false;
 
 const HOST = isDevelopment ? "http://127.0.0.1:4943" : "https://ic0.app";
 const DOMAIN = isDevelopment ? "localhost:4943" : "icp0.io";
@@ -13,14 +14,10 @@ export default {
   INFURA_API_KEY: process.env.INFURA_API_KEY,
   env: process.env.NODE_ENV,
 
-  pythia_canister_id: isDevelopment
-    ? "avqkn-guaaa-aaaaa-qaaea-cai"
+  pythia_canister_id: isStaging
+    ? "xmz4o-gqaaa-aaaag-qcjva-cai"
     : "ettff-uaaaa-aaaag-abpcq-cai",
-  sybil_canister_id: isDevelopment
-    ? "by6od-j4aaa-aaaaa-qaadq-cai"
+  sybil_canister_id: isStaging
+    ? "tysiw-qaaaa-aaaak-qcikq-cai"
     : "wth3l-tiaaa-aaaap-aa5uq-cai",
-    // : "tysiw-qaaaa-aaaak-qcikq-cai", // staging
-  treasurer_canister_id: isDevelopment
-    ? "by6od-j4aaa-aaaaa-qaadq-cai"
-    : "dvx6a-4aaaa-aaaag-qcbqq-cai",
 };

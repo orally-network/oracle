@@ -50,8 +50,8 @@ const PythiaDataProvider = ({ children }) => {
     // console.log({balance});
     
     setIsBalanceLoading(false);
-    if (balance.Ok) {
-      return balance.Ok;
+    if (balance.Ok || Number(balance.Ok) === 0) {
+        return balance.Ok;
     } else {
       logger.error(`Failed to get balance for ${address}, ${balance.Err}`)
       

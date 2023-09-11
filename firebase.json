@@ -1,5 +1,5 @@
 {
-  "hosting": {
+  "hosting": [{
     "public": "dist/app_frontend",
     "site": "app-orally",
     "ignore": [
@@ -13,5 +13,19 @@
         "destination": "/index.html"
       }
     ]
-  }
+  },{
+    "public": "dist/app_frontend",
+    "site": "staging-app-orally",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }]
 }

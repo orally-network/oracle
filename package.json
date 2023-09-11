@@ -16,7 +16,8 @@
     "prestart": "npm run generate",
     "generate": "dfx generate",
     "deploy-ic": "dfx build app_frontend --network ic && dfx canister install app_frontend --network ic -m reinstall",
-    "deploy-firebase": "firebase deploy --only hosting:app-orally"
+    "deploy-firebase": "firebase deploy --only hosting:app-orally",
+    "deploy-staging": "firebase deploy --only hosting:staging-app-orally"
   },
   "devDependencies": {
     "@dfinity/agent": "^0.19.2",

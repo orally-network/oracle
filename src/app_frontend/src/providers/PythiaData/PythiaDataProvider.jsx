@@ -5,6 +5,8 @@ import { remove0x } from 'Utils/addressUtils';
 import { useGlobalState } from 'Providers/GlobalState';
 import logger from 'Utils/logger';
 import pythiaCanister from 'Canisters/pythiaCanister';
+import { CHAINS_MAP } from 'Constants/chains';
+import config from 'Constants/config';
 import PythiaDataContext from './PythiaDataContext';
 
 const PythiaDataProvider = ({ children }) => {
@@ -38,7 +40,9 @@ const PythiaDataProvider = ({ children }) => {
 
     setIsChainsLoading(false);
     if (Array.isArray(chains)) {
-      setChains(chains);
+      const visibleChains = config.isStaging ? chains : chains.filter(chain => !CHAINS_MAP[chain.chain_id].testnet)
+      
+      setChains(visibleChains);
     }
   }, []);
   

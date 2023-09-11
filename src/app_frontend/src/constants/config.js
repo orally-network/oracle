@@ -6,6 +6,7 @@ const DOMAIN = isDevelopment ? "localhost:4943" : "icp0.io";
 
 export default {
   isDevelopment,
+  isStaging,
   HOST,
   DOMAIN,
   GOOGLE_ANALYTICS_TRACKING_CODE: process.env.GOOGLE_ANALYTICS_TRACKING_CODE,

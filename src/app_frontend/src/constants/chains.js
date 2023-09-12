@@ -10,6 +10,7 @@ import bitfinityImg from 'Assets/chains/bitfinity.svg';
 import taikoImg from 'Assets/chains/taiko.svg';
 import zkSyncImg from 'Assets/chains/zkSync.png';
 import artheraImg from 'Assets/chains/arthera.png';
+import mantaImg from 'Assets/chains/manta.png';
 
 const CHAINS = [
   {
@@ -338,6 +339,32 @@ const CHAINS = [
       default: {
         name: 'Explorer Arthera Testnet',
         url: 'https://explorer-test.arthera.net/',
+      },
+    },
+    testnet: true,
+    img: artheraImg,
+  },
+  {
+    id: 3441005,
+    name: 'Manta Pacific Testnet',
+    network: 'Manta Testnet',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://manta-testnet.calderachain.xyz/http']
+      },
+      public: {
+        http: ['https://manta-testnet.calderachain.xyz/http']
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Explorer Manta Pacific Testnet',
+        url: 'https://manta-testnet.calderaexplorer.xyz',
       },
     },
     testnet: true,

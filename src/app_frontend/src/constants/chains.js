@@ -368,7 +368,7 @@ const CHAINS = [
       },
     },
     testnet: true,
-    img: artheraImg,
+    img: mantaImg,
   },
 ];
 

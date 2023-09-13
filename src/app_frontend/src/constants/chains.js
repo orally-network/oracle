@@ -355,19 +355,44 @@ const CHAINS = [
     },
     rpcUrls: {
       default: {
-        http: ['https://manta-testnet.calderachain.xyz/http']
+        http: ['https://pacific-rpc.testnet.manta.network/http']
       },
       public: {
-        http: ['https://manta-testnet.calderachain.xyz/http']
+        http: ['https://pacific-rpc.testnet.manta.network/http']
       },
     },
     blockExplorers: {
       default: {
         name: 'Explorer Manta Pacific Testnet',
-        url: 'https://manta-testnet.calderaexplorer.xyz',
+        url: 'https://pacific-explorer.testnet.manta.network',
       },
     },
     testnet: true,
+    img: mantaImg,
+  },
+  {
+    id: 169,
+    name: 'Manta Pacific L2 Rollup',
+    network: 'Manta Pacific L2 Rollup',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://pacific-rpc.manta.network/http']
+      },
+      public: {
+        http: ['https://pacific-rpc.manta.network/http']
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Explorer Manta Pacific L2 Rollup',
+        url: 'https://pacific-explorer.manta.network',
+      },
+    },
     img: mantaImg,
   },
 ];

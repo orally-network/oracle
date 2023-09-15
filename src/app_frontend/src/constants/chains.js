@@ -195,7 +195,7 @@ const CHAINS = [
     network: 'Linea testnet',
     nativeCurrency: {
       name: 'Linea ETH',
-      symbol: 'LETH',
+      symbol: 'ETH',
       decimals: 18,
     },
     rpcUrls: {
@@ -209,7 +209,7 @@ const CHAINS = [
     blockExplorers: {
       default: {
         name: 'Explorer Linea Testnet',
-        url: 'https://explorer.goerli.linea.build',
+        url: 'https://goerli.lineascan.build/',
       },
     },
     testnet: true,

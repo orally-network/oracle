@@ -268,6 +268,32 @@ const CHAINS = [
     img: taikoImg,
   },
   {
+    id: 167007,
+    name: 'Taiko Jolnir L2',
+    network: 'Taiko Jolnir L2',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://rpc.jolnir.taiko.xyz']
+      },
+      public: {
+        http: ['https://rpc.jolnir.taiko.xyz']
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Explorer Taiko Jolnir L2',
+        url: 'https://explorer.jolnir.taiko.xyz',
+      },
+    },
+    testnet: true,
+    img: taikoImg,
+  },
+  {
     id: 59144,
     name: 'Linea Mainnet',
     network: 'Linea Mainnet',

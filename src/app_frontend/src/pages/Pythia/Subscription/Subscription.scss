@@ -1,8 +1,18 @@
+@import 'Styles/mix';
+@import 'Styles/variables';
+
 .subscription {
-  width: 500px;
+  width: 350px;
   max-width: 100vw;
-  margin: 10px;
   justify-content: center;
+  
+  @include card();
+  @include hoverScale();
+  
+  &:hover {
+    border-color: $text-color;
+    cursor: pointer;
+  }
   
   @media (max-width: 768px) {
     margin: 25px 0;
@@ -53,22 +63,38 @@
       .executions {
         display: flex;
         margin-right: 15px;
-
-        .icon {
-          margin-right: 5px;
-          width: 20px;
-          height: 20px;
-        }
+        align-items: center;
       }
 
       .frequency {
+        display: flex;
+        align-items: center;
+      }
 
+      .icon {
+        margin-right: 5px;
+        margin-left: 5px;
+        width: 15px;
+        height: 15px;
       }
     }
   }
+  
+  .inlineStats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    margin-bottom: 15px;
+  }
+  
+  .lastExecution {
+    opacity: 0.7;
+    text-align: center;
+    font-size: 14px;
+  }
 
   .stat {
-    margin-bottom: 25px;
 
     .label {
       margin-bottom: 10px;
@@ -105,5 +131,10 @@
 }
 
 .data {
+  background-color: $secondary-color;
   
+  &:hover {
+    color: $text-color;
+    border-color: $text-color;
+  }
 }

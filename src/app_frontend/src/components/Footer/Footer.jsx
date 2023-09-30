@@ -1,11 +1,10 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
 import { Layout, Button } from "antd";
 
 import GitIcon from "Assets/git.svg";
 import GitbookIcon from "Assets/gitbook.svg";
 import TwitterIcon from "Assets/twitter.svg";
-import onChainLogo from "Assets/onChain.png";
+import icpLogo from "Assets/icp.png";
 
 import styles from "./Footer.scss";
 
@@ -31,7 +30,10 @@ const Footer = () => {
           <GitbookIcon />
         </Button>
       </div>
-      <img src={onChainLogo} className={styles.logo} />
+      
+      <Button type="link" target="_blank" href="https://internetcomputer.org/ecosystem?tag=Tools+%2F+Infrastructure">
+        <img src={icpLogo} alt="100% on-chain: Internet Computer" className={styles.logo} />
+      </Button>
     </Layout.Footer>
   );
 };

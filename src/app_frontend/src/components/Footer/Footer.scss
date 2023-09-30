@@ -2,10 +2,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: inherit;
 }
 
 .logo {
-  width: 50%;
+  width: 220px;
+  border-radius: 15px;
   max-width: 300px;
   margin-top: 15px;
 }

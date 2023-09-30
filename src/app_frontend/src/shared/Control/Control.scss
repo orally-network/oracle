@@ -1,5 +1,7 @@
 .control {
   display: flex;
+  margin-top: 15px;
+  flex-direction: column;
   
   .executionAddress {
     display: flex;

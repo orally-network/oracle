@@ -1,5 +1,7 @@
+@use '~Styles/variables';
+
 .iconLink {
-  color: black;
+  color: variables.$text-color;
   width: 20px;
   height: 20px;
   font-size: 14px;

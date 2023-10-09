@@ -60,7 +60,7 @@
     "ethers": "^5.5.1",
     "memoize": "^0.1.1",
     "react": "^18.2.0",
-    "react-code-blocks": "^0.0.9-0",
+    "react-code-blocks": "^0.1.4",
     "react-dom": "^18.2.0",
     "react-drag-drop-files": "^2.3.8",
     "react-ga": "^3.3.1",

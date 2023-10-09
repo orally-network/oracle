@@ -1,20 +1,19 @@
 import * as React from "react";
 import { createRoot } from 'react-dom/client';
 import { ToastContainer } from 'react-toastify';
-import { BrowserRouter } from 'react-router-dom';
 import Modal from 'react-modal';
 import { WagmiConfig, createConfig, configureChains } from 'wagmi';
-import { mainnet, goerli, polygon, polygonMumbai, sepolia } from 'wagmi/chains';
-import { createPublicClient, http } from 'viem';
+// import { mainnet, goerli, polygon, polygonMumbai, sepolia } from 'wagmi/chains';
+// import { createPublicClient, http } from 'viem';
 
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
 
-import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
+// import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+// import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 
 import ErrorBoundary from 'Shared/ErrorBoundary';
 import config from 'Constants/config';

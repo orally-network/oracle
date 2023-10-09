@@ -4,9 +4,7 @@
       "frontend": {
         "entrypoint": "dist/app_frontend/index.html"
       },
-      "source": [
-        "dist/app_frontend/"
-      ],
+      "source": ["dist/app_frontend/"],
       "type": "assets"
     }
   },

@@ -113,6 +113,7 @@ const CustomPair = () => {
   const closeModal = () => setIsModalVisible(false);
   
   const getMethods = useCallback((index) => {
+    // TODO: refactor this useCallback cannot be called inside a callback
     const handleChangeUri = useCallback((e) => setSources(
       sources.map((source, i) => {
         console.log({ source, i, index, sources }, e.target.value)
@@ -184,8 +185,8 @@ const CustomPair = () => {
         onCancel={closeModal}
         className={styles.modal}
         footer={[
-          <Button onClick={closeModal}>Cancel</Button>,
-          <Button onClick={createCustomPair} type="primary">
+          <Button key="cancel-btn" onClick={closeModal}>Cancel</Button>,
+          <Button key="ok-btn" onClick={createCustomPair} type="primary">
             OK
           </Button>,
         ]}
@@ -226,7 +227,6 @@ const CustomPair = () => {
 
             <div className={styles.sources}>
               {sources.map((source, index) => {
-                
                 const {
                   handleChangeResolver,
                   handleChangeUri,
@@ -234,10 +234,10 @@ const CustomPair = () => {
                 } = getMethods(index);
 
                 return (
-                  <div className={styles.source}>
+                  <div key={index} className={styles.source}>
                     <div className={styles.stat}>
                       <div className={styles.label}>URI</div>
-  
+
                       <div className={styles.val}>
                         <Input
                           disabled={!isEdit || source.locked}
@@ -253,10 +253,10 @@ const CustomPair = () => {
                         />
                       </div>
                     </div>
-  
+
                     <div className={styles.stat}>
                       <div className={styles.label}>Resolver</div>
-  
+
                       <div className={styles.val}>
                         <Input
                           disabled={!isEdit || source.locked}
@@ -267,10 +267,10 @@ const CustomPair = () => {
                         />
                       </div>
                     </div>
-  
+
                     <div className={styles.stat}>
                       <div className={styles.label}>Bytes amount</div>
-  
+
                       <div className={styles.val}>
                         <Input
                           disabled

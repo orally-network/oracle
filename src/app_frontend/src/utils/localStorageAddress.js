@@ -1,5 +1,3 @@
-import { add0x } from 'Utils/addressUtils';
-
 const localStorageAddressKey = 'address';
 
 const getLoclStorageAddresses = () => {
@@ -23,6 +21,6 @@ export const setLocalStorageAddress = (address, message, signature) => {
   return addressData;
 };
 
-export const getLocalStorageAddress = (address, keyPrefix = '') => {
+export const getLocalStorageAddress = (address) => {
   return JSON.parse(localStorage.getItem(localStorageAddressKey))?.[address];
 }

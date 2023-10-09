@@ -15,9 +15,9 @@ The DFINITY command-line execution environment (dfx) is the primary tool for cre
 
 `sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"`
 
-In the project directory, you should run:
-1 tab in the terminal: `dfx start`
-2 tab in the terminal: `dfx canister create --all`
+In the project directory, you should run:  
+  1 tab in the terminal: `dfx start`  
+  2 tab in the terminal: `dfx canister create --all`  
 
 After that you script in the first tab could be stopped.
 

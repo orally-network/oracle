@@ -1,4 +1,4 @@
-import { mainnet, goerli, polygon, polygonMumbai, sepolia, zkSync, zkSyncTestnet, polygonZkEvm } from 'wagmi/chains';
+import { mainnet, goerli, polygon, polygonMumbai, sepolia, zkSync, zkSyncTestnet } from 'wagmi/chains';
 
 import ethereumImg from 'Assets/chains/ethereum.jpeg';
 import polygonImg from 'Assets/chains/polygon.jpeg';

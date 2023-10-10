@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { useAccount, useBalance } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { Spin } from 'antd';
 import { toast } from 'react-toastify';
 
@@ -9,7 +9,7 @@ import { truncateEthAddress } from 'Utils/addressUtils';
 import logger from 'Utils/logger';
 
 import TopUpModal from './TopUpModal';
-import SubscribeModal from './SubscribeModal';
+// import SubscribeModal from './SubscribeModal';
 import styles from './Control.scss';
 
 const MIN_BALANCE = 0.1;
@@ -17,140 +17,124 @@ const EMPTY_BALANCE = 0.001;
 
 // todo: subscribed will have `stop` and `withdraw` methods
 const Control = ({
-                   addressData,
-                   signMessage,
-                   chain,
-                   subscribe,
-                   subscribed,
-                   disabled,
-                   subId,
-                   stopSubscription,
-                   startSubscription,
-                   withdraw,
-                   is_active,
-                   balance, 
-                   executionAddress,
-                   refetchBalance,
-                   isBalanceLoading,
+  addressData,
+  signMessage,
+  chain,
+  subscribe,
+  subscribed,
+  disabled,
+  subId,
+  stopSubscription,
+  startSubscription,
+  withdraw,
+  is_active,
+  balance,
+  executionAddress,
+  refetchBalance,
+  isBalanceLoading,
   token,
 }) => {
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
-  const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
+  // const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
   const [isSigning, setIsSigning] = useState(false);
   const [isStopping, setIsStopping] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
-  
+
   const { address } = useAccount();
-  
+
   const signMessageHandler = useCallback(async () => {
     setIsSigning(true);
     try {
-      await toast.promise(
-        signMessage(chain?.id),
-        {
-          pending: `SIWE processing...`,
-          success: `SIWE processed`,
-          error: {
-            render({ error }) {
-              logger.error(`SIWE`, error);
+      await toast.promise(signMessage(chain?.id), {
+        pending: `SIWE processing...`,
+        success: `SIWE processed`,
+        error: {
+          render({ error }) {
+            logger.error(`SIWE`, error);
 
-              return 'Something went wrong. Try again later.';
-            }
+            return 'Something went wrong. Try again later.';
           },
-        }
-      );
+        },
+      });
     } finally {
       setIsSigning(false);
     }
   }, [chain, signMessage]);
-  
+
   const stopHandler = useCallback(async () => {
     setIsStopping(true);
     try {
-      await toast.promise(
-        stopSubscription(chain?.id, subId),
-        {
-          pending: `Stopping subscription...`,
-          success: `Subscription stopped`,
-          error: {
-            render({ error }) {
-              logger.error(`Stop subscription`, error);
+      await toast.promise(stopSubscription(chain?.id, subId), {
+        pending: `Stopping subscription...`,
+        success: `Subscription stopped`,
+        error: {
+          render({ error }) {
+            logger.error(`Stop subscription`, error);
 
-              return 'Something went wrong. Try again later.';
-            }
+            return 'Something went wrong. Try again later.';
           },
-        }
-      );
+        },
+      });
     } finally {
       setIsStopping(false);
     }
   }, [subId, stopSubscription]);
-  
+
   const startHandler = useCallback(async () => {
     setIsStarting(true);
     try {
-      await toast.promise(
-        startSubscription(chain?.id, subId),
-        {
-          pending: `Starting subscription...`,
-          success: `Subscription started`,
-          error: {
-            render({ error }) {
-              logger.error(`Start subscription`, error);
+      await toast.promise(startSubscription(chain?.id, subId), {
+        pending: `Starting subscription...`,
+        success: `Subscription started`,
+        error: {
+          render({ error }) {
+            logger.error(`Start subscription`, error);
 
-              return 'Something went wrong. Try again later.';
-            }
+            return 'Something went wrong. Try again later.';
           },
-        }
-      );
+        },
+      });
     } finally {
       setIsStarting(false);
     }
   }, [subId, startSubscription]);
-  
+
   const withdrawHandler = useCallback(async () => {
     setIsWithdrawing(true);
     try {
-      await toast.promise(
-        withdraw(chain?.id),
-        {
-          pending: `Withdrawing...`,
-          success: `Withdrawn`,
-          error: {
-            render({ error }) {
-              logger.error(`Withdraw`, error);
+      await toast.promise(withdraw(chain?.id), {
+        pending: `Withdrawing...`,
+        success: `Withdrawn`,
+        error: {
+          render({ error }) {
+            logger.error(`Withdraw`, error);
 
-              return 'Something went wrong. Try again later.';
-            }
+            return 'Something went wrong. Try again later.';
           },
-        }
-      );
-      
+        },
+      });
+
       refetchBalance();
     } finally {
       setIsWithdrawing(false);
     }
   }, [chain, refetchBalance, withdraw]);
-  
+
   if (!address) {
     return <Connect />;
   }
-  
+
   if (!addressData) {
     return (
       <Spin spinning={isSigning}>
-        <Button
-          onClick={signMessageHandler}
-          type="primary"
-          className={styles.signMessage}
-        >
+        <Button onClick={signMessageHandler} type="primary" className={styles.signMessage}>
           Sign message
         </Button>
       </Spin>
     );
   }
-  
+
   return (
     <div className={styles.control}>
       <div className={styles.executionAddress}>
@@ -159,18 +143,15 @@ const Control = ({
             <div className={styles.address} onClick={() => navigator.clipboard.writeText(executionAddress)}>
               {truncateEthAddress(executionAddress)}
             </div>
-            
+
             <div className={styles.balance}>
-              {(Number(balance) / Math.pow(10, chain.nativeCurrency.decimals)).toFixed(3) ?? '-'} {chain.nativeCurrency.symbol}
+              {(Number(balance) / Math.pow(10, chain.nativeCurrency.decimals)).toFixed(3) ?? '-'}{' '}
+              {chain.nativeCurrency.symbol}
             </div>
           </div>
         </Spin>
 
-        <Button
-          className={styles.topUp}
-          onClick={() => setIsTopUpModalOpen(true)}
-          type="primary"
-        >
+        <Button className={styles.topUp} onClick={() => setIsTopUpModalOpen(true)} type="primary">
           Top up
         </Button>
       </div>
@@ -179,26 +160,18 @@ const Control = ({
         <div className={styles.actionBtns}>
           {is_active ? (
             <Spin spinning={isStopping}>
-              <Button
-                className={styles.actionBtn}
-                type="primary"
-                onClick={stopHandler}
-              >
+              <Button className={styles.actionBtn} type="primary" onClick={stopHandler}>
                 Stop
               </Button>
             </Spin>
           ) : (
             <Spin spinning={isStarting}>
-              <Button
-                className={styles.actionBtn}
-                type="primary"
-                onClick={startHandler}
-              >
+              <Button className={styles.actionBtn} type="primary" onClick={startHandler}>
                 Start
               </Button>
             </Spin>
           )}
-          
+
           <Spin spinning={isWithdrawing}>
             <Button
               className={styles.actionBtn}
@@ -210,15 +183,17 @@ const Control = ({
             </Button>
           </Spin>
         </div>
-      ) : subscribe && (
-        <Button
-          className={styles.subscribe}
-          disabled={balance < MIN_BALANCE || subscribed || disabled}
-          onClick={subscribe}
-          type="primary"
-        >
-          Subscribe{subscribed && 'd'}
-        </Button>
+      ) : (
+        subscribe && (
+          <Button
+            className={styles.subscribe}
+            disabled={balance < MIN_BALANCE || subscribed || disabled}
+            onClick={subscribe}
+            type="primary"
+          >
+            Subscribe{subscribed && 'd'}
+          </Button>
+        )
       )}
 
       {isTopUpModalOpen && (
@@ -233,7 +208,7 @@ const Control = ({
           symbol={chain.nativeCurrency.symbol}
         />
       )}
-      
+
       {/*<SubscribeModal*/}
       {/*  isSubscribeModalOpen={isSubscribeModalOpen}*/}
       {/*  setIsSubscribeModalOpen={setIsSubscribeModalOpen}*/}
@@ -241,7 +216,7 @@ const Control = ({
       {/*  subscribe={subscribe}*/}
       {/*/>*/}
     </div>
-  )
+  );
 };
 
 export default Control;

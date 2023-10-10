@@ -8,6 +8,7 @@ const IconLink = ({ link, IconComponent, ...rest }) => {
       className={styles.iconLink}
       href={link}
       target="_blank"
+      rel="noopener noreferrer"
       {...rest}
     >
       <IconComponent />

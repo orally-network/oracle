@@ -1,12 +1,13 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { toast } from 'react-toastify';
+// eslint-disable-next-line no-unused-vars
 import { useSendTransaction, usePrepareSendTransaction, useSwitchNetwork, useNetwork, usePrepareContractWrite } from 'wagmi';
 import { utils } from 'ethers';
 import { Input, Modal } from 'antd';
 import { waitForTransaction } from '@wagmi/core'
 
 // import Modal from 'Components/Modal';
-import Button from 'Components/Button';
+// import Button from 'Components/Button';
 import logger from 'Utils/logger';
 import { usePythiaData } from 'Providers/PythiaData';
 
@@ -14,7 +15,7 @@ import styles from './Control.scss';
 
 const DEFAULT_AMOUNT = 0.01;
 
-const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAddress, refetchBalance, token, decimals, symbol }) => {
+const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAddress, refetchBalance, decimals, symbol }) => {
   const [amount, setAmount] = useState(DEFAULT_AMOUNT);
 
   const { chain: currentChain } = useNetwork();

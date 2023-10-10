@@ -113,7 +113,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
   const getMethodAddon = () => {
     return isRandom ? (
       <AntdSelect value={methodArg} onChange={setMethodArg}>
-        {RAND_METHOD_TYPES.map(type => <AntdSelect.Option value={type}>{type}</AntdSelect.Option>)}
+        {RAND_METHOD_TYPES.map(type => <AntdSelect.Option key={type} value={type}>{type}</AntdSelect.Option>)}
       </AntdSelect>
     ) : (
       getStrMethodArgs(Boolean(feed))

@@ -1,5 +1,5 @@
-import React, { useCallback } from "react";
-import { Col, Row, Radio, Switch } from "antd";
+import React from "react";
+import { Col, Row, Radio } from "antd";
 import Select from "react-select";
 import Button from "Components/Button";
 
@@ -10,7 +10,7 @@ import { mapChainsToOptions } from "../helper";
 
 import styles from "./FiltersBar.scss";
 
-const FiltersBar = ({}) => {
+const FiltersBar = () => {
   const { chains } = usePythiaData();
 
   const {

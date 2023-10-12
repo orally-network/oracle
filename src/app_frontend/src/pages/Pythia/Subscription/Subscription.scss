@@ -2,12 +2,12 @@
 @import 'Styles/variables';
 
 .subscription {
-  width: 350px;
+  // width: 350px;
   max-width: 100vw;
   justify-content: center;
   
-  @include card();
-  @include hoverScale();
+  // @include card();
+  // @include hoverScale();
   
   &:hover {
     border-color: $text-color;
@@ -95,9 +95,10 @@
   }
 
   .stat {
+    margin-bottom: 15px;
 
     .label {
-      margin-bottom: 10px;
+      margin-bottom: 5px;
     }
 
     .val {
@@ -113,8 +114,12 @@
 }
 
 .chainSelect {
-  width: 250px;
+  width: 250px; 
+  :global(.react-select__menu) {
+    background-color: #7DC1FF;
+  }
 }
+
 
 .flex {
   display: flex;
@@ -131,7 +136,7 @@
 }
 
 .data {
-  background-color: $secondary-color;
+  // background-color: $secondary-color;
   
   &:hover {
     color: $text-color;

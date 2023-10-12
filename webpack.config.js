@@ -57,7 +57,7 @@ module.exports = {
     minimizer: [new TerserPlugin()],
   },
   resolve: {
-    extensions: [".js", ".jsx"],
+    extensions: [".js", ".jsx", '.ts', '.tsx'],
     fallback: {
       assert: require.resolve("assert/"),
       buffer: require.resolve("buffer/"),
@@ -87,7 +87,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(js)x?$/,
+        test: /\.(js|ts)x?$/,
         loader: "ts-loader",
         exclude: /node_modules/,
         options: { transpileOnly: true },

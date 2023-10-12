@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import Select, { components } from 'react-select';
 import { toast } from 'react-toastify';
-import { Card, Input, Switch, Select as AntdSelect } from 'antd';
+import { Modal, Card, Input, Switch, Select as AntdSelect } from 'antd';
 
 import Control from 'Shared/Control';
 import { CHAINS_MAP } from 'Constants/chains';
@@ -10,7 +10,12 @@ import Button from 'Components/Button';
 import logger from 'Utils/logger';
 import { usePythiaData } from 'Providers/PythiaData';
 
-import { mapChainsToOptions, mapPairsToOptions, getStrMethodArgs, RAND_METHOD_TYPES } from '../helper';
+import {
+  mapChainsToOptions,
+  mapPairsToOptions,
+  getStrMethodArgs,
+  RAND_METHOD_TYPES,
+} from '../helper';
 
 import styles from './Subscription.scss';
 
@@ -18,11 +23,7 @@ import styles from './Subscription.scss';
 export const SingleValue = ({ children, ...props }) => (
   <components.SingleValue {...props}>
     <div className={styles.flex}>
-      <ChainLogo
-        chain={CHAINS_MAP[children]}
-      />
-      {' '}
-      {CHAINS_MAP[props.data.value].name}
+      <ChainLogo chain={CHAINS_MAP[children]} /> {CHAINS_MAP[props.data.value].name}
     </div>
   </components.SingleValue>
 );
@@ -31,15 +32,11 @@ export const Option = (props) => {
   return (
     <components.Option {...props}>
       <div className={styles.flex}>
-        <ChainLogo chain={CHAINS_MAP[props.data.value]} />
-        {' '}
-        {CHAINS_MAP[props.data.value].name}
+        <ChainLogo chain={CHAINS_MAP[props.data.value]} /> {CHAINS_MAP[props.data.value].name}
       </div>
     </components.Option>
   );
 };
-
-
 
 const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
   const [chainId, setChainId] = useState(null);
@@ -51,21 +48,21 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
   const [isRandom, setIsRandom] = useState(false);
   const [feed, setFeed] = useState(null);
   const [isEdit, setIsEdit] = useState(true);
-  
+
   const [balance, setBalance] = useState(0);
-  
+
   const { fetchSubs, chains, fetchBalance, pma, isBalanceLoading } = usePythiaData();
-  
+
   const refetchBalance = useCallback(async () => {
     setBalance(await fetchBalance(chainId, addressData.address));
-  }, [chainId, addressData]);
-  
+  }, [chainId, addressData, fetchBalance]);
+
   useEffect(() => {
     if (chainId && addressData) {
       refetchBalance();
     }
-  }, [chainId, addressData]);
-  
+  }, [chainId, addressData, refetchBalance]);
+
   const subscribeHandler = useCallback(async () => {
     const payload = {
       chainId,
@@ -76,26 +73,23 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
       isRandom,
       feed,
     };
-    
-    console.log({ payload });
-    
-    const res = await toast.promise(
-      subscribe(payload),
-      {
-        pending: `Subscribe ${addressToCall}:${methodName} to Pythia`,
-        success: `Subscribed successfully`,
-        error: {
-          render({ error }) {
-            logger.error(`Subscribe ${addressToCall}:${methodName} to Pythia`, error);
 
-            return 'Something went wrong. Try again later.';
-          }
+    console.log({ payload });
+
+    const res = await toast.promise(subscribe(payload), {
+      pending: `Subscribe ${addressToCall}:${methodName} to Pythia`,
+      success: `Subscribed successfully`,
+      error: {
+        render({ error }) {
+          logger.error(`Subscribe ${addressToCall}:${methodName} to Pythia`, error);
+
+          return 'Something went wrong. Try again later.';
         },
-      }
-    );
-    
+      },
+    });
+
     console.log({ res });
-    
+
     if (!res.Err) {
       fetchSubs();
       // clear state
@@ -108,33 +102,54 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
       setFeed(null);
       setIsEdit(true);
     }
-  }, [chainId, methodName, addressToCall, frequency, isRandom, feed, chains, subscribe, fetchSubs, gasLimit, methodArg]);
+  }, [
+    chainId,
+    methodName,
+    addressToCall,
+    frequency,
+    isRandom,
+    feed,
+    chains,
+    subscribe,
+    fetchSubs,
+    gasLimit,
+    methodArg,
+  ]);
 
   const getMethodAddon = () => {
     return isRandom ? (
       <AntdSelect value={methodArg} onChange={setMethodArg}>
-        {RAND_METHOD_TYPES.map(type => <AntdSelect.Option key={type} value={type}>{type}</AntdSelect.Option>)}
+        {RAND_METHOD_TYPES.map((type) => (
+          <AntdSelect.Option key={type} value={type}>
+            {type}
+          </AntdSelect.Option>
+        ))}
       </AntdSelect>
     ) : (
       getStrMethodArgs(Boolean(feed))
-    )
-  }
+    );
+  };
 
   const nextHandler = useCallback(() => setIsEdit(!isEdit), [isEdit]);
-  
+
   return (
-    <Card className={styles.subscription}>
+    <Modal
+      title="New Subscription"
+      open={true}
+      onCancel={() => {}}
+      footer={null}
+      className={styles.subscription}
+    >
       <div className={styles.inputs}>
         <div className={styles.stat}>
-          <div className={styles.label}>
-            Chain
-          </div>
+          <div className={styles.label}>Chain</div>
 
           <div className={styles.val}>
             <Select
               setValue={setChainId}
               value={chainId ? { label: chainId, value: chainId } : null}
               className={styles.chainSelect}
+              classNamePrefix="react-select"
               isDisabled={!isEdit}
               styles={{
                 singleValue: (base) => ({
@@ -149,11 +164,9 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
             />
           </div>
         </div>
-        
+
         <div className={styles.stat}>
-          <div className={styles.label}>
-            Address
-          </div>
+          <div className={styles.label}>Address</div>
 
           <div className={styles.val}>
             <Input
@@ -167,9 +180,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
         </div>
 
         <div className={styles.stat}>
-          <div className={styles.label}>
-            Method
-          </div>
+          <div className={styles.label}>Method</div>
 
           <div className={styles.val}>
             <Input
@@ -184,27 +195,23 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
         </div>
 
         <div className={styles.stat}>
-          <div className={styles.label}>
-            Frequency
-          </div>
+          <div className={styles.label}>Frequency</div>
 
           <div className={styles.val}>
-          <AntdSelect
-            value={frequency}
-            onChange={setFrequency}
-            addonAfter="mins"
-            options={[
-              { value: 30, label: "30 min" },
-              { value: 60, label: "60 min" },
-            ]}
-          />
+            <AntdSelect
+              value={frequency}
+              onChange={setFrequency}
+              addonAfter="mins"
+              options={[
+                { value: 30, label: '30 min' },
+                { value: 60, label: '60 min' },
+              ]}
+            />
           </div>
         </div>
 
         <div className={styles.stat}>
-          <div className={styles.label}>
-            Gas Limit
-          </div>
+          <div className={styles.label}>Gas Limit</div>
 
           <div className={styles.val}>
             <Input
@@ -218,19 +225,22 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
           </div>
         </div>
       </div>
-      
+
       <div className={styles.data}>
         <div className={styles.stat}>
-          <div className={styles.label}>
-            Randomness
-          </div>
+          <div className={styles.label}>Randomness</div>
 
           <div className={styles.val}>
             <Switch
               disabled={!isEdit}
               className={styles.input}
               checked={isRandom}
-              onChange={useCallback((checked) => { { setIsRandom(checked); setFeed(null); } }, [])}
+              onChange={useCallback((checked) => {
+                {
+                  setIsRandom(checked);
+                  setFeed(null);
+                }
+              }, [])}
             />
           </div>
         </div>
@@ -238,20 +248,22 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
 
       <div className={styles.data}>
         <div className={styles.stat}>
-          <div className={styles.label}>
-            Price feed (Sybil)
-          </div>
+          <div className={styles.label}>Price feed (Sybil)</div>
 
           <div className={styles.val}>
             <Select
               className={styles.chainSelect}
+              classNamePrefix="react-select"
               setValue={setFeed}
               clearValue={() => setFeed(null)}
               isDisabled={!isEdit}
               value={feed ? { label: feed, value: feed } : null}
               isClearable
               options={useMemo(() => mapPairsToOptions(pairs), [pairs])}
-              onChange={useCallback((e) => { setFeed(e?.value); setIsRandom(false) }, [])}
+              onChange={useCallback((e) => {
+                setFeed(e?.value);
+                setIsRandom(false);
+              }, [])}
             />
           </div>
         </div>
@@ -266,11 +278,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
           Next
         </Button>
       ) : (
-        <Button
-          className={styles.back}
-          onClick={nextHandler}
-          type="primary"
-        >
+        <Button className={styles.back} onClick={nextHandler} type="primary">
           Back
         </Button>
       )}
@@ -288,8 +296,8 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }) => {
           chain={CHAINS_MAP[chainId]}
         />
       )}
-    </Card>
-  )
+    </Modal>
+  );
 };
 
 export default NewSubscription;

@@ -31,3 +31,17 @@ a {
   flex-direction: column;
   min-height: 100vh;
 }
+
+//TODO: define styles for react-select and remove overrides
+:global {
+
+  .react-select__control {
+    background-color: transparent !important;
+  }
+  .react-select__single-value {
+    color: white !important;
+  }
+  .react-select__menu {
+    background-color: #7dc1ff;
+  }
+}

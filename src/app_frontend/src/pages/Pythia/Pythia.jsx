@@ -180,13 +180,14 @@ const Pythia = () => {
         <Loader size="large" isFullPage />
       ) : (
         <>
-          <Space direction="vertical">
+          <Space direction="vertical" style={{ width: '100%' }}>
             {!isWhitelisted && <div className={styles.notWhitelisted}>Not whitelisted</div>}
             {subs.length ? <FiltersBar /> : null}
             <div className={styles.controls}>
               <Button>Balance</Button>
               <Button
-                icon={<PlusOutlined onClick={() => setIsNewSubscriptionModalVisible(true)} />}
+                onClick={() => setIsNewSubscriptionModalVisible(!isNewSubscriptionModalVisible)}
+                icon={<PlusOutlined />}
               />
             </div>
 
@@ -205,27 +206,20 @@ const Pythia = () => {
             </Space>
 
             {isNewSubscriptionModalVisible && (
-              <NewSubscription
-                signMessage={signMessage}
-                subscribe={subscribe}
-                addressData={addressData}
-                pairs={pairs}
-              />
+              <Modal
+                title="New Subscription"
+                open={isNewSubscriptionModalVisible}
+                onCancel={() => setIsNewSubscriptionModalVisible(false)}
+                footer={null}
+              >
+                <NewSubscription
+                  signMessage={signMessage}
+                  subscribe={subscribe}
+                  addressData={addressData}
+                  pairs={pairs}
+                />
+              </Modal>
             )}
-
-            {/* <Modal
-              title="New Subscription"
-              open={isNewSubscriptionModalVisible}
-              onCancel={() => setIsNewSubscriptionModalVisible(false)}
-              footer={null}
-            >
-              <NewSubscription
-                signMessage={signMessage}
-                subscribe={subscribe}
-                addressData={addressData}
-                pairs={pairs}
-              />
-            </Modal> */}
           </Space>
         </>
       )}

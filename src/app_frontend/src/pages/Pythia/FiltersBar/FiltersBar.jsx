@@ -62,6 +62,7 @@ const FiltersBar = () => {
           setValue={setChainId}
           value={chainId ? { label: chainId, value: chainId } : null}
           className={styles.chainSelect}
+          classNamePrefix="react-select"
           styles={{
             singleValue: (base) => ({
               ...base,

@@ -16,3 +16,7 @@ $break-point-mobile: 640px;
   elementBackground: $element-background;
   background: $background-color;
 };
+
+:root {
+  --primary-color: rgb(48, 36, 246);
+}

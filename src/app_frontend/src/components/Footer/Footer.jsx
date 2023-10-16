@@ -11,7 +11,7 @@ import styles from "./Footer.scss";
 const Footer = () => {
   return (
     <Layout.Footer className={styles.container}>
-      <div>
+      <div className={styles.social}>
         <Button
           type="link"
           target="_blank"

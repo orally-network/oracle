@@ -1,24 +1,27 @@
-import React, { useState, useCallback, useEffect, useMemo } from "react";
-import { Layout, Spin, Space } from "antd";
-import { useAccount } from "wagmi";
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import { Button, Layout, Modal, Space } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { useAccount } from 'wagmi';
 
-import { remove0x } from "Utils/addressUtils";
-import { useSybilPairs } from "Providers/SybilPairs";
-import { usePythiaData } from "Providers/PythiaData";
-import { useGlobalState } from "Providers/GlobalState";
-import { useSubscriptionsFilters } from "Providers/SubscriptionsFilters";
-import pythiaCanister from "Canisters/pythiaCanister";
-import useSignature from "Shared/useSignature";
-import logger from "Utils/logger";
+import { remove0x } from 'Utils/addressUtils';
+import Loader from 'Components/Loader';
+import { useSybilPairs } from 'Providers/SybilPairs';
+import { usePythiaData } from 'Providers/PythiaData';
+import { useGlobalState } from 'Providers/GlobalState';
+import { useSubscriptionsFilters } from 'Providers/SubscriptionsFilters';
+import pythiaCanister from 'Canisters/pythiaCanister';
+import useSignature from 'Shared/useSignature';
+import logger from 'Utils/logger';
 
-import FiltersBar from "./FiltersBar";
-import Subscription from "./Subscription/Subscription";
-import NewSubscription from "./Subscription/NewSubscription";
-import styles from "./Pythia.scss";
+import FiltersBar from './FiltersBar';
+import Subscription from './Subscription/Subscription';
+import NewSubscription from './Subscription/NewSubscription';
+import styles from './Pythia.scss';
 
 const Pythia = () => {
   const [isWhitelisted, setIsWhitelisted] = useState(true);
   const [isSubscribing, setIsSubscribing] = useState(false);
+  const [isNewSubscriptionModalVisible, setIsNewSubscriptionModalVisible] = useState(false);
   const { subs, isSubsLoading, isChainsLoading } = usePythiaData();
   const { isLoading: isPairsLoading, pairs } = useSybilPairs();
   const {
@@ -51,15 +54,7 @@ const Pythia = () => {
   }, [address]);
 
   const subscribe = useCallback(
-    async ({
-      chainId,
-      methodName,
-      addressToCall,
-      frequency,
-      gasLimit,
-      isRandom,
-      feed,
-    }) => {
+    async ({ chainId, methodName, addressToCall, frequency, gasLimit, isRandom, feed }) => {
       // chain_id : nat;
       // pair_id : opt text;
       // contract_addr : text;
@@ -167,49 +162,67 @@ const Pythia = () => {
         .filter((sub) => (showInactiveFilter ? true : !!sub?.status?.is_active));
     }
     return [];
-  }, [subs, showAllFilter, showPairFilter, showInactiveFilter, chainIdFilter]);
-  
-  console.log({ filteredSubs});
+  }, [
+    subs,
+    showAllFilter,
+    address,
+    showPairFilter,
+    showRandomFilter,
+    chainIdFilter,
+    showInactiveFilter,
+  ]);
+
+  console.log({ filteredSubs });
 
   return (
     <Layout.Content className={styles.pythia}>
-      <Spin
-        spinning={
-          isChainsLoading || isSubsLoading || isSubscribing || isPairsLoading
-        }
-      >
-        {!isWhitelisted && (
-          <div className={styles.notWhitelisted}>Not whitelisted</div>
-        )}
-        
-        <Space align="center" direction="vertical">
-          {subs.length ? <FiltersBar /> : null}
-        
-          <Space wrap className={styles.subs}>
-            {filteredSubs.map((sub, i) => (
-              <Subscription
-                key={i}
-                sub={sub}
-                addressData={addressData}
-                signMessage={signMessage}
-                startSubscription={startSubscription}
-                stopSubscription={stopSubscription}
-                withdraw={withdraw}
+      {isChainsLoading || isSubsLoading || isSubscribing || isPairsLoading ? (
+        <Loader size="large" isFullPage />
+      ) : (
+        <>
+          <Space direction="vertical" style={{ width: '100%' }}>
+            {!isWhitelisted && <div className={styles.notWhitelisted}>Not whitelisted</div>}
+            {subs.length ? <FiltersBar /> : null}
+            <div className={styles.controls}>
+              <Button>Balance</Button>
+              <Button
+                onClick={() => setIsNewSubscriptionModalVisible(!isNewSubscriptionModalVisible)}
+                icon={<PlusOutlined />}
               />
-            ))}
+            </div>
+
+            <Space wrap className={styles.subs}>
+              {filteredSubs.map((sub, i) => (
+                <Subscription
+                  key={i}
+                  sub={sub}
+                  addressData={addressData}
+                  signMessage={signMessage}
+                  startSubscription={startSubscription}
+                  stopSubscription={stopSubscription}
+                  withdraw={withdraw}
+                />
+              ))}
+            </Space>
+
+            {isNewSubscriptionModalVisible && (
+              <Modal
+                title="New Subscription"
+                open={isNewSubscriptionModalVisible}
+                onCancel={() => setIsNewSubscriptionModalVisible(false)}
+                footer={null}
+              >
+                <NewSubscription
+                  signMessage={signMessage}
+                  subscribe={subscribe}
+                  addressData={addressData}
+                  pairs={pairs}
+                />
+              </Modal>
+            )}
           </Space>
-  
-          <Space align="center">
-            <NewSubscription
-              signMessage={signMessage}
-              subscribe={subscribe}
-              addressData={addressData}
-              pairs={pairs}
-            />
-          </Space>
-          
-        </Space>
-      </Spin>
+        </>
+      )}
     </Layout.Content>
   );
 };

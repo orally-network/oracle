@@ -20,3 +20,12 @@
   position: absolute;
   right: 35px;
 }
+.controls {
+ display: flex;
+ justify-content: end;
+  
+  button {
+    margin-left: 14px;
+  }
+
+}

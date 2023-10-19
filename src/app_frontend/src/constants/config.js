@@ -1,7 +1,7 @@
 const isDevelopment = false; // process.env.NODE_ENV === 'development'
 const isStaging = process.env.MODE === 'staging';
 
-const HOST = isDevelopment ? 'http://127.0.0.1:4943' : 'https://ic0.app';
+const HOST = 'https://ic0.app';
 const DOMAIN = isDevelopment ? 'localhost:4943' : 'icp0.io';
 
 export default {

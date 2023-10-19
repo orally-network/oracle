@@ -33,6 +33,6 @@
       "Providers/*": ["./app_frontend/src/providers/*"],
       "Canisters/*": ["./app_frontend/src/canisters/*"],
     },
-    "outDir": "./dist"
+    "outDir": "./dist",
   }
 }

@@ -1,0 +1,73 @@
+export const orallyTheme = {
+  token: {
+    colorBgBase: 'var(--background-color, #020915)',
+    colorPrimaryBg: 'var(--background-color, #020915)',
+    colorPrimary: 'var(--primary-color, rgb(48, 36, 246))',
+    colorBgLayout: 'var(--background-color, #020915)',
+  },
+  components: {
+    Layout: {
+      colorPrimary: 'red',
+      colorBgContainer: 'green',
+    },
+    Button: {
+      colorPrimary: 'var(--primary-color, rgb(48, 36, 246))',
+      colorPrimaryHover: '#5393FF',
+      colorPrimaryActive: '#1C5FCE',
+      colorBgContainer: 'var(--background-color, #020915)',
+      colorBgContainerDisabled: 'grey',
+      colorTextDisabled: '#7D8FA9',
+      colorText: '#B9D6FA',
+      colorBorder: '#B9D6FA',
+      defaultShadow: 'none',
+      primaryShadow: 'none',
+      borderRadius: 14,
+      // colorBgTextHover: 'red',
+      // textHoverBg: 'green',
+    },
+    Input: {
+      // colorPrimary: '#eb2f96',
+      // colorPrimaryHover: 'gray',
+      colorBgContainer: 'transparent',
+      colorText: 'white',
+      colorTextPlaceholder: '#7D8FA9',
+      colorFillAlter: '#7D8FA9',
+      colorBgContainerDisabled: '#7D8FA9'
+    },
+    Switch: {
+      colorPrimary: 'rgb(48, 36, 246)',
+      colorPrimaryHover: 'gray',
+      // colorBgContainer: 'green',
+      // handleBg: 'yellow',
+      // colorText: 'pink',
+      colorTextTertiary: '#7D8FA9',
+      colorTextQuaternary: '#B9D6FA',
+    },
+    Radio: {
+      colorPrimaryActive: 'rgb(48, 36, 246)',
+      colorBgContainer: 'transparent',
+      colorBorder: '#B9D6FA',
+      colorText: '#B9D6FA',
+    },
+    Select: {
+      colorBgContainer: 'transparent',
+      colorText: '#B9D6FA',
+      colorBgElevated: '#7dc1ff',
+      colorTextQuaternary: '#B9D6FA',
+      controlItemBgActive: '#005098',
+      colorTextPlaceholder: 'gray',
+      // colorTextTertiary: 'green',
+      // colorFillSecondary: 'blue',
+    },
+    Modal: {
+      colorBgElevated: 'rgb(26,21,41)',
+      colorText: '#B9D6FA',
+      titleColor: '#B9D6FA',
+      colorBgMask: 'rgba(0, 0, 0, .8)',
+      colorIcon: '#B9D6FA',
+      boxShadow:
+        '0px 4px 4px 0px rgba(255,255,255,.15) inset, 0px 0px 68px 0px rgba(255,255,255,.05) inset',
+      headerBg: 'transparent',
+    },
+  },
+};

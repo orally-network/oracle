@@ -1,9 +1,27 @@
+:root {
+  // colors
+  --primary-color: #5561FF; // #3024f6 previous -  #2F21FF on the old figma
+  --primary-color-hover: ##6B75FF;
+  --primary-bg-color: #28293D;
+  --sections-bg-color: #2D2F45;
+  --cards-bg-color: #373951;
+  --cards-section-bg-color: #3E405B;
+
+  --elements-bg-color: #0C172B; //header, aside, footer
+
+  //fonts
+  --text-size: 16px; // 1rem
+  --font-color: white;
+
+}
+
 $background-color: #020915;
 $hover-color: #2D72E5;
 $element-background: rgba(26, 21, 41, 0.75);
-$text-color: white;
+$text-color: var(--font-color, white);
+$text-size: var(--text-size, 16px);
 $text-secondary-color: #cbcbcb;
-$primary-color: rgb(48, 36, 246);
+$primary-color: var(--primary-color, rgb(48, 36, 246));
 $secondary-color: rgba(208, 208, 208, 0.81);
 $red-color: rgba(230, 0, 0, 0.9);
 
@@ -17,6 +35,5 @@ $break-point-mobile: 640px;
   background: $background-color;
 };
 
-:root {
-  --primary-color: rgb(48, 36, 246);
-}
+
+

@@ -141,8 +141,9 @@ module.exports = (env, argv) => {
           },
         ],
       }),
-      new webpack.EnvironmentPlugin({
+      new webpack.DefinePlugin({
         ...canisterEnvVariables,
+        'process.env.MODE': JSON.stringify(env.NODE_ENV),
       }),
       new webpack.ProvidePlugin({
         Buffer: [require.resolve('buffer/'), 'Buffer'],

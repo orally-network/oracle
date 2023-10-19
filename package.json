@@ -10,10 +10,10 @@
   ],
   "scripts": {
     "optimize": "ic-cdk-optimizer .wasm -o -opt.wasm",
-    "build": "webpack --mode production --env production",
+    "build": "webpack --mode production --env NODE_ENV=production",
     "prebuild": "npm run generate",
-    "start": "webpack serve --mode development --env development",
-    "start-stg": "webpack serve --mode production --env production",
+    "start": "webpack serve --mode development --env NODE_ENV=development",
+    "start-stg": "webpack serve --mode development --env NODE_ENV=staging",
     "prestart": "npm run generate",
     "generate": "dfx generate",
     "deploy-ic": "dfx build app_frontend --network ic && dfx canister install app_frontend --network ic -m reinstall",

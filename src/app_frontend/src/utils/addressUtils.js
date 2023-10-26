@@ -1,5 +1,5 @@
 // Captures 0x + 4 characters, then the last 4 characters.
-const truncateRegex = /^(0x[a-zA-Z0-9]{4})[a-zA-Z0-9]+([a-zA-Z0-9]{4})$/;
+const truncateRegex = /^(0x[a-zA-Z0-9]{4})[a-zA-Z0-9]+([a-zA-Z0-9]{10})$/;
 
 export const truncateEthAddress = (address) => {
   const match = address.match(truncateRegex);
@@ -12,5 +12,5 @@ export const remove0x = (address) => {
 };
 
 export const add0x = (address) => {
-  return `0x${address}`
+  return `0x${address}`;
 };

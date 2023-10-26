@@ -2,9 +2,7 @@
 @import 'Styles/mix';
 
 .button {
-  border-radius: 10px;
   cursor: pointer;
-  height: 35px;
 
   @include hoverScale();
 

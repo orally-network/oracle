@@ -9,6 +9,8 @@
 
   --elements-bg-color: #0C172B; //header, aside, footer
 
+  --highlight-color: #1766F9;
+
   //fonts
   --text-size: 16px; // 1rem
   --font-color: white;
@@ -20,6 +22,8 @@ $hover-color: #2D72E5;
 $element-background: rgba(26, 21, 41, 0.75);
 $text-color: var(--font-color, white);
 $text-size: var(--text-size, 16px);
+$highlight-color: var(--highlight-color, #1766F9);
+$secondary-btn-color: #4A6293;
 $text-secondary-color: #cbcbcb;
 $primary-color: var(--primary-color, rgb(48, 36, 246));
 $secondary-color: rgba(208, 208, 208, 0.81);

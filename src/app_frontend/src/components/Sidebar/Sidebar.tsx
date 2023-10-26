@@ -1,17 +1,12 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
-import { NavLink } from 'react-router-dom';
-import { Layout, Menu, Button } from 'antd';
+import { faSun, faMoon, faQuestion } from '@fortawesome/free-solid-svg-icons';
+import { Layout, Button } from 'antd';
 
-import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  RiseOutlined,
-  AppstoreOutlined,
-} from '@ant-design/icons';
+import { ArrowLeftOutlined, ArrowRightOutlined } from '@ant-design/icons';
 
 import styles from './Sidebar.scss';
+import { Navigation } from 'Components/Navigation';
 
 const { Sider } = Layout;
 
@@ -30,52 +25,32 @@ export const Sidebar = ({ toggleTheme, isDarkMode }: SidebarProps) => {
         collapsible
         collapsed={collapsed}
         style={{
-          height: '100%',
+          height: 'calc(100vh - 50px)',
+          position: 'fixed',
+          left: 0,
+          zIndex: 2,
         }}
-        // style={{
-        //   overflow: 'auto',
-        //   height: '100vh',
-        //   position: 'fixed',
-        //   left: 0,
-        //   top: '64px',
-        //   bottom: 0,
-        //   zIndex: 1,
-        // }}
       >
-        <Menu theme={isDarkMode ? 'dark' : 'light'} mode="inline" defaultSelectedKeys={['2']}>
-          <Menu.Item key="2" icon={<AppstoreOutlined />} title="Sybil">
-            <NavLink
-              to="/sybil"
-              className={({ isActive, isPending }) =>
-                isPending ? styles.pending : isActive ? styles.active : ''
-              }
-            >
-              Sybil
-            </NavLink>
-          </Menu.Item>
-          <Menu.Item key="1" icon={<RiseOutlined />} title="Pythia">
-            <NavLink
-              to="/pythia"
-              className={({ isActive, isPending }) =>
-                isPending ? styles.pending : isActive ? styles.active : ''
-              }
-            >
-              Pythia
-            </NavLink>
-          </Menu.Item>
-        </Menu>
-        <Button
-          type="text"
-          icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-          onClick={() => setCollapsed(!collapsed)}
-          style={{
-            fontSize: '16px',
-            width: 64,
-            height: 64,
-          }}
-        />
+        <Navigation isDarkMode={isDarkMode} />
+        <div className={styles.control}>
+          <Button
+            type="text"
+            icon={collapsed ? <ArrowRightOutlined /> : <ArrowLeftOutlined />}
+            onClick={() => setCollapsed(!collapsed)}
+            style={{
+              fontSize: '16px',
+              width: 42,
+              height: 42,
+              borderRadius: '50%',
+              border: isDarkMode ? '4px solid #020915' : '4px solid lightgray',
+              background: isDarkMode ? '#0C172B' : 'gray',
+              color: '#1766F9',
+            }}
+          />
+        </div>
         <div className={styles.toggler}>
           <FontAwesomeIcon onClick={toggleTheme} icon={isDarkMode ? faSun : faMoon} />
+          <FontAwesomeIcon icon={faQuestion} />
         </div>
       </Sider>
     </div>

@@ -13,13 +13,21 @@ interface ButtonProps extends AntdButtonProps {
   type?: ButtonType;
 }
 
-const Button = ({ disabled = false, children, onClick, className, type }: ButtonProps) => {
+const Button = ({
+  disabled = false,
+  children,
+  onClick,
+  className,
+  type,
+  ...props
+}: ButtonProps) => {
   return (
     <AntdButton
       disabled={disabled}
       onClick={onClick}
       className={cn([styles.button, className])}
       type={type}
+      {...props}
     >
       {children}
     </AntdButton>

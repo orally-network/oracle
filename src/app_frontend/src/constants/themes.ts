@@ -4,11 +4,15 @@ export const orallyTheme = {
     colorPrimaryBg: 'var(--background-color, #020915)',
     colorPrimary: 'var(--primary-color, rgb(48, 36, 246))',
     colorBgLayout: 'var(--background-color, #020915)',
+    colorText: 'white',
+    fontSize: 12,
+    controlHeightLG: 40,
+    fontSizeHeading5: 14,
   },
   components: {
     Layout: {
-      colorPrimary: 'red',
-      colorBgContainer: 'green',
+      headerBg: '#0C172B',
+      siderBg:'#0C172B',
     },
     Button: {
       colorPrimary: 'var(--primary-color, rgb(48, 36, 246))',
@@ -21,7 +25,9 @@ export const orallyTheme = {
       colorBorder: '#B9D6FA',
       defaultShadow: 'none',
       primaryShadow: 'none',
-      borderRadius: 14,
+      borderRadius: 12,
+      contentFontSizeLG: 12,
+ 
       // colorBgTextHover: 'red',
       // textHoverBg: 'green',
     },
@@ -44,10 +50,17 @@ export const orallyTheme = {
       colorTextQuaternary: '#B9D6FA',
     },
     Radio: {
-      colorPrimaryActive: 'rgb(48, 36, 246)',
-      colorBgContainer: 'transparent',
-      colorBorder: '#B9D6FA',
-      colorText: '#B9D6FA',
+      colorPrimaryActive: 'white !important',
+      colorText: 'white !important',
+      buttonBg: '#0C172B',
+      buttonCheckedBg: 'var(--primary-color, rgb(48, 36, 246))',
+      buttonColor: 'white !important',
+      buttonPaddingInline: 30,
+      buttonSolidCheckedBg: 'white',
+      fontSizeLG: 12,
+      borderRadius: 12,
+      colorPrimaryBorder: '#020915',
+      colorBorder: '#020915',  
     },
     Select: {
       colorBgContainer: 'transparent',
@@ -69,5 +82,54 @@ export const orallyTheme = {
         '0px 4px 4px 0px rgba(255,255,255,.15) inset, 0px 0px 68px 0px rgba(255,255,255,.05) inset',
       headerBg: 'transparent',
     },
+    Menu: {
+      // controlItemBgActive: 'red',
+      // itemSelectedBg: 'green',
+      // colorText: 'red',
+      // colorTextDescription: 'green',
+      // itemColor: 'red', // try in light theme
+      // itemActiveBg: 'brown',
+      // itemBg: 'white',
+      colorTextDisabled: '#4A6293',
+      colorPrimary: '#0C172B', // bg color of menu item
+      darkItemBg: 'transparent',
+      darkItemHoverBg: 'transparent',
+      darkItemHoverColor: '#1766F9',
+      darkItemColor: '#4A6293',
+      darkItemSelectedColor: '#1766F9',
+      darkItemSelectedBg: 'transparent',
+      iconSize: '20px !important',
+    },
+    Drawer: {
+      colorBgElevated: '#0C172B'
+    },
+    Card: {
+      colorBgContainer: '#0C172B',
+      borderRadiusLG: 24,
+      colorText: '#4A6293',
+    }
   },
 };
+
+
+export const lightTheme = {
+  token: {
+    colorBgBase: 'lightgray',
+    colorPrimaryBg: 'lightgray',
+    colorPrimary: 'rgb(48, 36, 246)',
+    colorBgLayout: 'lightgray',
+  },
+  components: {
+    Layout: {
+      colorBgHeader: 'gray',
+      siderBg:'gray',
+    },
+    Button: {
+      contentFontSizeLG: 14,
+    },
+    Menu: {
+      itemBg: 'gray'
+    }
+  },
+ 
+}

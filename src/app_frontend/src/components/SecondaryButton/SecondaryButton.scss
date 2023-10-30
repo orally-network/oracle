@@ -1,0 +1,10 @@
+@use './Styles/variables';
+
+.button {
+  color: variables.$secondary-btn-color;
+  border: none;
+
+  &:hover, &:active {
+    color: variables.$highlight-color;
+  }
+}

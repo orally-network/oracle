@@ -4,33 +4,23 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: inherit;
   padding-inline: 30px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  width: 100%;
+}
 
-  .logo {
-    .logoImg {
-      display: flex;
-      width: 140px;
-    }
+.logo {
+  .logoImg {
+    display: flex;
+    width: 140px;
   }
-  
-  .nav {
-    
-    .navButton {
-      &:first-child {
-        margin-right: 20px;
-      }
-    }
+}
 
-    .active {
-      display: none;
-    }
-
-    .pending {
-
-    }
-  }
-
-  .connect {
-  }
+.connect {
+  // should be defined as accent btn
+  background: linear-gradient(180deg, #F45651 0%, #FCA167 87.5%);
+  border: none;
+  color: white;
 }

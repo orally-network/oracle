@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { Button, Layout, Modal, Space } from 'antd';
+import { useSearchParams } from 'react-router-dom';
+import { Button, Layout, Drawer, Space, Typography } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useAccount } from 'wagmi';
 
@@ -22,6 +23,9 @@ const Pythia = () => {
   const [isWhitelisted, setIsWhitelisted] = useState(true);
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [isNewSubscriptionModalVisible, setIsNewSubscriptionModalVisible] = useState(false);
+
+  // const [searchParams, setSearchParams] = useSearchParams();
+
   const { subs, isSubsLoading, isChainsLoading } = usePythiaData();
   const { isLoading: isPairsLoading, pairs } = useSybilPairs();
   const {
@@ -175,21 +179,32 @@ const Pythia = () => {
   console.log({ filteredSubs });
 
   return (
-    <Layout.Content className={styles.pythia}>
+    <Layout.Content className={styles.pythia} title="Pythia">
+      <div className={styles.title}>
+        <Typography.Title level={3}>Pythia</Typography.Title>
+      </div>
       {isChainsLoading || isSubsLoading || isSubscribing || isPairsLoading ? (
         <Loader size="large" isFullPage />
       ) : (
         <>
-          <Space direction="vertical" style={{ width: '100%' }}>
+          {/* should be moved to one level with title */}
+          <Space direction="vertical" style={{ width: '100%', marginTop: '-50px' }}>
             {!isWhitelisted && <div className={styles.notWhitelisted}>Not whitelisted</div>}
-            {subs.length ? <FiltersBar /> : null}
-            <div className={styles.controls}>
-              <Button>Balance</Button>
+            <Space
+              style={{ width: '100%', justifyContent: 'center', margin: '20px 0' }}
+              align="center"
+            >
+              {subs.length ? <FiltersBar /> : null}
+
               <Button
+                type="primary"
+                size="large"
                 onClick={() => setIsNewSubscriptionModalVisible(!isNewSubscriptionModalVisible)}
                 icon={<PlusOutlined />}
-              />
-            </div>
+              >
+                Create subscription
+              </Button>
+            </Space>
 
             <Space wrap className={styles.subs}>
               {filteredSubs.map((sub, i) => (
@@ -206,11 +221,12 @@ const Pythia = () => {
             </Space>
 
             {isNewSubscriptionModalVisible && (
-              <Modal
-                title="New Subscription"
+              <Drawer
+                title="Create Subscription"
+                placement="right"
+                onClose={() => setIsNewSubscriptionModalVisible(false)}
                 open={isNewSubscriptionModalVisible}
-                onCancel={() => setIsNewSubscriptionModalVisible(false)}
-                footer={null}
+                style={{ paddingTop: '80px' }}
               >
                 <NewSubscription
                   signMessage={signMessage}
@@ -218,7 +234,7 @@ const Pythia = () => {
                   addressData={addressData}
                   pairs={pairs}
                 />
-              </Modal>
+              </Drawer>
             )}
           </Space>
         </>

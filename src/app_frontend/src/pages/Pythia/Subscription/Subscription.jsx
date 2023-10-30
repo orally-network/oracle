@@ -1,9 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Card, Tooltip } from 'antd';
-import { LinkOutlined } from '@ant-design/icons';
+import { Space, Card, Tooltip, Typography } from 'antd';
+import {
+  LinkOutlined,
+  UnorderedListOutlined,
+  ArrowRightOutlined,
+  EllipsisOutlined,
+} from '@ant-design/icons';
 import { useAccount } from 'wagmi';
-import { FaRepeat } from 'react-icons/fa6';
-import { BiTimeFive } from 'react-icons/bi';
 import { Link, useNavigate } from 'react-router-dom';
 
 import Control from 'Shared/Control';
@@ -18,25 +21,27 @@ import Button from 'Components/Button';
 
 import styles from './Subscription.scss';
 
+
 const Data = ({ pair, random }) => {
   if (pair) {
     return (
       <Link to={`/sybil/${pair}`} onClick={stopPropagation}>
-        <Button className={styles.data}>
-          {pair}
-        </Button>
+        <Button className={styles.data}>{pair}</Button>
       </Link>
-    )
+    );
   }
-  
-  return (
-    <Button className={styles.data}>
-      Random ({random})
-    </Button>
-  )
-}
 
-const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSubscription, withdraw }) => {
+  return <Button className={styles.data}>Random ({random})</Button>;
+};
+
+const Subscription = ({
+  sub,
+  addressData,
+  signMessage,
+  stopSubscription,
+  startSubscription,
+  withdraw,
+}) => {
   const { address } = useAccount();
   const navigate = useNavigate();
 
@@ -46,10 +51,7 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSu
       chain_id,
       name: method_name,
       gas_limit,
-      method_type: {
-        Pair: pair,
-        Random: random,
-      }
+      method_type: { Pair: pair, Random: random },
     },
     owner,
     contract_addr,
@@ -58,7 +60,7 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSu
   } = sub;
 
   const chain = CHAINS_MAP[chain_id];
-  
+
   const [balance, setBalance] = useState(0);
 
   const { pma, isBalanceLoading, fetchBalance } = usePythiaData();
@@ -72,52 +74,48 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSu
       refetchBalance();
     }
   }, [chain_id, addressData]);
-  
+
   return (
-    <Card className={styles.subscription} onClick={() => navigate(`/pythia/${id}`)}>
+    <Card bordered={false} className={styles.subscription}>
       <div className={styles.header}>
-        <div className={styles.chain}>
-          <Tooltip title={chain.name}>
-            <ChainLogo chain={chain} />
-          </Tooltip>
+        <div className={styles.logo}>
+          <ChainLogo chain={chain} />
+
+          <div className={styles.status}>
+            <Tooltip title={`Subscription is ${is_active ? '' : 'in'}active`}>
+              <div className={is_active ? styles.active : styles.inactive} />
+            </Tooltip>
+          </div>
         </div>
 
         <div className={styles.info}>
-          <Tooltip title="Executions">
-            <div className={styles.executions}>
-              {Number(executions_counter)}
-              
-              <FaRepeat className={styles.icon} />
-            </div>
-          </Tooltip>
+          <div>{chain.name}</div>
+          <Space>
+            <Typography.Title level={4} style={{ margin: 0 }}>
+              {pair}
+            </Typography.Title>
+            <Button
+              size="small"
+              type="text"
+              icon={<ArrowRightOutlined />}
+              onClick={() => navigate(`/pythia/${id}`)}
+            />
+          </Space>
+        </div>
 
-          <Tooltip title="mins">
-            <div className={styles.frequency}>
-              {(Number(frequency) / 60).toFixed(2)}
-
-              <BiTimeFive className={styles.icon} />
-            </div>
-          </Tooltip>
-          
-          <div className={styles.status}>
-            <Tooltip title={`Subscription is ${is_active ? '' : 'in'}active`}>
-              <div
-                className={is_active ? styles.active : styles.inactive}
-              />
-            </Tooltip>
-          </div>
+        <div className={styles.menu}>
+          <EllipsisOutlined />
         </div>
       </div>
 
       <div className={styles.inlineStats}>
         <div className={styles.stat}>
-          <div className={styles.label}>
-            Address
-          </div>
-    
+          <div className={styles.label}>Address</div>
+
           <div className={styles.val}>
-            {truncateEthAddress(add0x(contract_addr))}
-            {' '}
+            <Typography.Title level={5}>
+              {truncateEthAddress(add0x(contract_addr))}{' '}
+            </Typography.Title>
             {chain?.blockExplorers?.default?.url && (
               <IconLink
                 onClick={stopPropagation}
@@ -128,14 +126,33 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSu
           </div>
         </div>
 
-        <Data pair={pair} random={random} />
+        {/* <Data pair={pair} random={random} /> */}
       </div>
 
-      <Tooltip title="Last execution">
-        <div className={styles.lastExecution}>
-          {last_update ? new Date(Number(last_update) * 1000).toLocaleString() : 'Never'}
+      <div className={styles.time}>
+        <div className={styles.executions}>
+          Repetitions
+          <br />
+          <Typography.Title level={5}>{Number(executions_counter)}</Typography.Title>
         </div>
-      </Tooltip>
+
+        <div className={styles.frequency}>
+          Update time
+          <Typography.Title level={5}>{(Number(frequency) / 60).toFixed(2)}</Typography.Title>
+        </div>
+      </div>
+
+      <Button
+        type="primary"
+        size="large"
+        icon={<UnorderedListOutlined />}
+        onClick={() => navigate(`/pythia/${id}`)}
+        style={{
+          width: '100%',
+        }}
+      >
+        View list
+      </Button>
 
       {owner === address?.toLowerCase() && (
         <Control
@@ -155,7 +172,7 @@ const Subscription = ({ sub, addressData, signMessage, stopSubscription, startSu
         />
       )}
     </Card>
-  )
+  );
 };
 
 export default Subscription;

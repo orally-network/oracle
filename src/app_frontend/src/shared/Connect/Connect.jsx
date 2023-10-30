@@ -2,7 +2,6 @@ import React from 'react';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
 import { UserOutlined } from '@ant-design/icons';
-// import { Button } from 'antd';
 
 import Button from 'Components/Button';
 import { truncateEthAddress } from 'Utils/addressUtils';

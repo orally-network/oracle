@@ -43,17 +43,6 @@ const FiltersBar = () => {
           optionType="button"
         ></Radio.Group>
       </Col>
-      {/* <Col>
-        <Radio.Group
-          value={showAll}
-          onChange={({ target: { value } }) => setShowAll(value)}
-          options={[
-            { label: 'My', value: false },
-            { label: 'All', value: true },
-          ]}
-          optionType="button"
-        />
-      </Col> */}
       <Col>
         <Button
           size="large"

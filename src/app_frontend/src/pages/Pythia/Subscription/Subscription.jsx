@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Flex, Space, Card, Tooltip, Typography } from 'antd';
+import { Space, Card, Tooltip, Typography } from 'antd';
 import {
   LinkOutlined,
   UnorderedListOutlined,
@@ -7,8 +7,6 @@ import {
   EllipsisOutlined,
 } from '@ant-design/icons';
 import { useAccount } from 'wagmi';
-import { FaRepeat } from 'react-icons/fa6';
-import { BiTimeFive } from 'react-icons/bi';
 import { Link, useNavigate } from 'react-router-dom';
 
 import Control from 'Shared/Control';
@@ -23,7 +21,6 @@ import Button from 'Components/Button';
 
 import styles from './Subscription.scss';
 
-const { Meta } = Card;
 
 const Data = ({ pair, random }) => {
   if (pair) {
@@ -80,8 +77,6 @@ const Subscription = ({
 
   return (
     <Card bordered={false} className={styles.subscription}>
-      {/* extra={<EllipsisOutlined />}> */}
-
       <div className={styles.header}>
         <div className={styles.logo}>
           <ChainLogo chain={chain} />
@@ -135,49 +130,18 @@ const Subscription = ({
       </div>
 
       <div className={styles.time}>
-        {/* <Tooltip title="Executions"> */}
         <div className={styles.executions}>
           Repetitions
           <br />
           <Typography.Title level={5}>{Number(executions_counter)}</Typography.Title>
-          {/* <FaRepeat className={styles.icon} /> */}
         </div>
-        {/* </Tooltip> */}
 
-        {/* <Tooltip title="mins"> */}
         <div className={styles.frequency}>
           Update time
           <Typography.Title level={5}>{(Number(frequency) / 60).toFixed(2)}</Typography.Title>
-          {/* <BiTimeFive className={styles.icon} /> */}
         </div>
-        {/* </Tooltip>  */}
       </div>
 
-      {/* <div className={styles.header}>
-        <div className={styles.info}>
-          <Tooltip title="Executions">
-            <div className={styles.executions}>
-              {Number(executions_counter)}
-
-              <FaRepeat className={styles.icon} />
-            </div>
-          </Tooltip>
-
-          <Tooltip title="mins">
-            <div className={styles.frequency}>
-              {(Number(frequency) / 60).toFixed(2)}
-
-              <BiTimeFive className={styles.icon} />
-            </div>
-          </Tooltip>
-        </div>
-      </div> */}
-
-      {/* <Tooltip title="Last execution">
-        <div className={styles.lastExecution}>
-          {last_update ? new Date(Number(last_update) * 1000).toLocaleString() : 'Never'}
-        </div>
-      </Tooltip> */}
       <Button
         type="primary"
         size="large"

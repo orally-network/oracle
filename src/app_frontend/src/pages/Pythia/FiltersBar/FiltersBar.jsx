@@ -58,6 +58,7 @@ const FiltersBar = () => {
       <Col>
         <Select
           isClearable
+          // isMulti
           setValue={setChainId}
           value={chainId ? { label: chainId, value: chainId } : null}
           className={styles.chainSelect}

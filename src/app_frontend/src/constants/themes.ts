@@ -12,7 +12,7 @@ export const orallyTheme = {
   },
   components: {
     Layout: {
-      headerBg: '#0C172B',
+      headerBg: 'transparent',
       siderBg:'#0C172B',
     },
     Button: {
@@ -100,6 +100,7 @@ export const orallyTheme = {
       darkItemSelectedColor: '#1766F9',
       darkItemSelectedBg: 'transparent',
       iconSize: '20px !important',
+      fontSize: 14,
     },
     Drawer: {
       colorBgElevated: '#0C172B'
@@ -126,6 +127,7 @@ export const lightTheme = {
     Layout: {
       colorBgHeader: 'gray',
       siderBg:'gray',
+      headerBg: 'transparent',
     },
     Button: {
       contentFontSizeLG: 14,

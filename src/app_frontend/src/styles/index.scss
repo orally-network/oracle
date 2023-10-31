@@ -23,6 +23,10 @@ body {
   background-color: variables.$background-color;
   color: variables.$text-color;
   font-size: variables.$text-size;
+
+  @media screen and (min-width: variables.$break-point-large-desktop) {
+    font-size: variables.$desktop-text-size;
+  }
 }
 
 code {

@@ -4,10 +4,11 @@
   --primary-color-hover: ##6B75FF;
   --primary-bg-color: #28293D;
   --sections-bg-color: #2D2F45;
-  --cards-bg-color: #373951;
+  --cards-bg-color: #0C172B;
+  --cards-border-color: #15223B;
   --cards-section-bg-color: #3E405B;
 
-  --elements-bg-color: #0C172B; //header, aside, footer
+  --elements-bg-color: #0C172B; //header, aside, footer, cards
 
   --highlight-color: #1766F9;
 
@@ -17,7 +18,7 @@
 
 }
 
-$background-color: #020915;
+$background-color: #050B15;
 $hover-color: #2D72E5;
 $element-background: rgba(26, 21, 41, 0.75);
 $text-color: var(--font-color, white);

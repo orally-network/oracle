@@ -1,8 +1,9 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Button, Layout, Drawer, Space, Typography } from 'antd';
+import { Layout, Drawer, Space, Typography } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useAccount } from 'wagmi';
+import Button from 'Components/Button';
 
 import { remove0x } from 'Utils/addressUtils';
 import Loader from 'Components/Loader';
@@ -206,7 +207,7 @@ const Pythia = () => {
               </Button>
             </Space>
 
-            <Space wrap className={styles.subs}>
+            <Space wrap className={styles.subs} size="middle">
               {filteredSubs.map((sub, i) => (
                 <Subscription
                   key={i}

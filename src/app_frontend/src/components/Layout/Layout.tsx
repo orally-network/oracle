@@ -13,7 +13,7 @@ export const BaseLayout = () => {
   return (
     <ConfigProvider theme={isDarkMode ? orallyTheme : lightTheme}>
       <Header />
-      <Layout>
+      <Layout className={isDarkMode ? 'dark-theme' : 'light-theme'}>
         <Sidebar toggleTheme={() => setIsDarkMode(!isDarkMode)} isDarkMode={isDarkMode} />
         <Layout style={{ marginLeft: '80px' }}>
           <Outlet />

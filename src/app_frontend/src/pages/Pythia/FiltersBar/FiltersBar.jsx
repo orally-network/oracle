@@ -48,45 +48,16 @@ const FiltersBar = () => {
           size="large"
           type="default"
           onClick={() => {
-            setShowAll(false);
-            setSearchParams({ type: 'mine' });
+            setShowAll(!showAll);
+            setSearchParams({ showAll: !showAll });
           }}
         >
-          Mine
+          {showAll ? 'Mine' : 'All'}
         </Button>
       </Col>
       <Col>
-        <Button
-          size="large"
-          type="default"
-          onClick={() => {
-            setShowAll(true);
-            setSearchParams({ type: 'chain' });
-          }}
-        >
-          Chain
-        </Button>
-      </Col>
-      {/* <Col>
-        <Button type={showPair ? 'primary' : 'dashed'} onClick={() => setShowPair(!showPair)}>
-          Pairs
-        </Button>
-      </Col>
-      <Col>
-        <Button type={showRandom ? 'primary' : 'dashed'} onClick={() => setShowRandom(!showRandom)}>
-          Random
-        </Button>
-      </Col> */}
-      {/* <Col>
-        <Button
-          type={showInactive ? 'primary' : 'dashed'}
-          onClick={() => setShowInactive(!showInactive)}
-        >
-          Inactive
-        </Button>
-      </Col> */}
-      {/* <Col>
         <Select
+          isClearable
           setValue={setChainId}
           value={chainId ? { label: chainId, value: chainId } : null}
           className={styles.chainSelect}
@@ -100,9 +71,9 @@ const FiltersBar = () => {
           }}
           components={{ SingleValue, Option }}
           options={mapChainsToOptions(chains)}
-          onChange={(e) => setChainId(e.value)}
+          onChange={(e) => setChainId(e && e.value ? e.value : null)}
         />
-      </Col> */}
+      </Col>
     </Row>
   );
 };

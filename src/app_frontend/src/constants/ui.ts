@@ -1,1 +1,2 @@
 export const BREAK_POINT_MOBILE = 640;
+export const STROKE_DASHARRAY_PROGRESS_BAR = 372;

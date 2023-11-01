@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Dropdown, Space, Card, Tooltip, Typography, Flex } from 'antd';
 import type { MenuProps } from 'antd';
 import {
-  LinkOutlined,
+  ExportOutlined,
   UnorderedListOutlined,
   ArrowRightOutlined,
   EllipsisOutlined,
@@ -10,7 +10,6 @@ import {
 } from '@ant-design/icons';
 import { useAccount } from 'wagmi';
 import { Link, useNavigate } from 'react-router-dom';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import Control from 'Shared/Control';
 import { CHAINS_MAP } from 'Constants/chains';
@@ -20,10 +19,10 @@ import { usePythiaData } from 'Providers/PythiaData';
 import { truncateEthAddress } from 'Utils/addressUtils';
 import { stopPropagation } from 'Utils/reactUtils';
 import Button from 'Components/Button';
-
 import styles from './Subscription.scss';
-import { SecondaryButton } from 'Components/SecondaryButton';
+
 import { STROKE_DASHARRAY_PROGRESS_BAR } from 'Constants/ui';
+import IconLink from 'Components/IconLink';
 
 const contextMenuItems: MenuProps['items'] = [
   {
@@ -158,13 +157,11 @@ const Subscription = ({
               {truncateEthAddress(add0x(contract_addr))}{' '}
             </Typography.Title>
             {chain?.blockExplorers?.default?.url && (
-              <div>
-                <CopyToClipboard text={contract_addr} onCopy={() => setIsCopied(true)}>
-                  <SecondaryButton icon={<LinkOutlined />} />
-                </CopyToClipboard>
-
-                <Tooltip placement="bottom" title="Copied" open={isCopied} />
-              </div>
+              <IconLink
+                onClick={stopPropagation}
+                link={`${chain.blockExplorers.default.url}/address/${add0x(contract_addr)}`}
+                IconComponent={ExportOutlined}
+              />
             )}
           </Space>
         </div>
@@ -177,25 +174,30 @@ const Subscription = ({
           </div>
 
           <div className={styles.stat}>
-            <div className={styles.progress}>
-              <svg width="130" height="60" viewBox="0 0 130 70">
-                <path
-                  className="percent test path"
-                  d="M5,5 h107 a14,14 0 0 1 14,14 v35 a14,14 0 0 1 -14,14 h-107 a14,14 0 0 1 -14,-14 v-35 a14,14 0 0 1 14,-14 z"
-                  fill="none"
-                  stroke="#1766F9"
-                  stroke-width="1"
-                  style={{
-                    strokeDasharray: STROKE_DASHARRAY_PROGRESS_BAR,
-                    strokeDashoffset: progress,
-                  }}
-                />
-              </svg>
-            </div>
-            Update time
-            <Typography.Title level={5}>
-              {new Date(diffMs).getMinutes()}min {new Date(diffMs).getSeconds()} sec
-            </Typography.Title>
+            <Tooltip
+              placement="topRight"
+              title={`Next update in ${new Date(diffMs).getMinutes()} min ${new Date(
+                diffMs
+              ).getSeconds()} sec`}
+            >
+              <div className={styles.progress}>
+                <svg width="130" height="60" viewBox="0 0 130 70">
+                  <path
+                    className="percent test path"
+                    d="M5,5 h107 a14,14 0 0 1 14,14 v35 a14,14 0 0 1 -14,14 h-107 a14,14 0 0 1 -14,-14 v-35 a14,14 0 0 1 14,-14 z"
+                    fill="none"
+                    stroke="#1766F9"
+                    strokeWidth="1"
+                    style={{
+                      strokeDasharray: STROKE_DASHARRAY_PROGRESS_BAR,
+                      strokeDashoffset: progress,
+                    }}
+                  />
+                </svg>
+              </div>
+              Update time
+              <Typography.Title level={5}>{Number(frequency) / 60} min</Typography.Title>
+            </Tooltip>
           </div>
         </Flex>
 

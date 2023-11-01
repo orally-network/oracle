@@ -50,8 +50,19 @@ a {
 
   .react-select__control {
     background-color: transparent !important;
-    border-color: #1766F9 !important;
+    border-color: #15223B !important;
+    border-radius: 14px !important;
+    color: #4A6293 !important;
+
+    &--is-focused {
+      border-color: #1766F9 !important;
+    }
   }
+
+  .react-select__placeholder {
+    color: #4A6293 !important;
+  }
+
 
   .react-select__single-value {
     color: white !important;
@@ -66,7 +77,7 @@ a {
   }
 
   .react-select__option:hover, .react-select__option:active, .react-select__option:focus, .react-select__option--is-focused {
-    background-color: #111F37 !important;
+    background-color: #081A3C !important;
   }
 
   .react-select__menu {
@@ -74,6 +85,10 @@ a {
     :global(.light-theme) & {
       background-color: gray;
     }
+  }
+
+  .react-select__value-container{
+    flex-wrap: nowrap !important;
   }
 
   .ant-drawer-close {
@@ -84,5 +99,12 @@ a {
 
   .ant-btn-primary {
     background: linear-gradient(#5561FF, #3643FC) !important;
+  }
+
+  .ant-menu {
+
+    @media screen and (min-width: variables.$break-point-large-desktop) {
+      font-size: 16px;
+    }
   }
 }

@@ -34,7 +34,7 @@ const Pythia = () => {
     showPair: showPairFilter,
     showRandom: showRandomFilter,
     showInactive: showInactiveFilter,
-    chainId: chainIdFilter,
+    chainIds: chainIdsFilter,
   } = useSubscriptionsFilters();
   const { addressData } = useGlobalState();
   const { signMessage } = useSignature();
@@ -163,7 +163,9 @@ const Pythia = () => {
         .filter((sub) => (showAllFilter ? true : sub.owner === address?.toLowerCase?.()))
         .filter((sub) => (showPairFilter ? true : !sub.method?.method_type?.Pair))
         .filter((sub) => (showRandomFilter ? true : !sub.method?.method_type?.Random))
-        .filter((sub) => (chainIdFilter ? sub?.method?.chain_id === chainIdFilter : true))
+        .filter((sub) =>
+          chainIdsFilter.length > 0 ? chainIdsFilter.includes(sub?.method?.chain_id) : true
+        )
         .filter((sub) => (showInactiveFilter ? true : !!sub?.status?.is_active));
     }
     return [];
@@ -173,7 +175,7 @@ const Pythia = () => {
     address,
     showPairFilter,
     showRandomFilter,
-    chainIdFilter,
+    chainIdsFilter,
     showInactiveFilter,
   ]);
 

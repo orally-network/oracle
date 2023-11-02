@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import Select, { components } from 'react-select';
 import { toast } from 'react-toastify';
-import { Input, Switch, Select as AntdSelect } from 'antd';
+import { Input, Switch, Select as AntdSelect, Flex } from 'antd';
 
 import Control from 'Shared/Control';
 import { CHAINS_MAP } from 'Constants/chains';
@@ -22,18 +22,18 @@ import styles from './Subscription.scss';
 // TODO: Refactor Chain selector.
 export const SingleValue = ({ children, ...props }) => (
   <components.SingleValue {...props}>
-    <div className={styles.flex}>
+    <Flex align="center" gap="small">
       <ChainLogo chain={CHAINS_MAP[children]} /> {CHAINS_MAP[props.data.value].name}
-    </div>
+    </Flex>
   </components.SingleValue>
 );
 
 export const Option = (props: any) => {
   return (
     <components.Option {...props}>
-      <div className={styles.flex}>
+      <Flex align="center" gap="small">
         <ChainLogo chain={CHAINS_MAP[props.data.value]} /> {CHAINS_MAP[props.data.value].name}
-      </div>
+      </Flex>
     </components.Option>
   );
 };
@@ -140,7 +140,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
   const nextHandler = useCallback(() => setIsEdit(!isEdit), [isEdit]);
 
   return (
-    <div className={styles.subscriptionForm}>
+    <Flex dir="column" align="center" justify="center">
       <div className={styles.inputs}>
         <div className={styles.stat}>
           <div className={styles.label}>Chain</div>
@@ -297,7 +297,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
           chain={chainId !== null && CHAINS_MAP[chainId]}
         />
       )}
-    </div>
+    </Flex>
   );
 };
 

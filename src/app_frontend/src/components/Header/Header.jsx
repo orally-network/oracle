@@ -3,7 +3,6 @@ import { Button, Space, Layout } from 'antd';
 import { WalletOutlined } from '@ant-design/icons';
 
 import Connect from 'Shared/Connect';
-import logoSrc from 'Assets/logo.png';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 
@@ -16,9 +15,6 @@ const Header = () => {
 
   return (
     <Layout.Header className={styles.header} style={{ paddingLeft: isMobile ? '80px' : '30px' }}>
-      <Space className={styles.logo}>
-        <img src={logoSrc} className={styles.logoImg} alt="Orally" />
-      </Space>
       <Space>
         <div className={styles.controls}>
           {isMobile ? (

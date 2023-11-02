@@ -1,21 +1,22 @@
 export const orallyTheme = {
   token: {
-    colorBgBase: 'var(--background-color, #020915)',
-    colorPrimaryBg: 'var(--background-color, #020915)',
-    colorPrimary: 'var(--primary-color, rgb(48, 36, 246))',
-    colorBgLayout: 'var(--background-color, #020915)',
+    colorBgBase: 'var(--background-color, #050B15)',
+    colorPrimaryBg: 'var(--background-color, #050B15)',
+    colorPrimary: 'var(--primary-color, #1766F9)',
+    colorBgLayout: 'var(--background-color, #050B15)',
     colorText: 'white',
     fontSize: 12,
     controlHeightLG: 40,
     fontSizeHeading5: 14,
+    lineHeight: 1.2,
   },
   components: {
     Layout: {
-      headerBg: '#0C172B',
+      headerBg: 'transparent',
       siderBg:'#0C172B',
     },
     Button: {
-      colorPrimary: 'var(--primary-color, rgb(48, 36, 246))',
+      colorPrimary: 'var(--primary-color, #1766F9)',
       colorPrimaryHover: '#5393FF',
       colorPrimaryActive: '#1C5FCE',
       colorBgContainer: 'var(--background-color, #020915)',
@@ -41,19 +42,19 @@ export const orallyTheme = {
       colorBgContainerDisabled: '#7D8FA9'
     },
     Switch: {
-      colorPrimary: 'rgb(48, 36, 246)',
+      colorPrimary: '#1766F9',
       colorPrimaryHover: 'gray',
       // colorBgContainer: 'green',
       // handleBg: 'yellow',
       // colorText: 'pink',
-      colorTextTertiary: '#7D8FA9',
-      colorTextQuaternary: '#B9D6FA',
+      colorTextTertiary: '#6B75FF',
+      colorTextQuaternary: '#696C94',
     },
     Radio: {
       colorPrimaryActive: 'white !important',
       colorText: 'white !important',
       buttonBg: '#0C172B',
-      buttonCheckedBg: 'var(--primary-color, rgb(48, 36, 246))',
+      buttonCheckedBg: 'var(--primary-color, #1766F9)',
       buttonColor: 'white !important',
       buttonPaddingInline: 30,
       buttonSolidCheckedBg: 'white',
@@ -64,9 +65,9 @@ export const orallyTheme = {
     },
     Select: {
       colorBgContainer: 'transparent',
-      colorText: '#B9D6FA',
-      colorBgElevated: '#7dc1ff',
-      colorTextQuaternary: '#B9D6FA',
+      colorText: 'black',
+      colorBgElevated: 'white',
+      colorTextQuaternary: 'white',
       controlItemBgActive: '#005098',
       colorTextPlaceholder: 'gray',
       // colorTextTertiary: 'green',
@@ -99,6 +100,7 @@ export const orallyTheme = {
       darkItemSelectedColor: '#1766F9',
       darkItemSelectedBg: 'transparent',
       iconSize: '20px !important',
+      fontSize: 14,
     },
     Drawer: {
       colorBgElevated: '#0C172B'
@@ -107,6 +109,8 @@ export const orallyTheme = {
       colorBgContainer: '#0C172B',
       borderRadiusLG: 24,
       colorText: '#4A6293',
+      colorBorderSecondary: '#15223B',
+      paddingLG: 15,
     }
   },
 };
@@ -116,13 +120,14 @@ export const lightTheme = {
   token: {
     colorBgBase: 'lightgray',
     colorPrimaryBg: 'lightgray',
-    colorPrimary: 'rgb(48, 36, 246)',
+    colorPrimary: '#1766F9',
     colorBgLayout: 'lightgray',
   },
   components: {
     Layout: {
       colorBgHeader: 'gray',
       siderBg:'gray',
+      headerBg: 'transparent',
     },
     Button: {
       contentFontSizeLG: 14,

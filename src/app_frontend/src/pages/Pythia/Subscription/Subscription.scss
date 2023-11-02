@@ -6,7 +6,6 @@
   max-width: 100vw;
   justify-content: center;
 
-  @include card();
   @include hoverScale();
 
   @media (max-width: 768px) {
@@ -24,8 +23,8 @@
 
 .menu {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: -10px;
+  right: -10px;
   cursor: pointer;
 }
 
@@ -37,36 +36,31 @@
 
 .logo {
   border-radius: 50%;
-}
-
-.chain {
-  display: flex;
-  align-items: center;
-
-  div {
-    font-size: 18px;
-    font-weight: bold;
+  background-color: #091325;
+  margin-right: 14px;
+  width: 46px;
+  height: 46px;
+  position: relative;
+  :global(.light-theme) & {
+    background-color: gray;
   }
 }
 
 .status {
-  position: relative;
-  height: 0px;
-  width: 0px;
-  left: 17px;
-  bottom: 13px;
-
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  
   .active {
+    background-color: #00ff00;
+    border-radius: 50%;
     width: 10px;
     height: 10px;
-    border-radius: 50%;
-    background-color: #00ff00;
   }
 
   .inactive {
     width: 10px;
     height: 10px;
-    border-radius: 50%;
     background-color: #ff0000;
   }
 }
@@ -74,92 +68,26 @@
 .info {
   display: flex;
   margin-right: 15px;
-
-  .executions {
-    display: flex;
-    margin-right: 15px;
-    align-items: center;
-  }
-
-  .frequency {
-    display: flex;
-    align-items: center;
-  }
-
-  .icon {
-    margin-right: 5px;
-    margin-left: 5px;
-    width: 15px;
-    height: 15px;
-  }
-}
-
-.inlineStats {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  margin-bottom: 10px;
-}
-
-.lastExecution {
-  opacity: 0.7;
-  text-align: center;
-  font-size: 14px;
 }
 
 .stat {
-  // margin-bottom: 15px;
+  padding: 10px;
+  background-color: #091325;
+  border-radius: 14px;
+  width: 100%;
+  position: relative;
 
-  .label {
-    margin-bottom: 5px;
+  :global(.light-theme) & {
+    background-color: gray;
   }
-
-  .val {
-    font-size: 14px;
-    display: flex;
-  }
-}
-
-.back {
-  width: 70px;
-  margin-bottom: 10px;
-}
-
-.chainSelect {
-  width: 250px;
-}
-
-.flex {
-  display: flex;
-  align-items: center;
-}
-
-.inputs {
-  display: flex;
-  flex-direction: column;
-
-  .input {
-    width: 100%;
-  }
-}
-
-.subscriptionForm {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
 }
 
 .nextBtn {
   align-self: flex-start;
 }
 
-.time {
-  display: flex;
-  justify-content:  space-between;
-  margin-bottom: 10px;
-
-  .input {
-    width: 100%;
-  }
+.progress {
+  position: absolute;
+  top: -5px;
+  left: -1px;
 }

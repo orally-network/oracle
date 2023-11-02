@@ -2,9 +2,10 @@
 
 .button {
   color: variables.$secondary-btn-color;
-  border: none;
+  border: 1px solid transparent;
 
   &:hover, &:active {
     color: variables.$highlight-color;
+    border: 1px solid variables.$secondary-btn-color;
   }
 }

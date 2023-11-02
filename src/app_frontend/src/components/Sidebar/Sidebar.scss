@@ -1,7 +1,13 @@
 @use './Styles/variables';
 
-.container {
-  position: relative;
+.logo {
+  padding-left: 25px;
+  margin-bottom: 25px;
+}
+
+.logoImg {
+  display: flex;
+  width: 120px;
 }
 
 .toggler {

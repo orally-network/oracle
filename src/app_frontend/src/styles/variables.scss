@@ -4,31 +4,34 @@
   --primary-color-hover: ##6B75FF;
   --primary-bg-color: #28293D;
   --sections-bg-color: #2D2F45;
-  --cards-bg-color: #373951;
+  --cards-bg-color: #0C172B;
+  --cards-border-color: #15223B;
   --cards-section-bg-color: #3E405B;
 
-  --elements-bg-color: #0C172B; //header, aside, footer
+  --elements-bg-color: #0C172B; //header, aside, footer, cards
 
   --highlight-color: #1766F9;
 
   //fonts
-  --text-size: 16px; // 1rem
+  --text-size: 12px; // 1rem
   --font-color: white;
 
 }
 
-$background-color: #020915;
+$background-color: #050B15;
 $hover-color: #2D72E5;
 $element-background: rgba(26, 21, 41, 0.75);
 $text-color: var(--font-color, white);
-$text-size: var(--text-size, 16px);
+$text-size: var(--text-size, 12px);
+$desktop-text-size: 14px;
 $highlight-color: var(--highlight-color, #1766F9);
 $secondary-btn-color: #4A6293;
 $text-secondary-color: #cbcbcb;
-$primary-color: var(--primary-color, rgb(48, 36, 246));
+$primary-color: var(--primary-color, #1766F9);
 $secondary-color: rgba(208, 208, 208, 0.81);
 $red-color: rgba(230, 0, 0, 0.9);
 
+$break-point-large-desktop: 1440px;
 $break-point-desktop: 1024px;
 $break-point-tablet: 768px;
 $break-point-mobile: 640px;

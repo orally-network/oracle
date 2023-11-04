@@ -1,11 +1,12 @@
-import React from 'react';
-import { Col, Row, Radio, Switch } from 'antd';
+import React, { useState } from 'react';
+import { Col, Row, Radio, Switch, Input } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import { useSearchParams } from 'react-router-dom';
 
 import { usePythiaData } from 'Providers/PythiaData';
 import { useSubscriptionsFilters } from 'Providers/SubscriptionsFilters';
 import { mapChainsToOptions } from '../helper';
-
+import { SecondaryButton } from 'Components/SecondaryButton';
 import styles from './FiltersBar.scss';
 import { MultiSelect } from 'Components/Select';
 
@@ -13,50 +14,39 @@ const FiltersBar = () => {
   const { chains } = usePythiaData();
 
   const {
-    showAll,
-    showPair,
-    chainIds,
-    showRandom,
-    setShowAll,
-    setShowPair,
-    setShowRandom,
-
+    showMine,
+    filterByType,
+    setShowMine,
+    setFilterByType,
     setChainIds,
+    debouncedChangeHandler,
   } = useSubscriptionsFilters();
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const [isSearchVisible, setSearchIsVisible] = useState(false);
 
   const onChainSelect = (val) => {
     setChainIds(val?.map((s) => s.value) ?? []);
   };
 
   const onChangeType = (e) => {
-    //TODO: add and remove params when filters are changed
-    if (e.target.value === 'price') {
-      setShowPair(true);
-      setShowRandom(false);
-      searchParams.set('showPair', true);
-      setSearchParams(searchParams);
-    }
-    if (e.target.value === 'random') {
-      setShowRandom(true);
-      setShowPair(false);
-      searchParams.set('showRandom', true);
-      setSearchParams(searchParams);
-    }
+    setFilterByType(e.target.value);
+    searchParams.set('type', e.target.value);
+    setSearchParams(searchParams);
   };
 
   return (
-    <Row gutter={[16]} align="middle" className={styles.container}>
+    <Row flex={1} gutter={[16]} justify="center" align="middle" className={styles.container}>
       <Col>
         <Radio.Group
+          value={filterByType}
           onChange={onChangeType}
           defaultValue="Price"
           size="large"
           options={[
+            { label: 'All', value: 'all' },
             { label: 'Price', value: 'price' },
             { label: 'Random', value: 'random' },
-            // { label: 'Custom', value: 'custom' },
           ]}
           optionType="button"
         ></Radio.Group>
@@ -64,10 +54,10 @@ const FiltersBar = () => {
       <Col>
         <Switch
           size="large"
-          checked={!showAll}
+          checked={showMine}
           onChange={() => {
-            setShowAll(!showAll);
-            searchParams.set('showAll', !showAll);
+            setShowMine(!showMine);
+            searchParams.set('showMine', !showMine);
             setSearchParams(searchParams);
           }}
           style={{ marginRight: 10 }}
@@ -89,6 +79,23 @@ const FiltersBar = () => {
           options={mapChainsToOptions(chains)}
           onChange={onChainSelect}
           maxWidth={160}
+        />
+      </Col>
+      <Col>
+        {isSearchVisible && (
+          <Input
+            size="large"
+            placeholder="Search..."
+            onChange={debouncedChangeHandler}
+            style={{ width: 200, maxHeight: '38px' }}
+            allowClear
+            prefix={<SearchOutlined style={{ color: '#1D2E51' }} />}
+          />
+        )}
+        <SecondaryButton
+          icon={<SearchOutlined />}
+          size="large"
+          onClick={() => setSearchIsVisible(!isSearchVisible)}
         />
       </Col>
     </Row>

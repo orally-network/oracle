@@ -27,6 +27,7 @@
     "@dfinity/agent": "^0.19.2",
     "@dfinity/candid": "^0.19.2",
     "@dfinity/principal": "^0.19.2",
+    "@types/lodash.debounce": "^4.0.8",
     "@types/react-copy-to-clipboard": "^5.0.6",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "@typescript-eslint/parser": "^6.7.4",

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Layout, Drawer, Space, Typography } from 'antd';
+import { Flex, Layout, Drawer, Space, Typography } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useAccount } from 'wagmi';
 import Button from 'Components/Button';
@@ -24,21 +24,29 @@ const Pythia = () => {
   const [isWhitelisted, setIsWhitelisted] = useState(true);
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [isNewSubscriptionModalVisible, setIsNewSubscriptionModalVisible] = useState(false);
-
-  // const [searchParams, setSearchParams] = useSearchParams();
-
   const { subs, isSubsLoading, isChainsLoading } = usePythiaData();
   const { isLoading: isPairsLoading, pairs } = useSybilPairs();
+
+  const [searchParams] = useSearchParams();
+
   const {
-    showAll: showAllFilter,
-    showPair: showPairFilter,
-    showRandom: showRandomFilter,
-    showInactive: showInactiveFilter,
+    showMine,
     chainIds: chainIdsFilter,
+    searchQuery,
+    filterByType,
+    setFilterByType,
+    setShowMine,
   } = useSubscriptionsFilters();
   const { addressData } = useGlobalState();
   const { signMessage } = useSignature();
   const { address } = useAccount();
+
+  useEffect(() => {
+    const typeFilter = searchParams.get('type');
+    const authorFilter = searchParams.get('showMine');
+    setFilterByType(typeFilter);
+    setShowMine(authorFilter === 'true' ? true : false);
+  }, [searchParams, setFilterByType, setShowMine]);
 
   useEffect(() => {
     const checkWhitelisted = async () => {
@@ -158,45 +166,40 @@ const Pythia = () => {
   );
 
   const filteredSubs = useMemo(() => {
+    console.log(showMine, filterByType);
     if (subs.length) {
-      return subs
-        .filter((sub) => (showAllFilter ? true : sub.owner === address?.toLowerCase?.()))
-        .filter((sub) => (showPairFilter ? true : !sub.method?.method_type?.Pair))
-        .filter((sub) => (showRandomFilter ? true : !sub.method?.method_type?.Random))
-        .filter((sub) =>
-          chainIdsFilter.length > 0 ? chainIdsFilter.includes(sub?.method?.chain_id) : true
-        )
-        .filter((sub) => (showInactiveFilter ? true : !!sub?.status?.is_active));
+      return (
+        subs
+          .filter((sub) => (showMine ? sub.owner === address?.toLowerCase?.() : true))
+          .filter((sub) => (filterByType === 'price' ? sub.method?.method_type?.Pair : true))
+          .filter((sub) => (filterByType === 'random' ? sub.method?.method_type?.Random : true))
+          .filter((sub) =>
+            chainIdsFilter.length > 0 ? chainIdsFilter.includes(sub?.method?.chain_id) : true
+          )
+          //add later search by name, chain and pair
+          .filter((sub) =>
+            searchQuery ? sub.method?.method_type?.Pair?.toLowerCase().includes(searchQuery) : true
+          )
+      );
     }
     return [];
-  }, [
-    subs,
-    showAllFilter,
-    address,
-    showPairFilter,
-    showRandomFilter,
-    chainIdsFilter,
-    showInactiveFilter,
-  ]);
+  }, [showMine, filterByType, subs, address, chainIdsFilter, searchQuery]);
 
   console.log({ filteredSubs });
 
   return (
     <Layout.Content className={styles.pythia} title="Pythia">
-      <div className={styles.title}>
-        <Typography.Title level={3}>Pythia</Typography.Title>
-      </div>
       {isChainsLoading || isSubsLoading || isSubscribing || isPairsLoading ? (
         <Loader size="large" isFullPage />
       ) : (
         <>
-          {/* should be moved to one level with title */}
-          <Space direction="vertical" style={{ width: '100%', marginTop: '-50px' }}>
+          <Space size="large" direction="vertical" style={{ width: '100%' }}>
             {!isWhitelisted && <div className={styles.notWhitelisted}>Not whitelisted</div>}
-            <Space
-              style={{ width: '100%', justifyContent: 'center', margin: '20px 0' }}
-              align="center"
-            >
+            <Flex align="center" justify="space-between">
+              <div className={styles.title}>
+                <Typography.Title level={3}>Pythia</Typography.Title>
+              </div>
+
               {subs.length ? <FiltersBar /> : null}
 
               <Button
@@ -207,7 +210,7 @@ const Pythia = () => {
               >
                 Create subscription
               </Button>
-            </Space>
+            </Flex>
 
             <Space wrap className={styles.subs} size="middle">
               {filteredSubs.map((sub, i) => (

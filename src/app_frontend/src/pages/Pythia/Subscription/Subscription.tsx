@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Dropdown, Space, Card, Tooltip, Typography, Flex } from 'antd';
+import { Space, Card, Tooltip, Typography, Flex } from 'antd';
 import type { MenuProps } from 'antd';
 import {
   ExportOutlined,
   UnorderedListOutlined,
   ArrowRightOutlined,
-  EllipsisOutlined,
-  UserOutlined,
+  EditOutlined,
+  EyeOutlined,
 } from '@ant-design/icons';
 import { useAccount } from 'wagmi';
 import { Link, useNavigate } from 'react-router-dom';
@@ -23,19 +23,6 @@ import styles from './Subscription.scss';
 
 import { STROKE_DASHARRAY_PROGRESS_BAR } from 'Constants/ui';
 import IconLink from 'Components/IconLink';
-
-const contextMenuItems: MenuProps['items'] = [
-  {
-    label: '1st menu item',
-    key: '1',
-    icon: <UserOutlined />,
-  },
-  {
-    label: '2nd menu item',
-    key: '2',
-    icon: <UserOutlined />,
-  },
-];
 
 const Data = ({ pair, random }) => {
   if (pair) {
@@ -110,7 +97,7 @@ const Subscription = ({
 
   return (
     <Card hoverable={true} className={styles.subscription}>
-      <Space size="middle" direction="vertical">
+      <Space size="middle" direction="vertical" style={{ width: '100%' }}>
         <div className={styles.header}>
           <Flex className={styles.logo} align="center" justify="center">
             <ChainLogo chain={chain} />
@@ -139,13 +126,7 @@ const Subscription = ({
           </div>
 
           <div className={styles.menu}>
-            <Dropdown menu={{ items: contextMenuItems }}>
-              <Button type="text" style={{ color: '#1766F9' }}>
-                <Space>
-                  <EllipsisOutlined />
-                </Space>
-              </Button>
-            </Dropdown>
+            {sub.owner === address?.toLowerCase?.() ? <EditOutlined /> : <EyeOutlined />}
           </div>
         </div>
 

@@ -1,25 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import debounce from 'lodash.debounce';
 
 import SubscriptionsFiltersContext from './SubscriptionsFiltersContext';
+import { FilterType } from 'Interfaces/subscription';
 
 const SubscriptionsFiltersProvider = ({ children }: { children: React.ReactNode }) => {
-  const [showAll, setShowAll] = useState<boolean>(true);
-  const [showPair, setShowPair] = useState<boolean>(true);
-  const [showRandom, setShowRandom] = useState<boolean>(true);
-  const [showInactive, setShowInactive] = useState<boolean>(false);
+  const [showMine, setShowMine] = useState<boolean>(false);
+  const [filterByType, setFilterByType] = useState<FilterType>('all');
   const [chainIds, setChainIds] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const debouncedChangeHandler = useMemo(() => debounce(onSearch, 300), []);
+
+  useEffect(() => {
+    return () => {
+      debouncedChangeHandler.cancel();
+    };
+  }, []);
 
   const value = {
-    showAll,
-    showPair,
-    showRandom,
+    showMine,
+    filterByType,
     chainIds,
-    showInactive,
-    setShowAll,
-    setShowPair,
+    searchQuery,
+    setShowMine,
+    setFilterByType,
     setChainIds,
-    setShowInactive,
-    setShowRandom,
+    debouncedChangeHandler,
   };
 
   return (

@@ -92,7 +92,7 @@ a {
   }
 
   .ant-drawer-close {
-    color: white !important;
+    color: variables.$primary-color !important;
     position: absolute;
     right: 20px;
   }
@@ -103,6 +103,10 @@ a {
   
   .ant-input-clear-icon {
     color: var(--primary-color) !important;
+  }
+
+  .ant-tag {
+    margin-inline-end: 0 !important;
   }
 
   .ant-menu {

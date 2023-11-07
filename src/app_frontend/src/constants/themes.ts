@@ -28,13 +28,8 @@ export const orallyTheme = {
       primaryShadow: 'none',
       borderRadius: 12,
       contentFontSizeLG: 12,
- 
-      // colorBgTextHover: 'red',
-      // textHoverBg: 'green',
     },
     Input: {
-      // colorPrimary: '#eb2f96',
-      // colorPrimaryHover: 'gray',
       colorBorder: '#15223B !important',
       colorBgContainer: '#091325',
       colorTextPlaceholder: '#4A6293',
@@ -46,9 +41,6 @@ export const orallyTheme = {
     Switch: {
       colorPrimary: '#1766F9',
       colorPrimaryHover: 'gray',
-      // colorBgContainer: 'green',
-      // handleBg: 'yellow',
-      // colorText: 'pink',
       colorTextTertiary: '#6B75FF',
       colorTextQuaternary: '#696C94',
     },
@@ -72,8 +64,6 @@ export const orallyTheme = {
       colorTextQuaternary: 'white',
       controlItemBgActive: '#005098',
       colorTextPlaceholder: 'gray',
-      // colorTextTertiary: 'green',
-      // colorFillSecondary: 'blue',
     },
     Modal: {
       colorBgElevated: 'rgb(26,21,41)',
@@ -86,13 +76,6 @@ export const orallyTheme = {
       headerBg: 'transparent',
     },
     Menu: {
-      // controlItemBgActive: 'red',
-      // itemSelectedBg: 'green',
-      // colorText: 'red',
-      // colorTextDescription: 'green',
-      // itemColor: 'red', // try in light theme
-      // itemActiveBg: 'brown',
-      // itemBg: 'white',
       colorTextDisabled: '#4A6293',
       colorPrimary: '#0C172B', // bg color of menu item
       darkItemBg: 'transparent',
@@ -117,6 +100,11 @@ export const orallyTheme = {
     Spin: {
       colorPrimary: '#1766F9',
     },
+    Tag: {
+      borderRadiusSM: 12,
+      lineWidth: 2,
+      colorBorder: '#696C94',
+    }
    
   },
 };

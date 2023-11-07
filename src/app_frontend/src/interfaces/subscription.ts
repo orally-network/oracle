@@ -26,3 +26,8 @@ interface SubscriptionMethod {
 }
 
 export type FilterType = 'all' | 'price' | 'random'
+
+export type OptionType = {
+  value: string;
+  label: string;
+};

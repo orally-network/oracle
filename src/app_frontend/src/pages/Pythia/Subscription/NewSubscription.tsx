@@ -1,11 +1,10 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
-import Select, { components } from 'react-select';
+import Select from 'react-select';
 import { toast } from 'react-toastify';
-import { Input, Switch, Select as AntdSelect, Flex } from 'antd';
+import { Input, Switch, Select as AntdSelect, Flex, Tag, Space } from 'antd';
 
 import Control from 'Shared/Control';
 import { CHAINS_MAP } from 'Constants/chains';
-import ChainLogo from 'Shared/ChainLogo';
 import Button from 'Components/Button';
 import logger from 'Utils/logger';
 import { usePythiaData } from 'Providers/PythiaData';
@@ -15,28 +14,12 @@ import {
   mapPairsToOptions,
   getStrMethodArgs,
   RAND_METHOD_TYPES,
-} from '../helper';
+} from 'Utils/helper';
 
 import styles from './Subscription.scss';
-
-// TODO: Refactor Chain selector.
-export const SingleValue = ({ children, ...props }) => (
-  <components.SingleValue {...props}>
-    <Flex align="center" gap="small">
-      <ChainLogo chain={CHAINS_MAP[children]} /> {CHAINS_MAP[props.data.value].name}
-    </Flex>
-  </components.SingleValue>
-);
-
-export const Option = (props: any) => {
-  return (
-    <components.Option {...props}>
-      <Flex align="center" gap="small">
-        <ChainLogo chain={CHAINS_MAP[props.data.value]} /> {CHAINS_MAP[props.data.value].name}
-      </Flex>
-    </components.Option>
-  );
-};
+import { SingleValueSelect } from 'Components/Select';
+import { OptionType } from 'Interfaces/subscription';
+import { FREQUENCY_UNITS } from 'Constants/ui';
 
 export interface NewSubscriptionProps {
   addressData: any;
@@ -45,15 +28,20 @@ export interface NewSubscriptionProps {
   pairs: any;
 }
 
+type FrequencyType = {
+  value: number | null;
+  units: string;
+};
+
 const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubscriptionProps) => {
-  const [chainId, setChainId] = useState(null);
+  const [chainId, setChainId] = useState<string | null>(null);
   const [methodName, setMethodName] = useState('');
   const [methodArg, setMethodArg] = useState(RAND_METHOD_TYPES[0]);
   const [addressToCall, setAddressToCall] = useState('');
-  const [frequency, setFrequency] = useState(60); // mins
+  const [frequency, setFrequency] = useState<FrequencyType>({ value: null, units: 'min' }); // mins
   const [gasLimit, setGasLimit] = useState<string>('');
   const [isRandom, setIsRandom] = useState(false);
-  const [feed, setFeed] = useState(null);
+  const [feed, setFeed] = useState<string | null>(null);
   const [isEdit, setIsEdit] = useState(true);
 
   const [balance, setBalance] = useState(0);
@@ -140,134 +128,114 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
   const nextHandler = useCallback(() => setIsEdit(!isEdit), [isEdit]);
 
   return (
-    <Flex dir="column" align="center" justify="center">
-      <div className={styles.inputs}>
-        <div className={styles.stat}>
-          <div className={styles.label}>Chain</div>
+    <Flex vertical={true} gap="middle">
+      <div className={styles.label}>Chain</div>
 
-          <div className={styles.val}>
-            <Select
-              setValue={setChainId}
-              value={chainId ? { label: chainId, value: chainId } : null}
-              className={styles.chainSelect}
-              classNamePrefix="react-select"
-              isDisabled={!isEdit}
-              styles={{
-                singleValue: (base) => ({
-                  ...base,
-                  borderRadius: 5,
-                  display: 'flex',
-                }),
-              }}
-              components={{ SingleValue, Option }}
-              options={useMemo(() => mapChainsToOptions(chains), [chains])}
-              onChange={useCallback((e) => setChainId(e.value), [])}
-            />
-          </div>
-        </div>
+      <SingleValueSelect
+        className={styles.chainSelect}
+        classNamePrefix="react-select"
+        isDisabled={!isEdit}
+        options={useMemo(() => mapChainsToOptions(chains), [chains])}
+        onChange={useCallback((e: OptionType) => setChainId(e.value), [])}
+      />
 
-        <div className={styles.stat}>
-          <div className={styles.label}>Address</div>
+      <Input
+        disabled={!isEdit}
+        className={styles.input}
+        value={addressToCall}
+        placeholder="Address"
+        onChange={useCallback(
+          (e: React.ChangeEvent<HTMLInputElement>) => setAddressToCall(e.target.value),
+          []
+        )}
+      />
 
-          <div className={styles.val}>
-            <Input
-              disabled={!isEdit}
-              className={styles.input}
-              value={addressToCall}
-              placeholder="address_to_call"
-              onChange={useCallback((e) => setAddressToCall(e.target.value), [])}
-            />
-          </div>
-        </div>
+      <Input
+        disabled={!isEdit}
+        className={styles.input}
+        value={methodName}
+        placeholder="Method"
+        addonAfter={getMethodAddon()}
+        onChange={useCallback(
+          (e: React.ChangeEvent<HTMLInputElement>) => setMethodName(e.target.value),
+          []
+        )}
+      />
 
-        <div className={styles.stat}>
-          <div className={styles.label}>Method</div>
+      <div className={styles.label}>Frequency</div>
 
-          <div className={styles.val}>
-            <Input
-              disabled={!isEdit}
-              className={styles.input}
-              value={methodName}
-              placeholder="method_name"
-              addonAfter={getMethodAddon()}
-              onChange={useCallback((e) => setMethodName(e.target.value), [])}
-            />
-          </div>
-        </div>
+      <Space>
+        <Input
+          pattern="[0-9]*"
+          disabled={!isEdit}
+          className={styles.input}
+          value={frequency.value?.toString()}
+          placeholder="Quantity"
+          style={{ minWidth: '100px' }}
+          onChange={useCallback(
+            (e: React.ChangeEvent<HTMLInputElement>) =>
+              setFrequency({ value: +e.target.value, units: 'min' }),
+            []
+          )}
+        />
 
-        <div className={styles.stat}>
-          <div className={styles.label}>Frequency</div>
+        {FREQUENCY_UNITS.map((unit) => (
+          <Tag
+            key={unit}
+            style={{
+              cursor: 'pointer',
+            }}
+            color={frequency.units === unit ? '#1766F9' : 'default'}
+            onClick={() => setFrequency({ ...frequency, units: unit })}
+          >
+            {unit}
+          </Tag>
+        ))}
+      </Space>
 
-          <div className={styles.val}>
-            <AntdSelect
-              value={frequency}
-              onChange={setFrequency}
-              options={[
-                { value: 30, label: '30 min' },
-                { value: 60, label: '60 min' },
-              ]}
-            />
-          </div>
-        </div>
+      <Input
+        pattern="[0-9]*"
+        disabled={!isEdit}
+        className={styles.input}
+        value={gasLimit}
+        placeholder="Gas limit"
+        onChange={useCallback(
+          (e: React.ChangeEvent<HTMLInputElement>) => setGasLimit(e.target.value),
+          []
+        )}
+      />
 
-        <div className={styles.stat}>
-          <div className={styles.label}>Gas Limit</div>
+      <Space>
+        <Select
+          placeholder="Price feed (Sybil)"
+          className={styles.chainSelect}
+          classNamePrefix="react-select"
+          isDisabled={!isEdit}
+          value={feed ? { label: feed, value: feed } : null}
+          isClearable
+          menuShouldScrollIntoView={false}
+          options={useMemo(() => mapPairsToOptions(pairs), [pairs])}
+          onChange={useCallback((e: OptionType) => {
+            setFeed(e?.value);
+            setIsRandom(false);
+          }, [])}
+        />
 
-          <div className={styles.val}>
-            <Input
-              disabled={!isEdit}
-              className={styles.input}
-              value={gasLimit}
-              type="number"
-              placeholder="21000"
-              onChange={useCallback(
-                (e: React.ChangeEvent<HTMLInputElement>) => setGasLimit(e.target.value),
-                []
-              )}
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className={styles.stat}>
-        <div className={styles.label}>Randomness</div>
-
-        <div className={styles.val}>
+        <Space>
           <Switch
             disabled={!isEdit}
             className={styles.input}
             checked={isRandom}
-            onChange={useCallback((checked) => {
+            onChange={useCallback((checked: boolean) => {
               {
                 setIsRandom(checked);
                 setFeed(null);
               }
             }, [])}
           />
-        </div>
-      </div>
-
-      <div className={styles.stat}>
-        <div className={styles.label}>Price feed (Sybil)</div>
-
-        <div className={styles.val}>
-          <Select
-            className={styles.chainSelect}
-            classNamePrefix="react-select"
-            setValue={setFeed}
-            clearValue={() => setFeed(null)}
-            isDisabled={!isEdit}
-            value={feed ? { label: feed, value: feed } : null}
-            isClearable
-            menuShouldScrollIntoView={false}
-            options={useMemo(() => mapPairsToOptions(pairs), [pairs])}
-            onChange={useCallback((e) => {
-              setFeed(e?.value);
-              setIsRandom(false);
-            }, [])}
-          />
-        </div>
-      </div>
+          Randomness
+        </Space>
+      </Space>
 
       {isEdit ? (
         <Button

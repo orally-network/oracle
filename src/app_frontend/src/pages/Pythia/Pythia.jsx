@@ -166,7 +166,6 @@ const Pythia = () => {
   );
 
   const filteredSubs = useMemo(() => {
-    console.log(showMine, filterByType);
     if (subs.length) {
       return (
         subs

@@ -35,11 +35,13 @@ export const orallyTheme = {
     Input: {
       // colorPrimary: '#eb2f96',
       // colorPrimaryHover: 'gray',
-      colorBgContainer: 'transparent',
+      colorBorder: '#15223B !important',
+      colorBgContainer: '#091325',
+      colorTextPlaceholder: '#4A6293',
       colorText: 'white',
-      colorTextPlaceholder: '#7D8FA9',
-      colorFillAlter: '#7D8FA9',
-      colorBgContainerDisabled: '#7D8FA9'
+      colorFillAlter: '#091325',
+      colorBgContainerDisabled: '#7D8FA9',
+      colorIcon: 'red',
     },
     Switch: {
       colorPrimary: '#1766F9',
@@ -61,7 +63,7 @@ export const orallyTheme = {
       fontSizeLG: 12,
       borderRadius: 12,
       colorPrimaryBorder: '#020915',
-      colorBorder: '#020915',  
+      colorBorder: '#15223B',  
     },
     Select: {
       colorBgContainer: 'transparent',
@@ -111,7 +113,11 @@ export const orallyTheme = {
       colorText: '#4A6293',
       colorBorderSecondary: '#15223B',
       paddingLG: 15,
-    }
+    },
+    Spin: {
+      colorPrimary: '#1766F9',
+    },
+   
   },
 };
 

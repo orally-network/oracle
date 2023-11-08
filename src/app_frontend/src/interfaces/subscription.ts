@@ -24,3 +24,5 @@ interface SubscriptionMethod {
     random: boolean,
   }
 }
+
+export type FilterType = 'all' | 'price' | 'random'

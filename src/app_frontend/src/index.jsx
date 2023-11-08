@@ -6,7 +6,7 @@ import Modal from "react-modal";
 import { WagmiConfig, createConfig, configureChains } from "wagmi";
 import { mainnet, goerli, polygon, polygonMumbai, sepolia } from "wagmi/chains";
 import { createPublicClient, http } from "viem";
-import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react'
+import { createWeb3Modal, defaultWagmiConfig } from "@web3modal/wagmi/react";
 
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { infuraProvider } from "wagmi/providers/infura";
@@ -55,19 +55,24 @@ const { chains, provider, webSocketPublicClient, publicClient } =
   );
 
 // Set up client
-const projectId = '26360338ea435e287ccf74c9cf7db272'
+const projectId = "26360338ea435e287ccf74c9cf7db272";
 
-// check it later 
+// check it later
 const metadata = {
-  name: 'Web3Modal',
-  description: 'Web3Modal Example',
-  url: 'https://web3modal.com',
-  icons: ['https://avatars.githubusercontent.com/u/37784886']
-}
+  name: "Web3Modal",
+  description: "Web3Modal Example",
+  url: "https://web3modal.com",
+  icons: ["https://avatars.githubusercontent.com/u/37784886"],
+};
 
-const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata })
+const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata });
 
-createWeb3Modal({ wagmiConfig, projectId, chains })
+createWeb3Modal({
+  wagmiConfig,
+  projectId,
+  chains,
+  themeMode: "light",
+});
 
 const container = document.getElementById("app");
 

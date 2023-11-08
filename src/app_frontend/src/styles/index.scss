@@ -1,5 +1,11 @@
 @use './variables';
 
+:root {
+  --wui-gray-glass-005: rgba(22, 119, 255, 0.5) !important;
+  --wui-color-fg-100: #565656 !important;
+  --wui-color-fg-200: #444 !important;
+}
+
 @font-face {
   font-family: 'Gilroy-Light';
   src: url('./fonts/Gilroy-Light.ttf') format('truetype');

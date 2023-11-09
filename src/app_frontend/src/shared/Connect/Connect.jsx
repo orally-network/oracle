@@ -1,32 +1,15 @@
-import React from 'react';
-import { useAccount, useConnect, useDisconnect } from 'wagmi';
-import { InjectedConnector } from 'wagmi/connectors/injected';
-import { UserOutlined } from '@ant-design/icons';
+import React from "react";
+import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { InjectedConnector } from "wagmi/connectors/injected";
+import { useWeb3Modal } from "@web3modal/wagmi/react";
 
-import Button from 'Components/Button';
-import { truncateEthAddress } from 'Utils/addressUtils';
-import useWindowDimensions from 'Utils/useWindowDimensions';
-import { BREAK_POINT_MOBILE } from 'Constants/ui';
+import Button from "Components/Button";
+import { truncateEthAddress } from "Utils/addressUtils";
 
 const Connect = ({ className }) => {
-  const { address, isConnected } = useAccount();
-  const { width } = useWindowDimensions();
-  const { connect } = useConnect({
-    connector: new InjectedConnector(),
-  });
-  const { disconnect } = useDisconnect();
+  const { open, close } = useWeb3Modal();
 
-  const isMobile = width < BREAK_POINT_MOBILE;
-
-  return (
-    <Button
-      className={className}
-      icon={<UserOutlined />}
-      onClick={() => (isConnected ? disconnect() : connect())}
-    >
-      {isMobile ? null : isConnected ? truncateEthAddress(address) : 'Connect'}
-    </Button>
-  );
+  return <w3m-button />;
 };
 
 export default Connect;

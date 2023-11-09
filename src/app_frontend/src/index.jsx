@@ -2,29 +2,23 @@ import * as React from "react";
 import { createRoot } from 'react-dom/client';
 import { ToastContainer } from 'react-toastify';
 import Modal from 'react-modal';
-import { WagmiConfig, createConfig, configureChains } from 'wagmi';
-// import { mainnet, goerli, polygon, polygonMumbai, sepolia } from 'wagmi/chains';
-// import { createPublicClient, http } from 'viem';
+import { WagmiConfig, configureChains } from 'wagmi';
+import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react'
 
-import { alchemyProvider } from 'wagmi/providers/alchemy'
-import { infuraProvider } from 'wagmi/providers/infura'
-import { publicProvider } from 'wagmi/providers/public'
-
-// import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
-import { InjectedConnector } from 'wagmi/connectors/injected'
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
-// import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+import { alchemyProvider } from "wagmi/providers/alchemy";
+import { infuraProvider } from "wagmi/providers/infura";
+import { publicProvider } from "wagmi/providers/public";
 
 import ErrorBoundary from 'Shared/ErrorBoundary';
 import config from 'Constants/config';
 import CHAINS from 'Constants/chains';
 
-import App from './App';
+import App from "./App";
 
-import 'Styles/index.scss';
-import '!style-loader!css-loader!react-toastify/dist/ReactToastify.css';
+import "Styles/index.scss";
+import "!style-loader!css-loader!react-toastify/dist/ReactToastify.css";
 
-Modal.setAppElement('#app');
+Modal.setAppElement("#app");
 
 const { chains, provider, webSocketPublicClient, publicClient } = configureChains(
   CHAINS,
@@ -36,41 +30,30 @@ const { chains, provider, webSocketPublicClient, publicClient } = configureChain
 )
 
 // Set up client
-const wagmiConfig = createConfig({
-  autoConnect: true,
-  publicClient,
-  connectors: [
-    new MetaMaskConnector({ chains }),
-    // new CoinbaseWalletConnector({
-    //   chains,
-    //   options: {
-    //     appName: 'orally',
-    //     projectId: 'orally',
-    //   },
-    // }),
-    // new WalletConnectConnector({
-    //   chains,
-    //   options: {
-    //     qrcode: true,
-    //   },
-    // }),
-    new InjectedConnector({
-      chains,
-      options: {
-        name: 'Injected',
-        shimDisconnect: true,
-      },
-    }),
-  ],
-  provider,
-  webSocketPublicClient,
-})
+const projectId = "26360338ea435e287ccf74c9cf7db272";
 
-const container = document.getElementById('app');
+// check it later
+const metadata = {
+  name: "Web3Modal",
+  description: "Web3Modal Example",
+  url: "https://web3modal.com",
+  icons: ["https://avatars.githubusercontent.com/u/37784886"],
+};
+
+const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata });
+
+createWeb3Modal({
+  wagmiConfig,
+  projectId,
+  chains,
+  themeMode: "light",
+});
+
+const container = document.getElementById("app");
 
 const root = createRoot(container);
 
-import('./rollbar').then(() => {
+import("./rollbar").then(() => {
   root.render(
     <ErrorBoundary>
       <WagmiConfig config={wagmiConfig}>

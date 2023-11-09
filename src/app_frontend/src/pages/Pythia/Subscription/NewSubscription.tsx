@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
-import { Input, Switch, Select as AntdSelect, Flex, Tag, Space } from 'antd';
+import { Input, Switch, Select as AntdSelect, Flex, Tag, Space, Tooltip } from 'antd';
 
 import Control from 'Shared/Control';
 import { CHAINS_MAP } from 'Constants/chains';
@@ -14,12 +14,13 @@ import {
   mapPairsToOptions,
   getStrMethodArgs,
   RAND_METHOD_TYPES,
+  convertFrequencyToSeconds,
 } from 'Utils/helper';
 
 import styles from './Subscription.scss';
 import { SingleValueSelect } from 'Components/Select';
-import { OptionType } from 'Interfaces/subscription';
-import { FREQUENCY_UNITS } from 'Constants/ui';
+import { OptionType, Unit } from 'Interfaces/subscription';
+import { FREQUENCY_UNITS, MIN_BALANCE, MIN_FREQUENCY } from 'Constants/ui';
 
 export interface NewSubscriptionProps {
   addressData: any;
@@ -30,7 +31,7 @@ export interface NewSubscriptionProps {
 
 type FrequencyType = {
   value: number | null;
-  units: string;
+  units: Unit;
 };
 
 const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubscriptionProps) => {
@@ -61,9 +62,12 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
   const subscribeHandler = useCallback(async () => {
     const payload = {
       chainId,
-      methodName: `${methodName}(${feed ? getStrMethodArgs(feed) : methodArg})`,
+      methodName: `${methodName}(${feed ? getStrMethodArgs(Boolean(feed)) : methodArg})`,
       addressToCall,
-      frequency: Number(frequency) * 60,
+      frequency:
+        frequency.value !== null
+          ? convertFrequencyToSeconds(frequency.value, frequency.units)
+          : MIN_FREQUENCY,
       gasLimit,
       isRandom,
       feed,
@@ -91,7 +95,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
       setChainId(chains[0]?.chain_id);
       setMethodName('');
       setAddressToCall('');
-      setFrequency(10);
+      setFrequency({ value: 0, units: 'min' });
       setGasLimit('');
       setIsRandom(false);
       setFeed(null);
@@ -144,10 +148,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
         className={styles.input}
         value={addressToCall}
         placeholder="Address"
-        onChange={useCallback(
-          (e: React.ChangeEvent<HTMLInputElement>) => setAddressToCall(e.target.value),
-          []
-        )}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddressToCall(e.target.value)}
       />
 
       <Input
@@ -156,28 +157,25 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
         value={methodName}
         placeholder="Method"
         addonAfter={getMethodAddon()}
-        onChange={useCallback(
-          (e: React.ChangeEvent<HTMLInputElement>) => setMethodName(e.target.value),
-          []
-        )}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMethodName(e.target.value)}
       />
 
       <div className={styles.label}>Frequency</div>
 
       <Space>
-        <Input
-          pattern="[0-9]*"
-          disabled={!isEdit}
-          className={styles.input}
-          value={frequency.value?.toString()}
-          placeholder="Quantity"
-          style={{ minWidth: '100px' }}
-          onChange={useCallback(
-            (e: React.ChangeEvent<HTMLInputElement>) =>
-              setFrequency({ value: +e.target.value, units: 'min' }),
-            []
-          )}
-        />
+        <Tooltip title="Minimum 30 minutes and maximum 6 months">
+          <Input
+            pattern="[0-9]*"
+            disabled={!isEdit}
+            className={styles.input}
+            value={frequency.value?.toString()}
+            placeholder="Quantity"
+            style={{ minWidth: '100px' }}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setFrequency({ value: +e.target.value, units: 'min' })
+            }
+          />
+        </Tooltip>
 
         {FREQUENCY_UNITS.map((unit) => (
           <Tag
@@ -199,13 +197,10 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
         className={styles.input}
         value={gasLimit}
         placeholder="Gas limit"
-        onChange={useCallback(
-          (e: React.ChangeEvent<HTMLInputElement>) => setGasLimit(e.target.value),
-          []
-        )}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGasLimit(e.target.value)}
       />
 
-      <Space>
+      <Space size="large">
         <Select
           placeholder="Price feed (Sybil)"
           className={styles.chainSelect}
@@ -215,56 +210,71 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
           isClearable
           menuShouldScrollIntoView={false}
           options={useMemo(() => mapPairsToOptions(pairs), [pairs])}
-          onChange={useCallback((e: OptionType) => {
+          onChange={(e: OptionType) => {
             setFeed(e?.value);
             setIsRandom(false);
-          }, [])}
+          }}
         />
-
         <Space>
           <Switch
             disabled={!isEdit}
             className={styles.input}
             checked={isRandom}
-            onChange={useCallback((checked: boolean) => {
+            onChange={(checked: boolean) => {
               {
                 setIsRandom(checked);
                 setFeed(null);
               }
-            }, [])}
+            }}
           />
           Randomness
         </Space>
       </Space>
 
-      {isEdit ? (
-        <Button
-          disabled={!chainId || !methodName || !addressToCall || !frequency}
-          onClick={nextHandler}
-          type="primary"
-          className={styles.nextBtn}
-        >
-          Next
-        </Button>
-      ) : (
-        <Button className={styles.back} onClick={nextHandler} type="primary">
-          Back
-        </Button>
-      )}
+      <Flex justify="flex-end" gap="large" style={{ paddingTop: '1rem' }}>
+        {isEdit ? (
+          <Button
+            disabled={!chainId || !methodName || !addressToCall || !frequency}
+            onClick={nextHandler}
+            type="primary"
+            className={styles.nextBtn}
+            style={{ alignSelf: 'flex-end' }}
+          >
+            Next
+          </Button>
+        ) : (
+          <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+            <Control
+              disabled={!chainId || !methodName || !addressToCall || !frequency}
+              // subscribe={subscribeHandler}
+              signMessage={signMessage}
+              addressData={addressData}
+              balance={balance}
+              executionAddress={pma}
+              refetchBalance={refetchBalance}
+              isBalanceLoading={isBalanceLoading}
+              chain={chainId !== null && CHAINS_MAP[chainId]}
+            />
 
-      {!isEdit && (
-        <Control
-          disabled={!chainId || !methodName || !addressToCall || !frequency}
-          subscribe={subscribeHandler}
-          signMessage={signMessage}
-          addressData={addressData}
-          balance={balance}
-          executionAddress={pma}
-          refetchBalance={refetchBalance}
-          isBalanceLoading={isBalanceLoading}
-          chain={chainId !== null && CHAINS_MAP[chainId]}
-        />
-      )}
+            <Flex justify="space-between">
+              <Button type="link" className={styles.back} onClick={nextHandler}>
+                Back
+              </Button>
+
+              <Button
+                className={styles.subscribe}
+                disabled={
+                  balance < MIN_BALANCE || !chainId || !methodName || !addressToCall || !frequency
+                }
+                onClick={subscribe}
+                type="primary"
+              >
+                Subscribe
+              </Button>
+            </Flex>
+          </Space>
+        )}
+      </Flex>
     </Flex>
   );
 };

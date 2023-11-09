@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useAccount } from 'wagmi';
-import { Spin } from 'antd';
+import { Spin, Flex } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
 import { toast } from 'react-toastify';
 
 import Connect from 'Shared/Connect';
@@ -11,6 +12,7 @@ import logger from 'Utils/logger';
 import TopUpModal from './TopUpModal';
 // import SubscribeModal from './SubscribeModal';
 import styles from './Control.scss';
+import { SecondaryButton } from 'Components/SecondaryButton';
 
 const MIN_BALANCE = 0.1;
 const EMPTY_BALANCE = 0.001;
@@ -35,7 +37,6 @@ const Control = ({
   token,
 }) => {
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
-  // const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
   const [isSigning, setIsSigning] = useState(false);
   const [isStopping, setIsStopping] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
@@ -137,23 +138,31 @@ const Control = ({
 
   return (
     <div className={styles.control}>
-      <div className={styles.executionAddress}>
+      <Flex justify="space-between" gap="small">
         <Spin spinning={isBalanceLoading}>
           <div className={styles.executionAddressInfo}>
-            <div className={styles.address} onClick={() => navigator.clipboard.writeText(executionAddress)}>
+            Pythia Main Address
+            <div
+              className={styles.address}
+              onClick={() => navigator.clipboard.writeText(executionAddress)}
+            >
               {truncateEthAddress(executionAddress)}
-            </div>
-
-            <div className={styles.balance}>
-              {(Number(balance) / Math.pow(10, chain.nativeCurrency.decimals)).toFixed(3) ?? '-'}{' '}
-              {chain.nativeCurrency.symbol}
             </div>
           </div>
         </Spin>
 
-        <Button className={styles.topUp} onClick={() => setIsTopUpModalOpen(true)} type="primary">
+        <SecondaryButton
+          icon={<DownloadOutlined />}
+          className={styles.topUp}
+          onClick={() => setIsTopUpModalOpen(true)}
+        >
           Top up
-        </Button>
+        </SecondaryButton>
+      </Flex>
+
+      <div className={styles.balance}>
+        {(Number(balance) / Math.pow(10, chain.nativeCurrency.decimals)).toFixed(3) ?? '-'}{' '}
+        {chain.nativeCurrency.symbol}
       </div>
 
       {subscribed ? (

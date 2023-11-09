@@ -35,7 +35,7 @@ export const orallyTheme = {
       colorTextPlaceholder: '#4A6293',
       colorText: 'white',
       colorFillAlter: '#091325',
-      colorBgContainerDisabled: '#7D8FA9',
+      colorTextDisabled: 'white',
       colorIcon: 'red',
     },
     Switch: {
@@ -66,11 +66,11 @@ export const orallyTheme = {
       colorTextPlaceholder: 'gray',
     },
     Modal: {
-      colorBgElevated: 'rgb(26,21,41)',
-      colorText: '#B9D6FA',
-      titleColor: '#B9D6FA',
+      colorBgElevated: '#111F37',
+      colorText: '#4A6293',
+      titleColor: 'white',
       colorBgMask: 'rgba(0, 0, 0, .8)',
-      colorIcon: '#B9D6FA',
+      colorIcon: 'var(--primary-color, #1766F9)',
       boxShadow:
         '0px 4px 4px 0px rgba(255,255,255,.15) inset, 0px 0px 68px 0px rgba(255,255,255,.05) inset',
       headerBg: 'transparent',

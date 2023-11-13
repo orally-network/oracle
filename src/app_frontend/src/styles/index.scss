@@ -1,10 +1,5 @@
 @use './variables';
 
-:root {
-  --wui-gray-glass-005: rgba(22, 119, 255, 0.5) !important;
-  --wui-color-fg-100: #565656 !important;
-  --wui-color-fg-200: #444 !important;
-}
 
 @font-face {
   font-family: 'Gilroy-Light';
@@ -98,7 +93,7 @@ a {
   }
 
   .ant-drawer-close {
-    color: white !important;
+    color: variables.$primary-color !important;
     position: absolute;
     right: 20px;
   }
@@ -109,6 +104,10 @@ a {
   
   .ant-input-clear-icon {
     color: var(--primary-color) !important;
+  }
+
+  .ant-tag {
+    margin-inline-end: 0 !important;
   }
 
   .ant-menu {

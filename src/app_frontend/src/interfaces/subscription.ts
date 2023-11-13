@@ -26,3 +26,10 @@ interface SubscriptionMethod {
 }
 
 export type FilterType = 'all' | 'price' | 'random'
+
+export type OptionType = {
+  value: string;
+  label: string;
+};
+
+export type Unit = 'min' | 'hour'| 'day' | 'week' | 'month';

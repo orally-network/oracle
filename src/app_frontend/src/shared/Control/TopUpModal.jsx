@@ -1,93 +1,54 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { toast } from 'react-toastify';
-// eslint-disable-next-line no-unused-vars
-import { useSendTransaction, usePrepareSendTransaction, useSwitchNetwork, useNetwork, usePrepareContractWrite } from 'wagmi';
+import { useSendTransaction, useSwitchNetwork, useNetwork } from 'wagmi';
 import { utils } from 'ethers';
-import { Input, Modal } from 'antd';
-import { waitForTransaction } from '@wagmi/core'
-
-// import Modal from 'Components/Modal';
-// import Button from 'Components/Button';
+import { Input, Modal, Flex } from 'antd';
+import { waitForTransaction } from '@wagmi/core';
 import logger from 'Utils/logger';
 import { usePythiaData } from 'Providers/PythiaData';
 
-import styles from './Control.scss';
-
 const DEFAULT_AMOUNT = 0.01;
 
-const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAddress, refetchBalance, decimals, symbol }) => {
+const TopUpModal = ({
+  isTopUpModalOpen,
+  setIsTopUpModalOpen,
+  chain,
+  executionAddress,
+  refetchBalance,
+  decimals,
+  symbol,
+}) => {
   const [amount, setAmount] = useState(DEFAULT_AMOUNT);
 
   const { chain: currentChain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
   const { deposit } = usePythiaData();
-  
+
   console.log({
     chain,
     executionAddress,
     decimals,
     amount,
-  })
-  
-  // const config = usePrepareSendTransaction({
-  //   to: executionAddress,
-  //   value: utils.parseUnits(String(amount || 0), decimals),
-  //   chainId: chain.id,
-  // });
-  /*
-  const { config: tokenSendConfig } = usePrepareContractWrite({
-    address: token,
-    abi: [
-      {
-        name: 'transfer',
-        type: 'function',
-        stateMutability: 'nonpayable',
-        inputs: [
-          {
-            "name": "_to",
-            "type": "address"
-          },
-          {
-            "name": "_value",
-            "type": "uint256"
-          }
-        ],
-        outputs: [
-          {
-            "name": "",
-            "type": "bool"
-          }
-        ],
-      },
-    ],
-    functionName: 'transfer',
-    args: [executionAddress, utils.parseUnits(String(amount || 0), decimals)],
-    enabled: Boolean(token),
-  })
-   */
-  // const { sendTransactionAsync } = useSendTransaction({
-  //   ...config.data ?? {},
-  //   value: config.data?.value?.hex,
-  // });
-  
+  });
+
   const { sendTransactionAsync } = useSendTransaction({
     to: executionAddress,
     value: utils.parseUnits(String(amount || 0), decimals),
     chainId: chain.id,
   });
-  
+
   useEffect(() => {
     if (currentChain.id !== chain.id) {
       switchNetwork(chain.id);
     }
-  }, []);
-  
+  }, [chain.id, currentChain.id, switchNetwork]);
+
   const topUp = useCallback(async () => {
     const { hash } = await sendTransactionAsync();
 
     setIsTopUpModalOpen(false);
-    
-    console.log({ hash, id: chain.id })
+
+    console.log({ hash, id: chain.id });
 
     const data = await toast.promise(
       waitForTransaction({
@@ -101,56 +62,43 @@ const TopUpModal = ({ isTopUpModalOpen, setIsTopUpModalOpen, chain, executionAdd
             logger.error(`Sending ${symbol}`, error);
 
             return 'Something went wrong. Try again later.';
-          }
+          },
         },
       }
     );
-    
-    console.log({ data, hash });
-    
-    await toast.promise(
-      deposit(chain.id, hash),
-      {
-        pending: `Deposit ${amount} ${symbol} to canister`,
-        success: `Deposited successfully`,
-        error: {
-          render({ error }) {
-            logger.error(`Depositing ${symbol}`, error);
 
-            return 'Something went wrong. Try again later.';
-          }
+    console.log({ data, hash });
+
+    await toast.promise(deposit(chain.id, hash), {
+      pending: `Deposit ${amount} ${symbol} to canister`,
+      success: `Deposited successfully`,
+      error: {
+        render({ error }) {
+          logger.error(`Depositing ${symbol}`, error);
+
+          return 'Something went wrong. Try again later.';
         },
-      }
-    );
-    
+      },
+    });
+
     await refetchBalance();
   }, [amount, chain, executionAddress, sendTransactionAsync, refetchBalance]);
-  
+
   return (
     <Modal
+      maxWidth={400}
+      style={{ top: '30%', right: '10px' }}
       title="Top Up"
       okButtonProps={{ disabled: currentChain.id !== chain.id || amount < DEFAULT_AMOUNT }}
       onOk={topUp}
       open={isTopUpModalOpen}
-      onCancel={useCallback(() => setIsTopUpModalOpen(false), [])}
+      onCancel={() => setIsTopUpModalOpen(false)}
     >
-      <div className={styles.topUpModal}>
-        <Input
-          value={amount}
-          type="number"
-          onChange={useCallback((e) => setAmount(e.target.value), [])}
-        />
-        
-        {/*<Button*/}
-        {/*  className={styles.topUpBtn}*/}
-        {/*  disabled={currentChain.id !== chain.id || amount < DEFAULT_AMOUNT}*/}
-        {/*  onClick={topUp}*/}
-        {/*>*/}
-        {/*  Top Up*/}
-        {/*</Button>*/}
-      </div>
+      <Flex vertical style={{ paddingTop: '20px' }}>
+        <Input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} />
+      </Flex>
     </Modal>
-  )
+  );
 };
 
 export default TopUpModal;

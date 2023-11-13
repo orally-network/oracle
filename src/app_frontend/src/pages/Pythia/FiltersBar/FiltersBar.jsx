@@ -5,7 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import { usePythiaData } from 'Providers/PythiaData';
 import { useSubscriptionsFilters } from 'Providers/SubscriptionsFilters';
-import { mapChainsToOptions } from '../helper';
+import { mapChainsToOptions } from '../../../utils/helper';
 import { SecondaryButton } from 'Components/SecondaryButton';
 import styles from './FiltersBar.scss';
 import { MultiSelect } from 'Components/Select';

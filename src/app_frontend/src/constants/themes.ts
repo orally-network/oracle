@@ -28,27 +28,19 @@ export const orallyTheme = {
       primaryShadow: 'none',
       borderRadius: 12,
       contentFontSizeLG: 12,
- 
-      // colorBgTextHover: 'red',
-      // textHoverBg: 'green',
     },
     Input: {
-      // colorPrimary: '#eb2f96',
-      // colorPrimaryHover: 'gray',
       colorBorder: '#15223B !important',
       colorBgContainer: '#091325',
       colorTextPlaceholder: '#4A6293',
       colorText: 'white',
       colorFillAlter: '#091325',
-      colorBgContainerDisabled: '#7D8FA9',
+      colorTextDisabled: 'white',
       colorIcon: 'red',
     },
     Switch: {
       colorPrimary: '#1766F9',
       colorPrimaryHover: 'gray',
-      // colorBgContainer: 'green',
-      // handleBg: 'yellow',
-      // colorText: 'pink',
       colorTextTertiary: '#6B75FF',
       colorTextQuaternary: '#696C94',
     },
@@ -72,27 +64,18 @@ export const orallyTheme = {
       colorTextQuaternary: 'white',
       controlItemBgActive: '#005098',
       colorTextPlaceholder: 'gray',
-      // colorTextTertiary: 'green',
-      // colorFillSecondary: 'blue',
     },
     Modal: {
-      colorBgElevated: 'rgb(26,21,41)',
-      colorText: '#B9D6FA',
-      titleColor: '#B9D6FA',
+      colorBgElevated: '#111F37',
+      colorText: '#4A6293',
+      titleColor: 'white',
       colorBgMask: 'rgba(0, 0, 0, .8)',
-      colorIcon: '#B9D6FA',
+      colorIcon: 'var(--primary-color, #1766F9)',
       boxShadow:
         '0px 4px 4px 0px rgba(255,255,255,.15) inset, 0px 0px 68px 0px rgba(255,255,255,.05) inset',
       headerBg: 'transparent',
     },
     Menu: {
-      // controlItemBgActive: 'red',
-      // itemSelectedBg: 'green',
-      // colorText: 'red',
-      // colorTextDescription: 'green',
-      // itemColor: 'red', // try in light theme
-      // itemActiveBg: 'brown',
-      // itemBg: 'white',
       colorTextDisabled: '#4A6293',
       colorPrimary: '#0C172B', // bg color of menu item
       darkItemBg: 'transparent',
@@ -117,6 +100,11 @@ export const orallyTheme = {
     Spin: {
       colorPrimary: '#1766F9',
     },
+    Tag: {
+      borderRadiusSM: 12,
+      lineWidth: 2,
+      colorBorder: '#696C94',
+    }
    
   },
 };

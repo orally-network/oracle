@@ -2,62 +2,49 @@
   display: flex;
   margin-top: 15px;
   flex-direction: column;
+}
   
-  .executionAddress {
-    display: flex;
-    min-width: 210px;
-    
-    .executionAddressInfo {
-      display: flex;
-      flex-direction: column;
+.executionAddressInfo {
+  display: flex;
+  flex-direction: column;
+  color: #4A6293;
 
-      .address {
-        cursor: pointer;
-        
-        &:active {
-            opacity: 0.5;
-        }
-      }
-
-      .balance {
-        font-size: 0.8em;
-        color: #999;
-      }
-    }
+  .address {
+    cursor: pointer;
+    color: white;
     
-    .topUp {
-      margin-left: 10px;
+    &:active {
+      opacity: 0.5;
     }
   }
-  
-  .actionBtns {
-    display: flex;
-    
-    .actionBtn {
-      margin-left: 5px;
-    }
-  }
-  
-  .subscribe {
-    //width: -webkit-fill-available;
-    width: 290px;
+ 
+}
+
+.balance {
+  font-size: 0.8em;
+  color: var(--primary-color);
+}
+
+.topUp {
+  margin-left: 10px;
+}
+
+.actionBtns {
+  display: flex;
+
+  .actionBtn {
+    margin-left: 5px;
   }
 }
 
-.topUpModal {
-  display: flex;
-  flex-direction: column;
-  
-  .topUpBtn {
-    margin-top: 20px;
-    width: 100%;
-  }
+.subscribe {
+  width: 290px;
 }
 
 .subscribeModal {
   display: flex;
   flex-direction: column;
-  
+
   .input {
     margin-top: 20px;
   }

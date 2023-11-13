@@ -61,7 +61,7 @@ export const Sidebar = ({ toggleTheme, isDarkMode }: SidebarProps) => {
         />
       </div>
       <div className={styles.toggler}>
-        <FontAwesomeIcon onClick={toggleTheme} icon={isDarkMode ? faSun : faMoon} />
+        {/* <FontAwesomeIcon onClick={toggleTheme} icon={isDarkMode ? faSun : faMoon} /> */}
         <FontAwesomeIcon icon={faQuestion} />
       </div>
     </Sider>

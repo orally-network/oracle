@@ -1,7 +1,10 @@
 import { createContext } from 'react';
 
 const GlobalStateContext = createContext({
-    addressData: {},
+    addressData: {
+        message: '',
+        signature: '',
+    },
     setAddressData: () => {},
 });
 

@@ -59,11 +59,12 @@ export const orallyTheme = {
     },
     Select: {
       colorBgContainer: 'transparent',
-      colorText: 'black',
-      colorBgElevated: 'white',
+      colorText: 'white !important',
+      colorBgElevated: '#091325',
       colorTextQuaternary: 'white',
-      controlItemBgActive: '#005098',
-      colorTextPlaceholder: 'gray',
+      controlItemBgActive: '#081A3C',
+      colorTextPlaceholder: 'white',
+      colorTextTertiary: 'white',
     },
     Modal: {
       colorBgElevated: '#111F37',
@@ -104,6 +105,9 @@ export const orallyTheme = {
       borderRadiusSM: 12,
       lineWidth: 2,
       colorBorder: '#696C94',
+    },
+    Skeleton: {
+      colorFill:  '#111F37'
     }
    
   },

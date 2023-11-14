@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useAccount } from 'wagmi';
-import { Spin, Flex } from 'antd';
+import { Spin, Flex, Space } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { toast } from 'react-toastify';
 
@@ -166,7 +166,7 @@ const Control = ({
       </div>
 
       {subscribed ? (
-        <div className={styles.actionBtns}>
+        <Space size="large">
           {is_active ? (
             <Spin spinning={isStopping}>
               <Button className={styles.actionBtn} type="primary" onClick={stopHandler}>
@@ -191,7 +191,7 @@ const Control = ({
               Withdraw
             </Button>
           </Spin>
-        </div>
+        </Space>
       ) : (
         subscribe && (
           <Button

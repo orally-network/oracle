@@ -1,0 +1,224 @@
+import React, { useState, useMemo } from 'react';
+import { Flex, Input, Space, Button, Tooltip, Tag, Switch } from 'antd';
+import { SingleValueSelect } from 'Components/Select';
+import pythiaCanister from 'Canisters/pythiaCanister';
+import { remove0x } from 'Utils/addressUtils';
+import { useGlobalState } from 'Providers/GlobalState';
+import { FrequencyType, OptionType, Subscription } from 'Interfaces/subscription';
+import {
+  RAND_METHOD_TYPES,
+  convertFrequencyDate,
+  mapChainsToOptions,
+  mapPairsToOptions,
+} from 'Utils/helper';
+import logger from 'Utils/logger';
+import { usePythiaData } from 'Providers/PythiaData';
+import { FREQUENCY_UNITS } from 'Constants/ui';
+import { getMethodAddon } from './NewSubscription';
+import { useAccount } from 'wagmi';
+import Select from 'react-select';
+
+import styles from './Subscription.scss';
+import { useSybilPairs } from 'Providers/SybilPairs';
+
+interface SubscriptionDetailsProps {
+  subscription: Subscription;
+}
+
+export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) => {
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
+  const { address } = useAccount();
+  const [chainId, setChainId] = useState<string | null>(subscription.method.chain_id);
+  const [methodName, setMethodName] = useState(subscription.method.name);
+  const [methodArg, setMethodArg] = useState(RAND_METHOD_TYPES[0]);
+
+  const [addressToCall, setAddressToCall] = useState(subscription.contract_addr);
+  const [frequency, setFrequency] = useState<FrequencyType>({
+    value: convertFrequencyDate(Number(subscription.frequency)).value || null,
+    units: convertFrequencyDate(Number(subscription.frequency)).units || 'min',
+  });
+  const [gasLimit, setGasLimit] = useState<string>(subscription.method.gas_limit.toString());
+  const [isRandom, setIsRandom] = useState(subscription.method.method_type.Random);
+  const [feed, setFeed] = useState<string | null>(subscription.method?.method_type?.Pair || null);
+
+  const viewOnly = subscription.owner !== address?.toLowerCase?.();
+
+  const { addressData } = useGlobalState();
+  const { chains } = usePythiaData();
+  const { pairs } = useSybilPairs();
+
+  const updateSubscription = async ({
+    chainId,
+    methodName,
+    addressToCall,
+    frequency,
+    gasLimit,
+    isRandom,
+    feed,
+  }: {
+    chainId: string;
+    methodName: string;
+    addressToCall: string;
+    frequency: number;
+    gasLimit: number;
+    isRandom: boolean;
+    feed: string | null;
+  }) => {
+    setIsUpdating(true);
+
+    const res = await pythiaCanister.update_subscription({
+      chain_id: chainId,
+      pair_id: feed ? [feed] : [],
+      contract_addr: remove0x(addressToCall),
+      method_abi: methodName,
+      frequency: frequency,
+      is_random: isRandom,
+      gas_limit: Number(gasLimit),
+      msg: addressData.message,
+      sig: remove0x(addressData.signature),
+    });
+
+    setIsUpdating(false);
+    console.log({ res });
+
+    if (res.Err) {
+      logger.error(`Failed to update to ${addressToCall}, ${res.Err}`);
+
+      throw new Error(res.Err);
+    }
+
+    return res;
+  };
+
+  const onUpdateHandler = async () => {
+    try {
+      await updateSubscription({
+        chainId: subscription.method.chain_id,
+        methodName: subscription.method.name,
+        addressToCall: subscription.contract_addr,
+        frequency: Number(subscription.frequency),
+        gasLimit: subscription.method.gas_limit,
+        isRandom: subscription.method.method_type.Random,
+        feed: subscription.method.method_type.Pair,
+      });
+    } catch (error) {
+      console.log({ error });
+    }
+  };
+
+  return (
+    <Flex vertical={true} gap="middle">
+      <Space direction="vertical">
+        <div className={styles.label}>Chain</div>
+        <SingleValueSelect
+          isDisabled={viewOnly}
+          value={{ value: chainId, label: chainId }}
+          classNamePrefix="react-select"
+          options={useMemo(() => mapChainsToOptions(chains), [chains])}
+          onChange={(e: OptionType) => setChainId(e.value)}
+        />
+      </Space>
+      <Space direction="vertical">
+        <div className={styles.label}>Address</div>
+        <Input
+          disabled={viewOnly}
+          value={addressToCall}
+          placeholder="Address"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddressToCall(e.target.value)}
+        />
+      </Space>
+      <Space direction="vertical">
+        <div className={styles.label}>Method</div>
+        <Input
+          disabled={viewOnly}
+          value={methodName}
+          placeholder="Method"
+          addonAfter={getMethodAddon({ isRandom, methodArg, setMethodArg, feed })}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMethodName(e.target.value)}
+        />
+      </Space>
+
+      <div className={styles.label}>Frequency</div>
+      <Space>
+        <Tooltip title="Minimum 30 minutes and maximum 6 months">
+          <Input
+            pattern="[0-9]*"
+            disabled={viewOnly}
+            value={frequency.value?.toString()}
+            placeholder="Quantity"
+            style={{ minWidth: '100px' }}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setFrequency({ value: +e.target.value, units: 'min' })
+            }
+          />
+        </Tooltip>
+
+        {FREQUENCY_UNITS.map((unit) => (
+          <Tag
+            key={unit}
+            style={{
+              cursor: 'pointer',
+            }}
+            color={frequency.units === unit ? '#1766F9' : 'default'}
+            onClick={() => (!viewOnly ? setFrequency({ ...frequency, units: unit }) : null)}
+          >
+            {unit}
+          </Tag>
+        ))}
+      </Space>
+
+      <Space direction="vertical">
+        <div className={styles.label}>Gas limit</div>
+        <Input
+          pattern="[0-9]*"
+          disabled={viewOnly}
+          value={gasLimit}
+          placeholder="Gas limit"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGasLimit(e.target.value)}
+        />
+      </Space>
+      <Flex gap="middle" align="center">
+        <Space direction="vertical">
+          <div className={styles.label}>Price feed (Sybil)</div>
+          <Select
+            placeholder="Price feed"
+            classNamePrefix="react-select"
+            isDisabled={viewOnly}
+            value={feed ? { label: feed, value: feed } : null}
+            isClearable
+            menuShouldScrollIntoView={false}
+            options={useMemo(() => mapPairsToOptions(pairs), [pairs])}
+            onChange={(e: OptionType) => {
+              setFeed(e?.value);
+              setIsRandom(false);
+            }}
+          />
+        </Space>
+        <Space direction="vertical">
+          <div className={styles.label}>Randomness</div>
+          <Switch
+            disabled={viewOnly}
+            checked={isRandom}
+            onChange={(checked: boolean) => {
+              {
+                setIsRandom(checked);
+                setFeed(null);
+              }
+            }}
+          />
+        </Space>
+      </Flex>
+
+      <Space style={{ paddingTop: '2rem' }}>
+        <Button
+          type="primary"
+          loading={isUpdating}
+          onClick={onUpdateHandler}
+          disabled={subscription.owner !== address?.toLowerCase()}
+        >
+          Update
+        </Button>
+      </Space>
+    </Flex>
+  );
+};

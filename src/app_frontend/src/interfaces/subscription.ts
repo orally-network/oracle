@@ -1,5 +1,3 @@
-
-
 export interface Subscription {
   status: SubscriptionStatus;
   method: SubscriptionMethod;
@@ -20,10 +18,15 @@ interface SubscriptionMethod {
   name: string;
   gas_limit: number;
   method_type: {
-    pair: string,
-    random: boolean,
+    Pair: string,
+    Random: boolean,
   }
 }
+
+export type FrequencyType = {
+  value: number | null;
+  units: Unit;
+};
 
 export type FilterType = 'all' | 'price' | 'random'
 

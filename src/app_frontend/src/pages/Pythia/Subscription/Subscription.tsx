@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Space, Card, Tooltip, Typography, Flex } from 'antd';
-import type { MenuProps } from 'antd';
+import { Space, Card, Tooltip, Typography, Flex, Drawer, Skeleton as AntdSkeleton } from 'antd';
 import {
   ExportOutlined,
   UnorderedListOutlined,
@@ -9,7 +8,7 @@ import {
   EyeOutlined,
 } from '@ant-design/icons';
 import { useAccount } from 'wagmi';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import Control from 'Shared/Control';
 import { CHAINS_MAP } from 'Constants/chains';
@@ -23,30 +22,30 @@ import styles from './Subscription.scss';
 
 import { STROKE_DASHARRAY_PROGRESS_BAR } from 'Constants/ui';
 import IconLink from 'Components/IconLink';
+import { SubscriptionDetails } from './SubscriptionDetails';
+import { Subscription } from 'Interfaces/subscription';
 
-const Data = ({ pair, random }) => {
-  if (pair) {
-    return (
-      <Link to={`/sybil/${pair}`} onClick={stopPropagation}>
-        <Button className={styles.data}>{pair}</Button>
-      </Link>
-    );
-  }
+interface SubscriptionProps {
+  sub: Subscription;
+  addressData: string;
+  signMessage: string;
+  stopSubscription: () => void;
+  startSubscription: () => void;
+  withdraw: () => void;
+}
 
-  return <Button className={styles.data}>Random ({random})</Button>;
-};
-
-const Subscription = ({
+const SubscriptionCard = ({
   sub,
   addressData,
   signMessage,
   stopSubscription,
   startSubscription,
   withdraw,
-}) => {
+}: SubscriptionProps) => {
   const { address } = useAccount();
   const navigate = useNavigate();
-  const [isCopied, setIsCopied] = useState(false);
+  const [isCopied, setIsCopied] = useState<boolean>(false);
+  const [isSubscriptionDetailsVisible, setIsSubscriptionDetailsVisible] = useState<boolean>(false);
 
   const {
     status: { is_active, last_update, executions_counter },
@@ -61,10 +60,6 @@ const Subscription = ({
     frequency,
     id,
   } = sub;
-
-  const handleMenuClick: MenuProps['onClick'] = (e) => {
-    console.log('click', e);
-  };
 
   const chain = CHAINS_MAP[chain_id];
 
@@ -125,7 +120,7 @@ const Subscription = ({
             </Space>
           </div>
 
-          <div className={styles.menu}>
+          <div className={styles.menu} onClick={() => setIsSubscriptionDetailsVisible(true)}>
             {sub.owner === address?.toLowerCase?.() ? <EditOutlined /> : <EyeOutlined />}
           </div>
         </div>
@@ -195,25 +190,47 @@ const Subscription = ({
         </Button>
       </Space>
 
-      {owner === address?.toLowerCase() && (
-        <Control
-          subscribed
-          is_active={is_active}
-          addressData={addressData}
-          signMessage={signMessage}
-          chain={chain}
-          subId={id}
-          balance={balance}
-          executionAddress={pma}
-          isBalanceLoading={isBalanceLoading}
-          startSubscription={startSubscription}
-          refetchBalance={refetchBalance}
-          stopSubscription={stopSubscription}
-          withdraw={withdraw}
-        />
+      {isSubscriptionDetailsVisible && (
+        <Drawer
+          title="Subscription details"
+          placement="right"
+          onClose={() => setIsSubscriptionDetailsVisible(false)}
+          open={isSubscriptionDetailsVisible}
+          style={{ paddingTop: '80px' }}
+          width="40vw"
+        >
+          <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+            <SubscriptionDetails subscription={sub} />
+            {owner === address?.toLowerCase() && (
+              <Control
+                subscribed
+                is_active={is_active}
+                addressData={addressData}
+                signMessage={signMessage}
+                chain={chain}
+                subId={id}
+                balance={balance}
+                executionAddress={pma}
+                isBalanceLoading={isBalanceLoading}
+                startSubscription={startSubscription}
+                refetchBalance={refetchBalance}
+                stopSubscription={stopSubscription}
+                withdraw={withdraw}
+              />
+            )}
+          </Space>
+        </Drawer>
       )}
     </Card>
   );
 };
 
-export default Subscription;
+const Skeleton = () => {
+  return (
+    <Card hoverable={true} className={styles.subscription}>
+      <AntdSkeleton active avatar paragraph={{ rows: 3 }} round loading />
+    </Card>
+  );
+};
+
+export default Object.assign(SubscriptionCard, { Skeleton });

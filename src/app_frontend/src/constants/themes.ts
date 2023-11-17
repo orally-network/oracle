@@ -28,6 +28,7 @@ export const orallyTheme = {
       primaryShadow: 'none',
       borderRadius: 12,
       contentFontSizeLG: 12,
+      colorBgTextHover: 'var(--primary-color, #1766F9)',
     },
     Input: {
       colorBorder: '#15223B !important',

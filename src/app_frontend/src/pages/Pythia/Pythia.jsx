@@ -14,6 +14,8 @@ import pythiaCanister from 'Canisters/pythiaCanister';
 import useSignature from 'Shared/useSignature';
 import logger from 'Utils/logger';
 import { DEFAULT_SUBSCRIPTIONS } from 'Constants/ui';
+import useWindowDimensions from 'Utils/useWindowDimensions';
+import { BREAK_POINT_MOBILE } from 'Constants/ui';
 
 import FiltersBar from './FiltersBar';
 import SubscriptionCard from './Subscription/Subscription';
@@ -26,6 +28,9 @@ const Pythia = () => {
   const [isNewSubscriptionModalVisible, setIsNewSubscriptionModalVisible] = useState(false);
   const { subs, isSubsLoading, isChainsLoading } = usePythiaData();
   const { isLoading: isPairsLoading, pairs } = useSybilPairs();
+
+  const { width } = useWindowDimensions();
+  const isMobile = width <= BREAK_POINT_MOBILE;
 
   const [searchParams] = useSearchParams();
 
@@ -186,7 +191,7 @@ const Pythia = () => {
               <Typography.Title level={3}>Pythia</Typography.Title>
             </div>
 
-            {subs.length ? <FiltersBar /> : <Skeleton paragraph />}
+            {subs.length ? <FiltersBar /> : <Skeleton paragraph length={200} />}
 
             {loading ? (
               <Skeleton.Button active loading round size="large" />
@@ -196,8 +201,9 @@ const Pythia = () => {
                 size="large"
                 onClick={() => setIsNewSubscriptionModalVisible(!isNewSubscriptionModalVisible)}
                 icon={<PlusOutlined />}
+                style={{ width: isMobile ? '40px' : 'auto', height: isMobile ? '40px' : 'auto' }}
               >
-                Create subscription
+                {isMobile ? '' : 'Create subscription'}
               </Button>
             )}
           </Flex>
@@ -231,7 +237,7 @@ const Pythia = () => {
               onClose={() => setIsNewSubscriptionModalVisible(false)}
               open={isNewSubscriptionModalVisible}
               style={{ paddingTop: '80px' }}
-              width="45vw"
+              width={isMobile ? '90vw' : '54vw'}
             >
               <NewSubscription
                 signMessage={signMessage}

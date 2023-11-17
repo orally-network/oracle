@@ -2,7 +2,7 @@
 
 .header {
   display: flex;
-  justify-content: flex-end;
+
   align-items: center;
   padding-inline: 30px;
   position: sticky;
@@ -12,15 +12,10 @@
 }
 
 .logo {
-  .logoImg {
-    display: flex;
-    width: 140px;
-  }
+  display: flex;
+  margin-right: 7px;
 }
 
-.connect {
-  // should be defined as accent btn
-  background: linear-gradient(180deg, #F45651 0%, #FCA167 87.5%);
-  border: none;
-  color: white;
+.controls {
+  margin: 0 5px;
 }

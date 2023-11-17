@@ -13,13 +13,14 @@ import {
 } from 'Utils/helper';
 import logger from 'Utils/logger';
 import { usePythiaData } from 'Providers/PythiaData';
-import { FREQUENCY_UNITS } from 'Constants/ui';
+import { BREAK_POINT_MOBILE, FREQUENCY_UNITS } from 'Constants/ui';
 import { getMethodAddon } from './NewSubscription';
 import { useAccount } from 'wagmi';
 import Select from 'react-select';
 
 import styles from './Subscription.scss';
 import { useSybilPairs } from 'Providers/SybilPairs';
+import useWindowDimensions from 'Utils/useWindowDimensions';
 
 interface SubscriptionDetailsProps {
   subscription: Subscription;
@@ -46,6 +47,8 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
   const { addressData } = useGlobalState();
   const { chains } = usePythiaData();
   const { pairs } = useSybilPairs();
+  const { width } = useWindowDimensions();
+  const isMobile = width <= BREAK_POINT_MOBILE;
 
   const updateSubscription = async ({
     chainId,
@@ -139,7 +142,7 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
       </Space>
 
       <div className={styles.label}>Frequency</div>
-      <Space>
+      <Space direction={isMobile ? 'vertical' : 'horizontal'}>
         <Tooltip title="Minimum 30 minutes and maximum 6 months">
           <Input
             pattern="[0-9]*"
@@ -152,19 +155,20 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
             }
           />
         </Tooltip>
-
-        {FREQUENCY_UNITS.map((unit) => (
-          <Tag
-            key={unit}
-            style={{
-              cursor: 'pointer',
-            }}
-            color={frequency.units === unit ? '#1766F9' : 'default'}
-            onClick={() => (!viewOnly ? setFrequency({ ...frequency, units: unit }) : null)}
-          >
-            {unit}
-          </Tag>
-        ))}
+        <Flex gap="small" wrap="wrap">
+          {FREQUENCY_UNITS.map((unit) => (
+            <Tag
+              key={unit}
+              style={{
+                cursor: 'pointer',
+              }}
+              color={frequency.units === unit ? '#1766F9' : 'default'}
+              onClick={() => (!viewOnly ? setFrequency({ ...frequency, units: unit }) : null)}
+            >
+              {unit}
+            </Tag>
+          ))}
+        </Flex>
       </Space>
 
       <Space direction="vertical">
@@ -177,7 +181,8 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGasLimit(e.target.value)}
         />
       </Space>
-      <Flex gap="middle" align="center">
+
+      <Flex gap="middle" align={isMobile ? 'flex-start' : 'center'} vertical={isMobile}>
         <Space direction="vertical">
           <div className={styles.label}>Price feed (Sybil)</div>
           <Select

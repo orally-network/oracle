@@ -19,9 +19,10 @@ import {
 
 import { SingleValueSelect } from 'Components/Select';
 import { FrequencyType, OptionType } from 'Interfaces/subscription';
-import { FREQUENCY_UNITS, MIN_BALANCE, MIN_FREQUENCY } from 'Constants/ui';
+import { BREAK_POINT_MOBILE, FREQUENCY_UNITS, MIN_BALANCE, MIN_FREQUENCY } from 'Constants/ui';
 
 import styles from './Subscription.scss';
+import useWindowDimensions from 'Utils/useWindowDimensions';
 
 interface NewSubscriptionProps {
   addressData: any;
@@ -66,6 +67,8 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
   const [isEdit, setIsEdit] = useState(true);
 
   const [balance, setBalance] = useState(0);
+  const { width } = useWindowDimensions();
+  const isMobile = width <= BREAK_POINT_MOBILE;
 
   const { fetchSubs, chains, fetchBalance, pma, isBalanceLoading } = usePythiaData();
 
@@ -165,7 +168,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
 
       <div>Frequency</div>
 
-      <Space>
+      <Space direction={isMobile ? 'vertical' : 'horizontal'}>
         <Tooltip title="Minimum 30 minutes and maximum 6 months">
           <Input
             pattern="[0-9]*"
@@ -178,19 +181,20 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
             }
           />
         </Tooltip>
-
-        {FREQUENCY_UNITS.map((unit) => (
-          <Tag
-            key={unit}
-            style={{
-              cursor: 'pointer',
-            }}
-            color={frequency.units === unit ? '#1766F9' : 'default'}
-            onClick={() => setFrequency({ ...frequency, units: unit })}
-          >
-            {unit}
-          </Tag>
-        ))}
+        <Flex gap="small" wrap="wrap">
+          {FREQUENCY_UNITS.map((unit) => (
+            <Tag
+              key={unit}
+              style={{
+                cursor: 'pointer',
+              }}
+              color={frequency.units === unit ? '#1766F9' : 'default'}
+              onClick={() => setFrequency({ ...frequency, units: unit })}
+            >
+              {unit}
+            </Tag>
+          ))}
+        </Flex>
       </Space>
 
       <Input
@@ -201,7 +205,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGasLimit(e.target.value)}
       />
 
-      <Space size="large">
+      <Space size="large" direction={isMobile ? 'vertical' : 'horizontal'}>
         <Select
           placeholder="Price feed (Sybil)"
           className={styles.chainSelect}

@@ -22,12 +22,24 @@
   color: variables.$secondary-btn-color;
 
   svg {
-    margin-top: 10px;
     &:hover {
       color: variables.$highlight-color;
     }
   }
   
+}
+
+.support {
+  @media screen and (max-width: variables.$break-point-mobile) {
+    border: 1px solid var(--primary-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--primary-color);
+  }
 }
 
 .active {
@@ -40,4 +52,10 @@
   position: absolute;
   right: -21px;
   top: calc(50% - 21px);
+
+  @media screen and (max-width: variables.$break-point-mobile) {
+    top: 10px;
+    left: 20px;
+    right: 0;
+  }
 }

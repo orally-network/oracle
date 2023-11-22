@@ -20,10 +20,11 @@ import { stopPropagation } from 'Utils/reactUtils';
 import Button from 'Components/Button';
 import styles from './Subscription.scss';
 
-import { STROKE_DASHARRAY_PROGRESS_BAR } from 'Constants/ui';
+import { BREAK_POINT_MOBILE, STROKE_DASHARRAY_PROGRESS_BAR } from 'Constants/ui';
 import IconLink from 'Components/IconLink';
 import { SubscriptionDetails } from './SubscriptionDetails';
 import { Subscription } from 'Interfaces/subscription';
+import useWindowDimensions from 'Utils/useWindowDimensions';
 
 interface SubscriptionProps {
   sub: Subscription;
@@ -66,6 +67,8 @@ const SubscriptionCard = ({
   const [balance, setBalance] = useState(0);
 
   const { pma, isBalanceLoading, fetchBalance } = usePythiaData();
+  const { width } = useWindowDimensions();
+  const isMobile = width <= BREAK_POINT_MOBILE;
 
   const refetchBalance = useCallback(async () => {
     setBalance(await fetchBalance(chain_id, addressData.address));
@@ -197,7 +200,7 @@ const SubscriptionCard = ({
           onClose={() => setIsSubscriptionDetailsVisible(false)}
           open={isSubscriptionDetailsVisible}
           style={{ paddingTop: '80px' }}
-          width="40vw"
+          width={isMobile ? '90vw' : '54vw'}
         >
           <Space direction="vertical" size="middle" style={{ width: '100%' }}>
             <SubscriptionDetails subscription={sub} />

@@ -102,6 +102,10 @@ a {
     background: linear-gradient(#5561FF, #3643FC) !important;
   }
   
+  .ant-input-group-addon {
+    color: var(--primary-color) !important;
+  }
+  
   .ant-input-clear-icon {
     color: var(--primary-color) !important;
   }

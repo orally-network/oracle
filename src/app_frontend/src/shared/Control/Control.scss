@@ -23,18 +23,11 @@
 .balance {
   font-size: 0.8em;
   color: var(--primary-color);
+  margin-bottom: 10px;
 }
 
 .topUp {
   margin-left: 10px;
-}
-
-.actionBtns {
-  display: flex;
-
-  .actionBtn {
-    margin-left: 5px;
-  }
 }
 
 .subscribe {

@@ -17,21 +17,41 @@ import {
   convertFrequencyToSeconds,
 } from 'Utils/helper';
 
-import styles from './Subscription.scss';
 import { SingleValueSelect } from 'Components/Select';
-import { OptionType, Unit } from 'Interfaces/subscription';
+import { FrequencyType, OptionType } from 'Interfaces/subscription';
 import { FREQUENCY_UNITS, MIN_BALANCE, MIN_FREQUENCY } from 'Constants/ui';
 
-export interface NewSubscriptionProps {
+import styles from './Subscription.scss';
+
+interface NewSubscriptionProps {
   addressData: any;
   signMessage: any;
   subscribe: any;
   pairs: any;
 }
 
-type FrequencyType = {
-  value: number | null;
-  units: Unit;
+export const getMethodAddon = ({
+  isRandom,
+  methodArg,
+  setMethodArg,
+  feed,
+}: {
+  isRandom: boolean;
+  methodArg: string;
+  setMethodArg: (val: string) => void;
+  feed: string | null;
+}) => {
+  return isRandom ? (
+    <AntdSelect value={methodArg} onChange={setMethodArg}>
+      {RAND_METHOD_TYPES.map((type) => (
+        <AntdSelect.Option key={type} value={type}>
+          {type}
+        </AntdSelect.Option>
+      ))}
+    </AntdSelect>
+  ) : (
+    getStrMethodArgs(Boolean(feed))
+  );
 };
 
 const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubscriptionProps) => {
@@ -115,37 +135,21 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
     methodArg,
   ]);
 
-  const getMethodAddon = () => {
-    return isRandom ? (
-      <AntdSelect value={methodArg} onChange={setMethodArg}>
-        {RAND_METHOD_TYPES.map((type) => (
-          <AntdSelect.Option key={type} value={type}>
-            {type}
-          </AntdSelect.Option>
-        ))}
-      </AntdSelect>
-    ) : (
-      getStrMethodArgs(Boolean(feed))
-    );
-  };
-
   const nextHandler = useCallback(() => setIsEdit(!isEdit), [isEdit]);
 
   return (
     <Flex vertical={true} gap="middle">
-      <div className={styles.label}>Chain</div>
+      <div>Chain</div>
 
       <SingleValueSelect
-        className={styles.chainSelect}
         classNamePrefix="react-select"
         isDisabled={!isEdit}
         options={useMemo(() => mapChainsToOptions(chains), [chains])}
-        onChange={useCallback((e: OptionType) => setChainId(e.value), [])}
+        onChange={(e: OptionType) => setChainId(e.value)}
       />
 
       <Input
         disabled={!isEdit}
-        className={styles.input}
         value={addressToCall}
         placeholder="Address"
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddressToCall(e.target.value)}
@@ -153,21 +157,19 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
 
       <Input
         disabled={!isEdit}
-        className={styles.input}
         value={methodName}
         placeholder="Method"
-        addonAfter={getMethodAddon()}
+        addonAfter={getMethodAddon({ isRandom, methodArg, setMethodArg, feed })}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMethodName(e.target.value)}
       />
 
-      <div className={styles.label}>Frequency</div>
+      <div>Frequency</div>
 
       <Space>
         <Tooltip title="Minimum 30 minutes and maximum 6 months">
           <Input
             pattern="[0-9]*"
             disabled={!isEdit}
-            className={styles.input}
             value={frequency.value?.toString()}
             placeholder="Quantity"
             style={{ minWidth: '100px' }}
@@ -194,7 +196,6 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
       <Input
         pattern="[0-9]*"
         disabled={!isEdit}
-        className={styles.input}
         value={gasLimit}
         placeholder="Gas limit"
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGasLimit(e.target.value)}
@@ -218,7 +219,6 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
         <Space>
           <Switch
             disabled={!isEdit}
-            className={styles.input}
             checked={isRandom}
             onChange={(checked: boolean) => {
               {
@@ -246,7 +246,6 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
           <Space direction="vertical" size="middle" style={{ width: '100%' }}>
             <Control
               disabled={!chainId || !methodName || !addressToCall || !frequency}
-              // subscribe={subscribeHandler}
               signMessage={signMessage}
               addressData={addressData}
               balance={balance}
@@ -266,7 +265,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
                 disabled={
                   balance < MIN_BALANCE || !chainId || !methodName || !addressToCall || !frequency
                 }
-                onClick={subscribe}
+                onClick={subscribeHandler}
                 type="primary"
               >
                 Subscribe

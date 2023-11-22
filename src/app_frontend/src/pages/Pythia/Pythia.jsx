@@ -1,12 +1,11 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Flex, Layout, Drawer, Space, Typography } from 'antd';
+import { Flex, Layout, Drawer, Space, Typography, Skeleton } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useAccount } from 'wagmi';
 import Button from 'Components/Button';
 
 import { remove0x } from 'Utils/addressUtils';
-import Loader from 'Components/Loader';
 import { useSybilPairs } from 'Providers/SybilPairs';
 import { usePythiaData } from 'Providers/PythiaData';
 import { useGlobalState } from 'Providers/GlobalState';
@@ -14,9 +13,10 @@ import { useSubscriptionsFilters } from 'Providers/SubscriptionsFilters';
 import pythiaCanister from 'Canisters/pythiaCanister';
 import useSignature from 'Shared/useSignature';
 import logger from 'Utils/logger';
+import { DEFAULT_SUBSCRIPTIONS } from 'Constants/ui';
 
 import FiltersBar from './FiltersBar';
-import Subscription from './Subscription/Subscription';
+import SubscriptionCard from './Subscription/Subscription';
 import NewSubscription from './Subscription/NewSubscription';
 import styles from './Pythia.scss';
 
@@ -68,16 +68,6 @@ const Pythia = () => {
 
   const subscribe = useCallback(
     async ({ chainId, methodName, addressToCall, frequency, gasLimit, isRandom, feed }) => {
-      // chain_id : nat;
-      // pair_id : opt text;
-      // contract_addr : text;
-      // method_abi : text;
-      // frequency : nat;
-      // is_random : bool;
-      // gas_limit : nat;
-      // msg : text;
-      // sig : text;
-
       setIsSubscribing(true);
 
       const res = await pythiaCanister.subscribe({
@@ -86,8 +76,6 @@ const Pythia = () => {
         contract_addr: remove0x(addressToCall),
         method_abi: methodName,
         frequency: frequency,
-        // frequency_condition: [frequency],
-        // price_mutation_cond_req: [],
         is_random: isRandom,
         gas_limit: Number(gasLimit),
         msg: addressData.message,
@@ -186,21 +174,23 @@ const Pythia = () => {
 
   console.log({ filteredSubs });
 
+  const loading = isChainsLoading || isSubsLoading || isSubscribing || isPairsLoading;
+
   return (
     <Layout.Content className={styles.pythia} title="Pythia">
-      {isChainsLoading || isSubsLoading || isSubscribing || isPairsLoading ? (
-        <Loader size="large" isFullPage />
-      ) : (
-        <>
-          <Space size="large" direction="vertical" style={{ width: '100%' }}>
-            {!isWhitelisted && <div className={styles.notWhitelisted}>Not whitelisted</div>}
-            <Flex align="center" justify="space-between">
-              <div className={styles.title}>
-                <Typography.Title level={3}>Pythia</Typography.Title>
-              </div>
+      <>
+        <Space size="large" direction="vertical" style={{ width: '100%' }}>
+          {!isWhitelisted && <div className={styles.notWhitelisted}>Not whitelisted</div>}
+          <Flex align="center" justify="space-between">
+            <div className={styles.title}>
+              <Typography.Title level={3}>Pythia</Typography.Title>
+            </div>
 
-              {subs.length ? <FiltersBar /> : null}
+            {subs.length ? <FiltersBar /> : <Skeleton paragraph />}
 
+            {loading ? (
+              <Skeleton.Button active loading round size="large" />
+            ) : (
               <Button
                 type="primary"
                 size="large"
@@ -209,11 +199,19 @@ const Pythia = () => {
               >
                 Create subscription
               </Button>
-            </Flex>
+            )}
+          </Flex>
 
-            <Space wrap className={styles.subs} size="middle">
-              {filteredSubs.map((sub, i) => (
-                <Subscription
+          <Space wrap className={styles.subs} size="middle">
+            {loading ? (
+              <>
+                {Array.from(Array(DEFAULT_SUBSCRIPTIONS).keys()).map((sub, i) => (
+                  <SubscriptionCard.Skeleton key={i} />
+                ))}
+              </>
+            ) : (
+              filteredSubs.map((sub, i) => (
+                <SubscriptionCard
                   key={i}
                   sub={sub}
                   addressData={addressData}
@@ -222,28 +220,29 @@ const Pythia = () => {
                   stopSubscription={stopSubscription}
                   withdraw={withdraw}
                 />
-              ))}
-            </Space>
-
-            {isNewSubscriptionModalVisible && (
-              <Drawer
-                title="Create Subscription"
-                placement="right"
-                onClose={() => setIsNewSubscriptionModalVisible(false)}
-                open={isNewSubscriptionModalVisible}
-                style={{ paddingTop: '80px' }}
-              >
-                <NewSubscription
-                  signMessage={signMessage}
-                  subscribe={subscribe}
-                  addressData={addressData}
-                  pairs={pairs}
-                />
-              </Drawer>
+              ))
             )}
           </Space>
-        </>
-      )}
+
+          {isNewSubscriptionModalVisible && (
+            <Drawer
+              title="Create Subscription"
+              placement="right"
+              onClose={() => setIsNewSubscriptionModalVisible(false)}
+              open={isNewSubscriptionModalVisible}
+              style={{ paddingTop: '80px' }}
+              width="45vw"
+            >
+              <NewSubscription
+                signMessage={signMessage}
+                subscribe={subscribe}
+                addressData={addressData}
+                pairs={pairs}
+              />
+            </Drawer>
+          )}
+        </Space>
+      </>
     </Layout.Content>
   );
 };

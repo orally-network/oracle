@@ -1,0 +1,36 @@
+.logo {
+  border-radius: 50%;
+  background-color: #091325;
+  margin-right: 14px;
+  width: 46px;
+  height: 46px;
+  position: relative;
+  :global(.light-theme) & {
+    background-color: gray;
+  }
+}
+
+
+.status {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  
+  .active {
+    background-color: #00ff00;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .inactive {
+    width: 10px;
+    height: 10px;
+    background-color: #ff0000;
+    border-radius: 50%;
+  }
+}
+
+.label {
+  font-size: 15px;
+}

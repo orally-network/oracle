@@ -45,7 +45,6 @@ const SubscriptionCard = ({
 }: SubscriptionProps) => {
   const { address } = useAccount();
   const navigate = useNavigate();
-  const [isCopied, setIsCopied] = useState<boolean>(false);
   const [isSubscriptionDetailsVisible, setIsSubscriptionDetailsVisible] = useState<boolean>(false);
 
   const {
@@ -79,14 +78,6 @@ const SubscriptionCard = ({
       refetchBalance();
     }
   }, [chain_id, addressData]);
-
-  useEffect(() => {
-    if (isCopied) {
-      setTimeout(() => {
-        setIsCopied(false);
-      }, 2000);
-    }
-  }, [isCopied]);
 
   const lastUpdateDateTime = new Date(Number(last_update) * 1000);
   const nextUpdateDateTime = new Date(lastUpdateDateTime.getTime() + Number(frequency) * 1000);

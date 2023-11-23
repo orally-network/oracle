@@ -4,7 +4,7 @@ export interface Subscription {
   owner: string;
   contract_addr: string;
   frequency: any;
-  id: string;
+  id: BigInt;
 }
 
 interface SubscriptionStatus {
@@ -16,7 +16,7 @@ interface SubscriptionStatus {
 interface SubscriptionMethod {
   chain_id: string;
   name: string;
-  gas_limit: number;
+  gas_limit: BigInt;
   method_type: {
     Pair: string,
     Random: boolean,

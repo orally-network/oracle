@@ -39,12 +39,6 @@ export const Sidebar = ({ toggleTheme, isDarkMode }: SidebarProps) => {
       width={isLargeDesktop ? 400 : 200}
       breakpoint="sm"
       collapsedWidth={isMobile ? 0 : 80}
-      onCollapse={(collapsed, type) => {
-        console.log(collapsed, type);
-      }}
-      onBreakpoint={(broken) => {
-        console.log(broken);
-      }}
       style={{
         height: '100vh',
         position: 'fixed',

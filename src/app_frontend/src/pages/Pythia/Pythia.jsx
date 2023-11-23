@@ -18,7 +18,7 @@ import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 
 import FiltersBar from './FiltersBar';
-import SubscriptionCard from './Subscription/Subscription';
+import SubscriptionCard from './Subscription/SubscriptionCard';
 import NewSubscription from './Subscription/NewSubscription';
 import styles from './Pythia.scss';
 
@@ -183,7 +183,7 @@ const Pythia = () => {
 
   return (
     <Layout.Content className={styles.pythia} title="Pythia">
-      <>
+      <Flex vertical align="center" wrap="wrap">
         <Space size="large" direction="vertical" style={{ width: '100%' }}>
           {!isWhitelisted && <div className={styles.notWhitelisted}>Not whitelisted</div>}
           <Flex align="center" justify="space-between">
@@ -248,7 +248,7 @@ const Pythia = () => {
             </Drawer>
           )}
         </Space>
-      </>
+      </Flex>
     </Layout.Content>
   );
 };

@@ -22,6 +22,16 @@ export const idlFactory = ({ IDL }) => {
     'symbol' : IDL.Opt(IDL.Text),
   });
   const GetPMAResponse = IDL.Variant({ 'Ok' : IDL.Text, 'Err' : IDL.Text });
+  const ExecutionCondition = IDL.Record({
+    'frequency' : IDL.Nat,
+    'price_mutation': IDL.Record({
+      'mutation_rate': IDL.Nat,
+      'pair_id': IDL.Text,
+      'creation_price': IDL.Nat,
+      // 'price_mutation_type': PriceMutationType,
+    })}
+  );
+  // const PriceMutationType = 
   const SubscriptionStatus = IDL.Record({
     'is_active' : IDL.Bool,
     'last_update' : IDL.Nat,
@@ -38,6 +48,14 @@ export const idlFactory = ({ IDL }) => {
     'chain_id' : IDL.Nat,
     'method_type' : MethodType,
     'gas_limit' : IDL.Nat,
+    // 'exec_condition': IDL.Vec({
+    //   'frequency' : IDL.Nat,
+    //   'price_mutation': IDL.Record({
+    //     'mutation_rate': IDL.Nat,
+    //     'pair_id': IDL.Text,
+    //     'creation_price': IDL.Nat,
+    // }),
+  // })
   });
   const Subscription = IDL.Record({
     'id' : IDL.Nat,
@@ -45,7 +63,6 @@ export const idlFactory = ({ IDL }) => {
     'status' : SubscriptionStatus,
     'method' : Method,
     'owner' : IDL.Text,
-    'frequency' : IDL.Nat,
   });
   const WhitelistEntry = IDL.Record({
     'is_blacklisted' : IDL.Bool,

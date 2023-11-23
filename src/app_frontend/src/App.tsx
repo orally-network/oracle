@@ -14,11 +14,18 @@ import Pythia from 'Pages/Pythia';
 import Sybil from 'Pages/Sybil';
 import ROUTES from 'Constants/routes';
 import rollbar from './rollbar';
+import { SubscriptionDetailsPage } from 'Pages/SubscriptionDetailsPage';
+import ErrorPage from 'Pages/ErrorPage';
 
 const router = createBrowserRouter([
   {
     path: ROUTES.ROOT,
     element: <BaseLayout />,
+    errorElement: (
+      <BaseLayout>
+        <ErrorPage />
+      </BaseLayout>
+    ),
     children: [
       {
         // Default route navigation
@@ -32,6 +39,10 @@ const router = createBrowserRouter([
       {
         path: ROUTES.PYTHIA,
         element: <Pythia />,
+      },
+      {
+        path: `${ROUTES.PYTHIA}/:id`,
+        element: <SubscriptionDetailsPage />,
       },
     ],
   },

@@ -8,12 +8,13 @@ import { FrequencyType, OptionType, Subscription } from 'Interfaces/subscription
 import {
   RAND_METHOD_TYPES,
   convertFrequencyDate,
+  convertFrequencyToSeconds,
   mapChainsToOptions,
   mapPairsToOptions,
 } from 'Utils/helper';
 import logger from 'Utils/logger';
 import { usePythiaData } from 'Providers/PythiaData';
-import { BREAK_POINT_MOBILE, FREQUENCY_UNITS } from 'Constants/ui';
+import { BREAK_POINT_MOBILE, FREQUENCY_UNITS, MIN_FREQUENCY } from 'Constants/ui';
 import { getMethodAddon } from './NewSubscription';
 import { useAccount } from 'wagmi';
 import Select from 'react-select';
@@ -29,7 +30,7 @@ interface SubscriptionDetailsProps {
 export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) => {
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const { address } = useAccount();
-  const [chainId, setChainId] = useState<string | null>(subscription.method.chain_id);
+  const [chainId, setChainId] = useState<string>(subscription.method.chain_id);
   const [methodName, setMethodName] = useState(subscription.method.name);
   const [methodArg, setMethodArg] = useState(RAND_METHOD_TYPES[0]);
 
@@ -63,23 +64,26 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
     methodName: string;
     addressToCall: string;
     frequency: number;
-    gasLimit: number;
+    gasLimit: string;
     isRandom: boolean;
     feed: string | null;
   }) => {
     setIsUpdating(true);
 
-    const res = await pythiaCanister.update_subscription({
-      chain_id: chainId,
-      pair_id: feed ? [feed] : [],
-      contract_addr: remove0x(addressToCall),
-      method_abi: methodName,
-      frequency: frequency,
-      is_random: isRandom,
-      gas_limit: Number(gasLimit),
+    const payload = {
+      id: subscription.id,
       msg: addressData.message,
       sig: remove0x(addressData.signature),
-    });
+      contract_addr: remove0x(addressToCall),
+      method_abi: methodName,
+      frequency_condition: BigInt(frequency),
+      is_random: isRandom === undefined ? false : true,
+      chain_id: chainId,
+      gas_limit: BigInt(gasLimit),
+      pair_id: feed ? [feed] : [],
+    };
+
+    const res = await pythiaCanister.update_subscription(payload);
 
     setIsUpdating(false);
     console.log({ res });
@@ -96,13 +100,16 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
   const onUpdateHandler = async () => {
     try {
       await updateSubscription({
-        chainId: subscription.method.chain_id,
-        methodName: subscription.method.name,
-        addressToCall: subscription.contract_addr,
-        frequency: Number(subscription.frequency),
-        gasLimit: subscription.method.gas_limit,
-        isRandom: subscription.method.method_type.Random,
-        feed: subscription.method.method_type.Pair,
+        chainId,
+        methodName,
+        addressToCall,
+        frequency:
+          frequency.value !== null
+            ? convertFrequencyToSeconds(frequency.value, frequency.units)
+            : MIN_FREQUENCY,
+        gasLimit,
+        isRandom,
+        feed,
       });
     } catch (error) {
       console.log({ error });

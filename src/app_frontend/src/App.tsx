@@ -41,7 +41,7 @@ const router = createBrowserRouter([
         element: <Pythia />,
       },
       {
-        path: `${ROUTES.PYTHIA}/:id`,
+        path: `${ROUTES.PYTHIA}/:chainId/:id`,
         element: <SubscriptionDetailsPage />,
       },
     ],

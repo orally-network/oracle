@@ -54,14 +54,15 @@ const SubscriptionCard = ({
       name: method_name,
       gas_limit,
       method_type: { Pair: pair, Random: random },
+      exec_condition,
     },
     owner,
     contract_addr,
-    frequency,
     id,
   } = sub;
 
   const chain = CHAINS_MAP[chain_id];
+  const frequency = exec_condition[0]?.Frequency || BigInt(3600); // remove hardcoded value after exec_condition will be required
 
   const [balance, setBalance] = useState(0);
 
@@ -175,7 +176,7 @@ const SubscriptionCard = ({
           type="primary"
           size="large"
           icon={<UnorderedListOutlined />}
-          onClick={() => navigate(`/pythia/${id}`)}
+          onClick={() => navigate(`/pythia/${chain_id}/${id}`)}
           style={{
             width: '100%',
           }}

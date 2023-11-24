@@ -11,15 +11,34 @@ interface SubscriptionStatus {
   is_active: boolean;
   last_update: string;
   executions_counter: number;
+  failures_counter: [];
+}
+
+interface ExecutionCondition {
+  PriceMutation: { 
+    mutation_rate: number;
+    creation_price: number;
+    price_mutation_type: PriceMutationType,
+    pair_id: string,
+  };
+  Frequency: BigInt;
+}
+
+interface PriceMutationType {
+  Decrease: boolean;
+  Both: boolean;
+  Increase: boolean;
 }
 
 interface SubscriptionMethod {
+  abi: string;
   chain_id: string;
   name: string;
   gas_limit: BigInt;
+  exec_condition: ExecutionCondition;
   method_type: {
-    Pair: string,
-    Random: boolean,
+    Pair: string;
+    Random: boolean;
   }
 }
 

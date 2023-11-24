@@ -1,7 +1,7 @@
 import { CHAINS_MAP } from 'Constants/chains';
 import { Subscription } from 'Interfaces/subscription';
 import React from 'react';
-import { Space, Card, Tooltip, Typography, Flex, Skeleton as AntdSkeleton } from 'antd';
+import { Space, Card, Tooltip, Typography, Flex, Skeleton as AntdSkeleton, Button } from 'antd';
 import ChainLogo from 'Shared/ChainLogo';
 
 import styles from './SubscriptionDetailsPage.scss';
@@ -9,14 +9,22 @@ import { add0x } from 'Utils/addressUtils';
 import IconLink from 'Components/IconLink';
 import { stopPropagation } from 'Utils/reactUtils';
 import { ExportOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
+import { BREAK_POINT_MOBILE } from 'Constants/ui';
+import useWindowDimensions from 'Utils/useWindowDimensions';
 
 interface InformationCardProps {
   subscription: Subscription;
 }
 
 const InformationCard = ({ subscription }: InformationCardProps) => {
+  const { width } = useWindowDimensions();
+
+  const isMobile = width < BREAK_POINT_MOBILE;
+  const navigate = useNavigate();
   const {
-    status: { is_active, last_update, executions_counter },
+    id,
+    status: { is_active, last_update },
     method: {
       chain_id,
       name: method_name,
@@ -25,14 +33,13 @@ const InformationCard = ({ subscription }: InformationCardProps) => {
     },
     owner,
     contract_addr,
-    frequency,
   } = subscription;
 
   const chain = CHAINS_MAP[chain_id];
   const lastUpdateDateTime = new Date(Number(last_update) * 1000);
 
   return (
-    <Card style={{ minHeight: '60vh', width: '40%', padding: '10px' }}>
+    <Card style={{ minHeight: '60vh', width: isMobile ? '100%' : '40%', padding: '10px' }}>
       <Space size="middle" style={{ width: '100%', marginBottom: '20px' }}>
         <Flex className={styles.logo} align="center" justify="center">
           <ChainLogo chain={chain} />
@@ -95,9 +102,16 @@ const InformationCard = ({ subscription }: InformationCardProps) => {
         </Flex>
 
         {/* Data */}
-        <Flex vertical>
+        <Flex vertical gap="small">
           <div className={styles.label}>Data</div>
-          <Typography.Title level={5}>?</Typography.Title>
+          <Button
+            type="primary"
+            size="small"
+            style={{ alignSelf: 'start' }}
+            onClick={() => navigate(`/sybil/${id}`)}
+          >
+            {pair ? pair : 'Random'}
+          </Button>
         </Flex>
       </Space>
     </Card>
@@ -105,16 +119,22 @@ const InformationCard = ({ subscription }: InformationCardProps) => {
 };
 
 const Skeleton = () => {
+  const { width } = useWindowDimensions();
+
+  const isMobile = width < BREAK_POINT_MOBILE;
   return (
-    <Card style={{ minHeight: '60vh', width: '40%', padding: '10px' }}>
+    <Card style={{ minHeight: '60vh', width: isMobile ? '100%' : '40%', padding: '10px' }}>
       <AntdSkeleton active avatar paragraph={{ rows: 5 }} round loading />
     </Card>
   );
 };
 
 const Empty = () => {
+  const { width } = useWindowDimensions();
+
+  const isMobile = width < BREAK_POINT_MOBILE;
   return (
-    <Card style={{ minHeight: '60vh', width: '40%', padding: '10px' }}>
+    <Card style={{ minHeight: '60vh', width: isMobile ? '100%' : '40%', padding: '10px' }}>
       <Typography.Title level={5}>No subscription found</Typography.Title>
     </Card>
   );

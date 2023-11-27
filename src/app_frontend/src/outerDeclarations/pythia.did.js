@@ -47,7 +47,7 @@ export const idlFactory = ({ IDL }) => {
       'price_mutation_type' : PriceMutationType,
       'pair_id' : IDL.Text,
     }),
-    'Frequency' : IDL.Nat64,
+    'Frequency' : IDL.Nat,
   });
   const Method = IDL.Record({
     'abi' : IDL.Text,
@@ -91,7 +91,7 @@ export const idlFactory = ({ IDL }) => {
     'sig' : IDL.Text,
     'contract_addr' : IDL.Text,
     'method_abi' : IDL.Text,
-    'frequency_condition' : IDL.Opt(IDL.Nat64),
+    'frequency_condition' : IDL.Opt(IDL.Nat),
     'is_random' : IDL.Bool,
     'price_mutation_condition' : IDL.Opt(PriceMutationCondition),
     'chain_id' : IDL.Nat,
@@ -105,7 +105,7 @@ export const idlFactory = ({ IDL }) => {
     'sig' : IDL.Text,
     'contract_addr' : IDL.Opt(IDL.Text),
     'method_abi' : IDL.Opt(IDL.Text),
-    'frequency_condition' : IDL.Opt(IDL.Nat64),
+    'frequency_condition' : IDL.Opt(IDL.Nat),
     'is_random' : IDL.Opt(IDL.Bool),
     'price_mutation_condition' : IDL.Opt(PriceMutationCondition),
     'chain_id' : IDL.Nat,
@@ -177,4 +177,4 @@ export const idlFactory = ({ IDL }) => {
     'withdraw_fee' : IDL.Func([IDL.Nat, IDL.Text], [Error], []),
   });
 };
-export const init = ({ IDL }) => { return []; }; 
+export const init = ({ IDL }) => { return []; };

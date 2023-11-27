@@ -1,7 +1,6 @@
 import { Breadcrumb, Card, Flex, Layout, Space, Typography } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { usePythiaData } from 'Providers/PythiaData';
 import { Subscription } from 'Interfaces/subscription';
 
 import InformationCard from './InformationCard';

@@ -3,3 +3,11 @@
     border: 1px solid var(--primary-color);
   }
 }
+
+:global {
+  .ant-menu-item {
+    display: flex;
+    align-items: center;
+    padding-left: 24px;
+  }
+}

@@ -75,17 +75,20 @@ const Pythia = () => {
     async ({ chainId, methodName, addressToCall, frequency, gasLimit, isRandom, feed }) => {
       setIsSubscribing(true);
 
-      const res = await pythiaCanister.subscribe({
+      const payload = {
         chain_id: chainId,
-        pair_id: feed ? [feed] : [],
+        pair_id: [feed],
         contract_addr: remove0x(addressToCall),
         method_abi: methodName,
-        frequency: frequency,
+        frequency_condition: [frequency],
         is_random: isRandom,
-        gas_limit: Number(gasLimit),
+        gas_limit: BigInt(gasLimit),
         msg: addressData.message,
         sig: remove0x(addressData.signature),
-      });
+        price_mutation_condition: [],
+      };
+
+      const res = await pythiaCanister.subscribe(payload);
 
       setIsSubscribing(false);
       console.log({ res });

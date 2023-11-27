@@ -8,7 +8,7 @@ export const truncateEthAddress = (address) => {
 };
 
 export const remove0x = (address) => {
-  return address.slice(2);
+  return address.replace('0x', '');
 };
 
 export const add0x = (address) => {

@@ -9,6 +9,7 @@ import {
   RAND_METHOD_TYPES,
   convertFrequencyDate,
   convertFrequencyToSeconds,
+  getStrMethodArgs,
   mapChainsToOptions,
   mapPairsToOptions,
 } from 'Utils/helper';
@@ -22,6 +23,7 @@ import Select from 'react-select';
 import styles from './Subscription.scss';
 import { useSybilPairs } from 'Providers/SybilPairs';
 import useWindowDimensions from 'Utils/useWindowDimensions';
+import { toast } from 'react-toastify';
 
 interface SubscriptionDetailsProps {
   subscription: Subscription;
@@ -36,8 +38,14 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
 
   const [addressToCall, setAddressToCall] = useState(subscription.contract_addr);
   const [frequency, setFrequency] = useState<FrequencyType>({
-    value: convertFrequencyDate(Number(subscription.frequency)).value || null,
-    units: convertFrequencyDate(Number(subscription.frequency)).units || 'min',
+    value:
+      subscription.method.exec_condition && subscription.method.exec_condition.length > 0
+        ? convertFrequencyDate(Number(subscription.method.exec_condition[0].Frequency)).value
+        : null,
+    units:
+      subscription.method.exec_condition && subscription.method.exec_condition.length > 0
+        ? convertFrequencyDate(Number(subscription.method.exec_condition[0].Frequency)).units
+        : 'min',
   });
   const [gasLimit, setGasLimit] = useState<string>(subscription.method.gas_limit.toString());
   const [isRandom, setIsRandom] = useState(subscription.method.method_type.Random);
@@ -68,24 +76,22 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
     isRandom: boolean;
     feed: string | null;
   }) => {
-    setIsUpdating(true);
-
+    // optional fields should be wrapped in an array
     const payload = {
       id: subscription.id,
       msg: addressData.message,
       sig: remove0x(addressData.signature),
-      contract_addr: remove0x(addressToCall),
-      method_abi: methodName,
-      frequency_condition: BigInt(frequency),
-      is_random: isRandom === undefined ? false : true,
+      contract_addr: [remove0x(addressToCall)],
+      method_abi: [`${methodName}(${feed ? getStrMethodArgs(Boolean(feed)) : methodArg})`],
+      frequency_condition: [BigInt(frequency)],
+      is_random: isRandom === undefined ? [false] : [true],
       chain_id: chainId,
-      gas_limit: BigInt(gasLimit),
+      gas_limit: gasLimit ? [BigInt(gasLimit)] : [],
       pair_id: feed ? [feed] : [],
+      price_mutation_condition: [],
     };
 
     const res = await pythiaCanister.update_subscription(payload);
-
-    setIsUpdating(false);
     console.log({ res });
 
     if (res.Err) {
@@ -98,6 +104,7 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
   };
 
   const onUpdateHandler = async () => {
+    setIsUpdating(true);
     try {
       await updateSubscription({
         chainId,
@@ -111,8 +118,12 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
         isRandom,
         feed,
       });
+      toast.success('Subscription is updated successfully');
     } catch (error) {
       console.log({ error });
+      toast.error('Something went wrong. Try again later.');
+    } finally {
+      setIsUpdating(false);
     }
   };
 

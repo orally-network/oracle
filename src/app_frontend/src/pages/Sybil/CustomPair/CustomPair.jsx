@@ -70,14 +70,6 @@ const CustomPair = () => {
 
       console.log({ depositResult });
 
-      // pair_id : text;
-      // frequency : nat;
-      // uri : text;
-      // resolver : text;
-      // amount : nat;
-      // msg : text;
-      // sig : text;
-
       const customPairRes = await toast.promise(
         sybilCanister.create_custom_pair({
           pair_id: symbol,

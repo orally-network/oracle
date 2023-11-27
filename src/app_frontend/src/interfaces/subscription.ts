@@ -35,7 +35,7 @@ interface SubscriptionMethod {
   chain_id: string;
   name: string;
   gas_limit: BigInt;
-  exec_condition: ExecutionCondition;
+  exec_condition: ExecutionCondition[];
   method_type: {
     Pair: string;
     Random: boolean;

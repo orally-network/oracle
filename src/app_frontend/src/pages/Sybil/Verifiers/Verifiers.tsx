@@ -68,7 +68,7 @@ const verifiers = [
     id: 167005,
     name: 'Taiko (Alpha-3 Testnet)',
     verifierAddress: '0xCFf00E5f685cCE94Dfc6d1a18200c764f9BCca1f',
-  }
+  },
 ];
 
 const columns = [
@@ -95,9 +95,9 @@ const Verifiers = () => {
       className={styles.verifiers}
       columns={columns}
       dataSource={verifiers}
-      pagination={false} 
+      pagination={false}
     />
-  )
+  );
 };
 
 export default Verifiers;

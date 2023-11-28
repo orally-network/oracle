@@ -9,7 +9,7 @@ import { orallyTheme, lightTheme } from 'Constants/themes';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 
-export const BaseLayout = () => {
+export const BaseLayout = ({ children }: { children?: React.ReactNode }) => {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const { width } = useWindowDimensions();
   const isMobile = width <= BREAK_POINT_MOBILE;
@@ -19,8 +19,8 @@ export const BaseLayout = () => {
       <Header />
       <Layout className={isDarkMode ? 'dark-theme' : 'light-theme'}>
         <Sidebar toggleTheme={() => setIsDarkMode(!isDarkMode)} isDarkMode={isDarkMode} />
-        <Layout style={{ marginLeft: isMobile ? 0 : '80px' }}>
-          <Outlet />
+        <Layout style={{ marginLeft: isMobile ? 0 : '80px', padding: '10px 20px 20px 30px' }}>
+          {children ?? <Outlet />}
           <Footer />
         </Layout>
       </Layout>

@@ -45,7 +45,6 @@ const SubscriptionCard = ({
 }: SubscriptionProps) => {
   const { address } = useAccount();
   const navigate = useNavigate();
-  const [isCopied, setIsCopied] = useState<boolean>(false);
   const [isSubscriptionDetailsVisible, setIsSubscriptionDetailsVisible] = useState<boolean>(false);
 
   const {
@@ -55,14 +54,15 @@ const SubscriptionCard = ({
       name: method_name,
       gas_limit,
       method_type: { Pair: pair, Random: random },
+      exec_condition,
     },
     owner,
     contract_addr,
-    frequency,
     id,
   } = sub;
 
   const chain = CHAINS_MAP[chain_id];
+  const frequency = exec_condition[0]?.Frequency || BigInt(3600); // remove hardcoded value after exec_condition will be required
 
   const [balance, setBalance] = useState(0);
 
@@ -79,14 +79,6 @@ const SubscriptionCard = ({
       refetchBalance();
     }
   }, [chain_id, addressData]);
-
-  useEffect(() => {
-    if (isCopied) {
-      setTimeout(() => {
-        setIsCopied(false);
-      }, 2000);
-    }
-  }, [isCopied]);
 
   const lastUpdateDateTime = new Date(Number(last_update) * 1000);
   const nextUpdateDateTime = new Date(lastUpdateDateTime.getTime() + Number(frequency) * 1000);
@@ -184,7 +176,7 @@ const SubscriptionCard = ({
           type="primary"
           size="large"
           icon={<UnorderedListOutlined />}
-          onClick={() => navigate(`/pythia/${id}`)}
+          onClick={() => navigate(`/pythia/${chain_id}/${id}`)}
           style={{
             width: '100%',
           }}

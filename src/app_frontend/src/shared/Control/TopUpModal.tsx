@@ -6,8 +6,17 @@ import { Input, Modal, Flex } from 'antd';
 import { waitForTransaction } from '@wagmi/core';
 import logger from 'Utils/logger';
 import { usePythiaData } from 'Providers/PythiaData';
+import { DEFAULT_TOP_UP_AMOUNT } from 'Constants/ui';
 
-const DEFAULT_AMOUNT = 0.01;
+interface TopUpModalProps {
+  isTopUpModalOpen: boolean;
+  setIsTopUpModalOpen: (val: boolean) => void;
+  chain: any;
+  executionAddress: string;
+  refetchBalance: () => void;
+  decimals: any;
+  symbol: any;
+}
 
 const TopUpModal = ({
   isTopUpModalOpen,
@@ -17,8 +26,8 @@ const TopUpModal = ({
   refetchBalance,
   decimals,
   symbol,
-}) => {
-  const [amount, setAmount] = useState(DEFAULT_AMOUNT);
+}: TopUpModalProps) => {
+  const [amount, setAmount] = useState<string>(DEFAULT_TOP_UP_AMOUNT.toString());
 
   const { chain: currentChain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
@@ -44,52 +53,59 @@ const TopUpModal = ({
   }, [chain.id, currentChain.id, switchNetwork]);
 
   const topUp = useCallback(async () => {
-    const { hash } = await sendTransactionAsync();
+    try {
+      const { hash } = await sendTransactionAsync();
 
-    setIsTopUpModalOpen(false);
+      setIsTopUpModalOpen(false);
 
-    console.log({ hash, id: chain.id });
+      console.log({ hash, id: chain.id });
 
-    const data = await toast.promise(
-      waitForTransaction({
-        hash,
-      }),
-      {
-        pending: `Sending ${amount} ${symbol} to ${executionAddress}`,
-        success: `Sent successfully`,
+      const data = await toast.promise(
+        waitForTransaction({
+          hash,
+        }),
+        {
+          pending: `Sending ${amount} ${symbol} to ${executionAddress}`,
+          success: `Sent successfully`,
+          error: {
+            render({ error }) {
+              logger.error(`Sending ${symbol}`, error);
+
+              return 'Something went wrong. Try again later.';
+            },
+          },
+        }
+      );
+
+      console.log({ data, hash });
+
+      await toast.promise(deposit(chain.id, hash), {
+        pending: `Deposit ${amount} ${symbol} to canister`,
+        success: `Deposited successfully`,
         error: {
-          render({ error }) {
-            logger.error(`Sending ${symbol}`, error);
+          render({ data }) {
+            logger.error(`Depositing ${symbol}`, data);
+            toast.error('Deposit failed. Try again later.');
 
             return 'Something went wrong. Try again later.';
           },
         },
-      }
-    );
+      });
 
-    console.log({ data, hash });
-
-    await toast.promise(deposit(chain.id, hash), {
-      pending: `Deposit ${amount} ${symbol} to canister`,
-      success: `Deposited successfully`,
-      error: {
-        render({ error }) {
-          logger.error(`Depositing ${symbol}`, error);
-
-          return 'Something went wrong. Try again later.';
-        },
-      },
-    });
-
-    await refetchBalance();
+      await refetchBalance();
+    } catch (error) {
+      console.log({ error });
+      toast.error('Something went wrong. Try again later.');
+    }
   }, [amount, chain, executionAddress, sendTransactionAsync, refetchBalance]);
 
   return (
     <Modal
-      maxWidth={400}
-      style={{ top: '30%', right: '10px' }}
+      style={{ top: '30%', right: '10px', maxWidth: '400px' }}
       title="Top Up"
-      okButtonProps={{ disabled: currentChain.id !== chain.id || amount < DEFAULT_AMOUNT }}
+      okButtonProps={{
+        disabled: currentChain.id !== chain.id || amount < DEFAULT_TOP_UP_AMOUNT.toString(),
+      }}
       onOk={topUp}
       open={isTopUpModalOpen}
       onCancel={() => setIsTopUpModalOpen(false)}

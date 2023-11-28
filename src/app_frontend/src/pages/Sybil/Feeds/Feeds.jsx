@@ -1,22 +1,20 @@
-import React, { useState, useCallback, useMemo, useEffect } from "react";
-import { Card } from "antd";
-import cn from "classnames";
-import { CopyBlock, atomOneLight } from "react-code-blocks";
-import { Spin } from "antd";
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { Card } from 'antd';
+import cn from 'classnames';
+import { CopyBlock, atomOneLight } from 'react-code-blocks';
+import { Spin } from 'antd';
 
-import config from "Constants/config";
-import { useSybilPairs } from "Providers/SybilPairs";
+import config from 'Constants/config';
+import { useSybilPairs } from 'Providers/SybilPairs';
 
-import styles from "./Feeds.scss";
+import styles from './Feeds.scss';
 
 const MILLI = Math.pow(10, 3);
 
 const getCodeText = (selectedFeed) => {
-  const url = `http${config.isDevelopment ? "" : "s"}://${
-    config.sybil_canister_id
-  }.${config.DOMAIN}/get_asset_data_with_proof?pair_id=${
-    selectedFeed?.id ?? "{pair_id}"
-  }`;
+  const url = `http${config.isDevelopment ? '' : 's'}://${config.sybil_canister_id}.${
+    config.DOMAIN
+  }/get_asset_data_with_proof?pair_id=${selectedFeed?.id ?? '{pair_id}'}`;
 
   return ` // fetch price feed
   const url = '${url}';
@@ -24,13 +22,13 @@ const getCodeText = (selectedFeed) => {
 
   // response example:
   {
-    "symbol": "${selectedFeed?.id ?? "string"}",
-    "rate": ${selectedFeed?.data?.[0]?.rate ?? "number"},
-    "timestamp": ${selectedFeed?.data?.[0]?.timestamp ?? "number"}, // ${new Date(
-    Number(selectedFeed?.data?.[0]?.timestamp) * MILLI
-  ).toGMTString()}
-    "decimals": ${selectedFeed?.data?.[0]?.decimals ?? "number"}
-    "signature": "${selectedFeed?.data?.[0]?.signature ?? "string"}"
+    "symbol": "${selectedFeed?.id ?? 'string'}",
+    "rate": ${selectedFeed?.data?.[0]?.rate ?? 'number'},
+    "timestamp": ${selectedFeed?.data?.[0]?.timestamp ?? 'number'}, // ${new Date(
+      Number(selectedFeed?.data?.[0]?.timestamp) * MILLI
+    ).toGMTString()}
+    "decimals": ${selectedFeed?.data?.[0]?.decimals ?? 'number'}
+    "signature": "${selectedFeed?.data?.[0]?.signature ?? 'string'}"
   }
   `;
 };
@@ -59,10 +57,7 @@ const Feeds = () => {
         <div className={styles.feeds}>
           {pairs.map((feed) => (
             <Card
-              className={cn([
-                styles.feed,
-                feed.id === selectedFeed?.id && styles.selected,
-              ])}
+              className={cn([styles.feed, feed.id === selectedFeed?.id && styles.selected])}
               key={feed.id}
               onClick={handleFeedClick.bind(null, feed)}
             >
@@ -74,12 +69,7 @@ const Feeds = () => {
 
       <Spin spinning={isLoading}>
         <div className={styles.feedDetails}>
-          <CopyBlock
-            text={codeText}
-            language={"typescript"}
-            theme={atomOneLight}
-            codeBlock
-          />
+          <CopyBlock text={codeText} language={'typescript'} theme={atomOneLight} codeBlock />
         </div>
       </Spin>
     </div>

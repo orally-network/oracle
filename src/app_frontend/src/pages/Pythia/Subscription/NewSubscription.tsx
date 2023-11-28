@@ -89,7 +89,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
       addressToCall,
       frequency:
         frequency.value !== null
-          ? convertFrequencyToSeconds(frequency.value, frequency.units)
+          ? BigInt(convertFrequencyToSeconds(frequency.value, frequency.units))
           : MIN_FREQUENCY,
       gasLimit,
       isRandom,

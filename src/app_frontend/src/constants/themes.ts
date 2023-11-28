@@ -100,7 +100,7 @@ export const orallyTheme = {
       paddingLG: 15,
     },
     Spin: {
-      colorPrimary: '#1766F9',
+      colorPrimary: 'var(--primary-color, #1766F9)',
     },
     Tag: {
       borderRadiusSM: 12,
@@ -109,6 +109,14 @@ export const orallyTheme = {
     },
     Skeleton: {
       colorFill:  '#111F37'
+    },
+    Breadcrumb: {
+      iconFontSize: 16,
+      itemColor: '#4A6293',
+      lastItemColor: 'var(--primary-color, #1766F9)',
+      separatorColor: '#4A6293',
+      linkColor: '#4A6293',
+      fontSize: 14,
     }
    
   },

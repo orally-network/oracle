@@ -14,14 +14,37 @@ interface NavigationProps {
 interface MenuItem {
   key: string;
   icon: React.ReactNode;
-  title: string;
+  label: string | React.ReactNode;
 }
 
 const menuItems: MenuItem[] = [
   {
     key: '1',
     icon: <AppstoreOutlined />,
-    title: 'Sybil',
+    label: (
+      <NavLink
+        to="/sybil"
+        className={({ isActive, isPending }) =>
+          isPending ? styles.pending : isActive ? styles.active : ''
+        }
+      >
+        Sybil
+      </NavLink>
+    ),
+  },
+  {
+    key: '2',
+    icon: <PieChartOutlined />,
+    label: (
+      <NavLink
+        to="/pythia"
+        className={({ isActive, isPending }) =>
+          isPending ? styles.pending : isActive ? styles.active : ''
+        }
+      >
+        Pythia
+      </NavLink>
+    ),
   },
 ];
 
@@ -31,53 +54,7 @@ export const Navigation = ({ isDarkMode }: NavigationProps) => {
       theme={isDarkMode ? 'dark' : 'light'}
       mode="inline"
       defaultSelectedKeys={['2']}
-      // items={menuItems}
-    >
-      <Menu.Item
-        key="1"
-        icon={<AppstoreOutlined />}
-        title="Sybil"
-        style={{ paddingLeft: '24px', display: 'flex', alignItems: 'center' }}
-      >
-        <NavLink
-          to="/sybil"
-          className={({ isActive, isPending }) =>
-            isPending ? styles.pending : isActive ? styles.active : ''
-          }
-        >
-          Sybil
-        </NavLink>
-      </Menu.Item>
-      <Menu.Item
-        key="2"
-        icon={<PieChartOutlined />}
-        title="Pythia"
-        style={{ paddingLeft: '24px', display: 'flex', alignItems: 'center' }}
-      >
-        <NavLink
-          to="/pythia"
-          className={({ isActive, isPending }) =>
-            isPending ? styles.pending : isActive ? styles.active : ''
-          }
-        >
-          Pythia
-        </NavLink>
-      </Menu.Item>
-      <Menu.Item
-        key="3"
-        icon={<LineChartOutlined />}
-        title="Delphi"
-        style={{ paddingLeft: '24px', display: 'flex', alignItems: 'center' }}
-      >
-        <NavLink
-          to="/delphi"
-          className={({ isActive, isPending }) =>
-            isPending ? styles.pending : isActive ? styles.active : ''
-          }
-        >
-          Delphi
-        </NavLink>
-      </Menu.Item>
-    </Menu>
+      items={menuItems}
+    />
   );
 };

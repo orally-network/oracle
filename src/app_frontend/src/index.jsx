@@ -9,7 +9,6 @@ import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { publicProvider } from 'wagmi/providers/public';
 
-import ErrorBoundary from 'Shared/ErrorBoundary';
 import config from 'Constants/config';
 import CHAINS from 'Constants/chains';
 
@@ -20,7 +19,7 @@ import '!style-loader!css-loader!react-toastify/dist/ReactToastify.css';
 
 Modal.setAppElement('#app');
 
-const { chains, provider, webSocketPublicClient, publicClient } = configureChains(CHAINS, [
+const { chains } = configureChains(CHAINS, [
   infuraProvider({ apiKey: config.INFURA_API_KEY, stallTimeout: 1_000 }),
   alchemyProvider({ apiKey: config.ALCHEMY_API_KEY, stallTimeout: 1_000 }),
   publicProvider(),
@@ -52,22 +51,20 @@ const root = createRoot(container);
 
 import('./rollbar').then(() => {
   root.render(
-    <ErrorBoundary>
-      <WagmiConfig config={wagmiConfig}>
-        <App />
+    <WagmiConfig config={wagmiConfig}>
+      <App />
 
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
-      </WagmiConfig>
-    </ErrorBoundary>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+    </WagmiConfig>
   );
 });

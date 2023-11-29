@@ -11,6 +11,7 @@
   "scripts": {
     "optimize": "ic-cdk-optimizer .wasm -o -opt.wasm",
     "build": "webpack --mode production --env NODE_ENV=production",
+    "build-stg": "webpack --mode production --env NODE_ENV=staging",
     "prebuild": "npm run generate",
     "start": "webpack serve --mode development --env NODE_ENV=development",
     "start-stg": "webpack serve --mode development --env NODE_ENV=staging",
@@ -18,7 +19,7 @@
     "generate": "dfx generate",
     "deploy-ic": "dfx build app_frontend --network ic && dfx canister install app_frontend --network ic -m reinstall",
     "deploy-firebase": "npm run build && firebase deploy --only hosting:app-orally",
-    "deploy-staging": "npm run build && firebase deploy --only hosting:staging-app-orally",
+    "deploy-staging": "npm run build-stg && firebase deploy --only hosting:staging-app-orally",
     "lint": "eslint src/**/*.{js,jsx}",
     "lint:fix": "eslint - fix src/**/*.{js,jsx,}",
     "format": "prettier - write src/**/*.{js,jsx,} - config .prettierrc.json"

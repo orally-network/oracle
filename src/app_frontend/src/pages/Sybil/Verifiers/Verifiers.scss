@@ -1,8 +1,6 @@
 @import 'Styles/variables';
 
 .verifiers {
-  margin: 40px;
-
   @media screen and (max-width: $break-point-mobile) {
     margin: 20px;
 
@@ -10,5 +8,4 @@
       overflow: scroll;
     }
   }
-
 }

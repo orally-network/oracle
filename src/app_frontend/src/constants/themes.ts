@@ -13,7 +13,7 @@ export const orallyTheme = {
   components: {
     Layout: {
       headerBg: 'transparent',
-      siderBg:'#0C172B',
+      siderBg: '#0C172B',
     },
     Button: {
       colorPrimary: 'var(--primary-color, #1766F9)',
@@ -56,7 +56,7 @@ export const orallyTheme = {
       fontSizeLG: 12,
       borderRadius: 12,
       colorPrimaryBorder: '#020915',
-      colorBorder: '#15223B',  
+      colorBorder: '#15223B',
     },
     Select: {
       colorBgContainer: 'transparent',
@@ -90,7 +90,7 @@ export const orallyTheme = {
       fontSize: 14,
     },
     Drawer: {
-      colorBgElevated: '#0C172B'
+      colorBgElevated: '#0C172B',
     },
     Card: {
       colorBgContainer: '#0C172B',
@@ -108,7 +108,7 @@ export const orallyTheme = {
       colorBorder: '#696C94',
     },
     Skeleton: {
-      colorFill:  '#111F37'
+      colorFill: '#111F37',
     },
     Breadcrumb: {
       iconFontSize: 16,
@@ -117,11 +117,15 @@ export const orallyTheme = {
       separatorColor: '#4A6293',
       linkColor: '#4A6293',
       fontSize: 14,
-    }
-   
+    },
+    Table: {
+      borderColor: '#020915',
+      colorBgContainer: '#0C172B',
+      colorFillSecondary: '#15223B',
+      colorTextHeading: '#4A6293',
+    },
   },
 };
-
 
 export const lightTheme = {
   token: {
@@ -133,15 +137,14 @@ export const lightTheme = {
   components: {
     Layout: {
       colorBgHeader: 'gray',
-      siderBg:'gray',
+      siderBg: 'gray',
       headerBg: 'transparent',
     },
     Button: {
       contentFontSizeLG: 14,
     },
     Menu: {
-      itemBg: 'gray'
-    }
+      itemBg: 'gray',
+    },
   },
- 
-}
+};

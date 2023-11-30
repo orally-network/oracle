@@ -47,10 +47,10 @@ const TopUpModal = ({
   });
 
   useEffect(() => {
-    if (currentChain.id !== chain.id) {
+    if (currentChain?.id !== chain.id) {
       switchNetwork(chain.id);
     }
-  }, [chain.id, currentChain.id, switchNetwork]);
+  }, [chain.id, currentChain?.id, switchNetwork]);
 
   const topUp = useCallback(async () => {
     try {
@@ -68,8 +68,8 @@ const TopUpModal = ({
           pending: `Sending ${amount} ${symbol} to ${executionAddress}`,
           success: `Sent successfully`,
           error: {
-            render({ error }) {
-              logger.error(`Sending ${symbol}`, error);
+            render({ data }) {
+              logger.error(`Sending ${symbol}`, data);
 
               return 'Something went wrong. Try again later.';
             },
@@ -104,7 +104,7 @@ const TopUpModal = ({
       style={{ top: '30%', right: '10px', maxWidth: '400px' }}
       title="Top Up"
       okButtonProps={{
-        disabled: currentChain.id !== chain.id || amount < DEFAULT_TOP_UP_AMOUNT.toString(),
+        disabled: currentChain?.id !== chain.id || amount < DEFAULT_TOP_UP_AMOUNT.toString(),
       }}
       onOk={topUp}
       open={isTopUpModalOpen}

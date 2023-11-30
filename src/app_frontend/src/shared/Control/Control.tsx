@@ -17,6 +17,27 @@ import { SecondaryButton } from 'Components/SecondaryButton';
 const MIN_BALANCE = 0.1;
 const EMPTY_BALANCE = 0.001;
 
+interface ControlProps {
+  addressData: {
+    address: string;
+    signature: string;
+  };
+  signMessage: (chainId: BigInt, subId: BigInt) => Promise<any>;
+  chain: any;
+  balance: any;
+  executionAddress: any;
+  refetchBalance: any;
+  isBalanceLoading: boolean;
+  subscribe?: () => void;
+  disabled?: boolean;
+  subscribed?: boolean;
+  subId?: BigInt;
+  stopSubscription?: any;
+  startSubscription?: any;
+  withdraw?: any;
+  is_active?: boolean;
+}
+
 // todo: subscribed will have `stop` and `withdraw` methods
 const Control = ({
   addressData,
@@ -34,8 +55,7 @@ const Control = ({
   executionAddress,
   refetchBalance,
   isBalanceLoading,
-  token,
-}) => {
+}: ControlProps) => {
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
   const [isSigning, setIsSigning] = useState(false);
   const [isStopping, setIsStopping] = useState(false);
@@ -51,8 +71,8 @@ const Control = ({
         pending: `SIWE processing...`,
         success: `SIWE processed`,
         error: {
-          render({ error }) {
-            logger.error(`SIWE`, error);
+          render({ data }) {
+            logger.error(`SIWE`, data);
 
             return 'Something went wrong. Try again later.';
           },
@@ -70,8 +90,8 @@ const Control = ({
         pending: `Stopping subscription...`,
         success: `Subscription stopped`,
         error: {
-          render({ error }) {
-            logger.error(`Stop subscription`, error);
+          render({ data }) {
+            logger.error(`Stop subscription`, data);
 
             return 'Something went wrong. Try again later.';
           },
@@ -89,8 +109,8 @@ const Control = ({
         pending: `Starting subscription...`,
         success: `Subscription started`,
         error: {
-          render({ error }) {
-            logger.error(`Start subscription`, error);
+          render({ data }) {
+            logger.error(`Start subscription`, data);
 
             return 'Something went wrong. Try again later.';
           },
@@ -108,8 +128,8 @@ const Control = ({
         pending: `Withdrawing...`,
         success: `Withdrawn`,
         error: {
-          render({ error }) {
-            logger.error(`Withdraw`, error);
+          render({ data }) {
+            logger.error(`Withdraw`, data);
 
             return 'Something went wrong. Try again later.';
           },
@@ -212,7 +232,6 @@ const Control = ({
           chain={chain}
           executionAddress={executionAddress}
           refetchBalance={refetchBalance}
-          token={token}
           decimals={chain.nativeCurrency.decimals}
           symbol={chain.nativeCurrency.symbol}
         />

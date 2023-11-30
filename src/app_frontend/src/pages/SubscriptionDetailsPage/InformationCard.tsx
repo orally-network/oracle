@@ -35,7 +35,7 @@ const InformationCard = ({ subscription }: InformationCardProps) => {
     contract_addr,
   } = subscription;
 
-  const chain = CHAINS_MAP[chain_id];
+  const chain = CHAINS_MAP[chain_id as number];
   const lastUpdateDateTime = new Date(Number(last_update) * 1000);
 
   return (

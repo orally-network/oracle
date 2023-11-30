@@ -5,7 +5,6 @@ import {
   Radio,
   Switch,
   Input,
-  Button,
   Dropdown,
   MenuProps,
   RadioChangeEvent,
@@ -29,9 +28,11 @@ const FiltersBar = () => {
   const isMobile = width <= BREAK_POINT_MOBILE;
 
   const {
+    showInactive,
     showMine,
     filterByType,
     setShowMine,
+    setShowInactive,
     setFilterByType,
     setChainIds,
     debouncedChangeHandler,
@@ -89,6 +90,24 @@ const FiltersBar = () => {
     },
     {
       key: '3',
+      label: (
+        <>
+          <Switch
+            size="small"
+            checked={showInactive}
+            onChange={() => {
+              setShowInactive(!showInactive);
+              searchParams.set('showInactive', new Boolean(!showInactive).toString());
+              setSearchParams(searchParams);
+            }}
+            style={{ marginRight: 10 }}
+          />
+          Show inactive
+        </>
+      ),
+    },
+    {
+      key: '4',
       label: (
         <MultiSelect
           className={styles.chainSelect}
@@ -153,6 +172,18 @@ const FiltersBar = () => {
               style={{ marginRight: 10 }}
             />
             Mine
+          </Col>
+          <Col>
+            <Switch
+              checked={showInactive}
+              onChange={() => {
+                setShowInactive(!showInactive);
+                searchParams.set('showInactive', new Boolean(!showInactive).toString());
+                setSearchParams(searchParams);
+              }}
+              style={{ marginRight: 10 }}
+            />
+            Inactive
           </Col>
           <Col>
             <MultiSelect

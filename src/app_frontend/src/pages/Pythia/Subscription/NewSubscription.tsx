@@ -102,8 +102,8 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
       pending: `Subscribe ${addressToCall}:${methodName} to Pythia`,
       success: `Subscribed successfully`,
       error: {
-        render({ error }) {
-          logger.error(`Subscribe ${addressToCall}:${methodName} to Pythia`, error);
+        render({ data }) {
+          logger.error(`Subscribe ${addressToCall}:${methodName} to Pythia`, data);
 
           return 'Something went wrong. Try again later.';
         },

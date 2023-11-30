@@ -28,11 +28,15 @@ import useWindowDimensions from 'Utils/useWindowDimensions';
 
 interface SubscriptionProps {
   sub: Subscription;
-  addressData: string;
-  signMessage: string;
-  stopSubscription: () => void;
-  startSubscription: () => void;
-  withdraw: () => void;
+  addressData: {
+    address: string;
+    message: string;
+    signature: string;
+  };
+  signMessage: (chainId: BigInt, subId: BigInt) => Promise<any>;
+  stopSubscription: (chainId: BigInt, subId: BigInt) => void;
+  startSubscription: (chainId: BigInt, subId: BigInt) => void;
+  withdraw: (chainId: BigInt, subId: BigInt) => void;
 }
 
 const SubscriptionCard = ({
@@ -61,7 +65,7 @@ const SubscriptionCard = ({
     id,
   } = sub;
 
-  const chain = CHAINS_MAP[chain_id];
+  const chain = CHAINS_MAP[chain_id as number];
   const frequency = exec_condition[0]?.Frequency || BigInt(3600); // remove hardcoded value after exec_condition will be required
 
   const [balance, setBalance] = useState(0);
@@ -71,7 +75,8 @@ const SubscriptionCard = ({
   const isMobile = width <= BREAK_POINT_MOBILE;
 
   const refetchBalance = useCallback(async () => {
-    setBalance(await fetchBalance(chain_id, addressData.address));
+    const res: any = await fetchBalance(chain_id, addressData.address);
+    setBalance(res);
   }, [chain_id, addressData]);
 
   useEffect(() => {

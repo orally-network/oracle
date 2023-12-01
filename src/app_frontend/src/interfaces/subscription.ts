@@ -15,11 +15,11 @@ interface SubscriptionStatus {
 }
 
 interface ExecutionCondition {
-  PriceMutation: { 
+  PriceMutation: {
     mutation_rate: number;
     creation_price: number;
-    price_mutation_type: PriceMutationType,
-    pair_id: string,
+    price_mutation_type: PriceMutationType;
+    pair_id: string;
   };
   Frequency: BigInt;
 }
@@ -32,14 +32,14 @@ interface PriceMutationType {
 
 interface SubscriptionMethod {
   abi: string;
-  chain_id: string;
+  chain_id: BigInt | number;
   name: string;
   gas_limit: BigInt;
   exec_condition: ExecutionCondition[];
   method_type: {
     Pair: string;
     Random: boolean;
-  }
+  };
 }
 
 export type FrequencyType = {
@@ -47,11 +47,11 @@ export type FrequencyType = {
   units: Unit;
 };
 
-export type FilterType = 'all' | 'price' | 'random'
+export type FilterType = 'all' | 'price' | 'random';
 
 export type OptionType = {
   value: string;
   label: string;
 };
 
-export type Unit = 'min' | 'hour'| 'day' | 'week' | 'month';
+export type Unit = 'min' | 'hour' | 'day' | 'week' | 'month';

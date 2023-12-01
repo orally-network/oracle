@@ -21,6 +21,8 @@ import FiltersBar from './FiltersBar';
 import SubscriptionCard from './Subscription/SubscriptionCard';
 import NewSubscription from './Subscription/NewSubscription';
 import styles from './Pythia.scss';
+import { FilterType } from 'Interfaces/subscription';
+import { GeneralResponse } from 'Interfaces/common';
 
 const Pythia = () => {
   const [isWhitelisted, setIsWhitelisted] = useState(true);
@@ -36,12 +38,15 @@ const Pythia = () => {
 
   const {
     showMine,
+    showInactive,
     chainIds: chainIdsFilter,
     searchQuery,
     filterByType,
     setFilterByType,
     setShowMine,
+    setShowInactive,
   } = useSubscriptionsFilters();
+
   const { addressData } = useGlobalState();
   const { signMessage } = useSignature();
   const { address } = useAccount();
@@ -49,14 +54,18 @@ const Pythia = () => {
   useEffect(() => {
     const typeFilter = searchParams.get('type');
     const authorFilter = searchParams.get('showMine');
-    setFilterByType(typeFilter);
+    const inactiveFilter = searchParams.get('showInactive');
+    if (typeFilter !== null) {
+      setFilterByType(typeFilter as FilterType);
+    }
     setShowMine(authorFilter === 'true' ? true : false);
-  }, [searchParams, setFilterByType, setShowMine]);
+    setShowInactive(inactiveFilter === 'true' ? true : false);
+  }, [searchParams, setFilterByType, setShowMine, setShowInactive]);
 
   useEffect(() => {
     const checkWhitelisted = async () => {
       if (address) {
-        const res = await pythiaCanister.is_whitelisted(remove0x(address));
+        const res: GeneralResponse = await pythiaCanister.is_whitelisted(remove0x(address));
 
         console.log({ res });
 
@@ -72,7 +81,23 @@ const Pythia = () => {
   }, [address]);
 
   const subscribe = useCallback(
-    async ({ chainId, methodName, addressToCall, frequency, gasLimit, isRandom, feed }) => {
+    async ({
+      chainId,
+      methodName,
+      addressToCall,
+      frequency,
+      gasLimit,
+      isRandom,
+      feed,
+    }: {
+      chainId: BigInt;
+      methodName: string;
+      addressToCall: string;
+      frequency: BigInt;
+      gasLimit: number;
+      isRandom: boolean;
+      feed: string;
+    }) => {
       setIsSubscribing(true);
 
       const payload = {
@@ -88,7 +113,7 @@ const Pythia = () => {
         price_mutation_condition: [],
       };
 
-      const res = await pythiaCanister.subscribe(payload);
+      const res: GeneralResponse = await pythiaCanister.subscribe(payload);
 
       setIsSubscribing(false);
       console.log({ res });
@@ -105,8 +130,8 @@ const Pythia = () => {
   );
 
   const stopSubscription = useCallback(
-    async (chainId, subId) => {
-      const res = await pythiaCanister.stop_subscription(
+    async (chainId: BigInt, subId: BigInt) => {
+      const res: GeneralResponse = await pythiaCanister.stop_subscription(
         chainId,
         subId,
         addressData.message,
@@ -124,8 +149,8 @@ const Pythia = () => {
   );
 
   const startSubscription = useCallback(
-    async (chainId, subId) => {
-      const res = await pythiaCanister.start_subscription(
+    async (chainId: BigInt, subId: BigInt) => {
+      const res: GeneralResponse = await pythiaCanister.start_subscription(
         chainId,
         subId,
         addressData.message,
@@ -143,8 +168,8 @@ const Pythia = () => {
   );
 
   const withdraw = useCallback(
-    async (chainId) => {
-      const res = await pythiaCanister.withdraw(
+    async (chainId: BigInt) => {
+      const res: GeneralResponse = await pythiaCanister.withdraw(
         chainId,
         addressData.message,
         remove0x(addressData.signature),
@@ -166,10 +191,13 @@ const Pythia = () => {
       return (
         subs
           .filter((sub) => (showMine ? sub.owner === address?.toLowerCase?.() : true))
+          .filter((sub) => (showInactive ? true : !!sub?.status?.is_active))
           .filter((sub) => (filterByType === 'price' ? sub.method?.method_type?.Pair : true))
           .filter((sub) => (filterByType === 'random' ? sub.method?.method_type?.Random : true))
           .filter((sub) =>
-            chainIdsFilter.length > 0 ? chainIdsFilter.includes(sub?.method?.chain_id) : true
+            chainIdsFilter.length > 0
+              ? chainIdsFilter.includes(sub?.method?.chain_id.toString())
+              : true
           )
           //add later search by name, chain and pair
           .filter((sub) =>
@@ -178,7 +206,7 @@ const Pythia = () => {
       );
     }
     return [];
-  }, [showMine, filterByType, subs, address, chainIdsFilter, searchQuery]);
+  }, [showMine, showInactive, filterByType, subs, address, chainIdsFilter, searchQuery]);
 
   console.log({ filteredSubs });
 
@@ -194,10 +222,10 @@ const Pythia = () => {
               <Typography.Title level={3}>Pythia</Typography.Title>
             </div>
 
-            {subs.length ? <FiltersBar /> : <Skeleton paragraph length={200} />}
+            {subs.length ? <FiltersBar /> : <Skeleton paragraph={{ rows: 0 }} round active />}
 
             {loading ? (
-              <Skeleton.Button active loading round size="large" />
+              <Skeleton.Button active size="large" />
             ) : (
               <Button
                 type="primary"

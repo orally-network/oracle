@@ -1,12 +1,17 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useAccount } from 'wagmi';
 
 import { getLocalStorageAddress } from 'Utils/localStorageAddress';
 
 import GlobalStateContext from './GlobalStateContext';
+import { AddressData } from 'Interfaces/common';
 
-const GlobalStateProvider = ({ children }) => {
-  const [addressData, setAddressData] = useState();
+const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
+  const [addressData, setAddressData] = useState<AddressData>({
+    address: '',
+    signature: '',
+    message: '',
+  });
 
   const { address } = useAccount();
 
@@ -15,19 +20,15 @@ const GlobalStateProvider = ({ children }) => {
       setAddressData(getLocalStorageAddress(address));
     }
   }, [address]);
-  
+
   const value = useMemo(() => {
     return {
       addressData,
       setAddressData,
     };
   }, [addressData]);
-  
-  return (
-    <GlobalStateContext.Provider value={value}>
-      {children}
-    </GlobalStateContext.Provider>
-  );
+
+  return <GlobalStateContext.Provider value={value}>{children}</GlobalStateContext.Provider>;
 };
 
 export default GlobalStateProvider;

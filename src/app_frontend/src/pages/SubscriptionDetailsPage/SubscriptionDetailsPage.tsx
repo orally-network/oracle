@@ -20,9 +20,14 @@ export const SubscriptionDetailsPage = () => {
 
   const fetchSubscription = async (id: BigInt, chainId: BigInt) => {
     setIsSubscriptionLoading(true);
-    const response: any = await pythiaCanister.get_subscription(chainId, id);
-    setSubscriptionData(response.Ok);
-    setIsSubscriptionLoading(false);
+    try {
+      const response: any = await pythiaCanister.get_subscription(chainId, id);
+      setSubscriptionData(response.Ok);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsSubscriptionLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -30,8 +35,6 @@ export const SubscriptionDetailsPage = () => {
       fetchSubscription(BigInt(id), BigInt(chainId));
     }
   }, [id, chainId]);
-
-  // get subscription details by id from api?
 
   return (
     <Layout.Content title="Pythia">

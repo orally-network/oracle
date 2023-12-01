@@ -6,6 +6,7 @@ import { FilterType } from 'Interfaces/subscription';
 
 const SubscriptionsFiltersProvider = ({ children }: { children: React.ReactNode }) => {
   const [showMine, setShowMine] = useState<boolean>(false);
+  const [showInactive, setShowInactive] = useState<boolean>(false);
   const [filterByType, setFilterByType] = useState<FilterType>('all');
   const [chainIds, setChainIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -24,12 +25,15 @@ const SubscriptionsFiltersProvider = ({ children }: { children: React.ReactNode 
 
   const value = {
     showMine,
+    showInactive,
     filterByType,
     chainIds,
     searchQuery,
     setShowMine,
+    setShowInactive,
     setFilterByType,
     setChainIds,
+    setSearchQuery,
     debouncedChangeHandler,
   };
 

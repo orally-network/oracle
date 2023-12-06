@@ -16,30 +16,37 @@ const CHAINS = [
   {
     ...mainnet,
     img: ethereumImg,
+    isScanExplorer: true,
   },
   {
     ...goerli,
     img: ethereumImg,
+    isScanExplorer: true,
   },
   {
     ...sepolia,
     img: ethereumImg,
+    isScanExplorer: true,
   },
   {
     ...polygon,
     img: polygonImg,
+    isScanExplorer: true,
   },
   {
     ...polygonMumbai,
     img: polygonImg,
+    isScanExplorer: true,
   },
   {
     ...zkSync,
     img: zkSyncImg,
+    isScanExplorer: true,
   },
   {
     ...zkSyncTestnet,
     img: zkSyncImg,
+    isScanExplorer: true,
   },
   {
     id: 1231,
@@ -112,6 +119,7 @@ const CHAINS = [
     }, 
     testnet: true,
     img: qImg,
+    isScanExplorer: true,
   },
   {
     id: 35441,
@@ -137,6 +145,7 @@ const CHAINS = [
       },
     }, 
     img: qImg,
+    isScanExplorer: true,
   },
   {
     id: 1313161555,
@@ -163,6 +172,7 @@ const CHAINS = [
     },
     testnet: true,
     img: auroraImg,
+    isScanExplorer: true,
   },
   {
     id: 1313161554,
@@ -188,6 +198,7 @@ const CHAINS = [
       },
     },
     img: auroraImg,
+    isScanExplorer: true,
   },
   {
     id: 59140,
@@ -214,6 +225,7 @@ const CHAINS = [
     },
     testnet: true,
     img: lineaImg,
+    isScanExplorer: true,
   },
   {
     id: 355113,
@@ -266,6 +278,7 @@ const CHAINS = [
     },
     testnet: true,
     img: taikoImg,
+    isBlockscoutExplorer: true,
   },
   {
     id: 167007,
@@ -292,6 +305,7 @@ const CHAINS = [
     },
     testnet: true,
     img: taikoImg,
+    isBlockscoutExplorer: true,
   },
   {
     id: 59144,
@@ -317,6 +331,7 @@ const CHAINS = [
       },
     },
     img: lineaImg,
+    isScanExplorer: true,
   },
   {
     id: 167006,
@@ -343,6 +358,7 @@ const CHAINS = [
     },
     testnet: true,
     img: taikoImg,
+    isBlockscoutExplorer: true,
   },
   {
     id: 10243,
@@ -369,6 +385,7 @@ const CHAINS = [
     },
     testnet: true,
     img: artheraImg,
+    isBlockscoutExplorer: true,
   },
   {
     id: 3441005,
@@ -395,6 +412,7 @@ const CHAINS = [
     },
     testnet: true,
     img: mantaImg,
+    isScanExplorer: true,
   },
   {
     id: 169,
@@ -420,6 +438,7 @@ const CHAINS = [
       },
     },
     img: mantaImg,
+    isScanExplorer: true,
   },
 ];
 

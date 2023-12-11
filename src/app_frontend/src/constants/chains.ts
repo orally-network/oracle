@@ -11,42 +11,44 @@ import taikoImg from 'Assets/chains/taiko.svg';
 import zkSyncImg from 'Assets/chains/zkSync.png';
 import artheraImg from 'Assets/chains/arthera.png';
 import mantaImg from 'Assets/chains/manta.png';
+import { ExplorerType } from 'Interfaces/chain';
 
 const CHAINS = [
   {
     ...mainnet,
     img: ethereumImg,
-    isScanExplorer: true,
+    explorerType: ExplorerType.ScanExplorer,
+    explorerAddress: 'https://api.etherscan.io',
   },
   {
     ...goerli,
     img: ethereumImg,
-    isScanExplorer: true,
+    explorerType: ExplorerType.ScanExplorer,
   },
   {
     ...sepolia,
     img: ethereumImg,
-    isScanExplorer: true,
+    explorerType: ExplorerType.ScanExplorer,
   },
   {
     ...polygon,
     img: polygonImg,
-    isScanExplorer: true,
+    explorerType: ExplorerType.ScanExplorer,
   },
   {
     ...polygonMumbai,
     img: polygonImg,
-    isScanExplorer: true,
+    explorerType: ExplorerType.ScanExplorer,
   },
   {
     ...zkSync,
     img: zkSyncImg,
-    isScanExplorer: true,
+    explorerType: ExplorerType.ScanExplorer,
   },
   {
     ...zkSyncTestnet,
     img: zkSyncImg,
-    isScanExplorer: true,
+    explorerType: ExplorerType.ScanExplorer,
   },
   {
     id: 1231,
@@ -119,7 +121,7 @@ const CHAINS = [
     }, 
     testnet: true,
     img: qImg,
-    isScanExplorer: true,
+    explorerType: ExplorerType.ScanExplorer,
   },
   {
     id: 35441,
@@ -145,7 +147,7 @@ const CHAINS = [
       },
     }, 
     img: qImg,
-    isScanExplorer: true,
+    explorerType: ExplorerType.ScanExplorer,
   },
   {
     id: 1313161555,
@@ -172,7 +174,7 @@ const CHAINS = [
     },
     testnet: true,
     img: auroraImg,
-    isScanExplorer: true,
+    explorerType: ExplorerType.ScanExplorer,
   },
   {
     id: 1313161554,
@@ -198,7 +200,7 @@ const CHAINS = [
       },
     },
     img: auroraImg,
-    isScanExplorer: true,
+    explorerType: ExplorerType.ScanExplorer,
   },
   {
     id: 59140,
@@ -225,7 +227,7 @@ const CHAINS = [
     },
     testnet: true,
     img: lineaImg,
-    isScanExplorer: true,
+    explorerType: ExplorerType.ScanExplorer,
   },
   {
     id: 355113,
@@ -331,7 +333,7 @@ const CHAINS = [
       },
     },
     img: lineaImg,
-    isScanExplorer: true,
+    explorerType: ExplorerType.ScanExplorer,
   },
   {
     id: 167006,
@@ -412,7 +414,7 @@ const CHAINS = [
     },
     testnet: true,
     img: mantaImg,
-    isScanExplorer: true,
+    explorerType: ExplorerType.ScanExplorer,
   },
   {
     id: 169,
@@ -438,7 +440,7 @@ const CHAINS = [
       },
     },
     img: mantaImg,
-    isScanExplorer: true,
+    explorerType: ExplorerType.ScanExplorer,
   },
 ];
 

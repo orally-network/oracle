@@ -43,7 +43,7 @@ const FiltersBar = () => {
   const [isFiltersMenuOpen, setFiltersMenuOpen] = useState(false);
 
   const onChainSelect = (val: OptionType[]) => {
-    setChainIds(val?.map((s: OptionType) => s.value) ?? []);
+    setChainIds(val?.map((s: OptionType) => s.value.toString()) ?? []);
   };
 
   const onChangeType = (e: RadioChangeEvent) => {

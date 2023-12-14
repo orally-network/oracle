@@ -14,6 +14,7 @@ export default {
   ALCHEMY_API_KEY: process.env.ALCHEMY_API_KEY,
   INFURA_API_KEY: process.env.INFURA_API_KEY,
   env: process.env.NODE_ENV,
+  ETHERSCAN_API_KEY: process.env.ETHERSCAN_API_KEY,
 
   pythia_canister_id: isStaging ? 'xmz4o-gqaaa-aaaag-qcjva-cai' : 'ettff-uaaaa-aaaag-abpcq-cai',
   sybil_canister_id: isStaging ? 'tysiw-qaaaa-aaaak-qcikq-cai' : 'wth3l-tiaaa-aaaap-aa5uq-cai',

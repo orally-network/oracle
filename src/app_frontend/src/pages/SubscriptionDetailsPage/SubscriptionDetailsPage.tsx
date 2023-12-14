@@ -9,6 +9,7 @@ import { testData } from './testData';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import pythiaCanister from 'Canisters/pythiaCanister';
+import { InternalTransactionsTable } from './InternalTransactionsTable';
 
 export const SubscriptionDetailsPage = () => {
   const { id, chainId } = useParams();
@@ -59,6 +60,10 @@ export const SubscriptionDetailsPage = () => {
             <Typography.Title level={4} style={{ paddingBottom: '20px' }}>
               Dataset
             </Typography.Title>
+
+            {isSubscriptionLoading ? (
+              "Loading...") : subscriptionData === null ? ('Empty') : (<InternalTransactionsTable subscription={subscriptionData} />
+            )}
 
             {renderChart(testData)}
           </Card>

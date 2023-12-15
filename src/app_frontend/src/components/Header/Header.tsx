@@ -16,19 +16,14 @@ const Header = () => {
 
   return (
     <Layout.Header
-      justify-content={isMobile ? 'space-between' : 'flex-end'}
       className={styles.header}
       style={{
-        paddingLeft: isMobile ? '60px' : '30px',
-        backgroundColor: isMobile ? '#0C172B' : 'transparent',
-        justifyContent: isMobile ? 'space-between' : 'flex-end',
+        paddingLeft: isMobile ?  '65px' : '15px', 
       }}
     >
-      {isMobile && (
         <div className={styles.logo}>
           <LogoText height={20} />
         </div>
-      )}
       <Space>
         <div className={styles.controls}>
           {isMobile ? (

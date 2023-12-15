@@ -13,7 +13,7 @@
 .toggler {
   position: absolute;
   bottom: 20px;
-  left: 25px;
+  left: 15px;
   right: 0;
   display: flex;
   flex-direction: column;
@@ -54,8 +54,8 @@
   top: calc(50% - 21px);
 
   @media screen and (max-width: variables.$break-point-mobile) {
-    top: 10px;
-    left: 20px;
+    top: 12px;
+    left: 12px;
     right: 0;
   }
 }

@@ -50,10 +50,11 @@ a {
 :global {
 
   .react-select__control {
-    background-color: transparent !important;
-    border-color: #15223B !important;
-    border-radius: 14px !important;
+    background-color: #081120 !important;
+    border-color: #4A6293 !important;
+    border-radius: 8px !important;
     color: #4A6293 !important;
+
 
     &--is-focused {
       border-color: #1766F9 !important;
@@ -100,6 +101,22 @@ a {
 
   .ant-btn-primary {
     background: linear-gradient(#5561FF, #3643FC) !important;
+    &.ant-btn-primary[disabled] {
+      border: none;
+    }
+  }
+
+  .ant-radio-checked .ant-radio-inner:after {
+    background-color:#1766F9 !important;
+  }
+
+  .ant-radio-button-wrapper-checked {
+    border-color: #1766F9 !important;
+    color: #1766F9 !important;
+  } 
+
+  .ant-drawer-title {
+    font-size: 20px !important;
   }
   
   .ant-input-group-addon {

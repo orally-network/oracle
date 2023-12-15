@@ -29,7 +29,7 @@ export const MultiSelect = (props: any) => {
     <Select
       closeMenuOnSelect={false}
       isMulti
-      components={{ Option, MultiValueContainer }}
+      components={{ Option, MultiValueContainer, IndicatorSeparator: () => null  }}
       {...props}
     />
   );

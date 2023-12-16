@@ -8,14 +8,13 @@ import {
   ArrowRightOutlined,
   MenuOutlined,
   CloseOutlined,
+  SettingOutlined
 } from '@ant-design/icons';
 
 import styles from './Sidebar.scss';
 import { Navigation } from 'Components/Navigation';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_DESKTOP_LARGE, BREAK_POINT_MOBILE } from 'Constants/ui';
-import LogoImage from 'Assets/image-logo.svg';
-import LogoText from 'Assets/logo.svg';
 
 const { Sider } = Layout;
 
@@ -36,23 +35,18 @@ export const Sidebar = ({ toggleTheme, isDarkMode }: SidebarProps) => {
       trigger={null}
       collapsible
       collapsed={collapsed}
-      width={isLargeDesktop ? 400 : 200}
+      width={200}
       breakpoint="sm"
-      collapsedWidth={isMobile ? 0 : 80}
+      collapsedWidth={isMobile ? 0 : 47}
       style={{
         height: '100vh',
         position: 'fixed',
         left: 0,
         top: 0,
-        zIndex: 2,
-        padding: isMobile ? '50px 0' : '24px 0',
+        zIndex: isMobile ? 3 : 1,
+        padding:  '50px 0',
       }}
     >
-      {!isMobile && (
-        <div className={styles.logo}>
-          {collapsed ? <LogoImage height={35} /> : <LogoText height={35} />}
-        </div>
-      )}
       <Navigation isDarkMode={isDarkMode} />
       <div className={styles.control}>
         {isMobile ? (
@@ -61,15 +55,18 @@ export const Sidebar = ({ toggleTheme, isDarkMode }: SidebarProps) => {
             onClick={() => setCollapsed(!collapsed)}
             icon={
               collapsed ? (
-                <MenuOutlined style={{ fontSize: '24px' }} />
+                <MenuOutlined style={{ fontSize: '18px' }} />
               ) : (
-                <CloseOutlined style={{ fontSize: '24px' }} />
+                <CloseOutlined style={{ fontSize: '18px' }} />
               )
             }
             style={{
               width: 24,
               height: 24,
               color: '#1766F9',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
           />
         ) : (
@@ -98,7 +95,7 @@ export const Sidebar = ({ toggleTheme, isDarkMode }: SidebarProps) => {
       <div className={styles.toggler}>
         {/* <FontAwesomeIcon onClick={toggleTheme} icon={isDarkMode ? faSun : faMoon} /> */}
         <div className={styles.support}>
-          <FontAwesomeIcon icon={faQuestion} />
+        <SettingOutlined />
         </div>
       </div>
     </Sider>

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Flex, Input, Space, Button, Tooltip, Tag, Switch } from 'antd';
+import { Flex, Input, Space, Button, Tooltip, Tag, Switch, Checkbox, Radio } from 'antd';
 import { SingleValueSelect } from 'Components/Select';
 import pythiaCanister from 'Canisters/pythiaCanister';
 import { remove0x } from 'Utils/addressUtils';
@@ -159,8 +159,8 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
         />
       </Space>
 
-      <div className={styles.label}>Frequency</div>
-      <Space direction={isMobile ? 'vertical' : 'horizontal'}>
+      <Space direction="vertical">
+        <div className={styles.label}>Frequency</div>
         <Tooltip title="Minimum 30 minutes and maximum 6 months">
           <Input
             pattern="[0-9]*"
@@ -174,18 +174,18 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
           />
         </Tooltip>
         <Flex gap="small" wrap="wrap">
-          {FREQUENCY_UNITS.map((unit) => (
-            <Tag
-              key={unit}
-              style={{
-                cursor: 'pointer',
-              }}
-              color={frequency.units === unit ? '#1766F9' : 'default'}
-              onClick={() => (!viewOnly ? setFrequency({ ...frequency, units: unit }) : null)}
-            >
-              {unit}
-            </Tag>
-          ))}
+          <Radio.Group
+            onChange={(e) =>
+              !viewOnly ? setFrequency({ ...frequency, units: e.target.value }) : null
+            }
+            value={frequency.units}
+          >
+            {FREQUENCY_UNITS.map((unit) => (
+              <Radio key={unit} value={unit}>
+                {unit}
+              </Radio>
+            ))}
+          </Radio.Group>
         </Flex>
       </Space>
 
@@ -199,26 +199,26 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGasLimit(e.target.value)}
         />
       </Space>
+      <div className={styles.label}>Price feed (Sybil)</div>
+      <Space size="large" direction={isMobile ? 'vertical' : 'horizontal'}>
+        <Select
+          placeholder="Price feed"
+          classNamePrefix="react-select"
+          isDisabled={viewOnly}
+          value={feed ? { label: feed, value: feed } : null}
+          isClearable
+          menuShouldScrollIntoView={false}
+          options={useMemo(() => mapPairsToOptions(pairs), [pairs])}
+          onChange={(e: OptionType) => {
+            setFeed(e?.value);
+            setIsRandom(false);
+          }}
+          components={{
+            IndicatorSeparator: () => null,
+          }}
+        />
 
-      <Flex gap="middle" align={isMobile ? 'flex-start' : 'center'} vertical={isMobile}>
-        <Space direction="vertical">
-          <div className={styles.label}>Price feed (Sybil)</div>
-          <Select
-            placeholder="Price feed"
-            classNamePrefix="react-select"
-            isDisabled={viewOnly}
-            value={feed ? { label: feed, value: feed } : null}
-            isClearable
-            menuShouldScrollIntoView={false}
-            options={useMemo(() => mapPairsToOptions(pairs), [pairs])}
-            onChange={(e: OptionType) => {
-              setFeed(e?.value);
-              setIsRandom(false);
-            }}
-          />
-        </Space>
-        <Space direction="vertical">
-          <div className={styles.label}>Randomness</div>
+        <Space>
           <Switch
             disabled={viewOnly}
             checked={isRandom}
@@ -229,10 +229,11 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
               }
             }}
           />
+          Randomness
         </Space>
-      </Flex>
+      </Space>
 
-      <Space style={{ paddingTop: '2rem' }}>
+      <Flex style={{ paddingTop: '2rem' }} justify="flex-end">
         <Button
           type="primary"
           loading={isUpdating}
@@ -241,7 +242,7 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
         >
           Update
         </Button>
-      </Space>
+      </Flex>
     </Flex>
   );
 };

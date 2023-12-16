@@ -1,15 +1,13 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Menu } from 'antd';
-import { PieChartOutlined, AppstoreOutlined, LineChartOutlined } from '@ant-design/icons';
+import { HomeFilled, UnorderedListOutlined } from '@ant-design/icons';
 
 import styles from './Navigation.scss';
 
 interface NavigationProps {
   isDarkMode: boolean;
 }
-
-//todo: move items to array and map over them
 
 interface MenuItem {
   key: string;
@@ -20,7 +18,7 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   {
     key: '1',
-    icon: <AppstoreOutlined />,
+    icon: <HomeFilled />,
     label: (
       <NavLink
         to="/sybil"
@@ -34,7 +32,7 @@ const menuItems: MenuItem[] = [
   },
   {
     key: '2',
-    icon: <PieChartOutlined />,
+    icon: <UnorderedListOutlined />,
     label: (
       <NavLink
         to="/pythia"

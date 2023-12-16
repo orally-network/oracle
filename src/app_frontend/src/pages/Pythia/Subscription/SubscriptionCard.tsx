@@ -196,8 +196,8 @@ const SubscriptionCard = ({
           placement="right"
           onClose={() => setIsSubscriptionDetailsVisible(false)}
           open={isSubscriptionDetailsVisible}
-          style={{ paddingTop: '80px' }}
-          width={isMobile ? '90vw' : '54vw'}
+          style={{ marginTop: '47px' }}
+          width={isMobile ? '90vw' : '362px'}
         >
           <Space direction="vertical" size="middle" style={{ width: '100%' }}>
             <SubscriptionDetails subscription={sub} />

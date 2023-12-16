@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import {
-  Col,
-  Row,
   Radio,
   Switch,
   Input,
   Dropdown,
   MenuProps,
   RadioChangeEvent,
+  Flex,
+  Space,
 } from 'antd';
 import { SearchOutlined, FilterOutlined } from '@ant-design/icons';
 import { useSearchParams } from 'react-router-dom';
@@ -129,13 +129,7 @@ const FiltersBar = () => {
   ];
 
   return (
-    <Row
-      gutter={16}
-      justify={isMobile ? 'end' : 'center'}
-      align="middle"
-      className={styles.container}
-      style={{ flex: 1 }}
-    >
+    <Flex style={{ flex: 1 }} justify="space-between" wrap="wrap" gap={8}>
       {isMobile ? (
         <Dropdown menu={{ items }} trigger={['click']}>
           <SecondaryButton
@@ -147,7 +141,7 @@ const FiltersBar = () => {
         </Dropdown>
       ) : (
         <>
-          <Col>
+          <Space>
             <Radio.Group
               value={filterByType}
               onChange={onChangeType}
@@ -160,8 +154,6 @@ const FiltersBar = () => {
               ]}
               optionType="button"
             ></Radio.Group>
-          </Col>
-          <Col>
             <Switch
               checked={showMine}
               onChange={() => {
@@ -172,8 +164,6 @@ const FiltersBar = () => {
               style={{ marginRight: 10 }}
             />
             Mine
-          </Col>
-          <Col>
             <Switch
               checked={showInactive}
               onChange={() => {
@@ -184,8 +174,8 @@ const FiltersBar = () => {
               style={{ marginRight: 10 }}
             />
             Inactive
-          </Col>
-          <Col>
+          </Space>
+          <Space>
             <MultiSelect
               className={styles.chainSelect}
               classNamePrefix="react-select"
@@ -201,27 +191,18 @@ const FiltersBar = () => {
               onChange={onChainSelect}
               placeholder="Chain"
             />
-          </Col>
+            <Input
+              size="large"
+              placeholder="Search..."
+              onChange={debouncedChangeHandler}
+              style={{ width: 180, maxHeight: '38px' }}
+              allowClear
+              prefix={<SearchOutlined style={{ color: '#1D2E51' }} />}
+            />
+          </Space>
         </>
       )}
-      <Col style={{ marginRight: '10px' }}>
-        {isSearchVisible && (
-          <Input
-            size="large"
-            placeholder="Search..."
-            onChange={debouncedChangeHandler}
-            style={{ width: 200, maxHeight: '38px' }}
-            allowClear
-            prefix={<SearchOutlined style={{ color: '#1D2E51' }} />}
-          />
-        )}
-        <SecondaryButton
-          icon={<SearchOutlined />}
-          size="large"
-          onClick={() => setSearchIsVisible(!isSearchVisible)}
-        />
-      </Col>
-    </Row>
+    </Flex>
   );
 };
 

@@ -24,7 +24,7 @@ export const SingleValueSelect = (props: Props) => {
           display: 'flex',
         }),
       }}
-      components={{ SingleValue, Option }}
+      components={{ SingleValue, Option, IndicatorSeparator: () => null }}
       {...props}
     />
   );

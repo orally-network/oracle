@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
-import { Input, Switch, Select as AntdSelect, Flex, Tag, Space, Tooltip } from 'antd';
+import { Input, Switch, Select as AntdSelect, Flex, Space, Tooltip, Radio } from 'antd';
 
 import Control from 'Shared/Control';
 import { CHAINS_MAP } from 'Constants/chains';
@@ -142,33 +142,37 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
 
   return (
     <Flex vertical={true} gap="middle">
-      <div>Chain</div>
+      <Space direction="vertical">
+        <div className={styles.label}>Chain</div>
 
-      <SingleValueSelect
-        classNamePrefix="react-select"
-        isDisabled={!isEdit}
-        options={useMemo(() => mapChainsToOptions(chains), [chains])}
-        onChange={(e: OptionType) => setChainId(e.value)}
-      />
-
-      <Input
-        disabled={!isEdit}
-        value={addressToCall}
-        placeholder="Address"
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddressToCall(e.target.value)}
-      />
-
-      <Input
-        disabled={!isEdit}
-        value={methodName}
-        placeholder="Method"
-        addonAfter={getMethodAddon({ isRandom, methodArg, setMethodArg, feed })}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMethodName(e.target.value)}
-      />
-
-      <div>Frequency</div>
-
-      <Space direction={isMobile ? 'vertical' : 'horizontal'}>
+        <SingleValueSelect
+          classNamePrefix="react-select"
+          isDisabled={!isEdit}
+          options={useMemo(() => mapChainsToOptions(chains), [chains])}
+          onChange={(e: OptionType) => setChainId(e.value)}
+        />
+      </Space>
+      <Space direction="vertical">
+        <div className={styles.label}>Address</div>
+        <Input
+          disabled={!isEdit}
+          value={addressToCall}
+          placeholder="Address"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddressToCall(e.target.value)}
+        />
+      </Space>
+      <Space direction="vertical">
+        <div className={styles.label}>Method</div>
+        <Input
+          disabled={!isEdit}
+          value={methodName}
+          placeholder="Method"
+          addonAfter={getMethodAddon({ isRandom, methodArg, setMethodArg, feed })}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMethodName(e.target.value)}
+        />
+      </Space>
+      <Space direction="vertical">
+        <div className={styles.label}>Frequency</div>
         <Tooltip title="Minimum 30 minutes and maximum 6 months">
           <Input
             pattern="[0-9]*"
@@ -181,30 +185,31 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
             }
           />
         </Tooltip>
+
         <Flex gap="small" wrap="wrap">
-          {FREQUENCY_UNITS.map((unit) => (
-            <Tag
-              key={unit}
-              style={{
-                cursor: 'pointer',
-              }}
-              color={frequency.units === unit ? '#1766F9' : 'default'}
-              onClick={() => setFrequency({ ...frequency, units: unit })}
-            >
-              {unit}
-            </Tag>
-          ))}
+          <Radio.Group
+            onChange={(e) => setFrequency({ ...frequency, units: e.target.value })}
+            value={frequency.units}
+          >
+            {FREQUENCY_UNITS.map((unit) => (
+              <Radio key={unit} value={unit}>
+                {unit}
+              </Radio>
+            ))}
+          </Radio.Group>
         </Flex>
       </Space>
-
-      <Input
-        pattern="[0-9]*"
-        disabled={!isEdit}
-        value={gasLimit}
-        placeholder="Gas limit"
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGasLimit(e.target.value)}
-      />
-
+      <Space direction="vertical">
+        <div className={styles.label}>Gas limit</div>
+        <Input
+          pattern="[0-9]*"
+          disabled={!isEdit}
+          value={gasLimit}
+          placeholder="Gas limit"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGasLimit(e.target.value)}
+        />
+      </Space>
+      <div className={styles.label}>Price feed (Sybil)</div>
       <Space size="large" direction={isMobile ? 'vertical' : 'horizontal'}>
         <Select
           placeholder="Price feed (Sybil)"
@@ -219,7 +224,11 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
             setFeed(e?.value);
             setIsRandom(false);
           }}
+          components={{
+            IndicatorSeparator: () => null,
+          }}
         />
+
         <Space>
           <Switch
             disabled={!isEdit}
@@ -241,7 +250,6 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
             disabled={!chainId || !methodName || !addressToCall || !frequency}
             onClick={nextHandler}
             type="primary"
-            className={styles.nextBtn}
             style={{ alignSelf: 'flex-end' }}
           >
             Next

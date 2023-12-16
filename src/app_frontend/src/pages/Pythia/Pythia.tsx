@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Flex, Layout, Drawer, Space, Typography, Skeleton } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusCircleOutlined } from '@ant-design/icons';
 import { useAccount } from 'wagmi';
 import Button from 'Components/Button';
 
@@ -217,10 +217,8 @@ const Pythia = () => {
       <Flex vertical align="center" wrap="wrap">
         <Space size="large" direction="vertical" style={{ width: '100%' }}>
           {!isWhitelisted && <div className={styles.notWhitelisted}>Not whitelisted</div>}
-          <Flex align="center" justify="space-between">
-            <div className={styles.title}>
-              <Typography.Title level={3}>Pythia</Typography.Title>
-            </div>
+          <Flex align="center" justify="space-between" gap={8}>
+            <Typography.Title style={{ minWidth: '70px' }}level={3}>Pythia</Typography.Title>
 
             {subs.length ? <FiltersBar /> : <Skeleton paragraph={{ rows: 0 }} round active />}
 
@@ -231,10 +229,10 @@ const Pythia = () => {
                 type="primary"
                 size="large"
                 onClick={() => setIsNewSubscriptionModalVisible(!isNewSubscriptionModalVisible)}
-                icon={<PlusOutlined />}
+                icon={<PlusCircleOutlined />}
                 style={{ width: isMobile ? '40px' : 'auto', height: isMobile ? '40px' : 'auto' }}
               >
-                {isMobile ? '' : 'Create subscription'}
+                {isMobile ? '' : 'Create'}
               </Button>
             )}
           </Flex>
@@ -267,8 +265,8 @@ const Pythia = () => {
               placement="right"
               onClose={() => setIsNewSubscriptionModalVisible(false)}
               open={isNewSubscriptionModalVisible}
-              style={{ paddingTop: '80px' }}
-              width={isMobile ? '90vw' : '54vw'}
+              style={{ marginTop: '47px' }}
+              width={isMobile ? '90vw' : '362px'}
             >
               <NewSubscription
                 signMessage={signMessage}

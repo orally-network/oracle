@@ -105,7 +105,7 @@ export const orallyTheme = {
     },
     Card: {
       colorBgContainer: '#0C172B',
-      borderRadiusLG: 24,
+      borderRadiusLG: 12,
       colorText: '#4A6293',
       colorBorderSecondary: '#15223B',
       paddingLG: 15,

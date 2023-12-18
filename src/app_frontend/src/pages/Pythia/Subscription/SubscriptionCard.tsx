@@ -92,7 +92,7 @@ const SubscriptionCard = ({
 
   return (
     <Card hoverable={true} className={styles.subscription}>
-      <Space size="middle" direction="vertical" style={{ width: '100%' }}>
+      <Space size="small" direction="vertical" style={{ width: '100%' }}>
         <div className={styles.header}>
           <div className={styles.info}>
             <div>{chain.name}</div>

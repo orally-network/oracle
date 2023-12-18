@@ -39,12 +39,12 @@ export const Sidebar = ({ toggleTheme, isDarkMode }: SidebarProps) => {
       breakpoint="sm"
       collapsedWidth={isMobile ? 0 : 47}
       style={{
-        height: '100vh',
+        height: 'calc(100vh - 48px)',
         position: 'fixed',
         left: 0,
-        top: 0,
-        zIndex: isMobile ? 3 : 1,
-        padding:  '50px 0',
+        bottom: 0,
+        zIndex: 3,
+        padding:  '0 0 50px',
       }}
     >
       <Navigation isDarkMode={isDarkMode} />

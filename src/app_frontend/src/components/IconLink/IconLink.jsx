@@ -4,6 +4,7 @@ import styles from './IconLinks.scss';
 
 const IconLink = ({ link, IconComponent, ...rest }) => {
   return (
+    link ? (
     <a
       className={styles.iconLink}
       href={link}
@@ -13,6 +14,11 @@ const IconLink = ({ link, IconComponent, ...rest }) => {
     >
       <IconComponent />
     </a>
+    ) : (
+      <div className={styles.iconLink} {...rest}>
+        <IconComponent />
+      </div>
+    )
   );
 };
 

@@ -232,7 +232,7 @@ const Pythia = () => {
                 icon={<PlusCircleOutlined />}
                 style={{ width: isMobile ? '40px' : 'auto', height: isMobile ? '40px' : 'auto' }}
               >
-                {isMobile ? '' : 'Create'}
+                {isMobile ? '' : 'Create subscription'}
               </Button>
             )}
           </Flex>

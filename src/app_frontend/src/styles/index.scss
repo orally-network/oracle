@@ -100,11 +100,18 @@ a {
   }
 
   .ant-btn-primary {
-    background: linear-gradient(#5561FF, #3643FC) !important;
     &.ant-btn-primary[disabled] {
       border: none;
     }
   }
+
+  .ant-btn-text.ant-btn {
+    color: variables.$primary-color;
+  }
+
+ .ant-progress-line {
+  margin-bottom: 0 !important;
+ }
 
   .ant-radio-checked .ant-radio-inner:after {
     background-color:#1766F9 !important;

@@ -17,15 +17,16 @@ interface UseInternalTransactionsResult {
 
 const getExplorerUrl = (chain: Chain, address: string) => {
 
+  // goerli.lineascan.build/api?module=account&action=txlistinternal&address=0xB28f077244021BD84C878798b712e1D9B0FBC7Da&startblock=0&endblock=2702578&page=1&offset=10&sort=asc&apikey=FBXVNSRQN987A7FXMT455GE2XG7NPF7K6V
   switch (chain.explorerType as ExplorerType) {
     case ExplorerType.ScanExplorer:
-      return `${chain.blockExplorers.default.url}api?module=account&action=txlistinternal&address=${isAddressHasOx(address)}&sort=asc&apikey=${config.ETHERSCAN_API_KEY}`;
+      return `https://rpc.orally.network/?rpc=${chain.blockExplorers.default.url}${escape(`api?module=account&action=txlistinternal&address=${isAddressHasOx(address)}&sort=asc&apikey=${config.ETHERSCAN_API_KEY}&page=1&offset=10`)}`;
       // &startblock=0
       // &endblock=2702578
       // &page=1
       // &offset=10
     case ExplorerType.BlockscoutExplorer:
-      return `${chain.blockExplorers.default.url}api?module=account&action=txlistinternal&address=${address}&sort=asc`;
+      return `https://rpc.orally.network/?rpc=${chain.blockExplorers.default.url}${escape(`api?module=account&action=txlistinternal&address=${address}&sort=asc`)}`;
       // &startblock=555555
       // &endblock=666666
       // &page=1

@@ -302,12 +302,13 @@ const CHAINS = [
     blockExplorers: {
       default: {
         name: 'Explorer Taiko Jolnir L2',
-        url: 'https://explorer.jolnir.taiko.xyz',
+        url: 'https://explorer.jolnir.taiko.xyz/',
       },
     },
     testnet: true,
     img: taikoImg,
     isBlockscoutExplorer: true,
+    explorerType: ExplorerType.BlockscoutExplorer,
   },
   {
     id: 59144,

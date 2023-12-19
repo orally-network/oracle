@@ -2,7 +2,7 @@ export const orallyTheme = {
   token: {
     colorBgBase: 'var(--background-color, #050B15)',
     colorPrimaryBg: 'var(--background-color, #050B15)',
-    colorPrimary: 'var(--primary-color, #1766F9)',
+    colorPrimary: 'var(--primary-color, #1890FF)',
     colorBgLayout: 'var(--background-color, #050B15)',
     colorText: 'white',
     fontSize: 12,
@@ -18,7 +18,7 @@ export const orallyTheme = {
       headerPadding: '0 24px 0 15px',
     },
     Button: {
-      colorPrimary: 'var(--primary-color, #1766F9)',
+      colorPrimary: 'var(--primary-color, #1890FF)',
       colorPrimaryHover: '#5393FF',
       colorPrimaryActive: '#1C5FCE',
       colorBgContainer: 'var(--background-color, #020915)',
@@ -30,7 +30,10 @@ export const orallyTheme = {
       primaryShadow: 'none',
       borderRadius: 8,
       contentFontSizeLG: 12,
-      colorBgTextHover: 'var(--primary-color, #1766F9)',
+      colorBgTextHover: 'var(--primary-color, #1890FF)',
+    },
+    Progress: {
+      remainingColor: '#253554',
     },
     Input: {
       colorBorder: '#4A6293 !important',
@@ -43,7 +46,7 @@ export const orallyTheme = {
       borderRadius: '8px'
     },
     Switch: {
-      colorPrimary: '#1766F9',
+      colorPrimary: '#1890FF',
       colorPrimaryHover: 'gray',
       colorTextTertiary: '#6B75FF',
       colorTextQuaternary: '#696C94',
@@ -74,7 +77,7 @@ export const orallyTheme = {
       colorText: '#4A6293',
       titleColor: 'white',
       colorBgMask: 'rgba(0, 0, 0, .8)',
-      colorIcon: 'var(--primary-color, #1766F9)',
+      colorIcon: 'var(--primary-color, #1890FF)',
       boxShadow:
         '0px 4px 4px 0px rgba(255,255,255,.15) inset, 0px 0px 68px 0px rgba(255,255,255,.05) inset',
       headerBg: 'transparent',
@@ -84,9 +87,9 @@ export const orallyTheme = {
       colorPrimary: '#0C172B', // bg color of menu item
       darkItemBg: 'transparent',
       darkItemHoverBg: '#192438',
-      darkItemHoverColor: '#1766F9',
+      darkItemHoverColor: '#1890FF',
       darkItemColor: '#4A6293',
-      darkItemSelectedColor: '#1766F9',
+      darkItemSelectedColor: '#1890FF',
       darkItemSelectedBg: '#192438',
       iconSize: '16px !important',
       fontSize: 14,
@@ -102,13 +105,13 @@ export const orallyTheme = {
     },
     Card: {
       colorBgContainer: '#0C172B',
-      borderRadiusLG: 24,
+      borderRadiusLG: 12,
       colorText: '#4A6293',
       colorBorderSecondary: '#15223B',
       paddingLG: 15,
     },
     Spin: {
-      colorPrimary: 'var(--primary-color, #1766F9)',
+      colorPrimary: 'var(--primary-color, #1890FF)',
     },
     Tag: {
       borderRadiusSM: 12,
@@ -121,7 +124,7 @@ export const orallyTheme = {
     Breadcrumb: {
       iconFontSize: 16,
       itemColor: '#4A6293',
-      lastItemColor: 'var(--primary-color, #1766F9)',
+      lastItemColor: 'var(--primary-color, #1890FF)',
       separatorColor: '#4A6293',
       linkColor: '#4A6293',
       fontSize: 14,
@@ -139,7 +142,7 @@ export const lightTheme = {
   token: {
     colorBgBase: 'lightgray',
     colorPrimaryBg: 'lightgray',
-    colorPrimary: '#1766F9',
+    colorPrimary: '#1890FF',
     colorBgLayout: 'lightgray',
   },
   components: {

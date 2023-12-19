@@ -2,7 +2,7 @@
 @import 'Styles/mix';
 
 .subscription {
-  width: 300px;
+  width: 240px;
   max-width: 100vw;
   justify-content: center;
 
@@ -47,6 +47,23 @@
   flex-direction: column;
 }
 
+.logoBg {
+  background-color: antiquewhite;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 -15px;
+}
+
+.sybilLink {
+  color: #32D4AA;
+
+  &:hover {
+    color: #186753;
+  }
+}
+
 .logo {
   border-radius: 50%;
   background-color: #091325;
@@ -85,25 +102,11 @@
 }
 
 .stat {
-  padding: 10px;
-  background-color: #091325;
-  border-radius: 14px;
-  width: 100%;
   position: relative;
-
-  :global(.light-theme) & {
-    background-color: gray;
-  }
 }
 
 .nextBtn {
   align-self: flex-start;
-}
-
-.progress {
-  position: absolute;
-  top: -5px;
-  left: 3px;
 }
 
 .label {

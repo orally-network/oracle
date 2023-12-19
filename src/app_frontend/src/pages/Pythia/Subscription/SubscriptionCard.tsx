@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Space, Card, Tooltip, Typography, Flex, Drawer, Skeleton as AntdSkeleton } from 'antd';
+import { Progress, Space, Card, Tooltip, Typography, Flex, Drawer, Skeleton as AntdSkeleton } from 'antd';
 import {
   ExportOutlined,
-  UnorderedListOutlined,
-  ArrowRightOutlined,
+  CopyOutlined,
+  RightOutlined,
   EditOutlined,
   EyeOutlined,
 } from '@ant-design/icons';
@@ -13,14 +13,13 @@ import { useNavigate } from 'react-router-dom';
 import Control from 'Shared/Control';
 import { CHAINS_MAP } from 'Constants/chains';
 import ChainLogo from 'Shared/ChainLogo';
-import { add0x } from 'Utils/addressUtils';
+import { add0x, isAddressHasOx } from 'Utils/addressUtils';
 import { usePythiaData } from 'Providers/PythiaData';
 import { truncateEthAddress } from 'Utils/addressUtils';
 import { stopPropagation } from 'Utils/reactUtils';
 import Button from 'Components/Button';
 import styles from './Subscription.scss';
-
-import { BREAK_POINT_MOBILE, STROKE_DASHARRAY_PROGRESS_BAR } from 'Constants/ui';
+import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import IconLink from 'Components/IconLink';
 import { SubscriptionDetails } from './SubscriptionDetails';
 import { Subscription } from 'Interfaces/subscription';
@@ -88,12 +87,35 @@ const SubscriptionCard = ({
   const lastUpdateDateTime = new Date(Number(last_update) * 1000);
   const nextUpdateDateTime = new Date(lastUpdateDateTime.getTime() + Number(frequency) * 1000);
   const diffMs = Math.abs(+new Date() - +nextUpdateDateTime);
-  const progress = (diffMs * STROKE_DASHARRAY_PROGRESS_BAR) / (Number(frequency) * 1000);
+  const progress = (diffMs * 100) / (Number(frequency) * 1000);
+  console.log(progress);
 
   return (
     <Card hoverable={true} className={styles.subscription}>
-      <Space size="middle" direction="vertical" style={{ width: '100%' }}>
+      <Space size="small" direction="vertical" style={{ width: '100%' }}>
         <div className={styles.header}>
+          <div className={styles.info}>
+            <div>{chain.name}</div>
+            <Space>
+              <Typography.Title level={4} style={{ margin: 0 }}>
+                {pair ? pair : 'Random'}
+              </Typography.Title>
+            </Space>
+            <Typography.Text className={styles.sybilLink} onClick={() => navigate(`/sybil/${id}`)}>
+              DATA FEED <RightOutlined size={4} />
+            </Typography.Text>
+          </div>
+
+          <div className={styles.menu} onClick={() => setIsSubscriptionDetailsVisible(true)}>
+            {sub.owner === address?.toLowerCase?.() ? <EditOutlined /> : <EyeOutlined />}
+          </div>
+        </div>
+        <div
+          className={styles.logoBg}
+          style={{
+            backgroundImage: `url('/${is_active ? 'active' : 'inactive'}-bg.svg')`,
+          }}
+        >
           <Flex className={styles.logo} align="center" justify="center">
             <ChainLogo chain={chain} />
 
@@ -103,90 +125,61 @@ const SubscriptionCard = ({
               </Tooltip>
             </div>
           </Flex>
-
-          <div className={styles.info}>
-            <div>{chain.name}</div>
-            <Space>
-              <Typography.Title level={4} style={{ margin: 0 }}>
-                {pair ? pair : 'Random'}
-              </Typography.Title>
-              <Button
-                size="small"
-                type="text"
-                style={{ color: '#1766F9' }}
-                icon={<ArrowRightOutlined />}
-                onClick={() => navigate(`/sybil/${id}`)}
-              />
-            </Space>
-          </div>
-
-          <div className={styles.menu} onClick={() => setIsSubscriptionDetailsVisible(true)}>
-            {sub.owner === address?.toLowerCase?.() ? <EditOutlined /> : <EyeOutlined />}
-          </div>
         </div>
 
         <div className={styles.stat}>
           <div className={styles.label}>Address</div>
 
-          <Space size="middle">
+          <Flex gap={2} justify="space-between">
             <Typography.Title level={5}>
               {truncateEthAddress(add0x(contract_addr))}{' '}
             </Typography.Title>
-            {chain?.blockExplorers?.default?.url && (
+            <Space size={5}>
               <IconLink
-                onClick={stopPropagation}
-                link={`${chain.blockExplorers.default.url}/address/${add0x(contract_addr)}`}
-                IconComponent={ExportOutlined}
+                link={null}
+                IconComponent={CopyOutlined}
+                onClick={() => navigator.clipboard.writeText(isAddressHasOx(contract_addr))}
               />
-            )}
-          </Space>
+
+              {chain?.blockExplorers?.default?.url && (
+                <IconLink
+                  onClick={stopPropagation}
+                  link={`${chain.blockExplorers.default.url}/address/${add0x(contract_addr)}`}
+                  IconComponent={ExportOutlined}
+                />
+              )}
+            </Space>
+          </Flex>
         </div>
 
-        <Flex justify="space-between" gap="middle">
+        <Flex justify="space-between" gap={10}>
+          <div className={styles.stat}>
+            Update time <br />
+            <Typography.Title level={5}>
+              {new Date(diffMs).getMinutes()} min {new Date(diffMs).getSeconds()} sec
+            </Typography.Title>
+            <div className={styles.progress}>
+                <Progress percent={progress} showInfo={false} strokeColor="#1890FF" size={[92, 2]} />
+            </div>
+           
+          </div>
           <div className={styles.stat}>
             Repetitions
             <br />
             <Typography.Title level={5}>{Number(executions_counter)}</Typography.Title>
           </div>
-
-          <div className={styles.stat}>
-            <Tooltip
-              placement="topRight"
-              title={`Next update in ${new Date(diffMs).getMinutes()} min ${new Date(
-                diffMs
-              ).getSeconds()} sec`}
-            >
-              <div className={styles.progress}>
-                <svg width="130" height="60" viewBox="0 0 130 70">
-                  <path
-                    className="percent test path"
-                    d="M5,5 h107 a14,14 0 0 1 14,14 v35 a14,14 0 0 1 -14,14 h-107 a14,14 0 0 1 -14,-14 v-35 a14,14 0 0 1 14,-14 z"
-                    fill="none"
-                    stroke="#1766F9"
-                    strokeWidth="1"
-                    style={{
-                      strokeDasharray: STROKE_DASHARRAY_PROGRESS_BAR,
-                      strokeDashoffset: progress,
-                    }}
-                  />
-                </svg>
-              </div>
-              Update time
-              <Typography.Title level={5}>{Number(frequency) / 60} min</Typography.Title>
-            </Tooltip>
-          </div>
         </Flex>
 
         <Button
-          type="primary"
+          type="text"
           size="large"
-          icon={<UnorderedListOutlined />}
           onClick={() => navigate(`/pythia/${chain_id}/${id}`)}
           style={{
             width: '100%',
+            fontSize: '14px',
           }}
         >
-          View list
+          View subscription
         </Button>
       </Space>
 
@@ -228,7 +221,7 @@ const SubscriptionCard = ({
 const Skeleton = () => {
   return (
     <Card hoverable={true} className={styles.subscription}>
-      <AntdSkeleton active avatar paragraph={{ rows: 3 }} round loading />
+      <AntdSkeleton active paragraph={{ rows: 5 }} round loading />
     </Card>
   );
 };

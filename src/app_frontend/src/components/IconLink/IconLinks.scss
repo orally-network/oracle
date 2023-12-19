@@ -1,9 +1,8 @@
 @use '~Styles/variables';
 
 .iconLink {
-  color: variables.$text-color;
+  color: variables.$primary-color;
   width: 20px;
   height: 20px;
   font-size: 14px;
-  margin-left: 5px;
 }

@@ -113,6 +113,15 @@ export const orallyTheme = {
     Spin: {
       colorPrimary: 'var(--primary-color, #1890FF)',
     },
+    Pagination: {
+      itemBg: '#0C172B',
+      colorBgContainer: '#0C172B',
+      colorBorder: 'red',
+      borderRadius: 12,
+      colorPrimary: 'var(--primary-color, #1766F9)',
+      colorPrimaryHover: '#5393FF',
+      colorText: '#4A6293',
+    },
     Tag: {
       borderRadiusSM: 12,
       lineWidth: 2,

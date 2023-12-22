@@ -88,7 +88,6 @@ const SubscriptionCard = ({
   const nextUpdateDateTime = new Date(lastUpdateDateTime.getTime() + Number(frequency) * 1000);
   const diffMs = Math.abs(+new Date() - +nextUpdateDateTime);
   const progress = (diffMs * 100) / (Number(frequency) * 1000);
-  console.log(progress);
 
   return (
     <Card hoverable={true} className={styles.subscription}>

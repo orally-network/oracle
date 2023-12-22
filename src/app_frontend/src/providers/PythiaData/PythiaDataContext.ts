@@ -1,11 +1,11 @@
 import { Chain } from 'Interfaces/chain';
-import { Subscription } from 'Interfaces/subscription';
+import { SubscriptionData } from 'Interfaces/subscription';
 import { createContext } from 'react';
 
 interface PythiaDataContextInterface {
-  subs: Subscription[];
+  subs: SubscriptionData;
   isSubsLoading: boolean;
-  fetchSubs: () => void;
+  fetchSubs: (page: number, size?: number) => void;
   chains: Chain[];
   isChainsLoading: boolean;
   fetchBalance: (chainId: BigInt | number, address: string) => void;
@@ -16,7 +16,13 @@ interface PythiaDataContextInterface {
 }
 
 const PythiaDataContext = createContext<PythiaDataContextInterface>({
-  subs: [],
+  subs: {
+    items: [],
+    page: 1,
+    total_pages: 0,
+    size: 10,
+    total_items: 10,
+  },
   isSubsLoading: false,
   fetchSubs: () => {},
   chains: [],

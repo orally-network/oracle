@@ -12,3 +12,4 @@ export const EMPTY_BALANCE = 0.001;
 
 export const DEFAULT_SUBSCRIPTIONS = 12;
 export const DEFAULT_TOP_UP_AMOUNT = 0.01;
+export const DEFAULT_SUBSCRIPTIONS_SIZE = 10;

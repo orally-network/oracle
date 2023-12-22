@@ -55,3 +55,14 @@ export type OptionType = {
 };
 
 export type Unit = 'min' | 'hour' | 'day' | 'week' | 'month';
+
+export interface SubscriptionData extends Pagination {
+  items: Subscription[];
+}
+
+export interface Pagination {
+  page: number;
+  total_pages: number;
+  size: number;
+  total_items: number;
+}

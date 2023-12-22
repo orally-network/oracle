@@ -113,7 +113,8 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
     console.log({ res });
 
     if (!res.Err) {
-      fetchSubs();
+      // TODO: check if filters should be applied
+      fetchSubs(1);
       // clear state
       setChainId(chains[0]?.chain_id);
       setMethodName('');

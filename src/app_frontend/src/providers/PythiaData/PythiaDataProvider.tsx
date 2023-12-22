@@ -8,9 +8,17 @@ import pythiaCanister from 'Canisters/pythiaCanister';
 import { CHAINS_MAP } from 'Constants/chains';
 import config from 'Constants/config';
 import PythiaDataContext from './PythiaDataContext';
+import { SubscriptionData } from 'Interfaces/subscription';
+import { DEFAULT_SUBSCRIPTIONS_SIZE } from 'Constants/ui';
 
-const PythiaDataProvider = ({ children }) => {
-  const [subs, setSubs] = useState([]);
+const PythiaDataProvider = ({ children }: any) => {
+  const [subs, setSubs] = useState<SubscriptionData>({
+    items: [],
+    page: 1,
+    size: 10,
+    total_pages: 0,
+    total_items: 10,
+  });
   const [isSubsLoading, setIsSubsLoading] = useState(false);
   const [chains, setChains] = useState([]);
   const [isChainsLoading, setIsChainsLoading] = useState(false);
@@ -22,15 +30,34 @@ const PythiaDataProvider = ({ children }) => {
 
   const { address } = useAccount();
 
-  const fetchSubs = useCallback(async () => {
-    setIsSubsLoading(true);
+  const fetchSubs = useCallback(
+    async (page: number, size?: number) => {
+      setIsSubsLoading(true);
 
-    const subs = await pythiaCanister.get_subscriptions([]);
-    console.log({ subs });
+      const subsData: SubscriptionData = await pythiaCanister.get_subscriptions(
+        [
+          {
+            is_active: [true], // default show only active, but can be changed by filters
+            chain_ids: [],
+            owner: [],
+            search: [],
+            method_type: [],
+          },
+        ],
+        [
+          {
+            page,
+            size: size || DEFAULT_SUBSCRIPTIONS_SIZE,
+          },
+        ]
+      );
+      console.log({ subsData });
 
-    setIsSubsLoading(false);
-    if (Array.isArray(subs)) setSubs(subs);
-  }, [address]);
+      setIsSubsLoading(false);
+      setSubs(subsData);
+    },
+    [address]
+  );
 
   const fetchChains = useCallback(async () => {
     setIsChainsLoading(true);
@@ -94,7 +121,7 @@ const PythiaDataProvider = ({ children }) => {
   useEffect(() => {
     fetchChains();
     fetchPma();
-    fetchSubs();
+    fetchSubs(subs.page);
   }, []);
 
   const value = useMemo(() => {

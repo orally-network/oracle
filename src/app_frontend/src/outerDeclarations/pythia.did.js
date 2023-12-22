@@ -63,10 +63,26 @@ export const idlFactory = ({ IDL }) => {
     'status' : SubscriptionStatus,
     'method' : Method,
     'owner' : IDL.Text,
+    'label' : IDL.Text,
   });
   const GetSubscriptionResponse = IDL.Variant({
     'Ok' : Subscription,
     'Err' : IDL.Text,
+  });
+  const GetSubscriptionsFilter = IDL.Record({
+    'chain_ids' : IDL.Opt(IDL.Vec(IDL.Nat)),
+    'owner' : IDL.Opt(IDL.Text),
+    'search' : IDL.Opt(IDL.Text),
+    'method_type' : IDL.Opt(MethodType),
+    'is_active' : IDL.Opt(IDL.Bool),
+  });
+  const Pagination = IDL.Record({ 'page' : IDL.Nat64, 'size' : IDL.Nat64 });
+  const GetSubscriptionsResultWithPagination = IDL.Record({
+    'page' : IDL.Nat64,
+    'total_pages' : IDL.Nat64,
+    'size' : IDL.Nat64,
+    'total_items' : IDL.Nat64,
+    'items' : IDL.Vec(Subscription),
   });
   const WhitelistEntry = IDL.Record({
     'is_blacklisted' : IDL.Bool,
@@ -94,6 +110,7 @@ export const idlFactory = ({ IDL }) => {
     'frequency_condition' : IDL.Opt(IDL.Nat),
     'is_random' : IDL.Bool,
     'price_mutation_condition' : IDL.Opt(PriceMutationCondition),
+    'label' : IDL.Text,
     'chain_id' : IDL.Nat,
     'gas_limit' : IDL.Nat,
     'pair_id' : IDL.Opt(IDL.Text),
@@ -108,6 +125,7 @@ export const idlFactory = ({ IDL }) => {
     'frequency_condition' : IDL.Opt(IDL.Nat),
     'is_random' : IDL.Opt(IDL.Bool),
     'price_mutation_condition' : IDL.Opt(PriceMutationCondition),
+    'label' : IDL.Opt(IDL.Text),
     'chain_id' : IDL.Nat,
     'gas_limit' : IDL.Opt(IDL.Nat),
     'pair_id' : IDL.Opt(IDL.Text),
@@ -130,8 +148,8 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'get_subscriptions' : IDL.Func(
-        [IDL.Opt(IDL.Text)],
-        [IDL.Vec(Subscription)],
+        [IDL.Opt(GetSubscriptionsFilter), IDL.Opt(Pagination)],
+        [GetSubscriptionsResultWithPagination],
         [],
       ),
     'get_whitelist' : IDL.Func([], [GetWhiteListResponse], []),

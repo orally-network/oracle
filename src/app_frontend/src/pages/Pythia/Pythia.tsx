@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Flex, Layout, Drawer, Space, Typography, Skeleton } from 'antd';
+import { Flex, Layout, Drawer, Space, Typography, Skeleton, Pagination } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { useAccount } from 'wagmi';
 import Button from 'Components/Button';
@@ -28,9 +28,9 @@ const Pythia = () => {
   const [isWhitelisted, setIsWhitelisted] = useState(true);
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [isNewSubscriptionModalVisible, setIsNewSubscriptionModalVisible] = useState(false);
-  const { subs, isSubsLoading, isChainsLoading } = usePythiaData();
+  const { subs, isSubsLoading, isChainsLoading, fetchSubs } = usePythiaData();
   const { isLoading: isPairsLoading, pairs } = useSybilPairs();
-
+  const { items: subscriptions, page, size, total_pages, total_items } = subs;
   const { width } = useWindowDimensions();
   const isMobile = width <= BREAK_POINT_MOBILE;
 
@@ -186,10 +186,15 @@ const Pythia = () => {
     [addressData, address]
   );
 
+  const onPaginationChange = useCallback((page: number) => {
+    //todo: add query params and filters
+    fetchSubs(page);
+  }, []);
+
   const filteredSubs = useMemo(() => {
-    if (subs.length) {
+    if (subscriptions.length) {
       return (
-        subs
+        subscriptions
           .filter((sub) => (showMine ? sub.owner === address?.toLowerCase?.() : true))
           .filter((sub) => (showInactive ? true : !!sub?.status?.is_active))
           .filter((sub) => (filterByType === 'price' ? sub.method?.method_type?.Pair : true))
@@ -206,7 +211,7 @@ const Pythia = () => {
       );
     }
     return [];
-  }, [showMine, showInactive, filterByType, subs, address, chainIdsFilter, searchQuery]);
+  }, [showMine, showInactive, filterByType, subscriptions, address, chainIdsFilter, searchQuery]);
 
   console.log({ filteredSubs });
 
@@ -215,12 +220,18 @@ const Pythia = () => {
   return (
     <Layout.Content className={styles.pythia} title="Pythia">
       <Flex vertical align="center" wrap="wrap">
-        <Space size="large" direction="vertical" style={{ width: '100%' }}>
+        <Space size="middle" direction="vertical" style={{ width: '100%' }}>
           {!isWhitelisted && <div className={styles.notWhitelisted}>Not whitelisted</div>}
           <Flex align="center" justify="space-between" gap={8}>
-            <Typography.Title style={{ minWidth: '70px' }}level={3}>Pythia</Typography.Title>
+            <Typography.Title style={{ minWidth: '70px' }} level={3}>
+              Pythia
+            </Typography.Title>
 
-            {subs.length ? <FiltersBar /> : <Skeleton paragraph={{ rows: 0 }} round active />}
+            {subscriptions.length ? (
+              <FiltersBar />
+            ) : (
+              <Skeleton paragraph={{ rows: 0 }} round active />
+            )}
 
             {loading ? (
               <Skeleton.Button active size="large" />
@@ -258,6 +269,12 @@ const Pythia = () => {
               ))
             )}
           </Space>
+
+          {!loading && (
+            <Flex justify="end">
+              <Pagination current={Number(page)} onChange={onPaginationChange} total={Number(total_items)} />
+            </Flex>
+          )}
 
           {isNewSubscriptionModalVisible && (
             <Drawer

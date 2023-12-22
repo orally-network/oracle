@@ -16,6 +16,7 @@ export const orallyTheme = {
       siderBg: '#0C172B',
       headerHeight:  48,
       headerPadding: '0 24px 0 15px',
+      footerPadding: '10px 0',
     },
     Button: {
       colorPrimary: 'var(--primary-color, #1890FF)',
@@ -144,6 +145,9 @@ export const orallyTheme = {
       colorFillSecondary: '#4A6293',
       colorTextHeading: '#4A6293',
     },
+    Empty: {
+      colorText: 'var(--primary-color, #1890FF)'
+    }
   },
 };
 

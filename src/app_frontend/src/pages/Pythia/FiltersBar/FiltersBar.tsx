@@ -1,19 +1,9 @@
 import React, { useState } from 'react';
-import {
-  Radio,
-  Switch,
-  Input,
-  Dropdown,
-  MenuProps,
-  RadioChangeEvent,
-  Flex,
-  Space,
-} from 'antd';
+import { Radio, Switch, Input, Dropdown, MenuProps, RadioChangeEvent, Flex, Space } from 'antd';
 import { SearchOutlined, FilterOutlined } from '@ant-design/icons';
 import { useSearchParams } from 'react-router-dom';
 
 import { usePythiaData } from 'Providers/PythiaData';
-import { useSubscriptionsFilters } from 'Providers/SubscriptionsFilters';
 import { mapChainsToOptions } from '../../../utils/helper';
 import { SecondaryButton } from 'Components/SecondaryButton';
 import styles from './FiltersBar.scss';
@@ -23,11 +13,8 @@ import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import { OptionType } from 'Interfaces/subscription';
 
 const FiltersBar = () => {
-  const { chains } = usePythiaData();
-  const { width } = useWindowDimensions();
-  const isMobile = width <= BREAK_POINT_MOBILE;
-
   const {
+    chains,
     showInactive,
     showMine,
     filterByType,
@@ -36,10 +23,11 @@ const FiltersBar = () => {
     setFilterByType,
     setChainIds,
     debouncedChangeHandler,
-  } = useSubscriptionsFilters();
+  } = usePythiaData();
+  const { width } = useWindowDimensions();
+  const isMobile = width <= BREAK_POINT_MOBILE;
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const [isSearchVisible, setSearchIsVisible] = useState(false);
   const [isFiltersMenuOpen, setFiltersMenuOpen] = useState(false);
 
   const onChainSelect = (val: OptionType[]) => {
@@ -62,9 +50,9 @@ const FiltersBar = () => {
           defaultValue="Price"
           size="small"
           options={[
-            { label: 'All', value: 'all' },
-            { label: 'Price', value: 'price' },
-            { label: 'Random', value: 'random' },
+            { label: 'All', value: 'Empty' },
+            { label: 'Price', value: 'Pair' },
+            { label: 'Random', value: 'Random' },
           ]}
           optionType="button"
         ></Radio.Group>
@@ -148,9 +136,9 @@ const FiltersBar = () => {
               defaultValue="Price"
               size="large"
               options={[
-                { label: 'All', value: 'all' },
-                { label: 'Price', value: 'price' },
-                { label: 'Random', value: 'random' },
+                { label: 'All', value: 'Empty' },
+                { label: 'Price', value: 'Pair' },
+                { label: 'Random', value: 'Random' },
               ]}
               optionType="button"
             ></Radio.Group>
@@ -197,7 +185,7 @@ const FiltersBar = () => {
               onChange={debouncedChangeHandler}
               style={{ width: 180, maxHeight: '38px' }}
               allowClear
-              prefix={<SearchOutlined style={{ color: '#1D2E51' }} />}
+              suffix={<SearchOutlined style={{ color: '#1D2E51' }} />}
             />
           </Space>
         </>

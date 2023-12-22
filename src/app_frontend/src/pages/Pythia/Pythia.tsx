@@ -1,6 +1,6 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Flex, Layout, Drawer, Space, Typography, Skeleton, Pagination } from 'antd';
+import { Flex, Layout, Drawer, Space, Typography, Empty } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { useAccount } from 'wagmi';
 import Button from 'Components/Button';
@@ -9,7 +9,6 @@ import { remove0x } from 'Utils/addressUtils';
 import { useSybilPairs } from 'Providers/SybilPairs';
 import { usePythiaData } from 'Providers/PythiaData';
 import { useGlobalState } from 'Providers/GlobalState';
-import { useSubscriptionsFilters } from 'Providers/SubscriptionsFilters';
 import pythiaCanister from 'Canisters/pythiaCanister';
 import useSignature from 'Shared/useSignature';
 import logger from 'Utils/logger';
@@ -21,31 +20,28 @@ import FiltersBar from './FiltersBar';
 import SubscriptionCard from './Subscription/SubscriptionCard';
 import NewSubscription from './Subscription/NewSubscription';
 import styles from './Pythia.scss';
-import { FilterType } from 'Interfaces/subscription';
 import { GeneralResponse } from 'Interfaces/common';
+import { Pagination } from 'Components/Pagination/Pagination';
+import { FilterType } from 'Interfaces/subscription';
 
 const Pythia = () => {
   const [isWhitelisted, setIsWhitelisted] = useState(true);
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [isNewSubscriptionModalVisible, setIsNewSubscriptionModalVisible] = useState(false);
-  const { subs, isSubsLoading, isChainsLoading, fetchSubs } = usePythiaData();
+  const {
+    subs,
+    isSubsLoading,
+    isChainsLoading,
+    setFilterByType,
+    setShowMine,
+    setShowInactive,
+  } = usePythiaData();
   const { isLoading: isPairsLoading, pairs } = useSybilPairs();
-  const { items: subscriptions, page, size, total_pages, total_items } = subs;
+  const { items: subscriptions, page, total_items } = subs;
   const { width } = useWindowDimensions();
   const isMobile = width <= BREAK_POINT_MOBILE;
 
   const [searchParams] = useSearchParams();
-
-  const {
-    showMine,
-    showInactive,
-    chainIds: chainIdsFilter,
-    searchQuery,
-    filterByType,
-    setFilterByType,
-    setShowMine,
-    setShowInactive,
-  } = useSubscriptionsFilters();
 
   const { addressData } = useGlobalState();
   const { signMessage } = useSignature();
@@ -186,95 +182,63 @@ const Pythia = () => {
     [addressData, address]
   );
 
-  const onPaginationChange = useCallback((page: number) => {
-    //todo: add query params and filters
-    fetchSubs(page);
-  }, []);
-
-  const filteredSubs = useMemo(() => {
-    if (subscriptions.length) {
-      return (
-        subscriptions
-          .filter((sub) => (showMine ? sub.owner === address?.toLowerCase?.() : true))
-          .filter((sub) => (showInactive ? true : !!sub?.status?.is_active))
-          .filter((sub) => (filterByType === 'price' ? sub.method?.method_type?.Pair : true))
-          .filter((sub) => (filterByType === 'random' ? sub.method?.method_type?.Random : true))
-          .filter((sub) =>
-            chainIdsFilter.length > 0
-              ? chainIdsFilter.includes(sub?.method?.chain_id.toString())
-              : true
-          )
-          //add later search by name, chain and pair
-          .filter((sub) =>
-            searchQuery ? sub.method?.method_type?.Pair?.toLowerCase().includes(searchQuery) : true
-          )
-      );
-    }
-    return [];
-  }, [showMine, showInactive, filterByType, subscriptions, address, chainIdsFilter, searchQuery]);
-
-  console.log({ filteredSubs });
-
   const loading = isChainsLoading || isSubsLoading || isSubscribing || isPairsLoading;
 
   return (
     <Layout.Content className={styles.pythia} title="Pythia">
       <Flex vertical align="center" wrap="wrap">
-        <Space size="middle" direction="vertical" style={{ width: '100%' }}>
+        <Space size="middle" direction="vertical" style={{ width: '100%', position: 'relative' }}>
           {!isWhitelisted && <div className={styles.notWhitelisted}>Not whitelisted</div>}
           <Flex align="center" justify="space-between" gap={8}>
             <Typography.Title style={{ minWidth: '70px' }} level={3}>
               Pythia
             </Typography.Title>
 
-            {subscriptions.length ? (
-              <FiltersBar />
-            ) : (
-              <Skeleton paragraph={{ rows: 0 }} round active />
-            )}
-
-            {loading ? (
-              <Skeleton.Button active size="large" />
-            ) : (
-              <Button
-                type="primary"
-                size="large"
-                onClick={() => setIsNewSubscriptionModalVisible(!isNewSubscriptionModalVisible)}
-                icon={<PlusCircleOutlined />}
-                style={{ width: isMobile ? '40px' : 'auto', height: isMobile ? '40px' : 'auto' }}
-              >
-                {isMobile ? '' : 'Create subscription'}
-              </Button>
-            )}
+            <FiltersBar />
+            <Button
+              type="primary"
+              size="large"
+              onClick={() => setIsNewSubscriptionModalVisible(!isNewSubscriptionModalVisible)}
+              icon={<PlusCircleOutlined />}
+              style={{ width: isMobile ? '40px' : 'auto', height: isMobile ? '40px' : 'auto' }}
+            >
+              {isMobile ? '' : 'Create subscription'}
+            </Button>
           </Flex>
 
-          <Space wrap className={styles.subs} size="middle">
-            {loading ? (
-              <>
-                {Array.from(Array(DEFAULT_SUBSCRIPTIONS).keys()).map((sub, i) => (
-                  <SubscriptionCard.Skeleton key={i} />
-                ))}
-              </>
-            ) : (
-              filteredSubs.map((sub, i) => (
-                <SubscriptionCard
-                  key={i}
-                  sub={sub}
-                  addressData={addressData}
-                  signMessage={signMessage}
-                  startSubscription={startSubscription}
-                  stopSubscription={stopSubscription}
-                  withdraw={withdraw}
-                />
-              ))
-            )}
-          </Space>
-
-          {!loading && (
-            <Flex justify="end">
-              <Pagination current={Number(page)} onChange={onPaginationChange} total={Number(total_items)} />
+          {!loading && subscriptions.length === 0 ? (
+            <Flex justify="center" align="center" style={{ height: '60vh' }}>
+              <Empty />
             </Flex>
+          ) : (
+            <Space wrap className={styles.subs} size={['large', 'middle']}>
+              {loading ? (
+                <>
+                  {Array.from(Array(DEFAULT_SUBSCRIPTIONS).keys()).map((sub, i) => (
+                    <SubscriptionCard.Skeleton key={i} />
+                  ))}
+                </>
+              ) : (
+                subscriptions.map((sub, i) => (
+                  <SubscriptionCard
+                    key={i}
+                    sub={sub}
+                    addressData={addressData}
+                    signMessage={signMessage}
+                    startSubscription={startSubscription}
+                    stopSubscription={stopSubscription}
+                    withdraw={withdraw}
+                  />
+                ))
+              )}
+            </Space>
           )}
+
+          {!loading && subscriptions.length ? (
+            <Flex justify="end" className={styles.paginationContainer}>
+              <Pagination currentPage={Number(page)} total={Number(total_items)} />
+            </Flex>
+          ) : null}
 
           {isNewSubscriptionModalVisible && (
             <Drawer

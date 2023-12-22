@@ -11,6 +11,9 @@ import styles from "./Footer.scss";
 const Footer = () => {
   return (
     <Layout.Footer className={styles.container}>
+       <Button className={styles.logoBtn} type="link" target="_blank" href="https://internetcomputer.org/ecosystem?tag=Tools+%2F+Infrastructure">
+        <img src={icpLogo} alt="100% on-chain: Internet Computer" className={styles.logo} />
+      </Button>
       <div className={styles.social}>
         <Button
           type="link"
@@ -30,10 +33,6 @@ const Footer = () => {
           <GitbookIcon />
         </Button>
       </div>
-      
-      <Button type="link" target="_blank" href="https://internetcomputer.org/ecosystem?tag=Tools+%2F+Infrastructure">
-        <img src={icpLogo} alt="100% on-chain: Internet Computer" className={styles.logo} />
-      </Button>
     </Layout.Footer>
   );
 };

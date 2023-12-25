@@ -220,7 +220,7 @@ const SubscriptionCard = ({
 const Skeleton = () => {
   return (
     <Card hoverable={true} className={styles.subscription}>
-      <AntdSkeleton active paragraph={{ rows: 5 }} round loading />
+      <AntdSkeleton active paragraph={{ rows: 7 }} round loading />
     </Card>
   );
 };

@@ -6,7 +6,6 @@ import { Provider as RollbarProvider, ErrorBoundary } from '@rollbar/react';
 import { SybilPairsProvider } from 'Providers/SybilPairs';
 import { PythiaDataProvider } from 'Providers/PythiaData';
 import { GlobalStateProvider } from 'Providers/GlobalState';
-import { SubscriptionsFiltersProvider } from 'Providers/SubscriptionsFilters';
 
 import { BaseLayout } from 'Components/Layout';
 
@@ -55,16 +54,14 @@ const App = () => {
         <GlobalStateProvider>
           <PythiaDataProvider>
             <SybilPairsProvider>
-              <SubscriptionsFiltersProvider>
-                <RouterProvider
-                  router={router}
-                  fallbackElement={
-                    <Space size="large">
-                      <Spin size="large" />
-                    </Space>
-                  }
-                />
-              </SubscriptionsFiltersProvider>
+              <RouterProvider
+                router={router}
+                fallbackElement={
+                  <Space size="large">
+                    <Spin size="large" />
+                  </Space>
+                }
+              />
             </SybilPairsProvider>
           </PythiaDataProvider>
         </GlobalStateProvider>

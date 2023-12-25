@@ -1,17 +1,18 @@
 .container {
   display: flex;
-  flex-direction: column;
   align-items: center;
   background-color: inherit;
 }
 
-.social {
-  margin-bottom: 15px;
+.logoBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .logo {
-  width: 220px;
-  border-radius: 15px;
+  width: 180px;
+  border-radius: 12px;
   max-width: 300px;
   display: block;
 }

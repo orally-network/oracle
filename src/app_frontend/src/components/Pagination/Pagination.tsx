@@ -12,26 +12,30 @@ interface PaginationProps {
 
 const itemRender: AntdPaginationProps['itemRender'] = (_, type, originalElement) => {
   if (type === 'prev') {
-    return <div className={styles.controlBtn}><LeftOutlined /></div>;
+    return (
+      <div className={styles.controlBtn}>
+        <LeftOutlined />
+      </div>
+    );
   }
   if (type === 'next') {
-    return <div className={styles.controlBtn}><RightOutlined /></div>;
+    return (
+      <div className={styles.controlBtn}>
+        <RightOutlined />
+      </div>
+    );
   }
   return originalElement;
 };
 
-export const Pagination = ({currentPage, total}: PaginationProps) => {
-  const { fetchSubs } = usePythiaData();
-  
-  const onPaginationChange = useCallback(async(page: number) => {
-    await fetchSubs({ pagination: { page } });
-  }, []);
+export const Pagination = ({ currentPage, total }: PaginationProps) => {
+  const { setPage } = usePythiaData();
 
   return (
     <Flex justify="end" className={styles.paginationContainer}>
       <AntdPagination
         current={Number(currentPage)}
-        onChange={onPaginationChange}
+        onChange={(page) => setPage(page)}
         total={Number(total)}
         itemRender={itemRender}
       />

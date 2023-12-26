@@ -1,11 +1,8 @@
 import { Chain } from 'Interfaces/chain';
-import { FilterType, SubscriptionData } from 'Interfaces/subscription';
+import { FilterType } from 'Interfaces/subscription';
 import { createContext } from 'react';
 
 interface PythiaDataContextInterface {
-  subs: SubscriptionData;
-  isSubsLoading: boolean;
-  fetchSubs: (pagination?: {}, filter?: {}) => Promise<void>;
   chains: Chain[];
   isChainsLoading: boolean;
   fetchBalance: (chainId: BigInt | number, address: string) => void;
@@ -13,7 +10,9 @@ interface PythiaDataContextInterface {
   isBalanceLoading: boolean;
   pma: string;
   deposit: (chainId: string, hash: string) => Promise<any>;
-  
+
+  page: number;
+  setPage: (val: number) => void;
   filterByType: FilterType;
   showMine: boolean;
   showInactive: boolean;
@@ -28,15 +27,6 @@ interface PythiaDataContextInterface {
 }
 
 const PythiaDataContext = createContext<PythiaDataContextInterface>({
-  subs: {
-    items: [],
-    page: 1,
-    total_pages: 0,
-    size: 10,
-    total_items: 10,
-  },
-  isSubsLoading: false,
-  fetchSubs: () => Promise.resolve(),
   chains: [],
   isChainsLoading: false,
   fetchBalance: () => {},
@@ -45,6 +35,8 @@ const PythiaDataContext = createContext<PythiaDataContextInterface>({
   pma: '',
   deposit: () => Promise.resolve(),
 
+  page: 1,
+  setPage: (val: number) => {},
   filterByType: 'Empty',
   showMine: false,
   showInactive: false,

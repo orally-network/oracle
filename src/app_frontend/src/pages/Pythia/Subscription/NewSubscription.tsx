@@ -70,7 +70,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
   const { width } = useWindowDimensions();
   const isMobile = width <= BREAK_POINT_MOBILE;
 
-  const { fetchSubs, chains, fetchBalance, pma, isBalanceLoading } = usePythiaData();
+  const { chains, fetchBalance, pma, isBalanceLoading } = usePythiaData();
 
   const refetchBalance = useCallback(async () => {
     setBalance(await fetchBalance(chainId, addressData.address));
@@ -113,8 +113,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
     console.log({ res });
 
     if (!res.Err) {
-      // TODO: check if filters should be applied
-      fetchSubs(1);
+      // TODO: add item key to query list
       // clear state
       setChainId(chains[0]?.chain_id);
       setMethodName('');
@@ -134,7 +133,6 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
     feed,
     chains,
     subscribe,
-    fetchSubs,
     gasLimit,
     methodArg,
   ]);

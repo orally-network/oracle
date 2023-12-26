@@ -1,4 +1,5 @@
 import React from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Space, Spin } from 'antd';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { Provider as RollbarProvider, ErrorBoundary } from '@rollbar/react';
@@ -15,6 +16,7 @@ import ROUTES from 'Constants/routes';
 import rollbar from './rollbar';
 import { SubscriptionDetailsPage } from 'Pages/SubscriptionDetailsPage';
 import ErrorPage from 'Pages/ErrorPage';
+import { CACHE_TIME, QUERY_CLIENT_DEFAULT_RETRY_COUNT, TIME_TO_WAIT } from 'Constants/query';
 
 const router = createBrowserRouter([
   {
@@ -47,24 +49,40 @@ const router = createBrowserRouter([
   },
 ]);
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: TIME_TO_WAIT,
+      refetchOnMount: true,
+      refetchOnReconnect: true,
+      refetchOnWindowFocus: false,
+      refetchInterval: TIME_TO_WAIT,
+      cacheTime: CACHE_TIME,
+      retry: QUERY_CLIENT_DEFAULT_RETRY_COUNT,
+    },
+  },
+});
+
 const App = () => {
   return (
     <RollbarProvider instance={rollbar}>
       <ErrorBoundary>
-        <GlobalStateProvider>
-          <PythiaDataProvider>
-            <SybilPairsProvider>
-              <RouterProvider
-                router={router}
-                fallbackElement={
-                  <Space size="large">
-                    <Spin size="large" />
-                  </Space>
-                }
-              />
-            </SybilPairsProvider>
-          </PythiaDataProvider>
-        </GlobalStateProvider>
+        <QueryClientProvider client={queryClient}>
+          <GlobalStateProvider>
+            <PythiaDataProvider>
+              <SybilPairsProvider>
+                <RouterProvider
+                  router={router}
+                  fallbackElement={
+                    <Space size="large">
+                      <Spin size="large" />
+                    </Space>
+                  }
+                />
+              </SybilPairsProvider>
+            </PythiaDataProvider>
+          </GlobalStateProvider>
+        </QueryClientProvider>
       </ErrorBoundary>
     </RollbarProvider>
   );

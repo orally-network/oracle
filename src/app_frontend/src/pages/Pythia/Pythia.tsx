@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Flex, Layout, Drawer, Space, Typography, Empty } from 'antd';
+import { Flex, Layout, Drawer, Space, Typography } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { useAccount } from 'wagmi';
 import Button from 'Components/Button';
@@ -12,32 +12,23 @@ import { useGlobalState } from 'Providers/GlobalState';
 import pythiaCanister from 'Canisters/pythiaCanister';
 import useSignature from 'Shared/useSignature';
 import logger from 'Utils/logger';
-import { DEFAULT_SUBSCRIPTIONS } from 'Constants/ui';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 
 import FiltersBar from './FiltersBar';
-import SubscriptionCard from './Subscription/SubscriptionCard';
 import NewSubscription from './Subscription/NewSubscription';
 import styles from './Pythia.scss';
 import { GeneralResponse } from 'Interfaces/common';
-import { Pagination } from 'Components/Pagination/Pagination';
+
 import { FilterType } from 'Interfaces/subscription';
+import { SubscriptionList } from './SubscriptionList/SubscriptionList';
 
 const Pythia = () => {
   const [isWhitelisted, setIsWhitelisted] = useState(true);
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [isNewSubscriptionModalVisible, setIsNewSubscriptionModalVisible] = useState(false);
-  const {
-    subs,
-    isSubsLoading,
-    isChainsLoading,
-    setFilterByType,
-    setShowMine,
-    setShowInactive,
-  } = usePythiaData();
+  const { setFilterByType, setShowMine, setShowInactive } = usePythiaData();
   const { isLoading: isPairsLoading, pairs } = useSybilPairs();
-  const { items: subscriptions, page, total_items } = subs;
   const { width } = useWindowDimensions();
   const isMobile = width <= BREAK_POINT_MOBILE;
 
@@ -182,8 +173,6 @@ const Pythia = () => {
     [addressData, address]
   );
 
-  const loading = isChainsLoading || isSubsLoading || isSubscribing || isPairsLoading;
-
   return (
     <Layout.Content className={styles.pythia} title="Pythia">
       <Flex vertical align="center" wrap="wrap">
@@ -206,39 +195,11 @@ const Pythia = () => {
             </Button>
           </Flex>
 
-          {!loading && subscriptions.length === 0 ? (
-            <Flex justify="center" align="center" style={{ height: '60vh' }}>
-              <Empty />
-            </Flex>
-          ) : (
-            <Space wrap className={styles.subs} size={['large', 'middle']}>
-              {loading ? (
-                <>
-                  {Array.from(Array(DEFAULT_SUBSCRIPTIONS).keys()).map((sub, i) => (
-                    <SubscriptionCard.Skeleton key={i} />
-                  ))}
-                </>
-              ) : (
-                subscriptions.map((sub, i) => (
-                  <SubscriptionCard
-                    key={i}
-                    sub={sub}
-                    addressData={addressData}
-                    signMessage={signMessage}
-                    startSubscription={startSubscription}
-                    stopSubscription={stopSubscription}
-                    withdraw={withdraw}
-                  />
-                ))
-              )}
-            </Space>
-          )}
-
-          {!loading && subscriptions.length ? (
-            <Flex justify="end" className={styles.paginationContainer}>
-              <Pagination currentPage={Number(page)} total={Number(total_items)} />
-            </Flex>
-          ) : null}
+          <SubscriptionList
+            startSubscription={startSubscription}
+            stopSubscription={stopSubscription}
+            withdraw={withdraw}
+          />
 
           {isNewSubscriptionModalVisible && (
             <Drawer

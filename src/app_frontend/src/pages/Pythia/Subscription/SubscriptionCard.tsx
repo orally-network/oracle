@@ -1,5 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Progress, Space, Card, Tooltip, Typography, Flex, Drawer, Skeleton as AntdSkeleton } from 'antd';
+import {
+  Progress,
+  Space,
+  Card,
+  Tooltip,
+  Typography,
+  Flex,
+  Drawer,
+  Skeleton as AntdSkeleton,
+} from 'antd';
 import {
   ExportOutlined,
   CopyOutlined,
@@ -24,6 +33,7 @@ import IconLink from 'Components/IconLink';
 import { SubscriptionDetails } from './SubscriptionDetails';
 import { Subscription } from 'Interfaces/subscription';
 import useWindowDimensions from 'Utils/useWindowDimensions';
+import { GeneralResponse } from 'Interfaces/common';
 
 interface SubscriptionProps {
   sub: Subscription;
@@ -32,10 +42,10 @@ interface SubscriptionProps {
     message: string;
     signature: string;
   };
-  signMessage: (chainId: BigInt, subId: BigInt) => Promise<any>;
-  stopSubscription: (chainId: BigInt, subId: BigInt) => void;
-  startSubscription: (chainId: BigInt, subId: BigInt) => void;
-  withdraw: (chainId: BigInt, subId: BigInt) => void;
+  signMessage: () => Promise<void>;
+  stopSubscription: (chainId: BigInt, subId: BigInt) => Promise<GeneralResponse>;
+  startSubscription: (chainId: BigInt, subId: BigInt) => Promise<GeneralResponse>;
+  withdraw: (chainId: BigInt, subId: BigInt) => Promise<GeneralResponse>;
 }
 
 const SubscriptionCard = ({
@@ -158,9 +168,8 @@ const SubscriptionCard = ({
               {new Date(diffMs).getMinutes()} min {new Date(diffMs).getSeconds()} sec
             </Typography.Title>
             <div className={styles.progress}>
-                <Progress percent={progress} showInfo={false} strokeColor="#1890FF" size={[92, 2]} />
+              <Progress percent={progress} showInfo={false} strokeColor="#1890FF" size={[92, 2]} />
             </div>
-           
           </div>
           <div className={styles.stat}>
             Repetitions

@@ -1,20 +1,19 @@
 import { Filters, RemoteDataType } from 'Interfaces/common';
 import { QueryClient, useQuery, useQueryClient } from 'react-query';
 import { dynamicQueryKeys } from '../dynamicQueryKeys';
-import { Subscription } from 'Interfaces/subscription';
-import pythiaCanister from 'Canisters/pythiaCanister';
-import { DEFAULT_SUBSCRIPTIONS_SIZE } from 'Constants/ui';
+import sybilCanister from 'Canisters/sybilCanister';
+import { Feed } from 'Interfaces/feed';
 
-interface UseGetSubscriptionsProps {
+interface useGetSybilFeedsProps {
   page?: number;
   size?: number;
-  filters: Filters;
+  filters?: Filters;
 }
 
-interface UseGetSubscriptionsResult {
+interface useGetSybilFeedsResult {
   data: {
     type: RemoteDataType;
-    items?: Subscription[];
+    items?: Feed[];
     meta?: {
       page: number;
       size: number;
@@ -23,29 +22,22 @@ interface UseGetSubscriptionsResult {
     };
   };
   refetch: () => Promise<void>;
-} 
+}
 
-interface GetSubscriptionsResponse {
-  items: Subscription[];
+interface GetFeedsResponse {
+  items: Feed[];
   page: number;
   size: number;
   total_items: number;
   total_pages: number;
 }
 
-export const useGetSubscriptions = ({
+export const useGetSybilFeeds = ({
   page,
   size,
   filters,
-}: UseGetSubscriptionsProps): UseGetSubscriptionsResult => {
+}: useGetSybilFeedsProps): useGetSybilFeedsResult => {
   const queryClient: QueryClient = useQueryClient();
-
-  const normalizedFilters = {
-    ...filters,
-    chain_ids: filters.chain_ids.length
-      ? [filters.chain_ids.map((value: string) => BigInt(value))]
-      : [],
-  };
 
   const {
     data,
@@ -57,34 +49,26 @@ export const useGetSubscriptions = ({
   } = useQuery(
     [dynamicQueryKeys.subscriptions(), filters, page, size],
     async () => {
-      const subscriptionsResponse: GetSubscriptionsResponse =
-        await pythiaCanister.get_subscriptions(
-          [normalizedFilters],
-          [
-            {
-              page,
-              size: size || DEFAULT_SUBSCRIPTIONS_SIZE,
-            },
-          ]
-        );
+      const feedsResponse: Feed[] = await sybilCanister.get_pairs();
 
-      subscriptionsResponse.items.forEach((subscription: Subscription) => {
-        queryClient.setQueryDefaults(subscription.id.toString(), {
+      feedsResponse.forEach((feed: Feed) => {
+        queryClient.setQueryDefaults(feed.id.toString(), {
           cacheTime: Infinity,
           staleTime: Infinity,
         });
 
-        queryClient.setQueryData(subscription.id.toString(), subscription);
+        queryClient.setQueryData(feed.id.toString(), feed);
       });
 
       return {
+        // TODO: update after BE pagination is ready
         meta: {
-          page: subscriptionsResponse.page,
-          size: subscriptionsResponse.size,
-          totalItems: subscriptionsResponse.total_items,
-          totalPages: subscriptionsResponse.total_pages,
+          page: 1,
+          size: 10,
+          totalItems: 10,
+          totalPages: 1,
         },
-        items: subscriptionsResponse.items,
+        items: feedsResponse,
       };
     },
     {
@@ -97,8 +81,8 @@ export const useGetSubscriptions = ({
     await refetchQuery();
   };
 
-  const subscriptions: Subscription[] = data?.items ?? [];
-  console.log({ subscriptions });
+  const feeds: Feed[] = data?.items ?? data;
+  console.log({ feeds });
 
   if (isError) {
     return {
@@ -118,7 +102,7 @@ export const useGetSubscriptions = ({
     };
   }
 
-  if (isSuccess && subscriptions.length === 0) {
+  if (isSuccess && feeds.length === 0) {
     return {
       data: {
         type: RemoteDataType.EMPTY,
@@ -131,7 +115,7 @@ export const useGetSubscriptions = ({
     return {
       data: {
         type: RemoteDataType.SUCCESS,
-        items: subscriptions,
+        items: feeds,
         meta: data.meta,
       },
       refetch,

@@ -6,8 +6,7 @@ import { useAccount } from 'wagmi';
 import Button from 'Components/Button';
 
 import { remove0x } from 'Utils/addressUtils';
-import { useSybilPairs } from 'Providers/SybilPairs';
-import { usePythiaData } from 'Providers/PythiaData';
+import { PythiaDataProvider, usePythiaData } from 'Providers/PythiaData';
 import { useGlobalState } from 'Providers/GlobalState';
 import pythiaCanister from 'Canisters/pythiaCanister';
 import useSignature from 'Shared/useSignature';
@@ -28,7 +27,6 @@ const Pythia = () => {
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [isNewSubscriptionModalVisible, setIsNewSubscriptionModalVisible] = useState(false);
   const { setFilterByType, setShowMine, setShowInactive } = usePythiaData();
-  const { isLoading: isPairsLoading, pairs } = useSybilPairs();
   const { width } = useWindowDimensions();
   const isMobile = width <= BREAK_POINT_MOBILE;
 
@@ -174,53 +172,54 @@ const Pythia = () => {
   );
 
   return (
-    <Layout.Content className={styles.pythia} title="Pythia">
-      <Flex vertical align="center" wrap="wrap">
-        <Space size="middle" direction="vertical" style={{ width: '100%', position: 'relative' }}>
-          {!isWhitelisted && <div className={styles.notWhitelisted}>Not whitelisted</div>}
-          <Flex align="center" justify="space-between" gap={8}>
-            <Typography.Title style={{ minWidth: '70px' }} level={3}>
-              Pythia
-            </Typography.Title>
+    <PythiaDataProvider>
+      <Layout.Content className={styles.pythia} title="Pythia">
+        <Flex vertical align="center" wrap="wrap">
+          <Space size="middle" direction="vertical" style={{ width: '100%', position: 'relative' }}>
+            {!isWhitelisted && <div className={styles.notWhitelisted}>Not whitelisted</div>}
+            <Flex align="center" justify="space-between" gap={8}>
+              <Typography.Title style={{ minWidth: '70px' }} level={3}>
+                Pythia
+              </Typography.Title>
 
-            <FiltersBar />
-            <Button
-              type="primary"
-              size="large"
-              onClick={() => setIsNewSubscriptionModalVisible(!isNewSubscriptionModalVisible)}
-              icon={<PlusCircleOutlined />}
-              style={{ width: isMobile ? '40px' : 'auto', height: isMobile ? '40px' : 'auto' }}
-            >
-              {isMobile ? '' : 'Create subscription'}
-            </Button>
-          </Flex>
+              <FiltersBar />
+              <Button
+                type="primary"
+                size="large"
+                onClick={() => setIsNewSubscriptionModalVisible(!isNewSubscriptionModalVisible)}
+                icon={<PlusCircleOutlined />}
+                style={{ width: isMobile ? '40px' : 'auto', height: isMobile ? '40px' : 'auto' }}
+              >
+                {isMobile ? '' : 'Create subscription'}
+              </Button>
+            </Flex>
 
-          <SubscriptionList
-            startSubscription={startSubscription}
-            stopSubscription={stopSubscription}
-            withdraw={withdraw}
-          />
+            <SubscriptionList
+              startSubscription={startSubscription}
+              stopSubscription={stopSubscription}
+              withdraw={withdraw}
+            />
 
-          {isNewSubscriptionModalVisible && (
-            <Drawer
-              title="Create Subscription"
-              placement="right"
-              onClose={() => setIsNewSubscriptionModalVisible(false)}
-              open={isNewSubscriptionModalVisible}
-              style={{ marginTop: '47px' }}
-              width={isMobile ? '90vw' : '362px'}
-            >
-              <NewSubscription
-                signMessage={signMessage}
-                subscribe={subscribe}
-                addressData={addressData}
-                pairs={pairs}
-              />
-            </Drawer>
-          )}
-        </Space>
-      </Flex>
-    </Layout.Content>
+            {isNewSubscriptionModalVisible && (
+              <Drawer
+                title="Create Subscription"
+                placement="right"
+                onClose={() => setIsNewSubscriptionModalVisible(false)}
+                open={isNewSubscriptionModalVisible}
+                style={{ marginTop: '47px' }}
+                width={isMobile ? '90vw' : '362px'}
+              >
+                <NewSubscription
+                  signMessage={signMessage}
+                  subscribe={subscribe}
+                  addressData={addressData}
+                />
+              </Drawer>
+            )}
+          </Space>
+        </Flex>
+      </Layout.Content>
+    </PythiaDataProvider>
   );
 };
 

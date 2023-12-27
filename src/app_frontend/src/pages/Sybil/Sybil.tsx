@@ -1,24 +1,46 @@
 import React from 'react';
-import { Layout, Space, Typography } from 'antd';
+import { Button, Flex, Layout, Space, Typography } from 'antd';
 
-import Pairs from './Pairs';
+import { Feeds } from './FeedsList/Feeds';
 import CustomPair from './CustomPair';
-import Verifiers from './Verifiers';
 
 import styles from './Sybil.scss';
+import { PlusCircleOutlined } from '@ant-design/icons';
+import useWindowDimensions from 'Utils/useWindowDimensions';
+import { BREAK_POINT_MOBILE } from 'Constants/ui';
+import SybilFeedsProvider from 'Providers/SybilPairs/SybilFeedsProvider';
 
 const Sybil = () => {
+  const { width } = useWindowDimensions();
+  const isMobile = width <= BREAK_POINT_MOBILE;
+
   return (
-    <Layout.Content className={styles.sybil}>
-      <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        <Typography.Title level={3}>Sybil</Typography.Title>
-        <Pairs />
+    <SybilFeedsProvider>
+      <Layout.Content className={styles.sybil}>
+        <Space size="middle" direction="vertical" style={{ width: '100%', position: 'relative' }}>
+          <Flex align="center" justify="space-between" gap={8}>
+            <Typography.Title style={{ minWidth: '70px' }} level={3}>
+              Sybil
+            </Typography.Title>
 
-        <Verifiers />
+            {/* <FiltersBar /> make filters reusable */}
 
-        <CustomPair />
-      </Space>
-    </Layout.Content>
+            <Button
+              type="primary"
+              size="large"
+              onClick={() => console.log('create feed modal')}
+              icon={<PlusCircleOutlined />}
+              style={{ width: isMobile ? '40px' : 'auto', height: isMobile ? '40px' : 'auto' }}
+            >
+              {isMobile ? '' : 'Create feed'}
+            </Button>
+          </Flex>
+          <Feeds />
+
+          {/* <CustomPair /> */}
+        </Space>
+      </Layout.Content>
+    </SybilFeedsProvider>
   );
 };
 

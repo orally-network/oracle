@@ -1,7 +1,7 @@
 @use 'Styles/variables';
 @import 'Styles/mix';
 
-.subscription {
+.feed {
   width: 240px;
   justify-content: center;
 
@@ -45,62 +45,34 @@
   margin-right: 15px;
 }
 
+.stat {
+  position: relative;
+}
+
 .logoBg {
   padding: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 0 -15px;
+  background-color: #050b15;
 }
 
-.sybilLink {
-  color: #32d4aa;
-
-  &:hover {
-    color: #186753;
-  }
-}
-
-.logo {
-  border-radius: 50%;
-  background-color: #091325;
-  margin-right: 14px;
+.logoWrap {
   width: 46px;
   height: 46px;
-  position: relative;
-  :global(.light-theme) & {
-    background-color: gray;
+  border: 4px solid #050b15;
+  border-radius: 50%;
+
+  img {
+    width: auto;
+    height: 100%;
+    max-width: 35px;
   }
 }
 
-.status {
-  position: absolute;
-  right: 3px;
-  bottom: 3px;
-
-  .active {
-    background-color: #00ff00;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-  }
-
-  .inactive {
-    width: 10px;
-    height: 10px;
-    background-color: #ff0000;
-    border-radius: 50%;
-  }
-}
-
-.stat {
-  position: relative;
-}
-
-.nextBtn {
-  align-self: flex-start;
-}
-
-.label {
-  color: #4a6293;
+.feedLogos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

@@ -65,6 +65,7 @@ module.exports = (env, argv) => {
         Services: path.resolve(__dirname, './src/app_frontend/src/services/'),
         Constants: path.resolve(__dirname, './src/app_frontend/src/constants/'),
         Interfaces: path.resolve(__dirname, './src/app_frontend/src/interfaces/'),
+        ApiHooks: path.resolve(__dirname, './src/app_frontend/src/apiHooks/'),
         Utils: path.resolve(__dirname, './src/app_frontend/src/utils/'),
         Styles: path.resolve(__dirname, './src/app_frontend/src/styles/'),
         Assets: path.resolve(__dirname, './src/app_frontend/assets/'),

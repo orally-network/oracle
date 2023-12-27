@@ -24,6 +24,7 @@
       "Services/*": [ "./app_frontend/src/services/*"],
       "Constants/*": [ "./app_frontend/src/constants/*"],
       "Interfaces/*": [ "./app_frontend/src/interfaces/*"],
+      "ApiHooks/*": [ "./app_frontend/src/apiHooks/*"],
       "Utils/*": [ "./app_frontend/src/utils/*"],
       "Styles/*": [ "./app_frontend/src/styles/*"],
       "Assets/*":[ "./app_frontend/assets/*"],

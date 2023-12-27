@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { useAccount } from 'wagmi';
 
 import { remove0x } from 'Utils/addressUtils';
 import { useGlobalState } from 'Providers/GlobalState';
@@ -8,41 +7,16 @@ import pythiaCanister from 'Canisters/pythiaCanister';
 import { CHAINS_MAP } from 'Constants/chains';
 import config from 'Constants/config';
 import PythiaDataContext from './PythiaDataContext';
-import { FilterType, SubscriptionData } from 'Interfaces/subscription';
-import { DEFAULT_SUBSCRIPTIONS_SIZE } from 'Constants/ui';
+import { FilterType } from 'Interfaces/subscription';
 import debounce from 'lodash.debounce';
-import { useSearchParams } from 'react-router-dom';
-
-interface FetchSubsParams {
-  pagination?: {
-    page: number;
-    size?: number;
-  };
-  filters?: {
-    isActive: boolean[];
-    chainIds: number[];
-    owner: string[];
-    search: string[];
-    methodType: string[];
-  };
-}
 
 const PythiaDataProvider = ({ children }: any) => {
-  const [subs, setSubs] = useState<SubscriptionData>({
-    items: [],
-    page: 1,
-    size: 10,
-    total_pages: 0,
-    total_items: 10,
-  });
-
+  const [page, setPage] = useState<number>(1);
   const [showMine, setShowMine] = useState<boolean>(false);
   const [showInactive, setShowInactive] = useState<boolean>(false);
   const [filterByType, setFilterByType] = useState<FilterType>('Empty');
   const [chainIds, setChainIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
-
-  const [isSubsLoading, setIsSubsLoading] = useState(false);
   const [chains, setChains] = useState([]);
   const [isChainsLoading, setIsChainsLoading] = useState(false);
   const [balance, setBalance] = useState(0);
@@ -51,7 +25,6 @@ const PythiaDataProvider = ({ children }: any) => {
 
   const { addressData } = useGlobalState();
 
-  const { address } = useAccount();
 
   const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -64,36 +37,6 @@ const PythiaDataProvider = ({ children }: any) => {
       debouncedChangeHandler.cancel();
     };
   }, []);
-
-  const fetchSubs = async ({ pagination }: FetchSubsParams) => {
-    const { page, size } = pagination || {};
-    setIsSubsLoading(true);
-    try {
-      const subsData: SubscriptionData = await pythiaCanister.get_subscriptions(
-        [
-          {
-            is_active: showInactive === true ? [] : [true],
-            chain_ids: chainIds.length ? [chainIds.map((value: string) => BigInt(value))] : [],
-            owner: showMine ? [address] : [],
-            search: searchQuery ? [searchQuery] : [],
-            method_type: filterByType !== 'Empty' ? [{[filterByType]: ''}] : [],
-          },
-        ],
-        [
-          {
-            page,
-            size: size || DEFAULT_SUBSCRIPTIONS_SIZE,
-          },
-        ]
-      );
-      console.log({ subsData });
-      setSubs(subsData);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setIsSubsLoading(false);
-    }
-  };
 
   const fetchChains = useCallback(async () => {
     setIsChainsLoading(true);
@@ -157,28 +100,14 @@ const PythiaDataProvider = ({ children }: any) => {
   useEffect(() => {
     fetchChains();
     fetchPma();
-    fetchSubs({
-      pagination: {
-        page: subs.page,
-      },
-    });
   }, []);
-
-  useEffect(() => {
-    fetchSubs({
-      pagination: {
-        page: 1,
-      },
-    });
-  }, [showMine, showInactive, filterByType, chainIds, searchQuery]);
 
   const value = useMemo(() => {
     return {
-      subs,
-      isSubsLoading,
+      page,
+      setPage,
       chains,
       isChainsLoading,
-      fetchSubs,
       fetchBalance,
       balance,
       isBalanceLoading,
@@ -197,16 +126,19 @@ const PythiaDataProvider = ({ children }: any) => {
       debouncedChangeHandler,
     };
   }, [
-    subs,
-    isSubsLoading,
+    page,
     chains,
     isChainsLoading,
-    fetchSubs,
     fetchBalance,
     balance,
     isBalanceLoading,
     deposit,
     pma,
+    showMine,
+    showInactive,
+    filterByType,
+    chainIds,
+    searchQuery,
   ]);
 
   return <PythiaDataContext.Provider value={value}>{children}</PythiaDataContext.Provider>;

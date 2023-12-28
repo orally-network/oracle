@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Flex, Input, Space, Button, Tooltip, Tag, Switch, Checkbox, Radio } from 'antd';
+import { Flex, Input, Space, Button, Tooltip, Switch, Radio } from 'antd';
 import { SingleValueSelect } from 'Components/Select';
 import pythiaCanister from 'Canisters/pythiaCanister';
 import { remove0x } from 'Utils/addressUtils';
@@ -19,11 +19,11 @@ import { BREAK_POINT_MOBILE, FREQUENCY_UNITS, MIN_FREQUENCY } from 'Constants/ui
 import { getMethodAddon } from './NewSubscription';
 import { useAccount } from 'wagmi';
 import Select from 'react-select';
-
-import styles from './Subscription.scss';
-import { useSybilPairs } from 'Providers/SybilPairs';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { toast } from 'react-toastify';
+import { useGetSybilFeeds } from 'ApiHooks/useGetSybilFeeds';
+
+import styles from './Subscription.scss';
 
 interface SubscriptionDetailsProps {
   subscription: Subscription;
@@ -55,7 +55,7 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
 
   const { addressData } = useGlobalState();
   const { chains } = usePythiaData();
-  const { pairs } = useSybilPairs();
+  const pairs = useGetSybilFeeds({ page: 1 });
   const { width } = useWindowDimensions();
   const isMobile = width <= BREAK_POINT_MOBILE;
 
@@ -208,7 +208,13 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
           value={feed ? { label: feed, value: feed } : null}
           isClearable
           menuShouldScrollIntoView={false}
-          options={useMemo(() => mapPairsToOptions(pairs), [pairs])}
+          options={useMemo(
+            () =>
+              mapPairsToOptions(
+                pairs && pairs.data && pairs.data.items?.length ? pairs.data.items : []
+              ),
+            [pairs]
+          )}
           onChange={(e: OptionType) => {
             setFeed(e?.value);
             setIsRandom(false);

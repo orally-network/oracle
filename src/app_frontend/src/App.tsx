@@ -3,9 +3,6 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { Space, Spin } from 'antd';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { Provider as RollbarProvider, ErrorBoundary } from '@rollbar/react';
-
-import { SybilPairsProvider } from 'Providers/SybilPairs';
-import { PythiaDataProvider } from 'Providers/PythiaData';
 import { GlobalStateProvider } from 'Providers/GlobalState';
 
 import { BaseLayout } from 'Components/Layout';
@@ -69,18 +66,14 @@ const App = () => {
       <ErrorBoundary>
         <QueryClientProvider client={queryClient}>
           <GlobalStateProvider>
-            <PythiaDataProvider>
-              <SybilPairsProvider>
-                <RouterProvider
-                  router={router}
-                  fallbackElement={
-                    <Space size="large">
-                      <Spin size="large" />
-                    </Space>
-                  }
-                />
-              </SybilPairsProvider>
-            </PythiaDataProvider>
+            <RouterProvider
+              router={router}
+              fallbackElement={
+                <Space size="large">
+                  <Spin size="large" />
+                </Space>
+              }
+            />
           </GlobalStateProvider>
         </QueryClientProvider>
       </ErrorBoundary>

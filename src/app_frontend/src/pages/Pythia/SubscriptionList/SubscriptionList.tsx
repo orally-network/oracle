@@ -26,7 +26,8 @@ export const SubscriptionList = ({
   const { addressData } = useGlobalState();
   const { signMessage } = useSignature();
   const { address } = useAccount();
-  const { showInactive, searchQuery, chainIds, showMine, filterByType, page } = usePythiaData();
+  const { showInactive, searchQuery, chainIds, showMine, filterByType, page, setPage } =
+    usePythiaData();
 
   const subscriptionsData = useGetSubscriptions({
     page,
@@ -60,12 +61,12 @@ export const SubscriptionList = ({
               />
             ))}
           </Space>
-          <Flex justify="end" className={styles.paginationContainer}>
-            <Pagination
-              currentPage={Number(pagination?.page || 1)}
-              total={Number(pagination?.totalItems)}
-            />
-          </Flex>
+
+          <Pagination
+            currentPage={Number(pagination?.page || 1)}
+            total={Number(pagination?.totalItems)}
+            setPage={setPage}
+          />
         </>
       );
     case RemoteDataType.LOADING:

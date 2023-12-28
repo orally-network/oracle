@@ -1,13 +1,13 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import type { PaginationProps as AntdPaginationProps } from 'antd';
 import { Pagination as AntdPagination, Flex } from 'antd';
 import styles from './Pagination.scss';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import { usePythiaData } from 'Providers/PythiaData';
 
 interface PaginationProps {
   currentPage: number;
   total: number;
+  setPage: (page: number) => void;
 }
 
 const itemRender: AntdPaginationProps['itemRender'] = (_, type, originalElement) => {
@@ -28,9 +28,7 @@ const itemRender: AntdPaginationProps['itemRender'] = (_, type, originalElement)
   return originalElement;
 };
 
-export const Pagination = ({ currentPage, total }: PaginationProps) => {
-  const { setPage } = usePythiaData();
-
+export const Pagination = ({ currentPage, total, setPage }: PaginationProps) => {
   return (
     <Flex justify="end" className={styles.paginationContainer}>
       <AntdPagination

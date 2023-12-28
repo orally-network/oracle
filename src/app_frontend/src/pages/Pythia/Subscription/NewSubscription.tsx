@@ -23,12 +23,12 @@ import { BREAK_POINT_MOBILE, FREQUENCY_UNITS, MIN_BALANCE, MIN_FREQUENCY } from 
 
 import styles from './Subscription.scss';
 import useWindowDimensions from 'Utils/useWindowDimensions';
+import { useGetSybilFeeds } from 'ApiHooks/useGetSybilFeeds';
 
 interface NewSubscriptionProps {
   addressData: any;
   signMessage: any;
   subscribe: any;
-  pairs: any;
 }
 
 export const getMethodAddon = ({
@@ -55,7 +55,7 @@ export const getMethodAddon = ({
   );
 };
 
-const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubscriptionProps) => {
+const NewSubscription = ({ addressData, signMessage, subscribe }: NewSubscriptionProps) => {
   const [chainId, setChainId] = useState<string | null>(null);
   const [methodName, setMethodName] = useState('');
   const [methodArg, setMethodArg] = useState(RAND_METHOD_TYPES[0]);
@@ -65,6 +65,8 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
   const [isRandom, setIsRandom] = useState(false);
   const [feed, setFeed] = useState<string | null>(null);
   const [isEdit, setIsEdit] = useState(true);
+
+  const pairs = useGetSybilFeeds({ page: 1 });
 
   const [balance, setBalance] = useState(0);
   const { width } = useWindowDimensions();
@@ -218,7 +220,13 @@ const NewSubscription = ({ addressData, signMessage, subscribe, pairs }: NewSubs
           value={feed ? { label: feed, value: feed } : null}
           isClearable
           menuShouldScrollIntoView={false}
-          options={useMemo(() => mapPairsToOptions(pairs), [pairs])}
+          options={useMemo(
+            () =>
+              mapPairsToOptions(
+                pairs && pairs.data && pairs.data.items?.length ? pairs.data.items : []
+              ),
+            [pairs]
+          )}
           onChange={(e: OptionType) => {
             setFeed(e?.value);
             setIsRandom(false);

@@ -122,12 +122,15 @@ const InformationCard = ({ subscription }: InformationCardProps) => {
               </Card>
             </Flex>
             <Flex vertical gap="middle" style={{ flex: 1 }}>
-              <Card>
+              <Card
+                className={styles.cardIconBg}
+                style={{ backgroundImage: 'url(last_execution.png' }}
+              >
                 <Typography.Title level={5}>Last execution</Typography.Title>
                 Timestamp
                 <Typography.Title level={5}>{lastUpdateDateTime.toLocaleString()}</Typography.Title>
               </Card>
-              <Card>
+              <Card className={styles.cardIconBg} style={{ backgroundImage: 'url(interface.png' }}>
                 <Typography.Title level={5}>Interface</Typography.Title>
                 Method
                 <Typography.Title level={5}>{method_name}</Typography.Title>
@@ -160,14 +163,14 @@ const InformationCard = ({ subscription }: InformationCardProps) => {
         </Card>
       </Space>
       <Space direction="vertical" size="large" style={{ width: '340px' }}>
-        <Card>
+        <Card className={styles.cardIconBg} style={{ backgroundImage: 'url(gas_usage.png' }}>
           <Typography.Title level={5}>Gas Usage</Typography.Title>
           Gas limit
           <Typography.Title level={5}>{gas_limit.toString()}</Typography.Title>
         </Card>
-        <Card>
+        <Card className={styles.cardIconBg} style={{ backgroundImage: 'url(data.png' }}>
           <Typography.Title level={5}>Data</Typography.Title>
-          <Space direction="vertical">
+          <Space direction="vertical" size="middle">
             Payload data in subscription transactions
             <Button
               type="primary"

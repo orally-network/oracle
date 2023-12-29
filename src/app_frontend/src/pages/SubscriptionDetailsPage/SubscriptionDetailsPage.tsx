@@ -1,23 +1,17 @@
-import { Breadcrumb, Card, Flex, Layout, Space, Typography } from 'antd';
+import { Breadcrumb, Flex, Layout, Typography } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Subscription } from 'Interfaces/subscription';
 
 import InformationCard from './InformationCard';
-import { renderChart } from './DatasetChart';
-import { testData } from './testData';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import pythiaCanister from 'Canisters/pythiaCanister';
-import { InternalTransactionsTable } from './InternalTransactionsTable';
 
 export const SubscriptionDetailsPage = () => {
   const { id, chainId } = useParams();
   const [subscriptionData, setSubscriptionData] = useState<Subscription | null>(null);
   const [isSubscriptionLoading, setIsSubscriptionLoading] = useState<boolean>(false);
-  const { width } = useWindowDimensions();
-
-  const isMobile = width < BREAK_POINT_MOBILE;
 
   const fetchSubscription = async (id: BigInt, chainId: BigInt) => {
     setIsSubscriptionLoading(true);
@@ -39,36 +33,22 @@ export const SubscriptionDetailsPage = () => {
 
   return (
     <Layout.Content title="Pythia">
-      <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        <Space direction="vertical">
+      <Flex gap="middle" vertical>
+        <Flex vertical>
           <Breadcrumb
             separator=">"
             items={[{ title: 'Pythia', href: '/pythia' }, { title: 'Details' }]}
           />
-          <Typography.Title level={3}>Pythia</Typography.Title>
-        </Space>
-        <Flex gap="middle" vertical={isMobile ? true : false}>
-          {isSubscriptionLoading ? (
-            <InformationCard.Skeleton />
-          ) : subscriptionData === null ? (
-            <InformationCard.Empty />
-          ) : (
-            <InformationCard subscription={subscriptionData} />
-          )}
-
-          <Card style={{ flex: 1 }}>
-            <Typography.Title level={4} style={{ paddingBottom: '20px' }}>
-              Dataset
-            </Typography.Title>
-
-            {isSubscriptionLoading ? (
-              "Loading...") : subscriptionData === null ? ('Empty') : (<InternalTransactionsTable subscription={subscriptionData} />
-            )}
-
-            {renderChart(testData)}
-          </Card>
+          <Typography.Title level={3}>Details</Typography.Title>
         </Flex>
-      </Space>
+        {isSubscriptionLoading ? (
+          <InformationCard.Skeleton />
+        ) : subscriptionData === null ? (
+          <InformationCard.Empty />
+        ) : (
+          <InformationCard subscription={subscriptionData} />
+        )}
+      </Flex>
     </Layout.Content>
   );
 };

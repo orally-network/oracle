@@ -6,27 +6,28 @@ interface InternalTransactionsProps {
   subscription: Subscription;
 }
 
-export const InternalTransactionsTable = ({subscription}: InternalTransactionsProps) => {
-
-  const { isLoading, transactions } =  useInternalTransactions({
+export const InternalTransactionsTable = ({ subscription }: InternalTransactionsProps) => {
+  const { isLoading, transactions } = useInternalTransactions({
     chainId: subscription.method.chain_id as number,
     contractAddress: subscription.contract_addr,
   });
 
   console.log(transactions, 'InternalTransactionsTable');
+  console.log(transactions?.result, 'transactions result');
 
   return (
     <div>
       <h1>InternalTransactionsTable</h1>
-      {isLoading ? ("Loading...") : (
+      {isLoading ? (
+        'Loading...'
+      ) : (
         <div>
-          {transactions.map((transaction) => (
-            <div key={transaction.hash}>
-              {transaction.hash} tx
-            </div>
-          ))}
+          {transactions.length &&
+            transactions.map((transaction) => (
+              <div key={transaction.hash}>{transaction.hash} tx</div>
+            ))}
         </div>
       )}
     </div>
-  )
+  );
 };

@@ -1,7 +1,6 @@
 .logo {
   border-radius: 50%;
   background-color: #091325;
-  margin-right: 14px;
   width: 46px;
   height: 46px;
   position: relative;
@@ -10,12 +9,17 @@
   }
 }
 
+.information {
+  h5 {
+    padding-bottom: 12px;
+  }
+}
 
 .status {
   position: absolute;
   right: 3px;
   bottom: 3px;
-  
+
   .active {
     background-color: #00ff00;
     width: 10px;
@@ -33,4 +37,23 @@
 
 .label {
   font-size: 15px;
+}
+
+.chainBg {
+  background: linear-gradient(227deg, rgba(21, 143, 112, 0.6) 0%, rgba(6, 28, 26, 0.5) 100%);
+  width: 268px;
+  border-radius: 11px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.progress {
+  padding-bottom: 15px;
+}
+
+.cardIconBg {
+  background-repeat: no-repeat;
+  background-position: 90% center;
 }

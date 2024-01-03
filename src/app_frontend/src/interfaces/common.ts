@@ -40,3 +40,9 @@ export type Pagination = [
     size: number;
   },
 ];
+
+export type SybilFilters = {
+  owner: string[];
+  search: string[];
+  feed_type: { [key: string]: string }[];
+};

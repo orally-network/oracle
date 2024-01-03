@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Flex, Layout, Space, Typography } from 'antd';
 
 import { Feeds } from './FeedsList/Feeds';
@@ -9,10 +9,26 @@ import { PlusCircleOutlined } from '@ant-design/icons';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import SybilFeedsProvider from 'Providers/SybilPairs/SybilFeedsProvider';
+import { Filters } from './Filters/Filters';
+import { useSearchParams } from 'react-router-dom';
+import useSybilData from 'Providers/SybilPairs/useSybilFeeds';
+import { FilterFeedType } from 'Interfaces/feed';
 
 const Sybil = () => {
+  const [searchParams] = useSearchParams();
+  const { setFeedType, setShowMine } = useSybilData();
+
   const { width } = useWindowDimensions();
   const isMobile = width <= BREAK_POINT_MOBILE;
+
+  useEffect(() => {
+    const typeFilter = searchParams.get('type');
+    const authorFilter = searchParams.get('showMine');
+    if (typeFilter !== null) {
+      setFeedType(typeFilter as FilterFeedType);
+    }
+    setShowMine(authorFilter === 'true' ? true : false);
+  }, [searchParams, setFeedType, setShowMine]);
 
   return (
     <SybilFeedsProvider>
@@ -22,9 +38,7 @@ const Sybil = () => {
             <Typography.Title style={{ minWidth: '70px' }} level={3}>
               Sybil
             </Typography.Title>
-
-            {/* <FiltersBar /> make filters reusable */}
-
+            <Filters />
             <Button
               type="primary"
               size="large"

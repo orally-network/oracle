@@ -5,7 +5,7 @@ export interface Feed {
   owner: string;
   data: FeedData[];
   update_freq: number;
-  pair_type: FeedType;
+  feed_type: FeedType;
 }
 
 export interface FeedStatus {

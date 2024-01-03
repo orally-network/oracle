@@ -2,11 +2,11 @@ import React from 'react';
 import styles from './FeedCard.scss';
 
 interface FeedLogosProps {
-  pair: string;
+  feed: string;
 }
 
-export const FeedLogos = ({ pair }: FeedLogosProps) => {
-  const [firstCoin, secondCoin] = pair.split('/');
+export const FeedLogos = ({ feed }: FeedLogosProps) => {
+  const [firstCoin, secondCoin] = feed.split('/');
 
   return (
     <div className={styles.feedLogos}>

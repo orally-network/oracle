@@ -49,9 +49,9 @@ export const useGetSybilFeeds = ({
   } = useQuery(
     [dynamicQueryKeys.subscriptions(), filters, page, size],
     async () => {
-      const feedsResponse: Feed[] = await sybilCanister.get_pairs();
+      const feedsResponse: GetFeedsResponse = await sybilCanister.get_feeds([], []);
 
-      feedsResponse.forEach((feed: Feed) => {
+      feedsResponse.items.forEach((feed: Feed) => {
         queryClient.setQueryDefaults(feed.id.toString(), {
           cacheTime: Infinity,
           staleTime: Infinity,
@@ -68,7 +68,7 @@ export const useGetSybilFeeds = ({
           totalItems: 10,
           totalPages: 1,
         },
-        items: feedsResponse,
+        items: feedsResponse.items,
       };
     },
     {
@@ -81,7 +81,7 @@ export const useGetSybilFeeds = ({
     await refetchQuery();
   };
 
-  const feeds: Feed[] = data?.items ?? data;
+  const feeds: Feed[] = data?.items ?? [];
   console.log({ feeds });
 
   if (isError) {

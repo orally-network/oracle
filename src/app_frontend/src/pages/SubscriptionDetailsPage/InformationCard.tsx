@@ -39,7 +39,7 @@ const InformationCard = ({ subscription }: InformationCardProps) => {
       chain_id,
       name: method_name,
       gas_limit,
-      method_type: { Pair: pair, Random: random },
+      method_type: { Feed: feed, Random: random },
       exec_condition,
     },
     owner,
@@ -73,7 +73,7 @@ const InformationCard = ({ subscription }: InformationCardProps) => {
                   <div className={styles.label}> {chain.name}</div>
                   <Space>
                     <Typography.Title level={4} style={{ margin: 0 }}>
-                      {pair ? pair : 'Random'}
+                      {feed ? feed : 'Random'}
                     </Typography.Title>
                   </Space>
                 </Flex>
@@ -136,7 +136,7 @@ const InformationCard = ({ subscription }: InformationCardProps) => {
                 <Typography.Title level={5}>{method_name}</Typography.Title>
                 Arguments
                 <Typography.Title level={5}>
-                  {subscription.method?.method_type?.Pair ? getStrMethodArgs(true) : '-'}
+                  {subscription.method?.method_type?.Feed ? getStrMethodArgs(true) : '-'}
                 </Typography.Title>
               </Card>
             </Flex>
@@ -178,7 +178,7 @@ const InformationCard = ({ subscription }: InformationCardProps) => {
               style={{ alignSelf: 'start' }}
               onClick={() => navigate(`/sybil/${id}`)}
             >
-              {pair ? pair : 'Random'}
+              {feed ? feed : 'Random'}
             </Button>
           </Space>
         </Card>

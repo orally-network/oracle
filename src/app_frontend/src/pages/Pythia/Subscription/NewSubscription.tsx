@@ -11,7 +11,7 @@ import { usePythiaData } from 'Providers/PythiaData';
 
 import {
   mapChainsToOptions,
-  mapPairsToOptions,
+  mapFeedsToOptions,
   getStrMethodArgs,
   RAND_METHOD_TYPES,
   convertFrequencyToSeconds,
@@ -66,7 +66,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe }: NewSubscriptio
   const [feed, setFeed] = useState<string | null>(null);
   const [isEdit, setIsEdit] = useState(true);
 
-  const pairs = useGetSybilFeeds({ page: 1 });
+  const feeds = useGetSybilFeeds({ page: 1 });
 
   const [balance, setBalance] = useState(0);
   const { width } = useWindowDimensions();
@@ -222,10 +222,10 @@ const NewSubscription = ({ addressData, signMessage, subscribe }: NewSubscriptio
           menuShouldScrollIntoView={false}
           options={useMemo(
             () =>
-              mapPairsToOptions(
-                pairs && pairs.data && pairs.data.items?.length ? pairs.data.items : []
+              mapFeedsToOptions(
+                feeds && feeds.data && feeds.data.items?.length ? feeds.data.items : []
               ),
-            [pairs]
+            [feeds]
           )}
           onChange={(e: OptionType) => {
             setFeed(e?.value);

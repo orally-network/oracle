@@ -11,7 +11,7 @@ import {
   convertFrequencyToSeconds,
   getStrMethodArgs,
   mapChainsToOptions,
-  mapPairsToOptions,
+  mapFeedsToOptions,
 } from 'Utils/helper';
 import logger from 'Utils/logger';
 import { usePythiaData } from 'Providers/PythiaData';
@@ -49,13 +49,13 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
   });
   const [gasLimit, setGasLimit] = useState<string>(subscription.method.gas_limit.toString());
   const [isRandom, setIsRandom] = useState(subscription.method.method_type.Random);
-  const [feed, setFeed] = useState<string | null>(subscription.method?.method_type?.Pair || null);
+  const [feed, setFeed] = useState<string | null>(subscription.method?.method_type?.Feed || null);
 
   const viewOnly = subscription.owner !== address?.toLowerCase?.();
 
   const { addressData } = useGlobalState();
   const { chains } = usePythiaData();
-  const pairs = useGetSybilFeeds({ page: 1 });
+  const feeds = useGetSybilFeeds({ page: 1 });
   const { width } = useWindowDimensions();
   const isMobile = width <= BREAK_POINT_MOBILE;
 
@@ -87,7 +87,7 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
       is_random: isRandom === undefined ? [false] : [true],
       chain_id: chainId,
       gas_limit: gasLimit ? [BigInt(gasLimit)] : [],
-      pair_id: feed ? [feed] : [],
+      feed_id: feed ? [feed] : [],
       price_mutation_condition: [],
     };
 
@@ -210,10 +210,10 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
           menuShouldScrollIntoView={false}
           options={useMemo(
             () =>
-              mapPairsToOptions(
-                pairs && pairs.data && pairs.data.items?.length ? pairs.data.items : []
+              mapFeedsToOptions(
+                feeds && feeds.data && feeds.data.items?.length ? feeds.data.items : []
               ),
-            [pairs]
+            [feeds]
           )}
           onChange={(e: OptionType) => {
             setFeed(e?.value);

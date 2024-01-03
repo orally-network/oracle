@@ -32,7 +32,7 @@ export const idlFactory = ({ IDL }) => {
   });
   const MethodType = IDL.Variant({
     'Empty' : IDL.Null,
-    'Pair' : IDL.Text,
+    'Feed' : IDL.Text,
     'Random' : IDL.Text,
   });
   const PriceMutationType = IDL.Variant({
@@ -45,7 +45,7 @@ export const idlFactory = ({ IDL }) => {
       'mutation_rate' : IDL.Int64,
       'creation_price' : IDL.Nat64,
       'price_mutation_type' : PriceMutationType,
-      'pair_id' : IDL.Text,
+      'feed_id' : IDL.Text,
     }),
     'Frequency' : IDL.Nat,
   });
@@ -100,7 +100,7 @@ export const idlFactory = ({ IDL }) => {
   const PriceMutationCondition = IDL.Record({
     'mutation_rate' : IDL.Int64,
     'price_mutation_type' : PriceMutationType,
-    'pair_id' : IDL.Text,
+    'feed_id' : IDL.Text,
   });
   const SubscribeRequest = IDL.Record({
     'msg' : IDL.Text,
@@ -109,11 +109,11 @@ export const idlFactory = ({ IDL }) => {
     'method_abi' : IDL.Text,
     'frequency_condition' : IDL.Opt(IDL.Nat),
     'is_random' : IDL.Bool,
+    'feed_id' : IDL.Opt(IDL.Text),
     'price_mutation_condition' : IDL.Opt(PriceMutationCondition),
     'label' : IDL.Text,
     'chain_id' : IDL.Nat,
     'gas_limit' : IDL.Nat,
-    'pair_id' : IDL.Opt(IDL.Text),
   });
   const SubscribeResponse = IDL.Variant({ 'Ok' : IDL.Nat, 'Err' : IDL.Text });
   const UpdateSubscriptionRequest = IDL.Record({
@@ -124,11 +124,11 @@ export const idlFactory = ({ IDL }) => {
     'method_abi' : IDL.Opt(IDL.Text),
     'frequency_condition' : IDL.Opt(IDL.Nat),
     'is_random' : IDL.Opt(IDL.Bool),
+    'feed_id' : IDL.Opt(IDL.Text),
     'price_mutation_condition' : IDL.Opt(PriceMutationCondition),
     'label' : IDL.Opt(IDL.Text),
     'chain_id' : IDL.Nat,
     'gas_limit' : IDL.Opt(IDL.Nat),
-    'pair_id' : IDL.Opt(IDL.Text),
   });
   return IDL.Service({
     'add_chain' : IDL.Func([CreateChainRequest], [Error], []),

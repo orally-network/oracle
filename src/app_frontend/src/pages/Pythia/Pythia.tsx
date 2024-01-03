@@ -87,7 +87,7 @@ const Pythia = () => {
 
       const payload = {
         chain_id: chainId,
-        pair_id: [feed],
+        feed_id: [feed],
         contract_addr: remove0x(addressToCall),
         method_abi: methodName,
         frequency_condition: [frequency],

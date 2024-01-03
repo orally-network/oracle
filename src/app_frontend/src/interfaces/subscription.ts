@@ -19,7 +19,7 @@ interface ExecutionCondition {
     mutation_rate: number;
     creation_price: number;
     price_mutation_type: PriceMutationType;
-    pair_id: string;
+    feed_id: string;
   };
   Frequency: BigInt;
 }
@@ -37,7 +37,7 @@ interface SubscriptionMethod {
   gas_limit: BigInt;
   exec_condition: ExecutionCondition[];
   method_type: {
-    Pair: string;
+    Feed: string;
     Random: boolean;
   };
 }

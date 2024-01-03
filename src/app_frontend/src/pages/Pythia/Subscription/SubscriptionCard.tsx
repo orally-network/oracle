@@ -66,7 +66,7 @@ const SubscriptionCard = ({
       chain_id,
       name: method_name,
       gas_limit,
-      method_type: { Pair: pair, Random: random },
+      method_type: { Feed: feed, Random: random },
       exec_condition,
     },
     owner,
@@ -107,7 +107,7 @@ const SubscriptionCard = ({
             <div>{chain.name}</div>
             <Space>
               <Typography.Title level={4} style={{ margin: 0 }}>
-                {pair ? pair : 'Random'}
+                {feed ? feed : 'Random'}
               </Typography.Title>
             </Space>
             <Typography.Text className={styles.sybilLink} onClick={() => navigate(`/sybil/${id}`)}>

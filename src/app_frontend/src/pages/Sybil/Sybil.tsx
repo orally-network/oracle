@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Flex, Layout, Space, Typography } from 'antd';
 
 import { Feeds } from './FeedsList/Feeds';
-import CustomPair from './CustomPair';
+import CustomFeed from './CustomFeed';
 
 import styles from './Sybil.scss';
 import { PlusCircleOutlined } from '@ant-design/icons';
@@ -37,7 +37,7 @@ const Sybil = () => {
           </Flex>
           <Feeds />
 
-          {/* <CustomPair /> */}
+          {/* <CustomFeed /> */}
         </Space>
       </Layout.Content>
     </SybilFeedsProvider>

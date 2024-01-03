@@ -10,10 +10,10 @@ export const mapChainsToOptions = (chains: any) => {
   }));
 };
 
-export const mapPairsToOptions = (pairs: any) => {
-  return pairs.map((pair: any) => ({
-    value: pair.id,
-    label: pair.id,
+export const mapFeedsToOptions = (feeds: any) => {
+  return feeds.map((feed: any) => ({
+    value: feed.id,
+    label: feed.id,
   }));
 };
 

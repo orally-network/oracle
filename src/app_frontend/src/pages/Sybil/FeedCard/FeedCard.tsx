@@ -19,7 +19,7 @@ const FeedCard = ({ feed }: FeedCardProps) => {
   const navigate = useNavigate();
   const [isFeedDetailsVisible, setIsFeedDetailsVisible] = useState<boolean>(false);
 
-  const { id, decimals, owner, data, update_freq, pair_type } = feed;
+  const { id, decimals, owner, data, update_freq, feed_type } = feed;
 
   const { symbol, rate, timestamp } = data[0];
 
@@ -50,7 +50,7 @@ const FeedCard = ({ feed }: FeedCardProps) => {
 
         <div className={styles.logoBg}>
           <Flex className={styles.logo} align="center" justify="center">
-            <FeedLogos pair={id} />
+            <FeedLogos feed={id} />
           </Flex>
         </div>
 

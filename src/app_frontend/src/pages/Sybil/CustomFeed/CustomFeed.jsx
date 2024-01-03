@@ -13,12 +13,12 @@ import sybilCanister from "Canisters/sybilCanister";
 import logger from "Utils/logger";
 import { remove0x } from "Utils/addressUtils";
 
-import styles from "./CustomPair.scss";
+import styles from "./CustomFeed.scss";
 
 const TREASURER_CHAIN = CHAINS_MAP[137];
 const USDT_TOKEN_POLYGON = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
 
-const CustomPair = () => {
+const CustomFeed = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(true);
@@ -40,7 +40,7 @@ const CustomPair = () => {
     token: USDT_TOKEN_POLYGON,
   });
 
-  const createCustomPair = useCallback(async () => {
+  const createCustomFeed = useCallback(async () => {
     setConfirmLoading(true);
 
     try {
@@ -70,9 +70,9 @@ const CustomPair = () => {
 
       console.log({ depositResult });
 
-      const customPairRes = await toast.promise(
-        sybilCanister.create_custom_pair({
-          pair_id: symbol,
+      const customFeedRes = await toast.promise(
+        sybilCanister.create_custom_feed({
+          feed_id: symbol,
           frequency,
           uri,
           resolver,
@@ -93,7 +93,7 @@ const CustomPair = () => {
         }
       );
 
-      console.log({ customPairRes });
+      console.log({ customFeedRes });
     } finally {
       setIsModalVisible(false);
       setConfirmLoading(false);
@@ -165,20 +165,20 @@ const CustomPair = () => {
   console.log({ addressData });
 
   return (
-    <Space className={styles.customPair}>
+    <Space className={styles.customFeed}>
       <Button disabled={addressData?.address !== '0x654DFF41D51c230FA400205A633101C5C1f1969C'} type="primary" onClick={() => setIsModalVisible(true)}>
-        Create custom pair
+        Create custom feed
       </Button>
 
       <Modal
-        title="Create custom pair"
+        title="Create custom feed"
         open={isModalVisible}
         confirmLoading={confirmLoading}
         onCancel={closeModal}
         className={styles.modal}
         footer={[
           <Button key="cancel-btn" onClick={closeModal}>Cancel</Button>,
-          <Button key="ok-btn" onClick={createCustomPair} type="primary">
+          <Button key="ok-btn" onClick={createCustomFeed} type="primary">
             OK
           </Button>,
         ]}
@@ -311,4 +311,4 @@ const CustomPair = () => {
   );
 };
 
-export default CustomPair;
+export default CustomFeed;

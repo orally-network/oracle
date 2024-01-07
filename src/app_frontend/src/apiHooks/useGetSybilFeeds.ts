@@ -1,13 +1,14 @@
-import { Filters, RemoteDataType } from 'Interfaces/common';
+import { SybilFilters, RemoteDataType } from 'Interfaces/common';
 import { QueryClient, useQuery, useQueryClient } from 'react-query';
 import { dynamicQueryKeys } from '../dynamicQueryKeys';
 import sybilCanister from 'Canisters/sybilCanister';
 import { Feed } from 'Interfaces/feed';
+import { DEFAULT_FEEDS_SIZE } from 'Constants/ui';
 
 interface useGetSybilFeedsProps {
   page?: number;
   size?: number;
-  filters?: Filters;
+  filters?: SybilFilters;
 }
 
 interface useGetSybilFeedsResult {
@@ -49,7 +50,15 @@ export const useGetSybilFeeds = ({
   } = useQuery(
     [dynamicQueryKeys.subscriptions(), filters, page, size],
     async () => {
-      const feedsResponse: GetFeedsResponse = await sybilCanister.get_feeds([], []);
+      const feedsResponse: GetFeedsResponse = await sybilCanister.get_feeds(
+        [filters],
+        [
+          {
+            page,
+            size: size || DEFAULT_FEEDS_SIZE,
+          },
+        ]
+      );
 
       feedsResponse.items.forEach((feed: Feed) => {
         queryClient.setQueryDefaults(feed.id.toString(), {
@@ -61,7 +70,6 @@ export const useGetSybilFeeds = ({
       });
 
       return {
-        // TODO: update after BE pagination is ready
         meta: {
           page: 1,
           size: 10,

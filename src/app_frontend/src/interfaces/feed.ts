@@ -19,6 +19,8 @@ export interface FeedType {
   Custom: any;
 }
 
+export type FilterFeedType = 'Default' | 'Custom' | 'All';
+
 export interface FeedData {
   decimals: number; // bigint
   rate: number; // bigint

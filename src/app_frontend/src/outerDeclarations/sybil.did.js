@@ -63,7 +63,7 @@ export const idlFactory = ({ IDL }) => {
   });
   const FeedType = IDL.Variant({
     Default: IDL.Null,
-    Custom: IDL.Record({ sources: IDL.Vec(Source) }),
+    Custom: IDL.Null,
   });
   const GetFeedsFilter = IDL.Record({
     feed_type: IDL.Opt(FeedType),

@@ -47,7 +47,7 @@ export type FrequencyType = {
   units: Unit;
 };
 
-export type FilterType = 'Empty' | 'Pair' | 'Random';
+export type FilterType = 'Empty' | 'Feed' | 'Random';
 
 export type OptionType = {
   value: string;

@@ -24,6 +24,8 @@ import { BREAK_POINT_MOBILE, FREQUENCY_UNITS, MIN_BALANCE, MIN_FREQUENCY } from 
 import styles from './Subscription.scss';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { useGetSybilFeeds } from 'ApiHooks/useGetSybilFeeds';
+import { useGlobalState } from 'Providers/GlobalState';
+import { RemoteDataType } from 'Interfaces/common';
 
 interface NewSubscriptionProps {
   addressData: any;
@@ -66,13 +68,15 @@ const NewSubscription = ({ addressData, signMessage, subscribe }: NewSubscriptio
   const [feed, setFeed] = useState<string | null>(null);
   const [isEdit, setIsEdit] = useState(true);
 
-  const feeds = useGetSybilFeeds({ page: 1 });
+  const feeds = useGetSybilFeeds({ isGetAll: true });
 
   const [balance, setBalance] = useState(0);
   const { width } = useWindowDimensions();
   const isMobile = width <= BREAK_POINT_MOBILE;
 
-  const { chains, fetchBalance, pma, isBalanceLoading } = usePythiaData();
+  const { chains, isChainsLoading } = useGlobalState();
+
+  const { fetchBalance, pma, isBalanceLoading } = usePythiaData();
 
   const refetchBalance = useCallback(async () => {
     setBalance(await fetchBalance(chainId, addressData.address));
@@ -151,6 +155,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe }: NewSubscriptio
           isDisabled={!isEdit}
           options={useMemo(() => mapChainsToOptions(chains), [chains])}
           onChange={(e: OptionType) => setChainId(e.value)}
+          isLoading={isChainsLoading}
         />
       </Space>
       <Space direction="vertical">
@@ -234,6 +239,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe }: NewSubscriptio
           components={{
             IndicatorSeparator: () => null,
           }}
+          isLoading={feeds.data.type === RemoteDataType.LOADING}
         />
 
         <Space>

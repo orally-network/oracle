@@ -9,6 +9,7 @@ interface UseGetSubscriptionsProps {
   page?: number;
   size?: number;
   filters: Filters;
+  isGetAll?: boolean;
 }
 
 interface UseGetSubscriptionsResult {
@@ -23,7 +24,7 @@ interface UseGetSubscriptionsResult {
     };
   };
   refetch: () => Promise<void>;
-} 
+}
 
 interface GetSubscriptionsResponse {
   items: Subscription[];
@@ -37,6 +38,7 @@ export const useGetSubscriptions = ({
   page,
   size,
   filters,
+  isGetAll,
 }: UseGetSubscriptionsProps): UseGetSubscriptionsResult => {
   const queryClient: QueryClient = useQueryClient();
 
@@ -59,13 +61,15 @@ export const useGetSubscriptions = ({
     async () => {
       const subscriptionsResponse: GetSubscriptionsResponse =
         await pythiaCanister.get_subscriptions(
-          [normalizedFilters],
-          [
-            {
-              page,
-              size: size || DEFAULT_SUBSCRIPTIONS_SIZE,
-            },
-          ]
+          isGetAll ? [] : [normalizedFilters],
+          isGetAll
+            ? []
+            : [
+                {
+                  page,
+                  size: size || DEFAULT_SUBSCRIPTIONS_SIZE,
+                },
+              ]
         );
 
       subscriptionsResponse.items.forEach((subscription: Subscription) => {

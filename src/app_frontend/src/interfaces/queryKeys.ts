@@ -10,6 +10,7 @@ export type EnsuredDynamicQueryKey<Types extends unknown[] = []> = EnsuredQueryK
   [QueryType, ...Types]
 >;
 
+// TODO: add chains to query keys
 export interface QueryKeys {
   subscriptions: (
     filters?: Filters,

@@ -1,0 +1,21 @@
+.label {
+  color: #4a6293;
+}
+
+.listItem {
+  border-bottom: 1px solid #15223b;
+  width: 100%;
+  padding: 14px 0;
+}
+
+.logo {
+  border-radius: 50%;
+  background-color: #091325;
+  width: 27px;
+  height: 27px;
+  position: relative;
+  overflow: hidden;
+  :global(.light-theme) & {
+    background-color: gray;
+  }
+}

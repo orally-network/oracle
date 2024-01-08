@@ -1,10 +1,7 @@
-import { Chain } from 'Interfaces/chain';
 import { FilterType } from 'Interfaces/subscription';
 import { createContext } from 'react';
 
 interface PythiaDataContextInterface {
-  chains: Chain[];
-  isChainsLoading: boolean;
   fetchBalance: (chainId: BigInt | number, address: string) => void;
   balance: number;
   isBalanceLoading: boolean;
@@ -27,8 +24,6 @@ interface PythiaDataContextInterface {
 }
 
 const PythiaDataContext = createContext<PythiaDataContextInterface>({
-  chains: [],
-  isChainsLoading: false,
   fetchBalance: () => {},
   balance: 0,
   isBalanceLoading: false,

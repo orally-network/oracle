@@ -6,6 +6,7 @@ const GlobalStateContext = createContext({
     message: '',
     signature: '',
     address: '',
+    executionAddress: '',
   },
   setAddressData: (addressData: AddressData) => {},
 });

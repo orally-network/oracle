@@ -24,6 +24,7 @@ import { toast } from 'react-toastify';
 import { useGetSybilFeeds } from 'ApiHooks/useGetSybilFeeds';
 
 import styles from './Subscription.scss';
+import { RemoteDataType } from 'Interfaces/common';
 
 interface SubscriptionDetailsProps {
   subscription: Subscription;
@@ -53,9 +54,8 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
 
   const viewOnly = subscription.owner !== address?.toLowerCase?.();
 
-  const { addressData } = useGlobalState();
-  const { chains } = usePythiaData();
-  const feeds = useGetSybilFeeds({ page: 1 });
+  const { addressData, chains } = useGlobalState();
+  const feeds = useGetSybilFeeds({ isGetAll: true });
   const { width } = useWindowDimensions();
   const isMobile = width <= BREAK_POINT_MOBILE;
 
@@ -222,6 +222,7 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
           components={{
             IndicatorSeparator: () => null,
           }}
+          isLoading={feeds.data.type === RemoteDataType.LOADING}
         />
 
         <Space>

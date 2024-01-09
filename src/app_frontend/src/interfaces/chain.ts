@@ -12,10 +12,15 @@ export interface Chain {
       name: string;
       url: string;
     };
-  }
+  };
+  nativeCurrency: {
+    name: string;
+    symbol: string;
+    decimals: number;
+  };
 }
 
 export enum ExplorerType {
-  ScanExplorer = "Scan",
-  BlockscoutExplorer = "Blockscout",
+  ScanExplorer = 'Scan',
+  BlockscoutExplorer = 'Blockscout',
 }

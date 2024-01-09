@@ -11,10 +11,11 @@ import { MultiSelect } from 'Components/Select';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import { OptionType } from 'Interfaces/subscription';
+import { useGlobalState } from 'Providers/GlobalState';
 
 const FiltersBar = () => {
+  const { chains, isChainsLoading } = useGlobalState();
   const {
-    chains,
     showInactive,
     showMine,
     filterByType,
@@ -51,7 +52,7 @@ const FiltersBar = () => {
           size="small"
           options={[
             { label: 'All', value: 'Empty' },
-            { label: 'Price', value: 'Pair' },
+            { label: 'Price', value: 'Feed' },
             { label: 'Random', value: 'Random' },
           ]}
           optionType="button"
@@ -111,6 +112,7 @@ const FiltersBar = () => {
           options={mapChainsToOptions(chains)}
           onChange={onChainSelect}
           placeholder="Chain"
+          isLoading={isChainsLoading}
         />
       ),
     },
@@ -137,7 +139,7 @@ const FiltersBar = () => {
               size="large"
               options={[
                 { label: 'All', value: 'Empty' },
-                { label: 'Price', value: 'Pair' },
+                { label: 'Price', value: 'Feed' },
                 { label: 'Random', value: 'Random' },
               ]}
               optionType="button"

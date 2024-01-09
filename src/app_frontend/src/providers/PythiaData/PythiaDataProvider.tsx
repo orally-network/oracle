@@ -4,8 +4,6 @@ import { remove0x } from 'Utils/addressUtils';
 import { useGlobalState } from 'Providers/GlobalState';
 import logger from 'Utils/logger';
 import pythiaCanister from 'Canisters/pythiaCanister';
-import { CHAINS_MAP } from 'Constants/chains';
-import config from 'Constants/config';
 import PythiaDataContext from './PythiaDataContext';
 import { FilterType } from 'Interfaces/subscription';
 import debounce from 'lodash.debounce';
@@ -17,14 +15,11 @@ const PythiaDataProvider = ({ children }: any) => {
   const [filterByType, setFilterByType] = useState<FilterType>('Empty');
   const [chainIds, setChainIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [chains, setChains] = useState([]);
-  const [isChainsLoading, setIsChainsLoading] = useState(false);
   const [balance, setBalance] = useState(0);
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
   const [pma, setPma] = useState('');
 
   const { addressData } = useGlobalState();
-
 
   const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -36,22 +31,6 @@ const PythiaDataProvider = ({ children }: any) => {
     return () => {
       debouncedChangeHandler.cancel();
     };
-  }, []);
-
-  const fetchChains = useCallback(async () => {
-    setIsChainsLoading(true);
-
-    const chains = await pythiaCanister.get_chains();
-    console.log({ chains });
-
-    setIsChainsLoading(false);
-    if (Array.isArray(chains)) {
-      const visibleChains: any = config.isStaging
-        ? chains
-        : chains.filter((chain) => !CHAINS_MAP[chain.chain_id].testnet);
-
-      setChains(visibleChains);
-    }
   }, []);
 
   const fetchBalance = useCallback(async (chainId: number, address: string) => {
@@ -98,7 +77,6 @@ const PythiaDataProvider = ({ children }: any) => {
   );
 
   useEffect(() => {
-    fetchChains();
     fetchPma();
   }, []);
 
@@ -106,8 +84,6 @@ const PythiaDataProvider = ({ children }: any) => {
     return {
       page,
       setPage,
-      chains,
-      isChainsLoading,
       fetchBalance,
       balance,
       isBalanceLoading,
@@ -127,8 +103,6 @@ const PythiaDataProvider = ({ children }: any) => {
     };
   }, [
     page,
-    chains,
-    isChainsLoading,
     fetchBalance,
     balance,
     isBalanceLoading,

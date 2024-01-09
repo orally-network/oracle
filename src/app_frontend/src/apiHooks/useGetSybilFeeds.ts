@@ -8,7 +8,8 @@ import { DEFAULT_FEEDS_SIZE } from 'Constants/ui';
 interface useGetSybilFeedsProps {
   page?: number;
   size?: number;
-  filters?: SybilFilters;
+  filters?: SybilFilters | [];
+  isGetAll?: boolean;
 }
 
 interface useGetSybilFeedsResult {
@@ -37,6 +38,7 @@ export const useGetSybilFeeds = ({
   page,
   size,
   filters,
+  isGetAll,
 }: useGetSybilFeedsProps): useGetSybilFeedsResult => {
   const queryClient: QueryClient = useQueryClient();
 
@@ -51,13 +53,15 @@ export const useGetSybilFeeds = ({
     [dynamicQueryKeys.subscriptions(), filters, page, size],
     async () => {
       const feedsResponse: GetFeedsResponse = await sybilCanister.get_feeds(
-        [filters],
-        [
-          {
-            page,
-            size: size || DEFAULT_FEEDS_SIZE,
-          },
-        ]
+        isGetAll ? [] : [filters],
+        isGetAll
+          ? []
+          : [
+              {
+                page,
+                size: size || DEFAULT_FEEDS_SIZE,
+              },
+            ]
       );
 
       feedsResponse.items.forEach((feed: Feed) => {

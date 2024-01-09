@@ -45,6 +45,8 @@ export const NewFeed = ({}: NewFeedProps) => {
     token: USDT_TOKEN_POLYGON,
   });
 
+  console.log({ executionBalance }, 'executionBalance');
+
   const addSource = () => {
     setSources([...sources, newSource]);
   };
@@ -60,35 +62,35 @@ export const NewFeed = ({}: NewFeedProps) => {
       const amount = Number(executionBalance?.formatted);
       console.log({ amount });
 
-      const depositResult = await toast.promise(
-        sybilCanister.deposit({
-          amount,
-          taxpayer: addressData?.address,
-          deposit_type: {
-            Erc20: null,
-          },
-        }),
-        {
-          pending: `Depositing...`,
-          success: `Deposited successfully`,
-          error: {
-            render({ error }) {
-              logger.error(`Deposit`, error);
+      // const depositResult = await toast.promise(
+      //   sybilCanister.deposit({
+      //     amount,
+      //     taxpayer: addressData?.address,
+      //     deposit_type: {
+      //       Erc20: null,
+      //     },
+      //   }),
+      //   {
+      //     pending: `Depositing...`,
+      //     success: `Deposited successfully`,
+      //     error: {
+      //       render({ error }) {
+      //         logger.error(`Deposit`, error);
 
-              return 'Something went wrong. Try again later.';
-            },
-          },
-        }
-      );
+      //         return 'Something went wrong. Try again later.';
+      //       },
+      //     },
+      //   }
+      // );
 
-      console.log({ depositResult });
+      // console.log({ depositResult });
 
       const customFeedRes = await toast.promise(
         sybilCanister.create_custom_feed({
           feed_id: feedId,
-          frequency,
+          update_freq: frequency,
           sources,
-          amount,
+          decimals: 18,
           msg: addressData.message,
           sig: remove0x(addressData.signature),
         }),
@@ -114,26 +116,29 @@ export const NewFeed = ({}: NewFeedProps) => {
   const testSources = async () => {
     setConfirmLoading(true);
 
-    try {
-      const testSourcesRes = await toast.promise(
-        sybilCanister.create_data_fetcher({
-          msg: addressData.message,
-          sig: remove0x(addressData.signature),
-          update_freq: frequency,
-          sources,
-        }),
-        {
-          pending: `Testing...`,
-          success: `Tested successfully`,
-          error: {
-            render({ error }) {
-              logger.error(`Test sources`, error);
+    const balancePromises = sources.map((s) => fetch(s.uri));
 
-              return 'Something went wrong. Try again later.';
-            },
-          },
-        }
-      );
+    try {
+      const testSourcesRes = await Promise.all(balancePromises);
+      // const testSourcesRes = await toast.promise(
+      //   sybilCanister.create_data_fetcher({
+      //     msg: addressData.message,
+      //     sig: remove0x(addressData.signature),
+      //     update_freq: frequency,
+      //     sources,
+      //   }),
+      //   {
+      //     pending: `Testing...`,
+      //     success: `Tested successfully`,
+      //     error: {
+      //       render({ error }) {
+      //         logger.error(`Test sources`, error);
+
+      //         return 'Something went wrong. Try again later.';
+      //       },
+      //     },
+      //   }
+      // );
 
       console.log({ testSourcesRes });
     } finally {

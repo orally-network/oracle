@@ -116,29 +116,10 @@ export const NewFeed = ({}: NewFeedProps) => {
   const testSources = async () => {
     setConfirmLoading(true);
 
-    const balancePromises = sources.map((s) => fetch(s.uri));
+    const sourcesPromises = sources.map((s) => fetch(s.uri));
 
     try {
-      const testSourcesRes = await Promise.all(balancePromises);
-      // const testSourcesRes = await toast.promise(
-      //   sybilCanister.create_data_fetcher({
-      //     msg: addressData.message,
-      //     sig: remove0x(addressData.signature),
-      //     update_freq: frequency,
-      //     sources,
-      //   }),
-      //   {
-      //     pending: `Testing...`,
-      //     success: `Tested successfully`,
-      //     error: {
-      //       render({ error }) {
-      //         logger.error(`Test sources`, error);
-
-      //         return 'Something went wrong. Try again later.';
-      //       },
-      //     },
-      //   }
-      // );
+      const testSourcesRes = await Promise.all(sourcesPromises);
 
       console.log({ testSourcesRes });
     } finally {
@@ -155,7 +136,7 @@ export const NewFeed = ({}: NewFeedProps) => {
         <Input
           value={feedId}
           placeholder=".../USD"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFeedId(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFeedId(e.target.value.trim())}
           disabled={isSourcesTested}
         />
       </Space>

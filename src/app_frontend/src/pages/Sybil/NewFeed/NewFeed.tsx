@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { Input, Flex, Space } from 'antd';
+import sizeof from 'object-sizeof';
 
 import { CHAINS_MAP } from 'Constants/chains';
 import Button from 'Components/Button';
@@ -95,11 +96,11 @@ export const NewFeed = ({}: NewFeedProps) => {
           sig: remove0x(addressData.signature),
         }),
         {
-          pending: `Depositing...`,
-          success: `Deposited successfully`,
+          pending: `Creating...`,
+          success: `Created successfully`,
           error: {
             render({ error }) {
-              logger.error(`Deposit`, error);
+              logger.error(`Create`, error);
 
               return 'Something went wrong. Try again later.';
             },
@@ -116,11 +117,12 @@ export const NewFeed = ({}: NewFeedProps) => {
   const testSources = async () => {
     setConfirmLoading(true);
 
-    const sourcesPromises = sources.map((s) => fetch(s.uri));
+    const sourcesPromises = sources.map((s) => fetch(`https://rpc.orally.network/?rpc=${s.uri}`));
 
     try {
       const testSourcesRes = await Promise.all(sourcesPromises);
-
+      const bytes = sizeof(testSourcesRes);
+      console.log({ bytes });
       console.log({ testSourcesRes });
     } finally {
       setIsSourcesTested(true);
@@ -142,12 +144,12 @@ export const NewFeed = ({}: NewFeedProps) => {
       </Space>
       <Space direction="vertical">
         <div>Expiration time</div>
-        <div className={styles.label}>Frequency</div>
+        <div className={styles.label}>Frequency (min)</div>
         <Input
           pattern="[0-9]*"
           value={frequency}
           placeholder="Frequency"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFrequency(+e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFrequency(+e.target.value * 60)}
           disabled={isSourcesTested}
         />
       </Space>

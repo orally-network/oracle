@@ -42,7 +42,6 @@ interface SubscriptionProps {
     message: string;
     signature: string;
   };
-  signMessage: () => Promise<void>;
   stopSubscription: (chainId: BigInt, subId: BigInt) => Promise<GeneralResponse>;
   startSubscription: (chainId: BigInt, subId: BigInt) => Promise<GeneralResponse>;
   withdraw: (chainId: BigInt, subId: BigInt) => Promise<GeneralResponse>;
@@ -51,7 +50,6 @@ interface SubscriptionProps {
 const SubscriptionCard = ({
   sub,
   addressData,
-  signMessage,
   stopSubscription,
   startSubscription,
   withdraw,
@@ -207,7 +205,6 @@ const SubscriptionCard = ({
                 subscribed
                 is_active={is_active}
                 addressData={addressData}
-                signMessage={signMessage}
                 chain={chain}
                 subId={id}
                 balance={balance}

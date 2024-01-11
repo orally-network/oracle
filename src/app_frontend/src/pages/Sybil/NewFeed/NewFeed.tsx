@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import { Input, Flex, Space } from 'antd';
+import { Input, Flex, Space, Switch } from 'antd';
 import sizeof from 'object-sizeof';
 
 import { CHAINS_MAP } from 'Constants/chains';
@@ -33,10 +33,12 @@ export const NewFeed = ({}: NewFeedProps) => {
   };
 
   const [feedId, setFeedId] = useState<string>('');
-  const [frequency, setFrequency] = useState<number>();
+  const [frequency, setFrequency] = useState<string>('');
   const [sources, setSources] = useState<Source[]>([newSource]);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [isSourcesTested, setIsSourcesTested] = useState(false);
+  const [isPriceFeed, setIsPriceFeed] = useState(false);
+  const [decimals, setDecimals] = useState('9');
 
   const { addressData } = useGlobalState();
 
@@ -89,9 +91,9 @@ export const NewFeed = ({}: NewFeedProps) => {
       const customFeedRes = await toast.promise(
         sybilCanister.create_custom_feed({
           feed_id: feedId,
-          update_freq: frequency,
+          update_freq: +frequency * 60,
           sources,
-          decimals: 18,
+          decimals: isPriceFeed ? Number(decimals) : 0,
           msg: addressData.message,
           sig: remove0x(addressData.signature),
         }),
@@ -149,10 +151,41 @@ export const NewFeed = ({}: NewFeedProps) => {
           pattern="[0-9]*"
           value={frequency}
           placeholder="Frequency"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFrequency(+e.target.value * 60)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFrequency(e.target.value)}
           disabled={isSourcesTested}
         />
       </Space>
+      <Space>
+        <Switch
+          disabled={isSourcesTested}
+          checked={isPriceFeed}
+          onChange={(checked: boolean) => {
+            {
+              setIsPriceFeed(checked);
+              // setFeed(null);
+            }
+          }}
+        />
+        Price Feed
+      </Space>
+
+      {isPriceFeed && (
+        <Space direction="vertical">
+          <div>Decimals</div>
+          <div className={styles.label}>Add decimals</div>
+          <Input
+            value={decimals}
+            type="number"
+            min="0"
+            max="19"
+            placeholder="decimals from 0 to 19"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setDecimals(e.target.value.trim())
+            }
+            disabled={isSourcesTested}
+          />
+        </Space>
+      )}
 
       {sources.map((source, index) => (
         <Space key={index} size="middle" direction="vertical">

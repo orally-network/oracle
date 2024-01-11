@@ -14,6 +14,7 @@ import rollbar from './rollbar';
 import { SubscriptionDetailsPage } from 'Pages/SubscriptionDetailsPage';
 import ErrorPage from 'Pages/ErrorPage';
 import { CACHE_TIME, QUERY_CLIENT_DEFAULT_RETRY_COUNT, TIME_TO_WAIT } from 'Constants/query';
+import { PythiaDataProvider } from 'Providers/PythiaData';
 
 const router = createBrowserRouter([
   {
@@ -66,14 +67,16 @@ const App = () => {
       <ErrorBoundary>
         <QueryClientProvider client={queryClient}>
           <GlobalStateProvider>
-            <RouterProvider
-              router={router}
-              fallbackElement={
-                <Space size="large">
-                  <Spin size="large" />
-                </Space>
-              }
-            />
+            <PythiaDataProvider>
+              <RouterProvider
+                router={router}
+                fallbackElement={
+                  <Space size="large">
+                    <Spin size="large" />
+                  </Space>
+                }
+              />
+            </PythiaDataProvider>
           </GlobalStateProvider>
         </QueryClientProvider>
       </ErrorBoundary>

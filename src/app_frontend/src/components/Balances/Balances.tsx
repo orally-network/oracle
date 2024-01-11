@@ -13,6 +13,7 @@ import Loader from 'Components/Loader';
 import TopUpModal from 'Shared/Control/TopUpModal';
 import { usePythiaData } from 'Providers/PythiaData';
 import { Chain } from 'Interfaces/chain';
+import { SignInButton } from 'Shared/SignInButton';
 
 type ChainBalance = {
   chainId: string | number;
@@ -32,7 +33,7 @@ export const Balances = () => {
     setIsBalancesLoading(true);
 
     const balancePromises = chains.map((chain) =>
-      pythiaCanister.get_balance(chain.chain_id, remove0x(addressData.address))
+      pythiaCanister.get_balance(chain.chain_id, remove0x(addressData?.address))
     );
 
     try {
@@ -43,7 +44,6 @@ export const Balances = () => {
         balance: balances[index].Ok || Number(balances[index].Ok) === 0 ? balances[index].Ok : 0,
       }));
       setBalances(chainBalances);
-      console.log(chainBalances);
     } catch (e) {
       console.log(e);
     } finally {
@@ -52,13 +52,16 @@ export const Balances = () => {
   };
 
   useEffect(() => {
+    if (!addressData || !addressData.address) return;
     fetchBalances();
-  }, [chains]);
+  }, [chains, addressData]);
 
   const openTopUpModal = (chainId: string) => {
     setActiveChain(CHAINS_MAP[chainId]);
     setIsTopUpModalOpen(true);
   };
+
+  if (!addressData || !addressData.address) return <SignInButton chain={chains[0]} />;
 
   return (
     <>
@@ -89,7 +92,7 @@ export const Balances = () => {
               <SecondaryButton
                 icon={<DownloadOutlined />}
                 className={styles.topUp}
-                onClick={() => openTopUpModal(item.chainId)}
+                onClick={() => openTopUpModal(item.chainId as string)}
               >
                 Top up
               </SecondaryButton>

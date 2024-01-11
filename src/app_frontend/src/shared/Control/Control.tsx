@@ -13,6 +13,7 @@ import TopUpModal from './TopUpModal';
 // import SubscribeModal from './SubscribeModal';
 import styles from './Control.scss';
 import { SecondaryButton } from 'Components/SecondaryButton';
+import { SignInButton } from 'Shared/SignInButton';
 
 const MIN_BALANCE = 0.1;
 const EMPTY_BALANCE = 0.001;
@@ -22,7 +23,6 @@ interface ControlProps {
     address: string;
     signature: string;
   };
-  signMessage: (chainId: BigInt, subId: BigInt) => Promise<any>;
   chain: any;
   balance: any;
   executionAddress: any;
@@ -41,7 +41,6 @@ interface ControlProps {
 // todo: subscribed will have `stop` and `withdraw` methods
 const Control = ({
   addressData,
-  signMessage,
   chain,
   subscribe,
   subscribed,
@@ -57,31 +56,11 @@ const Control = ({
   isBalanceLoading,
 }: ControlProps) => {
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
-  const [isSigning, setIsSigning] = useState(false);
   const [isStopping, setIsStopping] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
 
   const { address } = useAccount();
-
-  const signMessageHandler = useCallback(async () => {
-    setIsSigning(true);
-    try {
-      await toast.promise(signMessage(chain?.id), {
-        pending: `SIWE processing...`,
-        success: `SIWE processed`,
-        error: {
-          render({ data }) {
-            logger.error(`SIWE`, data);
-
-            return 'Something went wrong. Try again later.';
-          },
-        },
-      });
-    } finally {
-      setIsSigning(false);
-    }
-  }, [chain, signMessage]);
 
   const stopHandler = useCallback(async () => {
     setIsStopping(true);
@@ -147,13 +126,7 @@ const Control = ({
   }
 
   if (!addressData) {
-    return (
-      <Spin spinning={isSigning}>
-        <Button onClick={signMessageHandler} type="primary" className={styles.signMessage}>
-          Sign message
-        </Button>
-      </Spin>
-    );
+    return <SignInButton chain={chain} />;
   }
 
   return (

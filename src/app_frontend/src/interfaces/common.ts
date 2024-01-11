@@ -7,7 +7,7 @@ export interface AddressData {
   address: string;
   message: string;
   signature: string;
-  executionAddress: string;
+  executionAddress?: string;
 }
 
 export enum RemoteDataType {

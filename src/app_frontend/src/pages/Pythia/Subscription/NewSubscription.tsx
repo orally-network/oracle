@@ -29,7 +29,6 @@ import { RemoteDataType } from 'Interfaces/common';
 
 interface NewSubscriptionProps {
   addressData: any;
-  signMessage: any;
   subscribe: any;
 }
 
@@ -57,7 +56,7 @@ export const getMethodAddon = ({
   );
 };
 
-const NewSubscription = ({ addressData, signMessage, subscribe }: NewSubscriptionProps) => {
+const NewSubscription = ({ addressData, subscribe }: NewSubscriptionProps) => {
   const [chainId, setChainId] = useState<string | null>(null);
   const [methodName, setMethodName] = useState('');
   const [methodArg, setMethodArg] = useState(RAND_METHOD_TYPES[0]);
@@ -271,7 +270,6 @@ const NewSubscription = ({ addressData, signMessage, subscribe }: NewSubscriptio
           <Space direction="vertical" size="middle" style={{ width: '100%' }}>
             <Control
               disabled={!chainId || !methodName || !addressToCall || !frequency}
-              signMessage={signMessage}
               addressData={addressData}
               balance={balance}
               executionAddress={pma}

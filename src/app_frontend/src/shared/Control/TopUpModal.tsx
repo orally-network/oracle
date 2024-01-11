@@ -47,7 +47,7 @@ const TopUpModal = ({
   });
 
   useEffect(() => {
-    if (currentChain?.id !== chain.id) {
+    if (currentChain?.id !== chain.id && switchNetwork) {
       switchNetwork(chain.id);
     }
   }, [chain.id, currentChain?.id, switchNetwork]);

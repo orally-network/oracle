@@ -58,6 +58,7 @@ export const getMethodAddon = ({
 
 const NewSubscription = ({ addressData, subscribe }: NewSubscriptionProps) => {
   const [chainId, setChainId] = useState<string | null>(null);
+  const [label, setLabel] = useState<string>('');
   const [methodName, setMethodName] = useState('');
   const [methodArg, setMethodArg] = useState(RAND_METHOD_TYPES[0]);
   const [addressToCall, setAddressToCall] = useState('');
@@ -89,6 +90,7 @@ const NewSubscription = ({ addressData, subscribe }: NewSubscriptionProps) => {
 
   const subscribeHandler = useCallback(async () => {
     const payload = {
+      label,
       chainId,
       methodName: `${methodName}(${feed ? getStrMethodArgs(Boolean(feed)) : methodArg})`,
       addressToCall,
@@ -145,7 +147,17 @@ const NewSubscription = ({ addressData, subscribe }: NewSubscriptionProps) => {
   const nextHandler = useCallback(() => setIsEdit(!isEdit), [isEdit]);
 
   return (
-    <Flex vertical={true} gap="middle">
+    <Flex vertical={true} gap="middle" style={{ paddingBottom: '60px' }}>
+      <Space direction="vertical">
+        <div className={styles.label}>Label</div>
+        <Input
+          disabled={!isEdit}
+          value={label}
+          placeholder="Label"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabel(e.target.value)}
+        />
+      </Space>
+
       <Space direction="vertical">
         <div className={styles.label}>Chain</div>
 

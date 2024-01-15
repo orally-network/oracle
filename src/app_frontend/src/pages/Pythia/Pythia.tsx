@@ -6,7 +6,7 @@ import { useAccount } from 'wagmi';
 import Button from 'Components/Button';
 
 import { remove0x } from 'Utils/addressUtils';
-import {  usePythiaData } from 'Providers/PythiaData';
+import { usePythiaData } from 'Providers/PythiaData';
 import { useGlobalState } from 'Providers/GlobalState';
 import pythiaCanister from 'Canisters/pythiaCanister';
 import logger from 'Utils/logger';
@@ -65,6 +65,7 @@ const Pythia = () => {
 
   const subscribe = useCallback(
     async ({
+      label,
       chainId,
       methodName,
       addressToCall,
@@ -73,6 +74,7 @@ const Pythia = () => {
       isRandom,
       feed,
     }: {
+      label: string;
       chainId: BigInt;
       methodName: string;
       addressToCall: string;
@@ -84,6 +86,7 @@ const Pythia = () => {
       setIsSubscribing(true);
 
       const payload = {
+        label,
         chain_id: chainId,
         feed_id: [feed],
         contract_addr: remove0x(addressToCall),
@@ -106,6 +109,8 @@ const Pythia = () => {
 
         throw new Error(res.Err);
       }
+
+      setIsNewSubscriptionModalVisible(false);
 
       return res;
     },

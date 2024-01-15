@@ -198,7 +198,11 @@ const SubscriptionCard = ({
           style={{ marginTop: '47px' }}
           width={isMobile ? '90vw' : '362px'}
         >
-          <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+          <Space
+            direction="vertical"
+            size="middle"
+            style={{ width: '100%', paddingBottom: '60px' }}
+          >
             <SubscriptionDetails subscription={sub} />
             {owner === address?.toLowerCase() && (
               <Control

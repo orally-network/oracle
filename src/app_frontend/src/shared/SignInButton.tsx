@@ -1,13 +1,13 @@
 import logger from 'Utils/logger';
-import { Button } from 'antd';
+import { Button, ButtonProps } from 'antd';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import useSignature from 'Shared/useSignature';
 
-interface SignInButtonProps {
+interface SignInButtonProps extends ButtonProps {
   chain: any;
 }
-export const SignInButton = ({ chain }: SignInButtonProps) => {
+export const SignInButton = ({ chain, ...props }: SignInButtonProps) => {
   const [isSigning, setIsSigning] = useState(false);
   const { signMessage } = useSignature();
 
@@ -31,7 +31,7 @@ export const SignInButton = ({ chain }: SignInButtonProps) => {
   };
 
   return (
-    <Button onClick={signMessageHandler} type="primary" loading={isSigning}>
+    <Button onClick={signMessageHandler} type="primary" loading={isSigning} {...props}>
       Sign message
     </Button>
   );

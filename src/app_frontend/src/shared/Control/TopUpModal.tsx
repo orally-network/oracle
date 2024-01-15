@@ -1,6 +1,12 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { useSendTransaction, useSwitchNetwork, useNetwork } from 'wagmi';
+import {
+  useSendTransaction,
+  useSwitchNetwork,
+  useNetwork,
+  usePrepareSendTransaction,
+  usePrepareContractWrite,
+} from 'wagmi';
 import { utils } from 'ethers';
 import { Input, Modal, Flex } from 'antd';
 import { waitForTransaction } from '@wagmi/core';
@@ -45,6 +51,47 @@ const TopUpModal = ({
     value: utils.parseUnits(String(amount || 0), decimals),
     chainId: chain.id,
   });
+
+  // to use with sybil ?
+  // const { config: tokenSendConfig } = usePrepareContractWrite({
+  //   address: token,
+  //   abi: [
+  //     {
+  //       name: 'transfer',
+  //       type: 'function',
+  //       stateMutability: 'nonpayable',
+  //       inputs: [
+  //         {
+  //           name: '_to',
+  //           type: 'address',
+  //         },
+  //         {
+  //           name: '_value',
+  //           type: 'uint256',
+  //         },
+  //       ],
+  //       outputs: [
+  //         {
+  //           name: '',
+  //           type: 'bool',
+  //         },
+  //       ],
+  //     },
+  //   ],
+  //   functionName: 'transfer',
+  //   args: [executionAddress, utils.parseUnits(String(amount || 0), decimals)],
+  //   enabled: Boolean(token),
+  // });
+
+  // const config = usePrepareSendTransaction({
+  //   to: executionAddress,
+  //   value: utils.parseUnits(String(amount || 0), decimals),
+  //   chainId: chain.id,
+  // });
+  // const { sendTransactionAsync } = useSendTransaction({
+  //   ...config.data ?? {},
+  //   value: config.data?.value?.hex,
+  // });
 
   useEffect(() => {
     if (currentChain?.id !== chain.id && switchNetwork) {

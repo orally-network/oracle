@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Input, Flex, Space, Switch } from 'antd';
 import sizeof from 'object-sizeof';
@@ -10,12 +10,22 @@ import logger from 'Utils/logger';
 import styles from './NewFeed.scss';
 import { DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { useGlobalState } from 'Providers/GlobalState';
-import { useBalance } from 'wagmi';
+import { useBalance, useNetwork, usePrepareContractWrite, useSendTransaction } from 'wagmi';
 import sybilCanister from 'Canisters/sybilCanister';
 import { remove0x } from 'Utils/addressUtils';
+import { SignInButton } from 'Shared/SignInButton';
+import { utils } from 'ethers';
+import { DEFAULT_TOP_UP_AMOUNT, MIN_BALANCE } from 'Constants/ui';
+import { waitForTransaction, writeContract } from '@wagmi/core';
+import { usePythiaData } from 'Providers/PythiaData';
+import { GeneralResponse } from 'Interfaces/common';
+import { abi } from './abi';
+import { useConfig } from 'wagmi';
+import Control from 'Shared/Control';
 
 const TREASURER_CHAIN = CHAINS_MAP[137];
 const USDT_TOKEN_POLYGON = '0xc2132D05D31c914a87C6611C10748AEb04B58e8F';
+const USDT_TOKEN_POLYGON_DECIMALS = 6;
 
 interface Source {
   uri: string;
@@ -35,20 +45,34 @@ export const NewFeed = ({}: NewFeedProps) => {
   const [feedId, setFeedId] = useState<string>('');
   const [frequency, setFrequency] = useState<string>('');
   const [sources, setSources] = useState<Source[]>([newSource]);
-  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
   const [isSourcesTested, setIsSourcesTested] = useState(false);
   const [isPriceFeed, setIsPriceFeed] = useState(false);
   const [decimals, setDecimals] = useState('9');
+  const [balance, setBalance] = useState(0);
 
   const { addressData } = useGlobalState();
+  const { pma, fetchBalance, isBalanceLoading } = usePythiaData();
+
+  const { chain: currentChain } = useNetwork();
+
+  const refetchBalance = useCallback(async () => {
+    setBalance(await fetchBalance(TREASURER_CHAIN.id, addressData.address));
+  }, [addressData, fetchBalance]);
+
+  useEffect(() => {
+    if (addressData) {
+      refetchBalance();
+    }
+  }, [addressData, refetchBalance]);
 
   const { data: executionBalance } = useBalance({
-    address: addressData?.executionAddress,
+    address: pma,
     chainId: TREASURER_CHAIN.id,
     token: USDT_TOKEN_POLYGON,
   });
 
-  console.log({ executionBalance }, 'executionBalance');
+  console.log({ executionBalance });
 
   const addSource = () => {
     setSources([...sources, newSource]);
@@ -59,89 +83,64 @@ export const NewFeed = ({}: NewFeedProps) => {
   };
 
   const createFeed = async () => {
-    setConfirmLoading(true);
+    setIsCreating(true);
+    toast.info(`Creating...`);
 
     try {
-      const amount = Number(executionBalance?.formatted);
-      console.log({ amount });
+      const customFeedRes: GeneralResponse = await sybilCanister.create_custom_feed({
+        feed_id: feedId.toUpperCase(),
+        update_freq: +frequency * 60,
+        sources,
+        decimals: isPriceFeed ? Number(decimals) : 0,
+        msg: addressData.message,
+        sig: remove0x(addressData.signature),
+      });
 
-      // const depositResult = await toast.promise(
-      //   sybilCanister.deposit({
-      //     amount,
-      //     taxpayer: addressData?.address,
-      //     deposit_type: {
-      //       Erc20: null,
-      //     },
-      //   }),
-      //   {
-      //     pending: `Depositing...`,
-      //     success: `Deposited successfully`,
-      //     error: {
-      //       render({ error }) {
-      //         logger.error(`Deposit`, error);
-
-      //         return 'Something went wrong. Try again later.';
-      //       },
-      //     },
-      //   }
-      // );
-
-      // console.log({ depositResult });
-
-      const customFeedRes = await toast.promise(
-        sybilCanister.create_custom_feed({
-          feed_id: feedId,
-          update_freq: +frequency * 60,
-          sources,
-          decimals: isPriceFeed ? Number(decimals) : 0,
-          msg: addressData.message,
-          sig: remove0x(addressData.signature),
-        }),
-        {
-          pending: `Creating...`,
-          success: `Created successfully`,
-          error: {
-            render({ error }) {
-              logger.error(`Create`, error);
-
-              return 'Something went wrong. Try again later.';
-            },
-          },
-        }
-      );
+      if (customFeedRes.Err) {
+        toast.error(`Create failed. Something went wrong. Try again later.`);
+      }
 
       console.log({ customFeedRes });
+      return toast.success('Created successfully');
+    } catch (error) {
+      logger.error(`Create feed`, error);
+      toast.error(`Create failed. Something went wrong. Try again later.`);
+      return null;
     } finally {
-      setConfirmLoading(false);
+      setIsCreating(false);
     }
   };
 
   const testSources = async () => {
-    setConfirmLoading(true);
+    setIsCreating(true);
 
     const sourcesPromises = sources.map((s) => fetch(`https://rpc.orally.network/?rpc=${s.uri}`));
 
     try {
       const testSourcesRes = await Promise.all(sourcesPromises);
       const bytes = sizeof(testSourcesRes);
-      console.log({ bytes });
+      setSources(sources.map((s) => ({ ...s, expected_bytes: bytes })));
       console.log({ testSourcesRes });
     } finally {
       setIsSourcesTested(true);
-      setConfirmLoading(false);
+      setIsCreating(false);
     }
   };
 
+  const regex = new RegExp('^[a-zA-Z]+/[a-zA-Z]+$');
+
   return (
-    <Flex vertical={true} gap="large" style={{ paddingBottom: '40px' }}>
+    <Flex vertical={true} gap="large" style={{ paddingBottom: '60px' }}>
       <Space direction="vertical">
         <div>Feed id</div>
         <div className={styles.label}>.../USD</div>
         <Input
           value={feedId}
           placeholder=".../USD"
+          pattern="^[a-zA-Z]+\/[a-zA-Z]+$"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFeedId(e.target.value.trim())}
           disabled={isSourcesTested}
+          status={feedId !== '' ? (regex.test(feedId) ? '' : 'error') : ''}
         />
       </Space>
       <Space direction="vertical">
@@ -159,12 +158,7 @@ export const NewFeed = ({}: NewFeedProps) => {
         <Switch
           disabled={isSourcesTested}
           checked={isPriceFeed}
-          onChange={(checked: boolean) => {
-            {
-              setIsPriceFeed(checked);
-              // setFeed(null);
-            }
-          }}
+          onChange={(checked: boolean) => setIsPriceFeed(checked)}
         />
         Price Feed
       </Space>
@@ -234,27 +228,40 @@ export const NewFeed = ({}: NewFeedProps) => {
       )}
 
       {isSourcesTested ? (
+        <Space direction="vertical" size="middle">
+          <Control
+            addressData={addressData}
+            balance={balance}
+            executionAddress={pma}
+            refetchBalance={refetchBalance}
+            isBalanceLoading={isBalanceLoading}
+            chain={TREASURER_CHAIN}
+          />
+
+          <Button
+            disabled={
+              !feedId || !frequency || !sources.length || isCreating || balance < MIN_BALANCE
+            }
+            onClick={createFeed}
+            type="primary"
+            style={{ alignSelf: 'flex-end' }}
+            loading={isCreating}
+          >
+            Create
+          </Button>
+        </Space>
+      ) : addressData && addressData.address ? (
         <Button
-          disabled={!feedId || !frequency || !sources.length || confirmLoading}
-          onClick={createFeed}
-          type="primary"
-          style={{ alignSelf: 'flex-end' }}
-          loading={confirmLoading}
-        >
-          Create
-        </Button>
-      ) : (
-        <Button
-          disabled={
-            !feedId || !frequency || !sources.every((s) => s.resolver && s.uri) || confirmLoading
-          }
+          disabled={!feedId || !frequency || !sources.every((s) => s.resolver && s.uri)}
           onClick={testSources}
           type="primary"
           style={{ alignSelf: 'flex-end' }}
-          loading={confirmLoading}
+          loading={isCreating}
         >
           Test fetch
         </Button>
+      ) : (
+        <SignInButton chain={currentChain} style={{ alignSelf: 'flex-end' }} />
       )}
     </Flex>
   );

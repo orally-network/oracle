@@ -311,6 +311,34 @@ const CHAINS = [
     explorerType: ExplorerType.BlockscoutExplorer,
   },
   {
+    id: 167008,
+    name: 'Taiko Katla',
+    network: 'Taiko Katla',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://rpc.katla.taiko.xyz/']
+      },
+      public: {
+        http: ['https://rpc.katla.taiko.xyz/']
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Explorer Taiko Katla',
+        url: 'https://explorer.katla.taiko.xyz/',
+      },
+    },
+    testnet: true,
+    img: taikoImg,
+    isBlockscoutExplorer: true,
+    explorerType: ExplorerType.BlockscoutExplorer,
+  },
+  {
     id: 59144,
     name: 'Linea Mainnet',
     network: 'Linea Mainnet',

@@ -420,6 +420,32 @@ const CHAINS = [
     isBlockscoutExplorer: true,
   },
   {
+    id: 10242,
+    name: 'Arthera',
+    network: 'Arthera',
+    nativeCurrency: {
+      name: 'AA',
+      symbol: 'AA',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://rpc.arthera.net']
+      },
+      public: {
+        http: ['https://rpc.arthera.net']
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Explorer Arthera',
+        url: 'https://explorer.arthera.net',
+      },
+    },
+    img: artheraImg,
+    isBlockscoutExplorer: true,
+  },
+  {
     id: 3441005,
     name: 'Manta Pacific Testnet',
     network: 'Manta Testnet',

@@ -11,6 +11,7 @@ import taikoImg from 'Assets/chains/taiko.svg';
 import zkSyncImg from 'Assets/chains/zkSync.png';
 import artheraImg from 'Assets/chains/arthera.png';
 import mantaImg from 'Assets/chains/manta.png';
+import blastImg from 'Assets/chains/blast.png';
 import { ExplorerType } from 'Interfaces/chain';
 
 const CHAINS = [
@@ -469,6 +470,32 @@ const CHAINS = [
       },
     },
     img: mantaImg,
+    explorerType: ExplorerType.ScanExplorer,
+  },
+  {
+    id: 168587773,
+    name: 'Blast Sepolia',
+    network: 'Blast Sepolia',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://sepolia.blast.io'],
+      },
+      public: {
+        http: ['https://sepolia.blast.io'],
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Explorer Blast Sepolia',
+        url: 'https://testnet.blastscan.io',
+      },
+    },
+    img: blastImg,
     explorerType: ExplorerType.ScanExplorer,
   },
 ];

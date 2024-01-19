@@ -1,46 +1,60 @@
 export const idlFactory = ({ IDL }) => {
   const Error = IDL.Variant({ Ok: IDL.Null, Err: IDL.Text });
+  const FeedType = IDL.Variant({
+    Default: IDL.Null,
+    CustomNumber: IDL.Null,
+    Custom: IDL.Null,
+    CustomString: IDL.Null,
+  });
   const Source = IDL.Record({
     uri: IDL.Text,
     resolver: IDL.Text,
-    expected_bytes: IDL.Nat64,
+    expected_bytes: IDL.Opt(IDL.Nat64),
   });
   const CreateCustomFeedRequest = IDL.Record({
     msg: IDL.Text,
     sig: IDL.Text,
-    decimals: IDL.Nat,
+    feed_type: FeedType,
+    decimals: IDL.Opt(IDL.Nat),
     update_freq: IDL.Nat,
     feed_id: IDL.Text,
     sources: IDL.Vec(Source),
   });
-  const CreateDataFetcherRequest = IDL.Record({
-    msg: IDL.Text,
-    sig: IDL.Text,
-    update_freq: IDL.Nat,
-    sources: IDL.Vec(Source),
-  });
-  const NatResponse = IDL.Variant({ Ok: IDL.Nat, Err: IDL.Text });
   const CreateDefaultFeedRequest = IDL.Record({
     decimals: IDL.Nat,
     update_freq: IDL.Nat,
     feed_id: IDL.Text,
   });
   const TextResponse = IDL.Variant({ Ok: IDL.Text, Err: IDL.Text });
-  const RateDataLight = IDL.Record({
-    decimals: IDL.Nat64,
+  const AssetData = IDL.Variant({
+    CustomPriceFeed: IDL.Record({
+      decimals: IDL.Opt(IDL.Nat64),
+      rate: IDL.Nat64,
+      timestamp: IDL.Nat64,
+      symbol: IDL.Text,
+    }),
+    CustomNumber: IDL.Record({ id: IDL.Text, value: IDL.Nat64 }),
+    DefaultPriceFeed: IDL.Record({
+      decimals: IDL.Nat64,
+      rate: IDL.Nat64,
+      timestamp: IDL.Nat64,
+      symbol: IDL.Text,
+    }),
+    CustomString: IDL.Record({ id: IDL.Text, value: IDL.Text }),
+  });
+  const AssetDataResult = IDL.Record({
     signature: IDL.Opt(IDL.Text),
-    rate: IDL.Nat64,
-    timestamp: IDL.Nat64,
-    symbol: IDL.Text,
+    data: AssetData,
   });
   const GetAssetDataResponse = IDL.Variant({
-    Ok: RateDataLight,
+    Ok: AssetDataResult,
     Err: IDL.Text,
   });
   const GetAssetDataWithProofResponse = IDL.Variant({
-    Ok: RateDataLight,
+    Ok: AssetDataResult,
     Err: IDL.Text,
   });
+  const NatResponse = IDL.Variant({ Ok: IDL.Nat, Err: IDL.Text });
   const BalancesCfg = IDL.Record({
     rpc: IDL.Text,
     erc20_contract: IDL.Text,
@@ -55,18 +69,12 @@ export const idlFactory = ({ IDL }) => {
     key_name: IDL.Text,
   });
   const GetCfgResponse = IDL.Variant({ Ok: Cfg, Err: IDL.Text });
-  const DataFetcher = IDL.Record({
-    id: IDL.Nat,
-    owner: IDL.Text,
-    update_freq: IDL.Nat,
-    sources: IDL.Vec(Source),
-  });
-  const FeedType = IDL.Variant({
+  const FeedTypeFilter = IDL.Variant({
     Default: IDL.Null,
     Custom: IDL.Null,
   });
   const GetFeedsFilter = IDL.Record({
-    feed_type: IDL.Opt(FeedType),
+    feed_type: IDL.Opt(FeedTypeFilter),
     owner: IDL.Opt(IDL.Text),
     search: IDL.Opt(IDL.Text),
   });
@@ -80,10 +88,11 @@ export const idlFactory = ({ IDL }) => {
     id: IDL.Text,
     feed_type: FeedType,
     status: FeedStatus,
-    decimals: IDL.Nat64,
+    decimals: IDL.Opt(IDL.Nat64),
     owner: IDL.Text,
-    data: IDL.Opt(RateDataLight),
+    data: IDL.Opt(AssetDataResult),
     update_freq: IDL.Nat64,
+    sources: IDL.Opt(IDL.Vec(Source)),
   });
   const GetFeedsResultWithPagination = IDL.Record({
     page: IDL.Nat64,
@@ -108,7 +117,6 @@ export const idlFactory = ({ IDL }) => {
     add_to_whitelist: IDL.Func([IDL.Text], [Error], []),
     clear_state: IDL.Func([], [Error], []),
     create_custom_feed: IDL.Func([CreateCustomFeedRequest], [Error], []),
-    create_data_fetcher: IDL.Func([CreateDataFetcherRequest], [NatResponse], []),
     create_default_feed: IDL.Func([CreateDefaultFeedRequest], [Error], []),
     deposit: IDL.Func([IDL.Text, IDL.Text, IDL.Text], [Error], []),
     eth_address: IDL.Func([], [TextResponse], []),
@@ -116,8 +124,6 @@ export const idlFactory = ({ IDL }) => {
     get_asset_data_with_proof: IDL.Func([IDL.Text], [GetAssetDataWithProofResponse], []),
     get_balance: IDL.Func([IDL.Text], [NatResponse], []),
     get_cfg: IDL.Func([], [GetCfgResponse], []),
-    get_data: IDL.Func([IDL.Nat], [TextResponse], []),
-    get_data_fetchers: IDL.Func([IDL.Text], [IDL.Vec(DataFetcher)], []),
     get_feeds: IDL.Func(
       [IDL.Opt(GetFeedsFilter), IDL.Opt(Pagination)],
       [GetFeedsResultWithPagination],
@@ -127,7 +133,6 @@ export const idlFactory = ({ IDL }) => {
     is_feed_exists: IDL.Func([IDL.Text], [IDL.Bool], []),
     is_whitelisted: IDL.Func([IDL.Text], [BoolResponse], []),
     remove_custom_feed: IDL.Func([IDL.Text, IDL.Text, IDL.Text], [Error], []),
-    remove_data_fetcher: IDL.Func([IDL.Nat, IDL.Text, IDL.Text], [Error], []),
     remove_default_feed: IDL.Func([IDL.Text], [Error], []),
     remove_from_whitelist: IDL.Func([IDL.Text], [Error], []),
     update_cfg: IDL.Func([UpdateCfg], [Error], []),

@@ -1,7 +1,7 @@
 export interface Feed {
   id: string;
   status: FeedStatus;
-  decimals: number;
+  decimals?: number;
   owner: string;
   data: FeedData[];
   update_freq: number;

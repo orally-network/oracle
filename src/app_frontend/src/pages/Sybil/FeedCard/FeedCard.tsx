@@ -21,7 +21,13 @@ const FeedCard = ({ feed }: FeedCardProps) => {
 
   const { id, decimals, owner, data, update_freq, feed_type } = feed;
 
-  const { symbol, rate, timestamp } = data[0];
+  let symbol, rate, timestamp;
+
+  if (data && data.length !== 0) {
+    symbol = data[0].data.DefaultPriceFeed.symbol;
+    rate = data[0].data.DefaultPriceFeed.rate;
+    timestamp = data[0].data.DefaultPriceFeed.timestamp;
+  }
 
   const { width } = useWindowDimensions();
   const isMobile = width <= BREAK_POINT_MOBILE;

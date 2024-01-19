@@ -91,7 +91,7 @@ export const NewFeed = ({}: NewFeedProps) => {
         feed_id: feedId.toUpperCase(),
         update_freq: +frequency * 60,
         sources,
-        decimals: isPriceFeed ? Number(decimals) : 0,
+        decimals: isPriceFeed ? [Number(decimals)] : [],
         msg: addressData.message,
         sig: remove0x(addressData.signature),
       });

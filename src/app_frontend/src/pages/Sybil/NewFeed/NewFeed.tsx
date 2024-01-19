@@ -57,7 +57,9 @@ export const NewFeed = ({}: NewFeedProps) => {
   const { chain: currentChain } = useNetwork();
 
   const refetchBalance = useCallback(async () => {
-    setBalance(await fetchBalance(TREASURER_CHAIN.id, addressData.address));
+    const balanceResponse = await sybilCanister.get_balance(addressData.address);
+
+    setBalance(balanceResponse?.Ok);
   }, [addressData, fetchBalance]);
 
   useEffect(() => {

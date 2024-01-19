@@ -14,6 +14,11 @@ import { waitForTransaction } from '@wagmi/core';
 import logger from 'Utils/logger';
 import { usePythiaData } from 'Providers/PythiaData';
 import { DEFAULT_TOP_UP_AMOUNT } from 'Constants/ui';
+import sybilCanister from 'Canisters/sybilCanister';
+import {useGlobalState} from "Providers/GlobalState";
+import pythiaCanister from "Canisters/pythiaCanister";
+import {remove0x} from "Utils/addressUtils";
+import { writeContract } from '@wagmi/core';
 
 interface TopUpModalProps {
   isTopUpModalOpen: boolean;
@@ -39,6 +44,7 @@ const TopUpModal = ({
   const { chain: currentChain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
   const { deposit } = usePythiaData();
+  const { addressData: { message, signature } } = useGlobalState();
 
   console.log({
     chain,
@@ -53,38 +59,39 @@ const TopUpModal = ({
   //   chainId: chain.id,
   // });
 
-  // to use with sybil ?
-  const { config: tokenSendConfig } = usePrepareContractWrite({
-    address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
-    abi: [
-      {
-        name: 'transfer',
-        type: 'function',
-        stateMutability: 'nonpayable',
-        inputs: [
-          {
-            name: '_to',
-            type: 'address',
-          },
-          {
-            name: '_value',
-            type: 'uint256',
-          },
-        ],
-        outputs: [
-          {
-            name: '',
-            type: 'bool',
-          },
-        ],
-      },
-    ],
-    functionName: 'transfer',
-    args: [executionAddress, utils.parseUnits(String(amount || 0), 6)],
-    enabled: Boolean('0xaf88d065e77c8cC2239327C5EDb3A432268e5831'),
-  });
 
-  const { writeAsync } = useContractWrite(tokenSendConfig);
+  const sendStablecoins = useCallback(async () => {
+    return writeContract({
+      address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+      abi: [
+        {
+          name: 'transfer',
+          type: 'function',
+          stateMutability: 'nonpayable',
+          inputs: [
+            {
+              name: '_to',
+              type: 'address',
+            },
+            {
+              name: '_value',
+              type: 'uint256',
+            },
+          ],
+          outputs: [
+            {
+              name: '',
+              type: 'bool',
+            },
+          ],
+        },
+      ],
+      functionName: 'transfer',
+      args: ['0xBFD54D868BE89184f19f597489A9FA9385AA708e', utils.parseUnits(String(amount || 0), 6)],
+      enabled: Boolean('0xaf88d065e77c8cC2239327C5EDb3A432268e5831'),
+      chainId: 42161,
+    });
+  }, [amount]);
 
   // const config = usePrepareSendTransaction({
   //   to: executionAddress,
@@ -102,9 +109,23 @@ const TopUpModal = ({
     }
   }, [chain.id, currentChain?.id, switchNetwork]);
 
+  const depositSybil = useCallback(
+    async (tx_hash) => {
+      const res = await sybilCanister.deposit(tx_hash, message, remove0x(signature));
+
+      console.log('deposit sybil res', res);
+      if (res.Err) {
+        logger.error(`Failed to deposit ${tx_hash}, ${res.Err}`);
+      }
+
+      return res;
+    },
+    [message, signature]
+  );
+
   const topUp = useCallback(async () => {
     try {
-      const { hash } = await writeAsync();
+      const { hash } = await sendStablecoins();
 
       setIsTopUpModalOpen(false);
 
@@ -129,7 +150,8 @@ const TopUpModal = ({
 
       console.log({ data, hash });
 
-      await toast.promise(deposit(chain.id, hash), {
+      // await toast.promise(deposit(chain.id, hash), {
+      await toast.promise(depositSybil(hash), {
         pending: `Deposit ${amount} ${symbol} to canister`,
         success: `Deposited successfully`,
         error: {
@@ -147,7 +169,7 @@ const TopUpModal = ({
       console.log({ error });
       toast.error('Something went wrong. Try again later.');
     }
-  }, [amount, chain, executionAddress, writeAsync, refetchBalance]);
+  }, [amount, chain, executionAddress, sendStablecoins, refetchBalance]);
 
   return (
     <Modal

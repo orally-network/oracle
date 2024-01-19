@@ -6,6 +6,7 @@ import {
   useNetwork,
   usePrepareSendTransaction,
   usePrepareContractWrite,
+  useContractWrite,
 } from 'wagmi';
 import { utils } from 'ethers';
 import { Input, Modal, Flex } from 'antd';
@@ -46,42 +47,44 @@ const TopUpModal = ({
     amount,
   });
 
-  const { sendTransactionAsync } = useSendTransaction({
-    to: executionAddress,
-    value: utils.parseUnits(String(amount || 0), decimals),
-    chainId: chain.id,
-  });
+  // const { sendTransactionAsync } = useSendTransaction({
+  //   to: executionAddress,
+  //   value: utils.parseUnits(String(amount || 0), decimals),
+  //   chainId: chain.id,
+  // });
 
   // to use with sybil ?
-  // const { config: tokenSendConfig } = usePrepareContractWrite({
-  //   address: token,
-  //   abi: [
-  //     {
-  //       name: 'transfer',
-  //       type: 'function',
-  //       stateMutability: 'nonpayable',
-  //       inputs: [
-  //         {
-  //           name: '_to',
-  //           type: 'address',
-  //         },
-  //         {
-  //           name: '_value',
-  //           type: 'uint256',
-  //         },
-  //       ],
-  //       outputs: [
-  //         {
-  //           name: '',
-  //           type: 'bool',
-  //         },
-  //       ],
-  //     },
-  //   ],
-  //   functionName: 'transfer',
-  //   args: [executionAddress, utils.parseUnits(String(amount || 0), decimals)],
-  //   enabled: Boolean(token),
-  // });
+  const { config: tokenSendConfig } = usePrepareContractWrite({
+    address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+    abi: [
+      {
+        name: 'transfer',
+        type: 'function',
+        stateMutability: 'nonpayable',
+        inputs: [
+          {
+            name: '_to',
+            type: 'address',
+          },
+          {
+            name: '_value',
+            type: 'uint256',
+          },
+        ],
+        outputs: [
+          {
+            name: '',
+            type: 'bool',
+          },
+        ],
+      },
+    ],
+    functionName: 'transfer',
+    args: [executionAddress, utils.parseUnits(String(amount || 0), 6)],
+    enabled: Boolean('0xaf88d065e77c8cC2239327C5EDb3A432268e5831'),
+  });
+
+  const { writeAsync } = useContractWrite(tokenSendConfig);
 
   // const config = usePrepareSendTransaction({
   //   to: executionAddress,
@@ -101,7 +104,7 @@ const TopUpModal = ({
 
   const topUp = useCallback(async () => {
     try {
-      const { hash } = await sendTransactionAsync();
+      const { hash } = await writeAsync();
 
       setIsTopUpModalOpen(false);
 
@@ -144,7 +147,7 @@ const TopUpModal = ({
       console.log({ error });
       toast.error('Something went wrong. Try again later.');
     }
-  }, [amount, chain, executionAddress, sendTransactionAsync, refetchBalance]);
+  }, [amount, chain, executionAddress, writeAsync, refetchBalance]);
 
   return (
     <Modal

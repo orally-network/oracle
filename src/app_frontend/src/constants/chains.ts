@@ -1,4 +1,13 @@
-import { mainnet, goerli, polygon, polygonMumbai, sepolia, zkSync, zkSyncTestnet } from 'wagmi/chains';
+import {
+  mainnet,
+  goerli,
+  polygon,
+  polygonMumbai,
+  sepolia,
+  zkSync,
+  arbitrum,
+  zkSyncTestnet,
+} from 'wagmi/chains';
 
 import ethereumImg from 'Assets/chains/ethereum.jpeg';
 import polygonImg from 'Assets/chains/polygon.jpeg';
@@ -20,6 +29,11 @@ const CHAINS = [
     img: ethereumImg,
     explorerType: ExplorerType.ScanExplorer,
     explorerAddress: 'https://api.etherscan.io',
+  },
+  {
+    ...arbitrum,
+    img: ethereumImg,
+    explorerType: ExplorerType.ScanExplorer,
   },
   {
     ...goerli,
@@ -62,10 +76,10 @@ const CHAINS = [
     },
     rpcUrls: {
       default: {
-        http: ['https://ultron-rpc.net']
+        http: ['https://ultron-rpc.net'],
       },
       public: {
-        http: ['https://ultron-rpc.net']
+        http: ['https://ultron-rpc.net'],
       },
     },
     testnet: false,
@@ -82,10 +96,10 @@ const CHAINS = [
     },
     rpcUrls: {
       default: {
-        http: ['https://ultron-dev.io']
+        http: ['https://ultron-dev.io'],
       },
       public: {
-        http: ['https://ultron-dev.io']
+        http: ['https://ultron-dev.io'],
       },
     },
     blockExplorers: {
@@ -108,18 +122,18 @@ const CHAINS = [
     },
     rpcUrls: {
       default: {
-        http: ['https://rpc.qtestnet.org']
+        http: ['https://rpc.qtestnet.org'],
       },
       public: {
-        http: ['https://rpc.qtestnet.org']
+        http: ['https://rpc.qtestnet.org'],
       },
-    }, 
+    },
     blockExplorers: {
       default: {
-        name: 'Explorer Q Testnet', 
+        name: 'Explorer Q Testnet',
         url: 'https://explorer.qtestnet.org/',
       },
-    }, 
+    },
     testnet: true,
     img: qImg,
     explorerType: ExplorerType.ScanExplorer,
@@ -135,18 +149,18 @@ const CHAINS = [
     },
     rpcUrls: {
       default: {
-        http: ['https://rpc.q.org']
+        http: ['https://rpc.q.org'],
       },
       public: {
-        http: ['https://rpc.q.org']
+        http: ['https://rpc.q.org'],
       },
-    }, 
+    },
     blockExplorers: {
       default: {
-        name: 'Explorer Q', 
+        name: 'Explorer Q',
         url: 'https://explorer.q.org',
       },
-    }, 
+    },
     img: qImg,
     explorerType: ExplorerType.ScanExplorer,
   },
@@ -161,10 +175,10 @@ const CHAINS = [
     },
     rpcUrls: {
       default: {
-        http: ['https://testnet.aurora.dev']
+        http: ['https://testnet.aurora.dev'],
       },
       public: {
-        http: ['https://testnet.aurora.dev']
+        http: ['https://testnet.aurora.dev'],
       },
     },
     blockExplorers: {
@@ -188,10 +202,10 @@ const CHAINS = [
     },
     rpcUrls: {
       default: {
-        http: ['https://mainnet.aurora.dev']
+        http: ['https://mainnet.aurora.dev'],
       },
       public: {
-        http: ['https://mainnet.aurora.dev']
+        http: ['https://mainnet.aurora.dev'],
       },
     },
     blockExplorers: {
@@ -214,10 +228,10 @@ const CHAINS = [
     },
     rpcUrls: {
       default: {
-        http: ['https://rpc.goerli.linea.build']
+        http: ['https://rpc.goerli.linea.build'],
       },
       public: {
-        http: ['https://rpc.goerli.linea.build']
+        http: ['https://rpc.goerli.linea.build'],
       },
     },
     blockExplorers: {
@@ -241,10 +255,10 @@ const CHAINS = [
     },
     rpcUrls: {
       default: {
-        http: ['https://testnet.bitfinity.network/']
+        http: ['https://testnet.bitfinity.network/'],
       },
       public: {
-        http: ['https://testnet.bitfinity.network/']
+        http: ['https://testnet.bitfinity.network/'],
       },
     },
     blockExplorers: {
@@ -267,10 +281,10 @@ const CHAINS = [
     },
     rpcUrls: {
       default: {
-        http: ['https://rpc.test.taiko.xyz']
+        http: ['https://rpc.test.taiko.xyz'],
       },
       public: {
-        http: ['https://rpc.test.taiko.xyz']
+        http: ['https://rpc.test.taiko.xyz'],
       },
     },
     blockExplorers: {
@@ -294,10 +308,10 @@ const CHAINS = [
     },
     rpcUrls: {
       default: {
-        http: ['https://rpc.jolnir.taiko.xyz']
+        http: ['https://rpc.jolnir.taiko.xyz'],
       },
       public: {
-        http: ['https://rpc.jolnir.taiko.xyz']
+        http: ['https://rpc.jolnir.taiko.xyz'],
       },
     },
     blockExplorers: {
@@ -322,10 +336,10 @@ const CHAINS = [
     },
     rpcUrls: {
       default: {
-        http: ['https://rpc.katla.taiko.xyz/']
+        http: ['https://rpc.katla.taiko.xyz/'],
       },
       public: {
-        http: ['https://rpc.katla.taiko.xyz/']
+        http: ['https://rpc.katla.taiko.xyz/'],
       },
     },
     blockExplorers: {
@@ -350,10 +364,10 @@ const CHAINS = [
     },
     rpcUrls: {
       default: {
-        http: ['https://linea-mainnet.infura.io/v3/{key}']
+        http: ['https://linea-mainnet.infura.io/v3/{key}'],
       },
       public: {
-        http: ['https://linea-mainnet.infura.io/v3/{key}']
+        http: ['https://linea-mainnet.infura.io/v3/{key}'],
       },
     },
     blockExplorers: {
@@ -376,10 +390,10 @@ const CHAINS = [
     },
     rpcUrls: {
       default: {
-        http: ['https://rpc.l3test.taiko.xyz']
+        http: ['https://rpc.l3test.taiko.xyz'],
       },
       public: {
-        http: ['https://rpc.l3test.taiko.xyz']
+        http: ['https://rpc.l3test.taiko.xyz'],
       },
     },
     blockExplorers: {
@@ -403,10 +417,10 @@ const CHAINS = [
     },
     rpcUrls: {
       default: {
-        http: ['https://rpc-test.arthera.net']
+        http: ['https://rpc-test.arthera.net'],
       },
       public: {
-        http: ['https://rpc-test.arthera.net']
+        http: ['https://rpc-test.arthera.net'],
       },
     },
     blockExplorers: {
@@ -430,10 +444,10 @@ const CHAINS = [
     },
     rpcUrls: {
       default: {
-        http: ['https://pacific-rpc.testnet.manta.network/http']
+        http: ['https://pacific-rpc.testnet.manta.network/http'],
       },
       public: {
-        http: ['https://pacific-rpc.testnet.manta.network/http']
+        http: ['https://pacific-rpc.testnet.manta.network/http'],
       },
     },
     blockExplorers: {
@@ -457,10 +471,10 @@ const CHAINS = [
     },
     rpcUrls: {
       default: {
-        http: ['https://pacific-rpc.manta.network/http']
+        http: ['https://pacific-rpc.manta.network/http'],
       },
       public: {
-        http: ['https://pacific-rpc.manta.network/http']
+        http: ['https://pacific-rpc.manta.network/http'],
       },
     },
     blockExplorers: {

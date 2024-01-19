@@ -5,7 +5,7 @@ import { DownloadOutlined } from '@ant-design/icons';
 import Connect from 'Shared/Connect';
 import { truncateEthAddress } from 'Utils/addressUtils';
 
-import TopUpModal from './TopUpModal';
+import { TopUpPythiaModal, TopUpSybilModal } from './TopUpModal';
 import styles from './Control.scss';
 import { SecondaryButton } from 'Components/SecondaryButton';
 import { SignInButton } from 'Shared/SignInButton';
@@ -18,6 +18,8 @@ interface ControlProps {
     signature: string;
   };
   chain: any;
+  decimals: any;
+  symbol: any;
   balance: any;
   executionAddress: any;
   refetchBalance: any;
@@ -30,6 +32,7 @@ interface ControlProps {
   startSubscription?: any;
   withdraw?: any;
   is_active?: boolean;
+  isPythia: boolean;
 }
 
 // todo: subscribed will have `stop` and `withdraw` methods
@@ -48,6 +51,9 @@ const Control = ({
   executionAddress,
   refetchBalance,
   isBalanceLoading,
+  decimals,
+  symbol,
+  isPythia,
 }: ControlProps) => {
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
   const { address } = useAccount();
@@ -59,6 +65,8 @@ const Control = ({
   if (!addressData) {
     return <SignInButton chain={chain} />;
   }
+
+  const formattedBalance = (Number(balance) / Math.pow(10, decimals)).toFixed(3);
 
   return (
     <div className={styles.control}>
@@ -85,7 +93,7 @@ const Control = ({
       </Flex>
 
       <div className={styles.balance}>
-        {(Number(balance) / Math.pow(10, chain.nativeCurrency.decimals)).toFixed(3) ?? '-'}{' '}
+        {formattedBalance}
         {chain.nativeCurrency.symbol}
       </div>
 
@@ -103,15 +111,25 @@ const Control = ({
         subId={subId}
       />
 
-      {isTopUpModalOpen && (
-        <TopUpModal
+      {isTopUpModalOpen && isPythia ? (
+        <TopUpPythiaModal
           isTopUpModalOpen={isTopUpModalOpen}
           setIsTopUpModalOpen={setIsTopUpModalOpen}
           chain={chain}
           executionAddress={executionAddress}
           refetchBalance={refetchBalance}
-          decimals={chain.nativeCurrency.decimals}
-          symbol={chain.nativeCurrency.symbol}
+          decimals={decimals}
+          symbol={symbol}
+        />
+      ) : (
+        <TopUpSybilModal
+          isTopUpModalOpen={isTopUpModalOpen}
+          setIsTopUpModalOpen={setIsTopUpModalOpen}
+          chain={chain}
+          executionAddress={executionAddress}
+          refetchBalance={refetchBalance}
+          decimals={decimals}
+          symbol={symbol}
         />
       )}
     </div>

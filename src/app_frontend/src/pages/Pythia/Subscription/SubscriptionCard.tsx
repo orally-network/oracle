@@ -218,6 +218,7 @@ const SubscriptionCard = ({
                 refetchBalance={refetchBalance}
                 stopSubscription={stopSubscription}
                 withdraw={withdraw}
+                isPythia={true}
               />
             )}
           </Space>

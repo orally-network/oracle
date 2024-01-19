@@ -10,7 +10,7 @@ import { DownloadOutlined } from '@ant-design/icons';
 import ChainLogo from 'Shared/ChainLogo';
 import { CHAINS_MAP } from 'Constants/chains';
 import Loader from 'Components/Loader';
-import TopUpModal from 'Shared/Control/TopUpModal';
+import { TopUpPythiaModal } from 'Shared/Control/TopUpModal';
 import { usePythiaData } from 'Providers/PythiaData';
 import { Chain } from 'Interfaces/chain';
 import { SignInButton } from 'Shared/SignInButton';
@@ -101,7 +101,7 @@ export const Balances = () => {
         )}
       </Flex>
       {isTopUpModalOpen && (
-        <TopUpModal
+        <TopUpPythiaModal
           isTopUpModalOpen={isTopUpModalOpen}
           setIsTopUpModalOpen={setIsTopUpModalOpen}
           chain={activeChain}

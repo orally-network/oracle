@@ -288,6 +288,9 @@ const NewSubscription = ({ addressData, subscribe }: NewSubscriptionProps) => {
               refetchBalance={refetchBalance}
               isBalanceLoading={isBalanceLoading}
               chain={chainId !== null && CHAINS_MAP[chainId]}
+              decimals={chainId !== null ? CHAINS_MAP[chainId].nativeCurrency.decimals : 18}
+              symbol={chainId !== null ? CHAINS_MAP[chainId].nativeCurrency.symbol : 'ETH'}
+              isPythia={true}
             />
 
             <Flex justify="space-between">

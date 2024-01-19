@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Input, Flex, Space, Switch } from 'antd';
-import sizeof from 'object-sizeof';
 
 import { CHAINS_MAP } from 'Constants/chains';
 import Button from 'Components/Button';
@@ -10,18 +9,14 @@ import logger from 'Utils/logger';
 import styles from './NewFeed.scss';
 import { DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { useGlobalState } from 'Providers/GlobalState';
-import { useBalance, useNetwork, usePrepareContractWrite, useSendTransaction } from 'wagmi';
+import { useBalance, useNetwork} from 'wagmi';
 import sybilCanister from 'Canisters/sybilCanister';
 import { remove0x } from 'Utils/addressUtils';
 import { SignInButton } from 'Shared/SignInButton';
-import { utils } from 'ethers';
-import { DEFAULT_TOP_UP_AMOUNT, MIN_BALANCE } from 'Constants/ui';
-import { waitForTransaction, writeContract } from '@wagmi/core';
 import { usePythiaData } from 'Providers/PythiaData';
 import { GeneralResponse } from 'Interfaces/common';
-import { abi } from './abi';
-import { useConfig } from 'wagmi';
 import Control from 'Shared/Control';
+import { useSybilData } from 'Providers/SybilPairs';
 
 const TREASURER_CHAIN = CHAINS_MAP[42161];
 const USDT_TOKEN_POLYGON = '0xaf88d065e77c8cC2239327C5EDb3A432268e5831';
@@ -39,27 +34,26 @@ export const NewFeed = ({}: NewFeedProps) => {
   const newSource: Source = {
     uri: '',
     resolver: '',
-    expected_bytes: 0,
+    expected_bytes: [],
   };
 
   const [feedId, setFeedId] = useState<string>('');
   const [frequency, setFrequency] = useState<string>('');
   const [sources, setSources] = useState<Source[]>([newSource]);
   const [isCreating, setIsCreating] = useState(false);
-  const [isSourcesTested, setIsSourcesTested] = useState(false);
   const [isPriceFeed, setIsPriceFeed] = useState(false);
   const [decimals, setDecimals] = useState('9');
   const [balance, setBalance] = useState(0);
 
   const { addressData } = useGlobalState();
-  const { pma, fetchBalance, isBalanceLoading } = usePythiaData();
+  const { pma } = usePythiaData();
+  const { fetchBalance, isBalanceLoading } = useSybilData();
 
   const { chain: currentChain } = useNetwork();
 
   const refetchBalance = useCallback(async () => {
-    const balanceResponse = await sybilCanister.get_balance(addressData.address);
-
-    setBalance(balanceResponse?.Ok);
+    const balanceResponse = await fetchBalance(addressData);
+    setBalance(balanceResponse);
   }, [addressData, fetchBalance]);
 
   useEffect(() => {
@@ -91,6 +85,9 @@ export const NewFeed = ({}: NewFeedProps) => {
     try {
       const customFeedRes: GeneralResponse = await sybilCanister.create_custom_feed({
         feed_id: feedId.toUpperCase(),
+        feed_type: {
+          Custom: null,
+        },
         update_freq: +frequency * 60,
         sources,
         decimals: isPriceFeed ? [Number(decimals)] : [],
@@ -113,24 +110,6 @@ export const NewFeed = ({}: NewFeedProps) => {
     }
   };
 
-  const testSources = async () => {
-    setIsSourcesTested(true);
-    return true;
-    setIsCreating(true);
-
-    const sourcesPromises = sources.map((s) => fetch(`https://rpc.orally.network/?rpc=${s.uri}`));
-
-    try {
-      const testSourcesRes = await Promise.all(sourcesPromises);
-      const bytes = sizeof(testSourcesRes);
-      setSources(sources.map((s) => ({ ...s, expected_bytes: bytes })));
-      console.log({ testSourcesRes });
-    } finally {
-      setIsSourcesTested(true);
-      setIsCreating(false);
-    }
-  };
-
   const regex = new RegExp('^[a-zA-Z]+/[a-zA-Z]+$');
 
   return (
@@ -143,7 +122,6 @@ export const NewFeed = ({}: NewFeedProps) => {
           placeholder=".../USD"
           pattern="^[a-zA-Z]+\/[a-zA-Z]+$"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFeedId(e.target.value.trim())}
-          disabled={isSourcesTested}
           status={feedId !== '' ? (regex.test(feedId) ? '' : 'error') : ''}
         />
       </Space>
@@ -155,15 +133,10 @@ export const NewFeed = ({}: NewFeedProps) => {
           value={frequency}
           placeholder="Frequency"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFrequency(e.target.value)}
-          disabled={isSourcesTested}
         />
       </Space>
       <Space>
-        <Switch
-          disabled={isSourcesTested}
-          checked={isPriceFeed}
-          onChange={(checked: boolean) => setIsPriceFeed(checked)}
-        />
+        <Switch checked={isPriceFeed} onChange={(checked: boolean) => setIsPriceFeed(checked)} />
         Price Feed
       </Space>
 
@@ -180,7 +153,6 @@ export const NewFeed = ({}: NewFeedProps) => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setDecimals(e.target.value.trim())
             }
-            disabled={isSourcesTested}
           />
         </Space>
       )}
@@ -189,7 +161,7 @@ export const NewFeed = ({}: NewFeedProps) => {
         <Space key={index} size="middle" direction="vertical">
           <Flex justify="space-between">
             <div>Source #{index + 1}</div>
-            {sources.length !== 1 && !isSourcesTested && (
+            {sources.length !== 1 && (
               <Button
                 icon={<DeleteOutlined />}
                 onClick={() => {
@@ -208,7 +180,6 @@ export const NewFeed = ({}: NewFeedProps) => {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 updateSource(index, { ...source, uri: e.target.value })
               }
-              disabled={isSourcesTested}
             />
           </Space>
           <Space direction="vertical" style={{ width: '100%' }}>
@@ -219,19 +190,17 @@ export const NewFeed = ({}: NewFeedProps) => {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 updateSource(index, { ...source, resolver: e.target.value })
               }
-              disabled={isSourcesTested}
             />
           </Space>
         </Space>
       ))}
-
-      {sources.length !== 10 && !isSourcesTested && (
+      {sources.length !== MAX_SOURCES && (
         <Button style={{ alignSelf: 'flex-end' }} icon={<PlusCircleOutlined />} onClick={addSource}>
           Add source
         </Button>
       )}
 
-      {isSourcesTested ? (
+      {addressData && addressData.address ? (
         <Space direction="vertical" size="middle">
           <Control
             addressData={addressData}
@@ -240,30 +209,29 @@ export const NewFeed = ({}: NewFeedProps) => {
             refetchBalance={refetchBalance}
             isBalanceLoading={isBalanceLoading}
             chain={TREASURER_CHAIN}
+            decimals={USDT_TOKEN_POLYGON_DECIMALS}
+            symbol="USDC"
+            isPythia={false}
           />
-
-          <Button
-            disabled={
-              !feedId || !frequency || !sources.length || isCreating || balance < MIN_BALANCE
-            }
-            onClick={createFeed}
-            type="primary"
-            style={{ alignSelf: 'flex-end' }}
-            loading={isCreating}
-          >
-            Create
-          </Button>
+          <Flex justify="flex-end">
+            <Button
+              disabled={
+                !feedId ||
+                !frequency ||
+                !sources.length ||
+                !sources.every((s) => s.uri && s.resolver) ||
+                isCreating ||
+                balance === undefined ||
+                balance < MIN_BALANCE
+              }
+              onClick={createFeed}
+              type="primary"
+              loading={isCreating}
+            >
+              Create
+            </Button>
+          </Flex>
         </Space>
-      ) : addressData && addressData.address ? (
-        <Button
-          disabled={!feedId || !frequency || !sources.every((s) => s.resolver && s.uri)}
-          onClick={testSources}
-          type="primary"
-          style={{ alignSelf: 'flex-end' }}
-          loading={isCreating}
-        >
-          Test fetch
-        </Button>
       ) : (
         <SignInButton chain={currentChain} style={{ alignSelf: 'flex-end' }} />
       )}

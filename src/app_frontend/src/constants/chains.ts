@@ -1,4 +1,4 @@
-import { mainnet, goerli, polygon, polygonMumbai, sepolia, zkSync, zkSyncTestnet } from 'wagmi/chains';
+import { mainnet, goerli, polygon, polygonMumbai, sepolia, zkSync, zkSyncTestnet, arbitrum } from 'wagmi/chains';
 
 import ethereumImg from 'Assets/chains/ethereum.jpeg';
 import polygonImg from 'Assets/chains/polygon.jpeg';
@@ -12,6 +12,7 @@ import zkSyncImg from 'Assets/chains/zkSync.png';
 import artheraImg from 'Assets/chains/arthera.png';
 import mantaImg from 'Assets/chains/manta.png';
 import blastImg from 'Assets/chains/blast.png';
+import arbitrumImg from 'Assets/chains/arbitrum.png';
 import { ExplorerType } from 'Interfaces/chain';
 
 const CHAINS = [
@@ -29,6 +30,11 @@ const CHAINS = [
   {
     ...sepolia,
     img: ethereumImg,
+    explorerType: ExplorerType.ScanExplorer,
+  },
+  {
+    ...arbitrum,
+    img: arbitrumImg,
     explorerType: ExplorerType.ScanExplorer,
   },
   {

@@ -21,6 +21,7 @@ import zkSyncImg from 'Assets/chains/zkSync.png';
 import artheraImg from 'Assets/chains/arthera.png';
 import mantaImg from 'Assets/chains/manta.png';
 import blastImg from 'Assets/chains/blast.png';
+import arbitrumImg from 'Assets/chains/arbitrum.png';
 import { ExplorerType } from 'Interfaces/chain';
 
 const CHAINS = [
@@ -43,6 +44,11 @@ const CHAINS = [
   {
     ...sepolia,
     img: ethereumImg,
+    explorerType: ExplorerType.ScanExplorer,
+  },
+  {
+    ...arbitrum,
+    img: arbitrumImg,
     explorerType: ExplorerType.ScanExplorer,
   },
   {
@@ -336,6 +342,34 @@ const CHAINS = [
     },
     rpcUrls: {
       default: {
+        http: ['https://rpc.katla.taiko.xyz/']
+      },
+      public: {
+        http: ['https://rpc.katla.taiko.xyz/']
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Explorer Taiko Katla',
+        url: 'https://explorer.katla.taiko.xyz/',
+      },
+    },
+    testnet: true,
+    img: taikoImg,
+    isBlockscoutExplorer: true,
+    explorerType: ExplorerType.BlockscoutExplorer,
+  },
+  {
+    id: 167008,
+    name: 'Taiko Katla',
+    network: 'Taiko Katla',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
         http: ['https://rpc.katla.taiko.xyz/'],
       },
       public: {
@@ -430,6 +464,32 @@ const CHAINS = [
       },
     },
     testnet: true,
+    img: artheraImg,
+    isBlockscoutExplorer: true,
+  },
+  {
+    id: 10242,
+    name: 'Arthera',
+    network: 'Arthera',
+    nativeCurrency: {
+      name: 'AA',
+      symbol: 'AA',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://rpc.arthera.net']
+      },
+      public: {
+        http: ['https://rpc.arthera.net']
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Explorer Arthera',
+        url: 'https://explorer.arthera.net',
+      },
+    },
     img: artheraImg,
     isBlockscoutExplorer: true,
   },

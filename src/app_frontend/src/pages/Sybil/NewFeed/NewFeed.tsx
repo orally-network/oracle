@@ -17,6 +17,7 @@ import { usePythiaData } from 'Providers/PythiaData';
 import { GeneralResponse } from 'Interfaces/common';
 import Control from 'Shared/Control';
 import { useSybilData } from 'Providers/SybilPairs';
+import { MAX_SOURCES, MIN_BALANCE } from 'Constants/ui';
 
 const TREASURER_CHAIN = CHAINS_MAP[42161];
 const USDT_TOKEN_POLYGON = '0xaf88d065e77c8cC2239327C5EDb3A432268e5831';

@@ -24,9 +24,11 @@ const FeedCard = ({ feed }: FeedCardProps) => {
   let symbol, rate, timestamp;
 
   if (data && data.length !== 0) {
-    symbol = data[0].data.DefaultPriceFeed.symbol;
-    rate = data[0].data.DefaultPriceFeed.rate;
-    timestamp = data[0].data.DefaultPriceFeed.timestamp;
+    const feed = data[0].data.DefaultPriceFeed ?? data[0].data.CustomPriceFeed;
+
+    symbol = feed.symbol;
+    rate = feed.rate;
+    timestamp = feed.timestamp;
   }
 
   const { width } = useWindowDimensions();

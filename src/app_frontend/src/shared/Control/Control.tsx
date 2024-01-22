@@ -94,7 +94,7 @@ const Control = ({
 
       <div className={styles.balance}>
         {formattedBalance}
-        {chain.nativeCurrency.symbol}
+        {isPythia ? chain.nativeCurrency.symbol : 'USDC'}
       </div>
 
       <SubscribeButtons

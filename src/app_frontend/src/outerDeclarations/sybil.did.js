@@ -15,7 +15,7 @@ export const idlFactory = ({ IDL }) => {
     'msg' : IDL.Text,
     'sig' : IDL.Text,
     'feed_type' : FeedType,
-    'decimals' : IDL.Opt(IDL.Nat),
+    'decimals' : IDL.Opt(IDL.Nat64),
     'update_freq' : IDL.Nat,
     'feed_id' : IDL.Text,
     'sources' : IDL.Vec(Source),

@@ -9,6 +9,7 @@ import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { Feed } from 'Interfaces/feed';
 import { FeedLogos } from './FeedLogos';
+import { BlockOutlined } from '@ant-design/icons';
 
 interface FeedCardProps {
   feed: Feed;
@@ -43,10 +44,10 @@ const FeedCard = ({ feed }: FeedCardProps) => {
       <Space size="small" direction="vertical" style={{ width: '100%' }}>
         <div className={styles.header}>
           <div className={styles.info}>
-            {/* <div>Example</div> name field will be added later  */}
+            {/* <div>{id}</div> */}
             <Space>
               <Typography.Title level={4} style={{ margin: 0 }}>
-                {symbol}
+                {id}
               </Typography.Title>
             </Space>
           </div>
@@ -58,7 +59,15 @@ const FeedCard = ({ feed }: FeedCardProps) => {
 
         <div className={styles.logoBg}>
           <Flex className={styles.logo} align="center" justify="center">
-            <FeedLogos feed={id} />
+            {feed_type && id && feed_type.Default === null ? (
+              <FeedLogos feed={id} />
+            ) : (
+              <BlockOutlined
+                style={{
+                  fontSize: '35px',
+                }}
+              />
+            )}
           </Flex>
         </div>
 

@@ -1,7 +1,7 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 
 import SybilFeedsContext from './SybilFeedsContext';
-import { FilterFeedType } from 'Interfaces/feed';
+import { FeedRequest, FilterFeedType } from 'Interfaces/feed';
 import debounce from 'lodash.debounce';
 import sybilCanister from 'Canisters/sybilCanister';
 import { remove0x } from 'Utils/addressUtils';
@@ -51,6 +51,18 @@ const SybilFeedsProvider = ({ children }: any) => {
     return res;
   };
 
+  const createFeed = async (feed: FeedRequest) => {
+    const res: GeneralResponse = await sybilCanister.create_custom_feed(feed);
+
+    console.log('create feed result', res);
+    if (res.Err) {
+      logger.error(`Failed to create feed, ${res.Err}`);
+      throw new Error(`Create failed. Something went wrong. Try again later.`);
+    }
+
+    return res;
+  };
+
   useEffect(() => {
     return () => {
       debouncedChangeHandler.cancel();
@@ -60,6 +72,7 @@ const SybilFeedsProvider = ({ children }: any) => {
   const value = useMemo(() => {
     return {
       deposit,
+      createFeed,
       page,
       feedType,
       searchQuery,

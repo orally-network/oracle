@@ -9,29 +9,20 @@ import logger from 'Utils/logger';
 import styles from './NewFeed.scss';
 import { DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { useGlobalState } from 'Providers/GlobalState';
-import { useBalance, useNetwork} from 'wagmi';
-import sybilCanister from 'Canisters/sybilCanister';
+import { useBalance, useNetwork } from 'wagmi';
 import { remove0x } from 'Utils/addressUtils';
 import { SignInButton } from 'Shared/SignInButton';
 import { usePythiaData } from 'Providers/PythiaData';
-import { GeneralResponse } from 'Interfaces/common';
 import Control from 'Shared/Control';
 import { useSybilData } from 'Providers/SybilPairs';
 import { MAX_SOURCES, MIN_BALANCE } from 'Constants/ui';
+import { Source } from 'Interfaces/feed';
 
 const TREASURER_CHAIN = CHAINS_MAP[42161];
 const USDT_TOKEN_POLYGON = '0xaf88d065e77c8cC2239327C5EDb3A432268e5831';
 const USDT_TOKEN_POLYGON_DECIMALS = 6;
 
-interface Source {
-  uri: string;
-  resolver: string;
-  expected_bytes: number;
-}
-
-interface NewFeedProps {}
-
-export const NewFeed = ({}: NewFeedProps) => {
+export const NewFeed = () => {
   const newSource: Source = {
     uri: '',
     resolver: '',
@@ -48,7 +39,7 @@ export const NewFeed = ({}: NewFeedProps) => {
 
   const { addressData } = useGlobalState();
   const { pma } = usePythiaData();
-  const { fetchBalance, isBalanceLoading } = useSybilData();
+  const { fetchBalance, isBalanceLoading, createFeed } = useSybilData();
 
   const { chain: currentChain } = useNetwork();
 
@@ -79,33 +70,37 @@ export const NewFeed = ({}: NewFeedProps) => {
     setSources(sources.map((s, i) => (i === index ? source : s)));
   };
 
-  const createFeed = async () => {
+  const create = async () => {
     setIsCreating(true);
-    toast.info(`Creating...`);
 
     try {
-      const customFeedRes: GeneralResponse = await sybilCanister.create_custom_feed({
-        feed_id: feedId.toUpperCase(),
-        feed_type: {
-          Custom: null,
-        },
-        update_freq: +frequency * 60,
-        sources,
-        decimals: isPriceFeed ? [Number(decimals)] : [],
-        msg: addressData.message,
-        sig: remove0x(addressData.signature),
-      });
+      await toast.promise(
+        createFeed({
+          feed_id: feedId.toUpperCase(),
+          feed_type: {
+            Custom: null,
+          },
+          update_freq: +frequency * 60,
+          sources,
+          decimals: isPriceFeed ? [Number(decimals)] : [],
+          msg: addressData.message,
+          sig: remove0x(addressData.signature),
+        }),
+        {
+          pending: `Creating...`,
+          success: `Created successfully`,
+          error: {
+            render({ data }) {
+              logger.error(`Create failed`, data);
+              toast.error('Create failed. Something went wrong. Try again later.');
 
-      if (customFeedRes.Err) {
-        toast.error(`Create failed. Something went wrong. Try again later.`);
-      }
-
-      console.log({ customFeedRes });
-      return toast.success('Created successfully');
+              return 'Something went wrong. Try again later.';
+            },
+          },
+        }
+      );
     } catch (error) {
       logger.error(`Create feed`, error);
-      toast.error(`Create failed. Something went wrong. Try again later.`);
-      return null;
     } finally {
       setIsCreating(false);
     }
@@ -225,7 +220,7 @@ export const NewFeed = ({}: NewFeedProps) => {
                 balance === undefined ||
                 balance < MIN_BALANCE
               }
-              onClick={createFeed}
+              onClick={create}
               type="primary"
               loading={isCreating}
             >

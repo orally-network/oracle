@@ -78,7 +78,7 @@ export const NewFeed = () => {
     try {
       await toast.promise(
         createFeed({
-          feed_id: feedId.toUpperCase(),
+          id: feedId.toUpperCase(),
           feed_type: {
             Custom: null,
           },

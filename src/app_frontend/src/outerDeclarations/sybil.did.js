@@ -12,18 +12,18 @@ export const idlFactory = ({ IDL }) => {
     'expected_bytes' : IDL.Opt(IDL.Nat64),
   });
   const CreateCustomFeedRequest = IDL.Record({
+    'id' : IDL.Text,
     'msg' : IDL.Text,
     'sig' : IDL.Text,
     'feed_type' : FeedType,
     'decimals' : IDL.Opt(IDL.Nat64),
     'update_freq' : IDL.Nat,
-    'feed_id' : IDL.Text,
     'sources' : IDL.Vec(Source),
   });
   const CreateDefaultFeedRequest = IDL.Record({
+    'id' : IDL.Text,
     'decimals' : IDL.Nat,
     'update_freq' : IDL.Nat,
-    'feed_id' : IDL.Text,
   });
   const TextResponse = IDL.Variant({ 'Ok' : IDL.Text, 'Err' : IDL.Text });
   const AssetData = IDL.Variant({
@@ -149,6 +149,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'remove_default_feed' : IDL.Func([IDL.Text], [Error], []),
     'remove_from_whitelist' : IDL.Func([IDL.Text], [Error], []),
+    'sign_message' : IDL.Func([IDL.Text], [TextResponse], []),
     'update_cfg' : IDL.Func([UpdateCfg], [Error], []),
     'withdraw' : IDL.Func(
         [IDL.Nat, IDL.Text, IDL.Text, IDL.Text],

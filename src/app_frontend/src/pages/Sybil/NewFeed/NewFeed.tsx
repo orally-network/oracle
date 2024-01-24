@@ -45,10 +45,10 @@ export const NewFeed = () => {
 
   const { chain: currentChain } = useNetwork();
 
-  const refetchBalance = useCallback(async () => {
+  const refetchBalance = async () => {
     const balanceResponse = await fetchBalance(addressData);
     setBalance(balanceResponse);
-  }, [addressData, fetchBalance]);
+  };
 
   useEffect(() => {
     if (addressData) {
@@ -93,10 +93,8 @@ export const NewFeed = () => {
           success: `Created successfully`,
           error: {
             render({ data }) {
-              logger.error(`Create failed`, data);
-              toast.error('Create failed. Something went wrong. Try again later.');
-
-              return 'Something went wrong. Try again later.';
+              logger.error('Create failed', data);
+              return `Create failed. ${data} Try again later.`;
             },
           },
         }

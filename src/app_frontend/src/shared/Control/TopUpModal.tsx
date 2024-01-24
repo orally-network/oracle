@@ -153,9 +153,8 @@ export const TopUpSybilModal = (props: TopUpWrapperProps) => {
         error: {
           render({ data }) {
             logger.error(`Depositing ${props.symbol}`, data);
-            toast.error('Deposit failed. Try again later.');
 
-            return 'Something went wrong. Try again later.';
+            return 'Deposit failed. Try again later.';
           },
         },
       });
@@ -225,9 +224,8 @@ export const TopUpPythiaModal = (props: TopUpWrapperProps) => {
         error: {
           render({ data }) {
             logger.error(`Depositing ${props.symbol}`, data);
-            toast.error('Deposit failed. Try again later.');
 
-            return 'Something went wrong. Try again later.';
+            return 'Deposit failed. Try again later.';
           },
         },
       });

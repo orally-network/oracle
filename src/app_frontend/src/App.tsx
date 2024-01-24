@@ -9,6 +9,7 @@ import { BaseLayout } from 'Components/Layout';
 
 import Pythia from 'Pages/Pythia';
 import Sybil from 'Pages/Sybil';
+import { Demo } from 'Pages/Demo';
 import ROUTES from 'Constants/routes';
 import rollbar from './rollbar';
 import { SubscriptionDetailsPage } from 'Pages/SubscriptionDetailsPage';
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
       {
         path: `${ROUTES.PYTHIA}/:chainId/:id`,
         element: <SubscriptionDetailsPage />,
+      },
+      {
+        path: `${ROUTES.DEMO}`,
+        element: <Demo />,
       },
     ],
   },

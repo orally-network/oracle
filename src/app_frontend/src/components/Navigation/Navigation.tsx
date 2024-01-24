@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Menu } from 'antd';
-import { HomeFilled, UnorderedListOutlined } from '@ant-design/icons';
+import { CloudOutlined, HomeFilled, UnorderedListOutlined } from '@ant-design/icons';
 
 import styles from './Navigation.scss';
 
@@ -17,7 +17,7 @@ interface MenuItem {
 
 const menuItems: MenuItem[] = [
   {
-    key: '1',
+    key: '0',
     icon: <HomeFilled />,
     label: (
       <NavLink
@@ -31,7 +31,7 @@ const menuItems: MenuItem[] = [
     ),
   },
   {
-    key: '2',
+    key: '1',
     icon: <UnorderedListOutlined />,
     label: (
       <NavLink
@@ -41,6 +41,20 @@ const menuItems: MenuItem[] = [
         }
       >
         Pythia
+      </NavLink>
+    ),
+  },
+  {
+    key: '2',
+    icon: <CloudOutlined />,
+    label: (
+      <NavLink
+        to="/demo"
+        className={({ isActive, isPending }) =>
+          isPending ? styles.pending : isActive ? styles.active : ''
+        }
+      >
+        Demo
       </NavLink>
     ),
   },

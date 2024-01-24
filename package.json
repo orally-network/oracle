@@ -8,7 +8,6 @@
     "JavaScript",
     "Canister"
   ],
-  "proxy": "http://localhost:8080",
   "scripts": {
     "optimize": "ic-cdk-optimizer .wasm -o -opt.wasm",
     "build": "webpack --mode production --env NODE_ENV=production",

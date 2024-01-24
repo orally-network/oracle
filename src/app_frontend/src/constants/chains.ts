@@ -6,6 +6,7 @@ import {
   sepolia,
   zkSync,
   arbitrum,
+  arbitrumNova,
   zkSyncTestnet,
 } from 'wagmi/chains';
 
@@ -14,6 +15,7 @@ import polygonImg from 'Assets/chains/polygon.jpeg';
 import ultronImg from 'Assets/chains/ultron.jpeg';
 import qImg from 'Assets/chains/q.svg';
 import auroraImg from 'Assets/chains/aurora.png';
+import arbitrumNovaImg from 'Assets/chains/arbitrum-nova.png';
 import lineaImg from 'Assets/chains/linea.svg';
 import bitfinityImg from 'Assets/chains/bitfinity.svg';
 import taikoImg from 'Assets/chains/taiko.svg';
@@ -32,11 +34,6 @@ const CHAINS = [
     explorerAddress: 'https://api.etherscan.io',
   },
   {
-    ...arbitrum,
-    img: ethereumImg,
-    explorerType: ExplorerType.ScanExplorer,
-  },
-  {
     ...goerli,
     img: ethereumImg,
     explorerType: ExplorerType.ScanExplorer,
@@ -49,6 +46,11 @@ const CHAINS = [
   {
     ...arbitrum,
     img: arbitrumImg,
+    explorerType: ExplorerType.ScanExplorer,
+  },
+  {
+    ...arbitrumNova,
+    img: arbitrumNovaImg,
     explorerType: ExplorerType.ScanExplorer,
   },
   {

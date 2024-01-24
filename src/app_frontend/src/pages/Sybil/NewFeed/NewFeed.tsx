@@ -17,6 +17,7 @@ import Control from 'Shared/Control';
 import { useSybilData } from 'Providers/SybilPairs';
 import { MAX_SOURCES, MIN_BALANCE } from 'Constants/ui';
 import { Source } from 'Interfaces/feed';
+import { useGetSybilFeeds } from 'ApiHooks/useGetSybilFeeds';
 
 const TREASURER_CHAIN = CHAINS_MAP[42161];
 const USDT_TOKEN_POLYGON = '0xaf88d065e77c8cC2239327C5EDb3A432268e5831';
@@ -40,6 +41,7 @@ export const NewFeed = () => {
   const { addressData } = useGlobalState();
   const { pma } = usePythiaData();
   const { fetchBalance, isBalanceLoading, createFeed } = useSybilData();
+  const feeds = useGetSybilFeeds({ isGetAll: true });
 
   const { chain: currentChain } = useNetwork();
 
@@ -108,6 +110,13 @@ export const NewFeed = () => {
 
   const regex = new RegExp('^[a-zA-Z]+/[a-zA-Z]+$');
 
+  const isFeedIdValid =
+    regex.test(feedId) &&
+    feeds &&
+    feeds.data &&
+    feeds.data.items &&
+    !feeds.data.items?.some((feed) => feed.id === feedId.toUpperCase());
+
   return (
     <Flex vertical={true} gap="large" style={{ paddingBottom: '60px' }}>
       <Space direction="vertical">
@@ -118,7 +127,7 @@ export const NewFeed = () => {
           placeholder=".../USD"
           pattern="^[a-zA-Z]+\/[a-zA-Z]+$"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFeedId(e.target.value.trim())}
-          status={feedId !== '' ? (regex.test(feedId) ? '' : 'error') : ''}
+          status={feedId !== '' ? (isFeedIdValid ? '' : 'error') : ''}
         />
       </Space>
       <Space direction="vertical">
@@ -218,7 +227,8 @@ export const NewFeed = () => {
                 !sources.every((s) => s.uri && s.resolver) ||
                 isCreating ||
                 balance === undefined ||
-                balance < MIN_BALANCE
+                balance < MIN_BALANCE ||
+                !isFeedIdValid
               }
               onClick={create}
               type="primary"

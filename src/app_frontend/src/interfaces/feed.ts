@@ -1,5 +1,5 @@
 export interface Feed {
-  feed_id: string;
+  id: string;
   status: FeedStatus;
   decimals?: number[];
   owner: string;
@@ -7,7 +7,6 @@ export interface Feed {
   update_freq: number;
   feed_type: FeedType;
   sources: Source[];
-  id?: string;
 }
 
 export interface Source {

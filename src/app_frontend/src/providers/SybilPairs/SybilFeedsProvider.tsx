@@ -57,7 +57,7 @@ const SybilFeedsProvider = ({ children }: any) => {
     console.log('create feed result', res);
     if (res.Err) {
       logger.error(`Failed to create feed, ${res.Err}`);
-      throw new Error(`Create failed. Something went wrong. Try again later.`);
+      throw new Error(`${res.Err} Try again later.`);
     }
 
     return res;

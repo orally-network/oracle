@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Space, Card, Typography, Flex, Drawer, Skeleton as AntdSkeleton } from 'antd';
 import { useAccount } from 'wagmi';
 import { useNavigate } from 'react-router-dom';
 
 import styles from './FeedCard.scss';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
+import { NewFeed } from 'Pages/Sybil/NewFeed/NewFeed';
+import weatherImg from 'Assets/weather.png';
 
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { Feed } from 'Interfaces/feed';
@@ -13,6 +15,22 @@ import { BlockOutlined } from '@ant-design/icons';
 
 interface FeedCardProps {
   feed: Feed;
+}
+
+const getFeedImg = ({ feed_type, id, isWeather }) => {
+  if (feed_type && id && feed_type.Default === null) {
+    return <FeedLogos feed={id} />
+  }
+
+  if (isWeather) {
+    return <img src={weatherImg} alt="sun" />;
+  }
+
+  return <BlockOutlined
+    style={{
+      fontSize: '35px',
+    }}
+  />;
 }
 
 const FeedCard = ({ feed }: FeedCardProps) => {
@@ -37,11 +55,22 @@ const FeedCard = ({ feed }: FeedCardProps) => {
 
   const lastUpdateDateTime = new Date(Number(timestamp) * 1000);
   const diffMs = Math.abs(+new Date() - +lastUpdateDateTime);
-  const lastRate = Number(rate) / Math.pow(10, Number(decimals));
+  const lastRate = Number(rate) / Math.pow(10, Number(decimals?.[0]));
+  const isWeather = id.toLowerCase().includes('weather');
+
+  const openDetails = useCallback(() => {
+    if (feed_type.Custom === null) {
+      setIsFeedDetailsVisible(true);
+    }
+  }, [feed_type]);
+
+  const closeDetails = useCallback(() => {
+    setIsFeedDetailsVisible(false);
+  }, []);
 
   return (
     <Card hoverable={true} className={styles.feed}>
-      <Space size="small" direction="vertical" style={{ width: '100%' }}>
+      <Space size="small" direction="vertical" style={{ width: '100%' }} onClick={openDetails}>
         <div className={styles.header}>
           <div className={styles.info}>
             {/* <div>{id}</div> */}
@@ -58,16 +87,8 @@ const FeedCard = ({ feed }: FeedCardProps) => {
         </div>
 
         <div className={styles.logoBg}>
-          <Flex className={styles.logo} align="center" justify="center">
-            {feed_type && id && feed_type.Default === null ? (
-              <FeedLogos feed={id} />
-            ) : (
-              <BlockOutlined
-                style={{
-                  fontSize: '35px',
-                }}
-              />
-            )}
+          <Flex className={styles.logoWrap} align="center" justify="center">
+            {getFeedImg({ feed_type, id, isWeather })}
           </Flex>
         </div>
 
@@ -75,7 +96,7 @@ const FeedCard = ({ feed }: FeedCardProps) => {
           <div className={styles.stat}>
             Last Data
             <br />
-            <Typography.Title level={5}>${lastRate.toFixed(3)}</Typography.Title>
+            <Typography.Title level={5}>{(decimals?.[0] && !isWeather) ? '$' : ''}{lastRate.toFixed(3)}</Typography.Title>
           </div>
           <div className={styles.stat}>
             Last update <br />
@@ -88,14 +109,17 @@ const FeedCard = ({ feed }: FeedCardProps) => {
         <Drawer
           title="Feed details"
           placement="right"
-          onClose={() => setIsFeedDetailsVisible(false)}
+          onClose={closeDetails}
           open={isFeedDetailsVisible}
           style={{ marginTop: '47px' }}
           width={isMobile ? '90vw' : '362px'}
         >
-          <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-            Details
-          </Space>
+          <NewFeed
+            feedId={id}
+            frequency={update_freq}
+            decimals={decimals?.[0]}
+            sources={feed.sources?.[0]}
+          />
         </Drawer>
       )}
     </Card>

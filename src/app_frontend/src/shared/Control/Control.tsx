@@ -66,7 +66,7 @@ const Control = ({
     return <SignInButton chain={chain} />;
   }
 
-  const formattedBalance = (Number(balance) / Math.pow(10, decimals)).toFixed(3);
+  const formattedBalance = (Number(balance) / Math.pow(10, decimals ?? chain.nativeCurrency.decimals)).toFixed(3);
 
   return (
     <div className={styles.control}>

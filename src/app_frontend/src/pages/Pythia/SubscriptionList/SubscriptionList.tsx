@@ -54,7 +54,6 @@ export const SubscriptionList = ({
                 key={i}
                 sub={sub}
                 addressData={addressData}
-                signMessage={signMessage}
                 startSubscription={startSubscription}
                 stopSubscription={stopSubscription}
                 withdraw={withdraw}

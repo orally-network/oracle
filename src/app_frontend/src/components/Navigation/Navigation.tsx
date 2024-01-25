@@ -51,7 +51,7 @@ export const Navigation = ({ isDarkMode }: NavigationProps) => {
     <Menu
       theme={isDarkMode ? 'dark' : 'light'}
       mode="inline"
-      defaultSelectedKeys={['2']}
+      defaultSelectedKeys={['1']}
       items={menuItems}
     />
   );

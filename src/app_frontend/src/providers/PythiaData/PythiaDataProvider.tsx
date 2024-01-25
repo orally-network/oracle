@@ -7,6 +7,7 @@ import pythiaCanister from 'Canisters/pythiaCanister';
 import PythiaDataContext from './PythiaDataContext';
 import { FilterType } from 'Interfaces/subscription';
 import debounce from 'lodash.debounce';
+import { GeneralResponse } from 'Interfaces/common';
 
 const PythiaDataProvider = ({ children }: any) => {
   const [page, setPage] = useState<number>(1);
@@ -49,7 +50,7 @@ const PythiaDataProvider = ({ children }: any) => {
   }, []);
 
   const fetchPma = useCallback(async () => {
-    const pma = await pythiaCanister.get_pma();
+    const pma: GeneralResponse = await pythiaCanister.get_pma();
 
     console.log({ pma });
     if (pma.Ok) {
@@ -61,7 +62,7 @@ const PythiaDataProvider = ({ children }: any) => {
 
   const deposit = useCallback(
     async (chainId, tx_hash) => {
-      const res = await pythiaCanister.deposit(
+      const res: GeneralResponse = await pythiaCanister.deposit(
         chainId,
         tx_hash,
         addressData.message,
@@ -71,7 +72,9 @@ const PythiaDataProvider = ({ children }: any) => {
       console.log('deposit res', res);
       if (res.Err) {
         logger.error(`Failed to deposit ${tx_hash}, ${res.Err}`);
+        throw new Error(`Failed to deposit ${tx_hash}, ${res.Err}`);
       }
+      return res;
     },
     [addressData]
   );

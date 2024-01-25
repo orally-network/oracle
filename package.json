@@ -85,6 +85,7 @@
     "ethers": "^5.5.1",
     "json-size": "^1.0.0",
     "memoize": "^0.1.1",
+    "object-sizeof": "^2.6.3",
     "react": "^18.2.0",
     "react-code-blocks": "^0.1.4",
     "react-copy-to-clipboard": "^5.1.0",

@@ -42,7 +42,6 @@ interface SubscriptionProps {
     message: string;
     signature: string;
   };
-  signMessage: () => Promise<void>;
   stopSubscription: (chainId: BigInt, subId: BigInt) => Promise<GeneralResponse>;
   startSubscription: (chainId: BigInt, subId: BigInt) => Promise<GeneralResponse>;
   withdraw: (chainId: BigInt, subId: BigInt) => Promise<GeneralResponse>;
@@ -51,7 +50,6 @@ interface SubscriptionProps {
 const SubscriptionCard = ({
   sub,
   addressData,
-  signMessage,
   stopSubscription,
   startSubscription,
   withdraw,
@@ -200,14 +198,17 @@ const SubscriptionCard = ({
           style={{ marginTop: '47px' }}
           width={isMobile ? '90vw' : '362px'}
         >
-          <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+          <Space
+            direction="vertical"
+            size="middle"
+            style={{ width: '100%', paddingBottom: '60px' }}
+          >
             <SubscriptionDetails subscription={sub} />
             {owner === address?.toLowerCase() && (
               <Control
                 subscribed
                 is_active={is_active}
                 addressData={addressData}
-                signMessage={signMessage}
                 chain={chain}
                 subId={id}
                 balance={balance}
@@ -217,6 +218,7 @@ const SubscriptionCard = ({
                 refetchBalance={refetchBalance}
                 stopSubscription={stopSubscription}
                 withdraw={withdraw}
+                isPythia={true}
               />
             )}
           </Space>

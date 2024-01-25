@@ -1,29 +1,25 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useAccount } from 'wagmi';
-import { Spin, Flex, Space } from 'antd';
+import { Spin, Flex } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
-import { toast } from 'react-toastify';
-
 import Connect from 'Shared/Connect';
-import Button from 'Components/Button';
 import { truncateEthAddress } from 'Utils/addressUtils';
-import logger from 'Utils/logger';
 
-import TopUpModal from './TopUpModal';
-// import SubscribeModal from './SubscribeModal';
+import { TopUpPythiaModal, TopUpSybilModal } from './TopUpModal';
 import styles from './Control.scss';
 import { SecondaryButton } from 'Components/SecondaryButton';
+import { SignInButton } from 'Shared/SignInButton';
 
-const MIN_BALANCE = 0.1;
-const EMPTY_BALANCE = 0.001;
+import { SubscribeButtons } from './SubscribeButtons';
 
 interface ControlProps {
   addressData: {
     address: string;
     signature: string;
   };
-  signMessage: (chainId: BigInt, subId: BigInt) => Promise<any>;
   chain: any;
+  decimals: any;
+  symbol: any;
   balance: any;
   executionAddress: any;
   refetchBalance: any;
@@ -36,12 +32,12 @@ interface ControlProps {
   startSubscription?: any;
   withdraw?: any;
   is_active?: boolean;
+  isPythia: boolean;
 }
 
 // todo: subscribed will have `stop` and `withdraw` methods
 const Control = ({
   addressData,
-  signMessage,
   chain,
   subscribe,
   subscribed,
@@ -55,106 +51,22 @@ const Control = ({
   executionAddress,
   refetchBalance,
   isBalanceLoading,
+  decimals,
+  symbol,
+  isPythia,
 }: ControlProps) => {
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
-  const [isSigning, setIsSigning] = useState(false);
-  const [isStopping, setIsStopping] = useState(false);
-  const [isStarting, setIsStarting] = useState(false);
-  const [isWithdrawing, setIsWithdrawing] = useState(false);
-
   const { address } = useAccount();
-
-  const signMessageHandler = useCallback(async () => {
-    setIsSigning(true);
-    try {
-      await toast.promise(signMessage(chain?.id), {
-        pending: `SIWE processing...`,
-        success: `SIWE processed`,
-        error: {
-          render({ data }) {
-            logger.error(`SIWE`, data);
-
-            return 'Something went wrong. Try again later.';
-          },
-        },
-      });
-    } finally {
-      setIsSigning(false);
-    }
-  }, [chain, signMessage]);
-
-  const stopHandler = useCallback(async () => {
-    setIsStopping(true);
-    try {
-      await toast.promise(stopSubscription(chain?.id, subId), {
-        pending: `Stopping subscription...`,
-        success: `Subscription stopped`,
-        error: {
-          render({ data }) {
-            logger.error(`Stop subscription`, data);
-
-            return 'Something went wrong. Try again later.';
-          },
-        },
-      });
-    } finally {
-      setIsStopping(false);
-    }
-  }, [subId, stopSubscription]);
-
-  const startHandler = useCallback(async () => {
-    setIsStarting(true);
-    try {
-      await toast.promise(startSubscription(chain?.id, subId), {
-        pending: `Starting subscription...`,
-        success: `Subscription started`,
-        error: {
-          render({ data }) {
-            logger.error(`Start subscription`, data);
-
-            return 'Something went wrong. Try again later.';
-          },
-        },
-      });
-    } finally {
-      setIsStarting(false);
-    }
-  }, [subId, startSubscription]);
-
-  const withdrawHandler = useCallback(async () => {
-    setIsWithdrawing(true);
-    try {
-      await toast.promise(withdraw(chain?.id), {
-        pending: `Withdrawing...`,
-        success: `Withdrawn`,
-        error: {
-          render({ data }) {
-            logger.error(`Withdraw`, data);
-
-            return 'Something went wrong. Try again later.';
-          },
-        },
-      });
-
-      refetchBalance();
-    } finally {
-      setIsWithdrawing(false);
-    }
-  }, [chain, refetchBalance, withdraw]);
 
   if (!address) {
     return <Connect />;
   }
 
   if (!addressData) {
-    return (
-      <Spin spinning={isSigning}>
-        <Button onClick={signMessageHandler} type="primary" className={styles.signMessage}>
-          Sign message
-        </Button>
-      </Spin>
-    );
+    return <SignInButton chain={chain} />;
   }
+
+  const formattedBalance = (Number(balance) / Math.pow(10, decimals)).toFixed(3);
 
   return (
     <div className={styles.control}>
@@ -181,68 +93,45 @@ const Control = ({
       </Flex>
 
       <div className={styles.balance}>
-        {(Number(balance) / Math.pow(10, chain.nativeCurrency.decimals)).toFixed(3) ?? '-'}{' '}
-        {chain.nativeCurrency.symbol}
+        {formattedBalance}
+        {isPythia ? chain.nativeCurrency.symbol : 'USDC'}
       </div>
 
-      {subscribed ? (
-        <Space size="large">
-          {is_active ? (
-            <Spin spinning={isStopping}>
-              <Button className={styles.actionBtn} type="primary" onClick={stopHandler}>
-                Stop
-              </Button>
-            </Spin>
-          ) : (
-            <Spin spinning={isStarting}>
-              <Button className={styles.actionBtn} type="primary" onClick={startHandler}>
-                Start
-              </Button>
-            </Spin>
-          )}
+      <SubscribeButtons
+        balance={balance}
+        subscribed={subscribed}
+        subscribe={subscribe}
+        isActive={is_active}
+        stopSubscription={stopSubscription}
+        startSubscription={startSubscription}
+        refetchBalance={refetchBalance}
+        withdraw={withdraw}
+        disabled={disabled}
+        chain={chain}
+        subId={subId}
+      />
 
-          <Spin spinning={isWithdrawing}>
-            <Button
-              className={styles.actionBtn}
-              type="primary"
-              onClick={withdrawHandler}
-              disabled={balance < EMPTY_BALANCE}
-            >
-              Withdraw
-            </Button>
-          </Spin>
-        </Space>
-      ) : (
-        subscribe && (
-          <Button
-            className={styles.subscribe}
-            disabled={balance < MIN_BALANCE || subscribed || disabled}
-            onClick={subscribe}
-            type="primary"
-          >
-            Subscribe{subscribed && 'd'}
-          </Button>
-        )
-      )}
-
-      {isTopUpModalOpen && (
-        <TopUpModal
+      {isTopUpModalOpen && isPythia ? (
+        <TopUpPythiaModal
           isTopUpModalOpen={isTopUpModalOpen}
           setIsTopUpModalOpen={setIsTopUpModalOpen}
           chain={chain}
           executionAddress={executionAddress}
           refetchBalance={refetchBalance}
-          decimals={chain.nativeCurrency.decimals}
-          symbol={chain.nativeCurrency.symbol}
+          decimals={decimals}
+          symbol={symbol}
+        />
+      ) : (
+        <TopUpSybilModal
+          isTopUpModalOpen={isTopUpModalOpen}
+          setIsTopUpModalOpen={setIsTopUpModalOpen}
+          chain={chain}
+          executionAddress={executionAddress}
+          refetchBalance={refetchBalance}
+          decimals={decimals}
+          symbol={symbol}
         />
       )}
-
-      {/*<SubscribeModal*/}
-      {/*  isSubscribeModalOpen={isSubscribeModalOpen}*/}
-      {/*  setIsSubscribeModalOpen={setIsSubscribeModalOpen}*/}
-      {/*  addressData={addressData}*/}
-      {/*  subscribe={subscribe}*/}
-      {/*/>*/}
     </div>
   );
 };

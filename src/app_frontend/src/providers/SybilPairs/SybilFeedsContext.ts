@@ -1,4 +1,5 @@
-import { FilterFeedType } from 'Interfaces/feed';
+import { AddressData } from 'Interfaces/common';
+import { FeedRequest, FilterFeedType } from 'Interfaces/feed';
 import { createContext } from 'react';
 
 interface SybilFeedsContextInterface {
@@ -11,6 +12,10 @@ interface SybilFeedsContextInterface {
   setShowMine: (val: boolean) => void;
   setFeedType: (val: FilterFeedType) => void;
   debouncedChangeHandler: (val: React.ChangeEvent<HTMLInputElement>) => void;
+  deposit: (hash: string, addressData: AddressData) => Promise<any>;
+  createFeed: (feed: FeedRequest) => Promise<any>;
+  fetchBalance: (addressData: AddressData) => Promise<any>;
+  isBalanceLoading: boolean;
 }
 
 const SybilFeedsContext = createContext<SybilFeedsContextInterface>({
@@ -23,6 +28,10 @@ const SybilFeedsContext = createContext<SybilFeedsContextInterface>({
   setShowMine: (val: boolean) => {},
   setFeedType: (val: FilterFeedType) => {},
   debouncedChangeHandler: (val: React.ChangeEvent<HTMLInputElement>) => {},
+  deposit: () => Promise.resolve(),
+  createFeed: () => Promise.resolve(),
+  fetchBalance: () => Promise.resolve(),
+  isBalanceLoading: false,
 });
 
 export default SybilFeedsContext;

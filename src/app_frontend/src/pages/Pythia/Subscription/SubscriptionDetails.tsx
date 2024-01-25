@@ -33,6 +33,7 @@ interface SubscriptionDetailsProps {
 export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) => {
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const { address } = useAccount();
+  const [label, setLabel] = useState<string>(subscription.label);
   const [chainId, setChainId] = useState<string>(subscription.method.chain_id);
   const [methodName, setMethodName] = useState(subscription.method.name);
   const [methodArg, setMethodArg] = useState(RAND_METHOD_TYPES[0]);
@@ -60,6 +61,7 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
   const isMobile = width <= BREAK_POINT_MOBILE;
 
   const updateSubscription = async ({
+    label,
     chainId,
     methodName,
     addressToCall,
@@ -68,6 +70,7 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
     isRandom,
     feed,
   }: {
+    label: string;
     chainId: string;
     methodName: string;
     addressToCall: string;
@@ -79,6 +82,7 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
     // optional fields should be wrapped in an array
     const payload = {
       id: subscription.id,
+      label: [label],
       msg: addressData.message,
       sig: remove0x(addressData.signature),
       contract_addr: [remove0x(addressToCall)],
@@ -107,6 +111,7 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
     setIsUpdating(true);
     try {
       await updateSubscription({
+        label,
         chainId,
         methodName,
         addressToCall,
@@ -129,6 +134,15 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
 
   return (
     <Flex vertical={true} gap="middle">
+      <Space direction="vertical">
+        <div className={styles.label}>Label</div>
+        <Input
+          disabled={viewOnly}
+          value={label}
+          placeholder="Label"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabel(e.target.value)}
+        />
+      </Space>
       <Space direction="vertical">
         <div className={styles.label}>Chain</div>
         <SingleValueSelect

@@ -14,7 +14,7 @@ export const orallyTheme = {
     Layout: {
       headerBg: '#0C172B',
       siderBg: '#0C172B',
-      headerHeight:  48,
+      headerHeight: 48,
       headerPadding: '0 24px 0 15px',
       footerPadding: '10px 0',
     },
@@ -37,14 +37,14 @@ export const orallyTheme = {
       remainingColor: '#253554',
     },
     Input: {
-      colorBorder: '#4A6293 !important',
+      colorBorder: '#4A6293',
       colorBgContainer: '#091325',
       colorTextPlaceholder: '#4A6293',
       colorText: 'white',
       colorFillAlter: '#091325',
       colorTextDisabled: 'white',
       colorIcon: 'red',
-      borderRadius: '8px'
+      borderRadius: '8px',
     },
     Switch: {
       colorPrimary: '#1890FF',
@@ -99,7 +99,7 @@ export const orallyTheme = {
       itemBorderRadius: 0,
       itemPaddingInline: 0,
       itemPaddingBlock: 0,
-      padding: 0
+      padding: 0,
     },
     Drawer: {
       colorBgElevated: '#0C172B',
@@ -146,8 +146,8 @@ export const orallyTheme = {
       colorTextHeading: '#4A6293',
     },
     Empty: {
-      colorText: 'var(--primary-color, #1890FF)'
-    }
+      colorText: 'var(--primary-color, #1890FF)',
+    },
   },
 };
 

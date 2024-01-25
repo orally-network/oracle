@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Button, Flex, Layout, Space, Typography } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Drawer, Flex, Layout, Space, Typography } from 'antd';
 
 import { Feeds } from './FeedsList/Feeds';
 import CustomFeed from './CustomFeed';
@@ -13,8 +13,10 @@ import { Filters } from './Filters/Filters';
 import { useSearchParams } from 'react-router-dom';
 import useSybilData from 'Providers/SybilPairs/useSybilFeeds';
 import { FilterFeedType } from 'Interfaces/feed';
+import { NewFeed } from './NewFeed/NewFeed';
 
 const Sybil = () => {
+  const [isNewFeedModalVisible, setIsNewFeedModalVisible] = useState(false);
   const [searchParams] = useSearchParams();
   const { setFeedType, setShowMine } = useSybilData();
 
@@ -42,7 +44,7 @@ const Sybil = () => {
             <Button
               type="primary"
               size="large"
-              onClick={() => console.log('create feed modal')}
+              onClick={() => setIsNewFeedModalVisible(!isNewFeedModalVisible)}
               icon={<PlusCircleOutlined />}
               style={{ width: isMobile ? '40px' : 'auto', height: isMobile ? '40px' : 'auto' }}
             >
@@ -52,6 +54,19 @@ const Sybil = () => {
           <Feeds />
 
           {/* <CustomFeed /> */}
+
+          {isNewFeedModalVisible && (
+            <Drawer
+              title="Create Feed"
+              placement="right"
+              onClose={() => setIsNewFeedModalVisible(false)}
+              open={isNewFeedModalVisible}
+              style={{ marginTop: '47px' }}
+              width={isMobile ? '90vw' : '362px'}
+            >
+              <NewFeed />
+            </Drawer>
+          )}
         </Space>
       </Layout.Content>
     </SybilFeedsProvider>

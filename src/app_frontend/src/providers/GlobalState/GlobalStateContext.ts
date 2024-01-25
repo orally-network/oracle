@@ -9,11 +9,12 @@ interface GlobalStateContextInterface {
   isChainsLoading: boolean;
 }
 
-const GlobalStateContext = createContext({
+const GlobalStateContext = createContext<GlobalStateContextInterface>({
   addressData: {
     message: '',
     signature: '',
     address: '',
+    executionAddress: '',
   },
   setAddressData: (addressData: AddressData) => {},
   chains: [] as Chain[],

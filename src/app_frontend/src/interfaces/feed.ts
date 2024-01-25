@@ -1,11 +1,23 @@
 export interface Feed {
   id: string;
   status: FeedStatus;
-  decimals: number;
+  decimals?: number[];
   owner: string;
   data: FeedData[];
   update_freq: number;
   feed_type: FeedType;
+  sources: Source[];
+}
+
+export interface Source {
+  uri: string;
+  resolver: string;
+  expected_bytes: number[];
+}
+
+export interface FeedRequest extends Omit<Feed, 'owner' | 'data' | 'status'> {
+  msg: string;
+  sig: string;
 }
 
 export interface FeedStatus {
@@ -14,10 +26,7 @@ export interface FeedStatus {
   last_update: number;
 }
 
-export interface FeedType {
-  Default: any;
-  Custom: any;
-}
+export type FeedType = { Default: null } | { Custom: null };
 
 export type FilterFeedType = 'Default' | 'Custom' | 'All';
 

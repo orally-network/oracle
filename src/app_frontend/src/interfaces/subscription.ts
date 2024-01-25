@@ -5,6 +5,7 @@ export interface Subscription {
   contract_addr: string;
   frequency: any;
   id: BigInt;
+  label: string;
 }
 
 interface SubscriptionStatus {

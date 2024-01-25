@@ -29,7 +29,6 @@ import { RemoteDataType } from 'Interfaces/common';
 
 interface NewSubscriptionProps {
   addressData: any;
-  signMessage: any;
   subscribe: any;
 }
 
@@ -57,8 +56,9 @@ export const getMethodAddon = ({
   );
 };
 
-const NewSubscription = ({ addressData, signMessage, subscribe }: NewSubscriptionProps) => {
+const NewSubscription = ({ addressData, subscribe }: NewSubscriptionProps) => {
   const [chainId, setChainId] = useState<string | null>(null);
+  const [label, setLabel] = useState<string>('');
   const [methodName, setMethodName] = useState('');
   const [methodArg, setMethodArg] = useState(RAND_METHOD_TYPES[0]);
   const [addressToCall, setAddressToCall] = useState('');
@@ -90,6 +90,7 @@ const NewSubscription = ({ addressData, signMessage, subscribe }: NewSubscriptio
 
   const subscribeHandler = useCallback(async () => {
     const payload = {
+      label,
       chainId,
       methodName: `${methodName}(${feed ? getStrMethodArgs(Boolean(feed)) : methodArg})`,
       addressToCall,
@@ -146,7 +147,17 @@ const NewSubscription = ({ addressData, signMessage, subscribe }: NewSubscriptio
   const nextHandler = useCallback(() => setIsEdit(!isEdit), [isEdit]);
 
   return (
-    <Flex vertical={true} gap="middle">
+    <Flex vertical={true} gap="middle" style={{ paddingBottom: '60px' }}>
+      <Space direction="vertical">
+        <div className={styles.label}>Label</div>
+        <Input
+          disabled={!isEdit}
+          value={label}
+          placeholder="Label"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabel(e.target.value)}
+        />
+      </Space>
+
       <Space direction="vertical">
         <div className={styles.label}>Chain</div>
 
@@ -271,13 +282,15 @@ const NewSubscription = ({ addressData, signMessage, subscribe }: NewSubscriptio
           <Space direction="vertical" size="middle" style={{ width: '100%' }}>
             <Control
               disabled={!chainId || !methodName || !addressToCall || !frequency}
-              signMessage={signMessage}
               addressData={addressData}
               balance={balance}
               executionAddress={pma}
               refetchBalance={refetchBalance}
               isBalanceLoading={isBalanceLoading}
               chain={chainId !== null && CHAINS_MAP[chainId]}
+              decimals={chainId !== null ? CHAINS_MAP[chainId].nativeCurrency.decimals : 18}
+              symbol={chainId !== null ? CHAINS_MAP[chainId].nativeCurrency.symbol : 'ETH'}
+              isPythia={true}
             />
 
             <Flex justify="space-between">

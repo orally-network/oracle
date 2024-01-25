@@ -8,7 +8,7 @@ import { TodayBidsTable } from './TodayBidsTable';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 
-export const Demo = () => {
+export const WeatherAuction = () => {
   const { width } = useWindowDimensions();
   const isMobile = width < BREAK_POINT_MOBILE;
 

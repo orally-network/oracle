@@ -2,7 +2,7 @@ const ROUTES = {
   ROOT: '/',
   SYBIL: 'sybil',
   PYTHIA: 'pythia',
-  DEMO: 'demo',
+  WEATHER_AUCTION: 'weather-auction',
 };
 
 export default ROUTES;

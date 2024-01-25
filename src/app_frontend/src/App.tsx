@@ -9,13 +9,13 @@ import { BaseLayout } from 'Components/Layout';
 
 import Pythia from 'Pages/Pythia';
 import Sybil from 'Pages/Sybil';
-import { Demo } from 'Pages/Demo';
 import ROUTES from 'Constants/routes';
 import rollbar from './rollbar';
 import { SubscriptionDetailsPage } from 'Pages/SubscriptionDetailsPage';
 import ErrorPage from 'Pages/ErrorPage';
 import { CACHE_TIME, QUERY_CLIENT_DEFAULT_RETRY_COUNT, TIME_TO_WAIT } from 'Constants/query';
 import { PythiaDataProvider } from 'Providers/PythiaData';
+import { WeatherAuction } from 'Pages/WeatherAuction';
 
 const router = createBrowserRouter([
   {
@@ -45,8 +45,8 @@ const router = createBrowserRouter([
         element: <SubscriptionDetailsPage />,
       },
       {
-        path: `${ROUTES.DEMO}`,
-        element: <Demo />,
+        path: `${ROUTES.WEATHER_AUCTION}`,
+        element: <WeatherAuction />,
       },
     ],
   },

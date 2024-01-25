@@ -1,6 +1,6 @@
 import { Button, Flex, Space } from 'antd';
 import React from 'react';
-import styles from './Demo.scss';
+import styles from './WeatherAuction.scss';
 
 export const Actions = () => {
   return (

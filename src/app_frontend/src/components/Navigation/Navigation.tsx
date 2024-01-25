@@ -49,12 +49,12 @@ const menuItems: MenuItem[] = [
     icon: <CloudOutlined />,
     label: (
       <NavLink
-        to="/demo"
+        to="/weather-auction"
         className={({ isActive, isPending }) =>
           isPending ? styles.pending : isActive ? styles.active : ''
         }
       >
-        Demo
+        Weather Auction
       </NavLink>
     ),
   },

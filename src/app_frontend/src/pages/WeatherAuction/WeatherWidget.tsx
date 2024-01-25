@@ -1,6 +1,6 @@
 import { Card, Flex, Spin, Typography } from 'antd';
 import React, { useEffect, useState } from 'react';
-import styles from './Demo.scss';
+import styles from './WeatherAuction.scss';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 

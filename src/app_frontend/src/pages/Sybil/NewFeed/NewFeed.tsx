@@ -108,7 +108,7 @@ export const NewFeed = (params) => {
     }
   };
 
-  const regex = new RegExp('^[a-zA-Z]+/[a-zA-Z]+$');
+  const regex = new RegExp('^[a-zA-Z]+/[a-zA-Z0-9]+$');
 
   const isFeedIdValid =
     regex.test(feedId) &&

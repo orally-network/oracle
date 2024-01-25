@@ -23,19 +23,21 @@ const TREASURER_CHAIN = CHAINS_MAP[42161];
 const USDT_TOKEN_POLYGON = '0xaf88d065e77c8cC2239327C5EDb3A432268e5831';
 const USDT_TOKEN_POLYGON_DECIMALS = 6;
 
-export const NewFeed = () => {
+export const NewFeed = (params) => {
+  const isViewingMode = Boolean(params.feedId);
+
   const newSource: Source = {
     uri: '',
     resolver: '',
     expected_bytes: [],
   };
 
-  const [feedId, setFeedId] = useState<string>('');
-  const [frequency, setFrequency] = useState<string>('');
-  const [sources, setSources] = useState<Source[]>([newSource]);
+  const [feedId, setFeedId] = useState<string>(params.feedId ?? '');
+  const [frequency, setFrequency] = useState<string>(params.frequency ?? '');
+  const [sources, setSources] = useState<Source[]>(params.sources ?? [newSource]);
   const [isCreating, setIsCreating] = useState(false);
-  const [isPriceFeed, setIsPriceFeed] = useState(false);
-  const [decimals, setDecimals] = useState('9');
+  const [isPriceFeed, setIsPriceFeed] = useState(Boolean(params.decimals) ?? false);
+  const [decimals, setDecimals] = useState(params.decimals ?? '9');
   const [balance, setBalance] = useState(0);
 
   const { addressData } = useGlobalState();
@@ -121,6 +123,7 @@ export const NewFeed = () => {
         <div>Feed id</div>
         <div className={styles.label}>.../USD</div>
         <Input
+          disabled={isViewingMode}
           value={feedId}
           placeholder=".../USD"
           pattern="^[a-zA-Z]+\/[a-zA-Z]+$"
@@ -132,6 +135,7 @@ export const NewFeed = () => {
         <div>Expiration time</div>
         <div className={styles.label}>Frequency (min)</div>
         <Input
+          disabled={isViewingMode}
           pattern="[0-9]*"
           value={frequency}
           placeholder="Frequency"
@@ -139,7 +143,7 @@ export const NewFeed = () => {
         />
       </Space>
       <Space>
-        <Switch checked={isPriceFeed} onChange={(checked: boolean) => setIsPriceFeed(checked)} />
+        <Switch checked={isPriceFeed} onChange={(checked: boolean) => setIsPriceFeed(checked)} disabled={isViewingMode} />
         Price Feed
       </Space>
 
@@ -148,6 +152,7 @@ export const NewFeed = () => {
           <div>Decimals</div>
           <div className={styles.label}>Add decimals</div>
           <Input
+            disabled={isViewingMode}
             value={decimals}
             type="number"
             min="0"
@@ -166,6 +171,7 @@ export const NewFeed = () => {
             <div>Source #{index + 1}</div>
             {sources.length !== 1 && (
               <Button
+                disabled={isViewingMode}
                 icon={<DeleteOutlined />}
                 onClick={() => {
                   const newSources = [...sources];
@@ -178,6 +184,7 @@ export const NewFeed = () => {
           <Space direction="vertical" style={{ width: '100%' }}>
             <div className={styles.label}>URI</div>
             <Input
+              disabled={isViewingMode}
               value={source.uri}
               placeholder="URI"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -188,6 +195,7 @@ export const NewFeed = () => {
           <Space direction="vertical" style={{ width: '100%' }}>
             <div className={styles.label}>Resolver</div>
             <Input
+              disabled={isViewingMode}
               value={source.resolver}
               placeholder="Resolver"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -197,8 +205,13 @@ export const NewFeed = () => {
           </Space>
         </Space>
       ))}
-      {sources.length !== MAX_SOURCES && (
-        <Button style={{ alignSelf: 'flex-end' }} icon={<PlusCircleOutlined />} onClick={addSource}>
+      {sources.length !== MAX_SOURCES && !isViewingMode && (
+        <Button
+          disabled={isViewingMode}
+          style={{ alignSelf: 'flex-end' }}
+          icon={<PlusCircleOutlined />}
+          onClick={addSource}
+        >
           Add source
         </Button>
       )}
@@ -217,8 +230,9 @@ export const NewFeed = () => {
             isPythia={false}
           />
           <Flex justify="flex-end">
-            <Button
+            {!isViewingMode && <Button
               disabled={
+                isViewingMode ||
                 !feedId ||
                 !frequency ||
                 !sources.length ||
@@ -233,7 +247,7 @@ export const NewFeed = () => {
               loading={isCreating}
             >
               Create
-            </Button>
+            </Button>}
           </Flex>
         </Space>
       ) : (

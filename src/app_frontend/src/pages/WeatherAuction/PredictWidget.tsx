@@ -1,11 +1,49 @@
-import { Space, Typography, Input, Card, Flex, Button } from 'antd';
+import { writeContract } from '@wagmi/core';
+import { Space, Typography, Input, Card, Flex } from 'antd';
+import Button from 'Components/Button';
 import React, { useState } from 'react';
+import { WeatherAuctionABI } from './weatherAuctionABI';
+import { utils } from 'ethers';
+import { CHAINS_MAP } from 'Constants/chains';
+
+const WEATHER_AUCTION_ADDRESS = '0x7959B4780547E8052cDFBF881710cFA7240654B1';
+const TICKET_PRICE = 0.001;
+const ARBITRUM_CHAIN_ID = 42161;
 
 // TODO: implement this widget, connect it to the smart contract
 
 export const PredictWidget = () => {
-  const [degree, setDegree] = useState<string>('');
-  const [amount, setAmount] = useState<string>('');
+  const [temperatureGuess, setTemperatureGuess] = useState<string>('');
+  const [ticketAmount, setTicketAmount] = useState<string>('');
+  const [isConfirming, setIsConfirming] = useState<boolean>(false);
+
+  const sendAuctionData = async () => {
+    const formattedTemperatureGuess = +temperatureGuess.replace('.', '');
+
+    return writeContract({
+      address: WEATHER_AUCTION_ADDRESS,
+      abi: WeatherAuctionABI,
+      value: utils.parseUnits(
+        String(TICKET_PRICE * (ticketAmount ? +ticketAmount : 1)),
+        CHAINS_MAP[ARBITRUM_CHAIN_ID].nativeCurrency.decimals
+      ), // amount of eth applied to transaction
+      functionName: 'bid',
+      args: [formattedTemperatureGuess], // in format with decimals=1, e.g. 16.6C = 166
+      chainId: ARBITRUM_CHAIN_ID,
+    });
+  };
+
+  const makeBidAndVerify = async () => {
+    setIsConfirming(true);
+    try {
+      const { hash } = await sendAuctionData();
+      console.log({ hash });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsConfirming(false);
+    }
+  };
 
   return (
     <Card>
@@ -16,23 +54,32 @@ export const PredictWidget = () => {
             <div>Write the weather degree</div>
             <Space size="middle">
               <Input
-                value={degree}
-                placeholder="20℃"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDegree(e.target.value)}
+                value={temperatureGuess}
+                placeholder="20℃ or 16.6℃"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setTemperatureGuess(e.target.value)
+                }
                 style={{ width: '133px' }}
               />
               <Input
-                value={amount}
+                value={ticketAmount}
                 placeholder="Ticket amount"
                 type="number"
                 min="1"
                 max="100"
                 style={{ width: '133px' }}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAmount(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setTicketAmount(e.target.value)
+                }
               />
             </Space>
-            <Button type="primary" onClick={() => {}}>
-              Verify
+            <Button
+              type="primary"
+              onClick={makeBidAndVerify}
+              loading={isConfirming}
+              disabled={!temperatureGuess}
+            >
+              Bid
             </Button>
           </Flex>
           <div>

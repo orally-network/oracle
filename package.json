@@ -63,6 +63,7 @@
   ],
   "dependencies": {
     "@ant-design/icons": "^5.1.2",
+    "@apollo/client": "^3.8.10",
     "@dfinity/auth-client": "^0.19.2",
     "@dfinity/authentication": "^0.14.2",
     "@dfinity/identity": "^0.19.2",
@@ -82,6 +83,7 @@
     "css-loader": "^6.7.3",
     "dotenv-webpack": "^8.0.1",
     "ethers": "^5.5.1",
+    "graphql": "^16.8.1",
     "json-size": "^1.0.0",
     "memoize": "^0.1.1",
     "object-sizeof": "^2.6.3",

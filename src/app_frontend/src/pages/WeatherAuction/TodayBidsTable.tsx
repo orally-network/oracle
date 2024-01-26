@@ -1,5 +1,7 @@
 import { Table } from 'antd';
 import React from 'react';
+import { useQuery } from '@apollo/client';
+import { GET_BIDS } from './queries/auction';
 
 const columns = [
   {
@@ -25,5 +27,9 @@ const columns = [
 ];
 
 export const TodayBidsTable = () => {
+  const { loading, error, data } = useQuery(GET_BIDS);
+
+  console.log(error);
+
   return <Table columns={columns} dataSource={[]} pagination={false} showHeader={false} />;
 };

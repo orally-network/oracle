@@ -4,6 +4,9 @@ import { Space, Spin } from 'antd';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { Provider as RollbarProvider, ErrorBoundary } from '@rollbar/react';
 import { GlobalStateProvider } from 'Providers/GlobalState';
+import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client/react';
+import { HttpLink } from '@apollo/client';
 
 import { BaseLayout } from 'Components/Layout';
 
@@ -66,24 +69,35 @@ const queryClient = new QueryClient({
   },
 });
 
+const link = new HttpLink({
+  uri: 'https://api.studio.thegraph.com/query/orally-weather-auction/',
+});
+
+export const client = new ApolloClient({
+  link: link,
+  cache: new InMemoryCache(),
+});
+
 const App = () => {
   return (
     <RollbarProvider instance={rollbar}>
       <ErrorBoundary>
-        <QueryClientProvider client={queryClient}>
-          <GlobalStateProvider>
-            <PythiaDataProvider>
-              <RouterProvider
-                router={router}
-                fallbackElement={
-                  <Space size="large">
-                    <Spin size="large" />
-                  </Space>
-                }
-              />
-            </PythiaDataProvider>
-          </GlobalStateProvider>
-        </QueryClientProvider>
+        <ApolloProvider client={client}>
+          <QueryClientProvider client={queryClient}>
+            <GlobalStateProvider>
+              <PythiaDataProvider>
+                <RouterProvider
+                  router={router}
+                  fallbackElement={
+                    <Space size="large">
+                      <Spin size="large" />
+                    </Space>
+                  }
+                />
+              </PythiaDataProvider>
+            </GlobalStateProvider>
+          </QueryClientProvider>
+        </ApolloProvider>
       </ErrorBoundary>
     </RollbarProvider>
   );

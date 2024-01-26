@@ -86,7 +86,7 @@ export const WeatherWidget = () => {
 
           <Flex align="center" vertical>
             <div className={styles.temperature}>
-              {isWeatherDataLoading ? <Spin /> : Math.round(currentTemperature)}
+              {isWeatherDataLoading ? <Spin /> : currentTemperature.toFixed(1)}
               <span>℃</span>
             </div>
             <span className={styles.label}>right now</span>

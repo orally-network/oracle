@@ -2,11 +2,11 @@ import { writeContract } from '@wagmi/core';
 import { Space, Typography, Input, Card, Flex } from 'antd';
 import Button from 'Components/Button';
 import React, { useState } from 'react';
-import { WeatherAuctionABI } from './weatherAuctionABI';
+import WeatherAuctionABI from './weatherAuctionABI.json';
 import { utils } from 'ethers';
 import { CHAINS_MAP } from 'Constants/chains';
 
-const WEATHER_AUCTION_ADDRESS = '0x7959B4780547E8052cDFBF881710cFA7240654B1';
+const WEATHER_AUCTION_ADDRESS = '0x8B2B8E6e8bF338e6071E6Def286B8518B7BFF7F1';
 const TICKET_PRICE = 0.001;
 const ARBITRUM_CHAIN_ID = 42161;
 

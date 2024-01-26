@@ -1,7 +1,8 @@
+import { useEffect } from 'react';
 import { Table } from 'antd';
 import React from 'react';
-import { useQuery } from '@apollo/client';
-import { GET_BIDS } from './queries/auction';
+
+import { WeatherBidsDocument, WeatherBidsQuery, execute } from '../../../../../.graphclient';
 
 const columns = [
   {
@@ -27,9 +28,14 @@ const columns = [
 ];
 
 export const TodayBidsTable = () => {
-  const { loading, error, data } = useQuery(GET_BIDS);
+  const [data, setData] = React.useState<WeatherBidsQuery>()
 
-  console.log(error);
+  useEffect(() => {
+    execute(WeatherBidsDocument, {}).then((result) => {
+      console.log({ result });
+      setData(result?.data);
+    })
+  }, []);
 
   return <Table columns={columns} dataSource={[]} pagination={false} showHeader={false} />;
 };

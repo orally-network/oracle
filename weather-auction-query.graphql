@@ -1,0 +1,15 @@
+query WeatherBids {
+    bidPlaceds(first: 30) {
+        id
+        bidder
+        temperatureGuess
+        day
+        ticketCount
+    }
+    winnerDeclareds(first: 5) {
+        id
+        winner
+        day
+        temperature
+    }
+}

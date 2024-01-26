@@ -16,6 +16,8 @@ export default {
   env: process.env.NODE_ENV,
   ETHERSCAN_API_KEY: process.env.ETHERSCAN_API_KEY,
 
+  THE_GRAPH_URL: process.env.THE_GRAPH_URL,
+
   pythia_canister_id: isStaging ? 'xmz4o-gqaaa-aaaag-qcjva-cai' : 'ettff-uaaaa-aaaag-abpcq-cai',
   sybil_canister_id: isStaging ? 'tysiw-qaaaa-aaaak-qcikq-cai' : 'wth3l-tiaaa-aaaap-aa5uq-cai',
 };

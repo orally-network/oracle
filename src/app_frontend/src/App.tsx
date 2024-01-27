@@ -70,7 +70,7 @@ const queryClient = new QueryClient({
 });
 
 const link = new HttpLink({
-  uri: 'https://api.studio.thegraph.com/query/orally-weather-auction/',
+  uri: 'https://api.studio.thegraph.com/query/61274/orally-weather-auction/version/latest',
 });
 
 export const client = new ApolloClient({

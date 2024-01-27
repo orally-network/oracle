@@ -1,41 +1,50 @@
-import { useEffect } from 'react';
-import { Table } from 'antd';
+import { Card, Table } from 'antd';
 import React from 'react';
-
-import { WeatherBidsDocument, WeatherBidsQuery, execute } from '../../../../../.graphclient';
-
-const columns = [
-  {
-    title: 'Address',
-    dataIndex: 'id',
-    key: 'id',
-  },
-  {
-    title: 'Date',
-    dataIndex: 'date',
-    key: 'date',
-  },
-  {
-    title: 'Prize',
-    dataIndex: 'prize',
-    key: 'prize',
-  },
-  {
-    title: 'Temperature',
-    dataIndex: 'temperature',
-    key: 'temp',
-  },
-];
+import { useWeatherData } from 'Providers/WeatherAuctionData/useWeatherData';
+import { useAccount } from 'wagmi';
+import { truncateAddressSymbolsNum } from 'Utils/addressUtils';
 
 export const TodayBidsTable = () => {
-  const [data, setData] = React.useState<WeatherBidsQuery>()
+  const { bids, isWinnersLoading } = useWeatherData();
+  const { address } = useAccount();
 
-  useEffect(() => {
-    execute(WeatherBidsDocument, {}).then((result) => {
-      console.log({ result });
-      setData(result?.data);
-    })
-  }, []);
+  const columns = [
+    {
+      title: 'Address',
+      dataIndex: 'bidder',
+      key: 'bidder',
+      render: (address: string) => truncateAddressSymbolsNum(address, 8),
+    },
+    {
+      title: 'Mine',
+      dataIndex: 'bidder',
+      key: 'bidder',
+      render: (val: string) => <strong>{val === address?.toLowerCase() ? 'Mine' : ''}</strong>,
+    },
+    {
+      title: 'Temperature',
+      dataIndex: 'temperatureGuess',
+      key: 'temperatureGuess',
+      render: (temp: string) => (
+        <span>{temp.slice(0, temp.length - 1) + '.' + temp.slice(temp.length - 1)}℃</span>
+      ),
+    },
+  ];
 
-  return <Table columns={columns} dataSource={[]} pagination={false} showHeader={false} />;
+  return (
+    <Card title="Today’s bids" style={{ flex: 1 }}>
+      <Table
+        columns={columns}
+        dataSource={bids}
+        pagination={false}
+        showHeader={false}
+        scroll={{ y: 260 }}
+        loading={isWinnersLoading}
+        rowKey="id"
+        rowClassName={(record, index) => {
+          return record.bidder === address?.toLowerCase() ? 'highlight' : '';
+        }}
+      />
+    </Card>
+  );
 };

@@ -7,12 +7,14 @@ export const GET_BIDS = gql`
       bidder
       temperatureGuess
       day
+      ticketCount
     }
     winnerDeclareds(first: 5) {
       id
       winner
       day
       temperature
+      winnerPrize
     }
   }
 `;

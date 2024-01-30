@@ -7,6 +7,7 @@ import styles from './Navigation.scss';
 
 interface NavigationProps {
   isDarkMode: boolean;
+  closeSideBar: () => void;
 }
 
 interface MenuItem {
@@ -60,13 +61,14 @@ const menuItems: MenuItem[] = [
   },
 ];
 
-export const Navigation = ({ isDarkMode }: NavigationProps) => {
+export const Navigation = ({ isDarkMode, closeSideBar }: NavigationProps) => {
   return (
     <Menu
       theme={isDarkMode ? 'dark' : 'light'}
       mode="inline"
       defaultSelectedKeys={['1']}
       items={menuItems}
+      onClick={closeSideBar}
     />
   );
 };

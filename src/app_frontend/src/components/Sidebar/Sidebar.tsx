@@ -8,7 +8,7 @@ import {
   ArrowRightOutlined,
   MenuOutlined,
   CloseOutlined,
-  SettingOutlined
+  SettingOutlined,
 } from '@ant-design/icons';
 
 import styles from './Sidebar.scss';
@@ -39,15 +39,15 @@ export const Sidebar = ({ toggleTheme, isDarkMode }: SidebarProps) => {
       breakpoint="sm"
       collapsedWidth={isMobile ? 0 : 47}
       style={{
-        height: 'calc(100vh - 48px)',
+        height: isMobile ? '100vh' : 'calc(100vh - 48px)',
         position: 'fixed',
         left: 0,
         bottom: 0,
         zIndex: 3,
-        padding:  '0 0 50px',
+        padding: '0 0 50px',
       }}
     >
-      <Navigation isDarkMode={isDarkMode} />
+      <Navigation isDarkMode={isDarkMode} closeSideBar={() => setCollapsed(true)} />
       <div className={styles.control}>
         {isMobile ? (
           <Button
@@ -95,7 +95,7 @@ export const Sidebar = ({ toggleTheme, isDarkMode }: SidebarProps) => {
       <div className={styles.toggler}>
         {/* <FontAwesomeIcon onClick={toggleTheme} icon={isDarkMode ? faSun : faMoon} /> */}
         <div className={styles.support}>
-        <SettingOutlined />
+          <SettingOutlined />
         </div>
       </div>
     </Sider>

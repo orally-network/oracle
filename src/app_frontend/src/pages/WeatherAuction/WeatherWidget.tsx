@@ -56,7 +56,7 @@ export const WeatherWidget = () => {
   console.log({ weatherData });
 
   return (
-    <Flex gap="middle">
+    <Flex gap="middle" vertical={isMobile}>
       <Card
         style={{ width: '177', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
       >
@@ -68,7 +68,7 @@ export const WeatherWidget = () => {
           )}
         </Flex>
       </Card>
-      <Card style={{ minWidth: isMobile ? '100%' : 400 }}>
+      <Card style={{ minWidth: isMobile ? 'auto' : 400 }}>
         <Flex gap={isMobile ? 30 : 80}>
           <Flex vertical gap="large">
             <Typography.Title level={5}>Weather in Lisbon</Typography.Title>

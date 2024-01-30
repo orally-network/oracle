@@ -16,7 +16,7 @@ export const WeatherAuction = () => {
 
   return (
     <WeatherAuctionProvider>
-      <Layout.Content>
+      <Layout.Content className='weather-auction'>
         <Space size="middle" direction="vertical" style={{ width: '100%', position: 'relative' }}>
           <Flex align="center" justify="space-between" gap={8}>
             <Typography.Title style={{ minWidth: '70px' }} level={3}>

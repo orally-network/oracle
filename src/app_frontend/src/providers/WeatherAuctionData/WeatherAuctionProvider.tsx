@@ -28,7 +28,7 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
   };
 
   const sendAuctionData = async (temp: number, ticketAmount: number) => {
-    return writeContract({
+    return await writeContract({
       address: WEATHER_AUCTION_ADDRESS,
       abi: WeatherAuctionABI,
       value: utils.parseUnits(
@@ -152,6 +152,7 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
     withdraw,
     getUserBalances,
     userWinningBalance,
+    currentDay,
   };
   return <WeatherAuctionContext.Provider value={value}>{children}</WeatherAuctionContext.Provider>;
 };

@@ -8,9 +8,10 @@ export type WeatherData = {
   sendAuctionData: (temp: number, amount: number) => Promise<WriteContractResult>;
   getTotalPrize: () => Promise<WriteContractResult>;
   isAuctionOpen: boolean;
-  getBids: () => void;
+  getBids: (vars: any) => void;
   withdraw: () => Promise<WriteContractResult>;
   userWinningBalance: number;
+  currentDay: number;
 };
 
 export const WeatherAuctionContext = createContext<WeatherData>({
@@ -20,7 +21,8 @@ export const WeatherAuctionContext = createContext<WeatherData>({
   sendAuctionData: async () => Promise.resolve({} as WriteContractResult),
   getTotalPrize: async () => Promise.resolve({} as WriteContractResult),
   isAuctionOpen: false,
-  getBids: () => {},
+  getBids: (vars) => {},
   withdraw: () => Promise.resolve({} as WriteContractResult),
   userWinningBalance: 0,
+  currentDay: 0,
 });

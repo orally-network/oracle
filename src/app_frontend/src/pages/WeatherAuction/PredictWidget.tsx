@@ -17,7 +17,7 @@ export const PredictWidget = () => {
   const [isSubscriptionLoading, setIsSubscriptionLoading] = useState<boolean>(false);
   const [nextUpdateDateTime, setNextUpdateDateTime] = useState<string | null>(null);
 
-  const { sendAuctionData, isAuctionOpen, getBids } = useWeatherData();
+  const { sendAuctionData, isAuctionOpen, getBids, currentDay } = useWeatherData();
 
   const fetchSubscription = async (id: BigInt, chainId: BigInt) => {
     try {
@@ -39,16 +39,13 @@ export const PredictWidget = () => {
   const makeBidAndVerify = async () => {
     setIsConfirming(true);
     try {
-      const { hash } = await toast.promise(
-        sendAuctionData(+temperatureGuess.replace('.', ''), +ticketAmount),
-        {
-          pending: 'Confirming transaction...',
-          success: 'Transaction confirmed!',
-          error: 'Transaction failed',
-        }
-      );
+      const { hash } = await toast.promise(sendAuctionData(+temperatureGuess * 10, +ticketAmount), {
+        pending: 'Confirming transaction...',
+        success: 'Transaction confirmed!',
+        error: 'Transaction failed',
+      });
       console.log({ hash });
-      getBids();
+      getBids({ variables: { day: currentDay } });
     } catch (err) {
       console.error(err);
     } finally {

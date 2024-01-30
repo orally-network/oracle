@@ -1,16 +1,40 @@
 import { Space, Typography, Input, Card, Flex } from 'antd';
 import Button from 'Components/Button';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useWeatherData } from 'Providers/WeatherAuctionData/useWeatherData';
 import { toast } from 'react-toastify';
-
-// TODO: implement this widget, connect it to the smart contract
+import pythiaCanister from 'Canisters/pythiaCanister';
+import { Subscription } from 'Interfaces/subscription';
+import { ARBITRUM_CHAIN_ID } from 'Providers/WeatherAuctionData/WeatherAuctionProvider';
+import { LoadingOutlined } from '@ant-design/icons';
 
 export const PredictWidget = () => {
   const [temperatureGuess, setTemperatureGuess] = useState<string>('');
   const [ticketAmount, setTicketAmount] = useState<string>('');
   const [isConfirming, setIsConfirming] = useState<boolean>(false);
-  const { sendAuctionData } = useWeatherData();
+
+  const [subscriptionData, setSubscriptionData] = useState<Subscription | null>(null);
+  const [isSubscriptionLoading, setIsSubscriptionLoading] = useState<boolean>(false);
+  const [nextUpdateDateTime, setNextUpdateDateTime] = useState<string | null>(null);
+
+  const { sendAuctionData, isAuctionOpen, getBids } = useWeatherData();
+
+  const fetchSubscription = async (id: BigInt, chainId: BigInt) => {
+    try {
+      setIsSubscriptionLoading(true);
+      const response: any = await pythiaCanister.get_subscription(chainId, id);
+      if (response.Err) {
+        setSubscriptionData(null);
+        throw new Error(response.Err);
+      } else {
+        setSubscriptionData(response.Ok);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsSubscriptionLoading(false);
+    }
+  };
 
   const makeBidAndVerify = async () => {
     setIsConfirming(true);
@@ -24,13 +48,36 @@ export const PredictWidget = () => {
         }
       );
       console.log({ hash });
-      // TODO: verify transaction
+      getBids();
     } catch (err) {
       console.error(err);
     } finally {
       setIsConfirming(false);
     }
   };
+
+  useEffect(() => {
+    if (isAuctionOpen) {
+      fetchSubscription(BigInt(57), BigInt(ARBITRUM_CHAIN_ID));
+    } else {
+      fetchSubscription(BigInt(59), BigInt(ARBITRUM_CHAIN_ID));
+    }
+  }, [isAuctionOpen]);
+
+  useEffect(() => {
+    if (!subscriptionData) return;
+    const {
+      method: { exec_condition },
+      status: { last_update },
+    } = subscriptionData as Subscription;
+
+    const frequency = exec_condition[0]?.Frequency || BigInt(3600);
+
+    const lastUpdateDateTime = new Date(Number(last_update) * 1000);
+    const nextUpdateDateTime = new Date(lastUpdateDateTime.getTime() + Number(frequency) * 1000);
+
+    setNextUpdateDateTime(nextUpdateDateTime.toLocaleString());
+  }, [subscriptionData]);
 
   return (
     <Card>
@@ -60,6 +107,18 @@ export const PredictWidget = () => {
                 }
               />
             </Space>
+            <Typography.Text>
+              {isAuctionOpen
+                ? 'Auction will close in '
+                : 'Auction closed, winner will be chosen in '}
+              <strong>
+                {isSubscriptionLoading || !nextUpdateDateTime ? (
+                  <LoadingOutlined />
+                ) : (
+                  nextUpdateDateTime
+                )}
+              </strong>
+            </Typography.Text>
             <Button
               type="primary"
               onClick={makeBidAndVerify}

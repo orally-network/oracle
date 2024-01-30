@@ -1,6 +1,7 @@
 import { useWeatherData } from 'Providers/WeatherAuctionData/useWeatherData';
 import { truncateAddressSymbolsNum } from 'Utils/addressUtils';
 import { Card, Table } from 'antd';
+import { utils } from 'ethers';
 import React from 'react';
 
 const columns = [
@@ -11,14 +12,15 @@ const columns = [
     render: (address: string) => truncateAddressSymbolsNum(address, 8),
   },
   {
-    title: 'Date',
-    dataIndex: 'date',
-    key: 'date',
+    title: 'Day',
+    dataIndex: 'day',
+    key: 'day',
   },
   {
     title: 'Prize',
-    dataIndex: 'prize',
-    key: 'prize',
+    dataIndex: 'winnerPrize',
+    key: 'winnerPrize',
+    render: (prize: string) => <span>{utils.formatEther(prize)}</span>,
   },
   {
     title: 'Temperature',

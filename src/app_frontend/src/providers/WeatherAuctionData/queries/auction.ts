@@ -1,15 +1,15 @@
 import { gql } from '@apollo/client';
 
 export const GET_BIDS = gql`
-  query {
-    bidPlaceds(first: 5) {
+  query GetBids($day: Int!) {
+    bidPlaceds(first: 100, where: { day: $day }) {
       id
       bidder
       temperatureGuess
       day
       ticketCount
     }
-    winnerDeclareds(first: 5) {
+    winnerDeclareds(first: 100) {
       id
       winner
       day

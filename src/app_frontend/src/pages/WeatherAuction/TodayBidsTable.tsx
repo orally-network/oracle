@@ -22,6 +22,11 @@ export const TodayBidsTable = () => {
       render: (val: string) => <strong>{val === address?.toLowerCase() ? 'Mine' : ''}</strong>,
     },
     {
+      title: 'Tickets',
+      dataIndex: 'ticketCount',
+      key: 'ticketCount',
+    },
+    {
       title: 'Temperature',
       dataIndex: 'temperatureGuess',
       key: 'temperatureGuess',

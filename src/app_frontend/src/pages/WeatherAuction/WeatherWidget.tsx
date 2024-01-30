@@ -4,7 +4,8 @@ import styles from './WeatherAuction.scss';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 
-//snow, rain, fog, wind, cloudy, partly-cloudy-day, partly-cloudy-night, clear-day, clear-night
+// snow, rain, fog, wind, cloudy, partly-cloudy-day, partly-cloudy-night, clear-day, clear-night
+// TODO: add mapping for backup weather icons
 
 export const WeatherWidget = () => {
   const [weatherData, setWeatherData] = useState<any>(null);
@@ -50,10 +51,9 @@ export const WeatherWidget = () => {
       ? 0
       : weatherData?.currentConditions?.temp || weatherData?.current?.temp;
 
-  // add mapping for backup weather icons
   const weatherIcon = !weatherData
     ? 'clear-day'
-    : weatherData.currentConditions.icon || weatherData?.current.weather[0].icon;
+    : weatherData?.currentConditions?.icon || weatherData?.current.weather[0].icon;
 
   console.log({ weatherData });
 

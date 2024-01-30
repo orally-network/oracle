@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { WeatherAuctionContext } from './WeatherAuctionContext';
-import { useQuery } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client';
 import { GET_BIDS } from './queries/auction';
 import { readContracts, writeContract } from '@wagmi/core';
 import WeatherAuctionABI from './weatherAuctionABI.json';
@@ -13,10 +13,13 @@ export const TICKET_PRICE = 0.001;
 export const ARBITRUM_CHAIN_ID = 42161;
 
 export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode }) => {
-  const { loading, error, data } = useQuery(GET_BIDS);
+  const [getBids, { loading, error, data }] = useLazyQuery(GET_BIDS);
   const { address } = useAccount();
   const { switchNetwork } = useSwitchNetwork();
   const { chain: currentChain } = useNetwork();
+  const [isAuctionOpen, setIsAuctionOpen] = useState<boolean>(false);
+  const [userWinningBalance, setUserWinningBalance] = useState<number>(0);
+  const [currentDay, setCurrentDay] = useState<number>(0);
 
   const weatherAuctionContract = {
     address: WEATHER_AUCTION_ADDRESS,
@@ -24,8 +27,6 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
   };
 
   const sendAuctionData = async (temp: number, ticketAmount: number) => {
-    // TODO: should check balance before sending transaction
-    // open top up?
     return writeContract({
       address: WEATHER_AUCTION_ADDRESS,
       abi: WeatherAuctionABI,
@@ -39,13 +40,62 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
     });
   };
 
+  const withdraw = async () => {
+    return writeContract({
+      address: WEATHER_AUCTION_ADDRESS,
+      abi: WeatherAuctionABI,
+      functionName: 'withdraw',
+      chainId: ARBITRUM_CHAIN_ID,
+    });
+  };
+
+  const getUserBalances = async () => {
+    try {
+      const data = await readContracts({
+        contracts: [
+          {
+            ...weatherAuctionContract,
+            functionName: 'userBalances',
+            args: [address],
+          },
+        ],
+      });
+      setUserWinningBalance(Number(data[0]?.result));
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  };
+
+  const getAuctionStatusAndDay = async () => {
+    try {
+      const data = await readContracts({
+        contracts: [
+          {
+            ...weatherAuctionContract,
+            functionName: 'auctionOpen',
+          },
+          {
+            ...weatherAuctionContract,
+            functionName: 'currentDay',
+          },
+        ],
+      });
+      setIsAuctionOpen(data[0]?.result as boolean);
+      setCurrentDay(Number(data[1]?.result));
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  };
+
   const getTotalPrize = async () => {
     try {
       const data = await readContracts({
         contracts: [
           {
             ...weatherAuctionContract,
-            functionName: 'totalTickets', // then multiply it for TICKET_PRICE and it'll be today's prize
+            functionName: 'totalTickets',
           },
           address
             ? {
@@ -56,7 +106,6 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
             : null,
         ],
       });
-      // TODO: parse data
       console.log({ data });
       return data;
     } catch (err) {
@@ -71,12 +120,23 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
     }
   }, [currentChain?.id, switchNetwork]);
 
+  useEffect(() => {
+    getAuctionStatusAndDay();
+    getBids({ variables: { day: currentDay } });
+    getUserBalances();
+  }, [currentDay]);
+
   const value = {
     winners: data ? data.winnerDeclareds : [],
     bids: data ? data.bidPlaceds : [],
     isWinnersLoading: loading,
     getTotalPrize,
     sendAuctionData,
+    isAuctionOpen,
+    getBids,
+    withdraw,
+    getUserBalances,
+    userWinningBalance,
   };
   return <WeatherAuctionContext.Provider value={value}>{children}</WeatherAuctionContext.Provider>;
 };

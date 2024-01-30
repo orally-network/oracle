@@ -60,7 +60,7 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
           },
         ],
       });
-      setUserWinningBalance(Number(data[0]?.result));
+      setUserWinningBalance(utils.formatEther((data[0]?.result)));
     } catch (err) {
       console.error(err);
       return err;

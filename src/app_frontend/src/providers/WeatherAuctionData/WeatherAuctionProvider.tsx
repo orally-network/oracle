@@ -7,6 +7,7 @@ import WeatherAuctionABI from './weatherAuctionABI.json';
 import { utils } from 'ethers';
 import { CHAINS_MAP } from 'Constants/chains';
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
+import { toast } from 'react-toastify';
 
 export const WEATHER_AUCTION_ADDRESS = '0x8B2B8E6e8bF338e6071E6Def286B8518B7BFF7F1';
 export const TICKET_PRICE = 0.001;
@@ -41,12 +42,26 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
   };
 
   const withdraw = async () => {
-    return writeContract({
-      address: WEATHER_AUCTION_ADDRESS,
-      abi: WeatherAuctionABI,
-      functionName: 'withdraw',
-      chainId: ARBITRUM_CHAIN_ID,
-    });
+    try {
+      const res = await toast.promise(
+        writeContract({
+          address: WEATHER_AUCTION_ADDRESS,
+          abi: WeatherAuctionABI,
+          functionName: 'withdraw',
+          chainId: ARBITRUM_CHAIN_ID,
+        }),
+        {
+          pending: 'Withdrawing...',
+          success: 'Withdrawn!',
+          error: 'Error withdrawing',
+        }
+      );
+      setUserWinningBalance(0);
+      return res;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
   };
 
   const getUserBalances = async () => {

@@ -43,8 +43,9 @@ export const Sidebar = ({ toggleTheme, isDarkMode }: SidebarProps) => {
         position: 'fixed',
         left: 0,
         bottom: 0,
+        top: isMobile ? 0 : '48px',
         zIndex: 3,
-        padding: '0 0 50px',
+        padding: isMobile ? '50px 0 50px' : '0 0 50px',
       }}
     >
       <Navigation isDarkMode={isDarkMode} closeSideBar={() => setCollapsed(true)} />

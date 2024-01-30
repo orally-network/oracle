@@ -25,6 +25,7 @@ export const TodayBidsTable = () => {
       title: 'Tickets',
       dataIndex: 'ticketCount',
       key: 'ticketCount',
+      render: (ticketCount: string) => <span>{`${ticketCount} ${ticketCount > 1 ? 'tickets' : 'ticket'}`}</span>,
     },
     {
       title: 'Temperature',

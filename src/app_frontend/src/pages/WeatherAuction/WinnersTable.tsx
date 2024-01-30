@@ -40,7 +40,7 @@ export const WinnersTable = () => {
       <Table
         columns={columns}
         dataSource={winners}
-        pagination={{ position: ['bottomRight'], defaultPageSize: 2 }}
+        pagination={{ position: ['bottomRight'], defaultPageSize: 100 }}
         loading={isWinnersLoading}
         rowKey="id"
       />

@@ -7,6 +7,8 @@ import pythiaCanister from 'Canisters/pythiaCanister';
 import { Subscription } from 'Interfaces/subscription';
 import { ARBITRUM_CHAIN_ID } from 'Providers/WeatherAuctionData/WeatherAuctionProvider';
 import { LoadingOutlined } from '@ant-design/icons';
+import useWindowDimensions from 'Utils/useWindowDimensions';
+import { BREAK_POINT_MOBILE } from 'Constants/ui';
 
 export const PredictWidget = () => {
   const [temperatureGuess, setTemperatureGuess] = useState<string>('');
@@ -18,6 +20,8 @@ export const PredictWidget = () => {
   const [nextUpdateDateTime, setNextUpdateDateTime] = useState<string | null>(null);
 
   const { sendAuctionData, isAuctionOpen, getBids, currentDay } = useWeatherData();
+  const { width } = useWindowDimensions();
+  const isMobile = width < BREAK_POINT_MOBILE;
 
   const fetchSubscription = async (id: BigInt, chainId: BigInt) => {
     try {
@@ -80,7 +84,11 @@ export const PredictWidget = () => {
     <Card>
       <Flex gap="large" vertical>
         <Typography.Title level={5}>How much degree will be today at 17:00? </Typography.Title>
-        <Flex gap="large" align="center">
+        <Flex
+          gap={isMobile ? 'middle' : 'large'}
+          align={isMobile ? 'flex-start' : 'center'}
+          vertical={isMobile}
+        >
           <Flex vertical gap="middle">
             <div>Write the weather degree</div>
             <Space size="middle">

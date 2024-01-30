@@ -68,8 +68,8 @@ export const WeatherWidget = () => {
           )}
         </Flex>
       </Card>
-      <Card style={{ minWidth: isMobile ? 'auto' : 400 }}>
-        <Flex gap={80}>
+      <Card style={{ minWidth: isMobile ? '100%' : 400 }}>
+        <Flex gap={isMobile ? 30 : 80}>
           <Flex vertical gap="large">
             <Typography.Title level={5}>Weather in Lisbon</Typography.Title>
             <Flex vertical>

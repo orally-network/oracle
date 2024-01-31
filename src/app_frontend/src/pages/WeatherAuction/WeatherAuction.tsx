@@ -9,6 +9,9 @@ import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { WeatherAuctionProvider } from 'Providers/WeatherAuctionData/WeatherAuctionProvider';
 import { PrizePool } from './PrizePool';
+import { ExportOutlined } from '@ant-design/icons';
+import IconLink from 'Components/IconLink';
+import { truncateEthAddress } from 'Utils/addressUtils';
 
 export const WeatherAuction = () => {
   const { width } = useWindowDimensions();
@@ -20,7 +23,12 @@ export const WeatherAuction = () => {
         <Space size="middle" direction="vertical" style={{ width: '100%', position: 'relative' }}>
           <Flex align="center" justify="space-between" gap={8}>
             <Typography.Title style={{ minWidth: '70px' }} level={3}>
-              Weather Auction
+              Weather Auction ({truncateEthAddress("0x8B2B8E6e8bF338e6071E6Def286B8518B7BFF7F1")})
+              {' '}
+              <IconLink
+                link="https://arbiscan.io/address/0x8B2B8E6e8bF338e6071E6Def286B8518B7BFF7F1"
+                IconComponent={ExportOutlined}
+              />
             </Typography.Title>
             <Actions />
           </Flex>

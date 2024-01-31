@@ -1,6 +1,6 @@
 import { Space, Typography, Input, Card, Flex } from 'antd';
 import Button from 'Components/Button';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useWeatherData } from 'Providers/WeatherAuctionData/useWeatherData';
 import { toast } from 'react-toastify';
 import pythiaCanister from 'Canisters/pythiaCanister';
@@ -10,28 +10,35 @@ import { LoadingOutlined } from '@ant-design/icons';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 
+const CLOSE_AUCTION_SUBSCRIPTION_ID = 57;
+
+const PROVIDE_TEMPERATURE_SUBSCRIPTION_ID = 59;
+
 export const PredictWidget = () => {
   const [temperatureGuess, setTemperatureGuess] = useState<string>('');
   const [ticketAmount, setTicketAmount] = useState<string>('');
   const [isConfirming, setIsConfirming] = useState<boolean>(false);
 
+  const [closeSubscriptionData, setCloseSubscriptionData] = useState<Subscription | null>(null);
   const [subscriptionData, setSubscriptionData] = useState<Subscription | null>(null);
   const [isSubscriptionLoading, setIsSubscriptionLoading] = useState<boolean>(false);
-  const [nextUpdateDateTime, setNextUpdateDateTime] = useState<string | null>(null);
+  // const [nextUpdateDateTime, setNextUpdateDateTime] = useState<string | null>(null);
 
   const { sendAuctionData, isAuctionOpen, getBids, currentDay } = useWeatherData();
   const { width } = useWindowDimensions();
   const isMobile = width < BREAK_POINT_MOBILE;
 
-  const fetchSubscription = async (id: BigInt, chainId: BigInt) => {
+  const fetchSubscription = async () => {
     try {
       setIsSubscriptionLoading(true);
-      const response: any = await pythiaCanister.get_subscription(chainId, id);
-      if (response.Err) {
+      const closeSubResponse: any = await pythiaCanister.get_subscription(ARBITRUM_CHAIN_ID, CLOSE_AUCTION_SUBSCRIPTION_ID);
+      const provideTempSubResponse: any = await pythiaCanister.get_subscription(ARBITRUM_CHAIN_ID, PROVIDE_TEMPERATURE_SUBSCRIPTION_ID);
+      if (provideTempSubResponse.Err) {
         setSubscriptionData(null);
-        throw new Error(response.Err);
+        throw new Error(provideTempSubResponse.Err);
       } else {
-        setSubscriptionData(response.Ok);
+        setCloseSubscriptionData(closeSubResponse.Ok);
+        setSubscriptionData(provideTempSubResponse.Ok);
       }
     } catch (error) {
       console.log(error);
@@ -58,14 +65,25 @@ export const PredictWidget = () => {
   };
 
   useEffect(() => {
-    if (isAuctionOpen) {
-      fetchSubscription(BigInt(57), BigInt(ARBITRUM_CHAIN_ID));
-    } else {
-      fetchSubscription(BigInt(59), BigInt(ARBITRUM_CHAIN_ID));
-    }
-  }, [isAuctionOpen]);
+    fetchSubscription();
+  }, []);
 
-  useEffect(() => {
+  const nextCloseDateTime = useMemo(() => {
+    if (!closeSubscriptionData) return;
+    const {
+      method: { exec_condition },
+      status: { last_update },
+    } = closeSubscriptionData as Subscription;
+
+    const frequency = exec_condition[0]?.Frequency || BigInt(3600);
+
+    const lastUpdateDateTime = new Date(Number(last_update) * 1000);
+    const nextCloseDateTime = new Date(lastUpdateDateTime.getTime() + Number(frequency) * 1000);
+
+    return nextCloseDateTime.toLocaleString();
+  }, [closeSubscriptionData]);
+
+  const nextUpdateDateTime = useMemo(() => {
     if (!subscriptionData) return;
     const {
       method: { exec_condition },
@@ -77,13 +95,15 @@ export const PredictWidget = () => {
     const lastUpdateDateTime = new Date(Number(last_update) * 1000);
     const nextUpdateDateTime = new Date(lastUpdateDateTime.getTime() + Number(frequency) * 1000);
 
-    setNextUpdateDateTime(nextUpdateDateTime.toLocaleString());
+    return nextUpdateDateTime.toLocaleString();
   }, [subscriptionData]);
 
   return (
     <Card>
       <Flex gap="large" vertical>
-        <Typography.Title level={5}>How much degree will be today at 17:00? </Typography.Title>
+        <Typography.Title level={5}>How much degree will be today at {isSubscriptionLoading ? (
+          <LoadingOutlined />
+        ) : (nextUpdateDateTime)}?</Typography.Title>
         <Flex
           gap={isMobile ? 'middle' : 'large'}
           align={isMobile ? 'flex-start' : 'center'}
@@ -114,13 +134,13 @@ export const PredictWidget = () => {
             </Space>
             <Typography.Text>
               {isAuctionOpen
-                ? 'Auction will close in '
-                : 'Auction closed, winner will be chosen in '}
+                ? 'Auction will close at '
+                : 'Auction closed, winner will be chosen at '}
               <strong>
-                {isSubscriptionLoading || !nextUpdateDateTime ? (
+                {isSubscriptionLoading ? (
                   <LoadingOutlined />
                 ) : (
-                  nextUpdateDateTime
+                  isAuctionOpen ? nextCloseDateTime : nextUpdateDateTime
                 )}
               </strong>
             </Typography.Text>

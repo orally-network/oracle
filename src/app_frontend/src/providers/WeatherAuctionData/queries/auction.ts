@@ -9,7 +9,7 @@ export const GET_BIDS = gql`
       day
       ticketCount
     }
-    winnerDeclareds(first: 100) {
+    winnerDeclareds(first: 100, orderBy: day) {
       id
       winner
       day

@@ -4,8 +4,10 @@ import { Card, Typography } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 export const PrizePool = () => {
-  const { getTotalPrize } = useWeatherData();
+  const { getTotalPrize, ethRate } = useWeatherData();
   const [prize, setPrize] = useState(0);
+
+  const prizeUsd = ethRate ? prize * Number(ethRate) : null;
 
   //TODO: add ticket cost from data or ?
 
@@ -16,10 +18,13 @@ export const PrizePool = () => {
     };
     getPools();
   }, []);
+
   return (
     <Card>
-      <Typography.Paragraph>Today’s prize pool: {prize.toFixed(4)} ETH</Typography.Paragraph>
-      <Typography.Title level={4}>1 ticket costs {TICKET_PRICE} ETH</Typography.Title>
+      <Typography.Paragraph>Today’s prize pool: {prize.toFixed(4)} ETH
+        {prizeUsd ? <Typography.Text> (${prizeUsd?.toFixed(2)})</Typography.Text> : null}
+      </Typography.Paragraph>
+      <Typography.Title level={4}>1 ticket costs {TICKET_PRICE} ETH {ethRate ? `($${(ethRate * prize).toFixed(2)})` : null}</Typography.Title>
     </Card>
   );
 };

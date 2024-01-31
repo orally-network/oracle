@@ -7,7 +7,7 @@ import React from 'react';
 const columns = [
   {
     title: 'Address',
-    dataIndex: 'id',
+    dataIndex: 'winner',
     key: 'winner',
     render: (address: string) => truncateAddressSymbolsNum(address, 8),
   },
@@ -18,9 +18,9 @@ const columns = [
   },
   {
     title: 'Prize',
-    dataIndex: 'winnerPrize',
-    key: 'winnerPrize',
-    render: (prize: string) => <span>{utils.formatEther(prize)}</span>,
+    dataIndex: 'winnerPrizeLabel',
+    key: 'winnerPrizeLabel',
+    render: (prizeLabel: string, winner) => <span>{prizeLabel ?? utils.formatEther(winner.winnerPrize)}</span>,
   },
   {
     title: 'Temperature',

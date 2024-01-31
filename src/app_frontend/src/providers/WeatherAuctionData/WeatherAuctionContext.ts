@@ -12,6 +12,7 @@ export type WeatherData = {
   withdraw: () => Promise<WriteContractResult>;
   userWinningBalance: number;
   currentDay: number;
+  ethRate: number,
 };
 
 export const WeatherAuctionContext = createContext<WeatherData>({
@@ -25,4 +26,5 @@ export const WeatherAuctionContext = createContext<WeatherData>({
   withdraw: () => Promise.resolve({} as WriteContractResult),
   userWinningBalance: 0,
   currentDay: 0,
+  ethRate: 0,
 });

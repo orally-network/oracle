@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { WeatherAuctionContext } from './WeatherAuctionContext';
 import { useLazyQuery } from '@apollo/client';
 import { GET_BIDS } from './queries/auction';
@@ -8,6 +8,8 @@ import { utils } from 'ethers';
 import { CHAINS_MAP } from 'Constants/chains';
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
 import { toast } from 'react-toastify';
+import { useGetSybilFeeds } from 'ApiHooks/useGetSybilFeeds';
+import { DEFAULT_FEEDS_SIZE } from 'Constants/ui';
 
 export const WEATHER_AUCTION_ADDRESS = '0x8B2B8E6e8bF338e6071E6Def286B8518B7BFF7F1';
 export const TICKET_PRICE = 0.001;
@@ -21,6 +23,18 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
   const [isAuctionOpen, setIsAuctionOpen] = useState<boolean>(false);
   const [userWinningBalance, setUserWinningBalance] = useState<number>(0);
   const [currentDay, setCurrentDay] = useState<number>(0);
+
+  const feedsData = useGetSybilFeeds({
+    page: 1,
+    size: DEFAULT_FEEDS_SIZE,
+    filters: {
+      owner: [],
+      search: ['ETH/USD'],
+      feed_type: [],
+    },
+  });
+  const { rate, decimals } = feedsData.data.items?.[0]?.data?.[0]?.data?.DefaultPriceFeed ?? {};
+  const ethRate = rate ? utils.formatUnits(rate, decimals) : null;
 
   const weatherAuctionContract = {
     address: WEATHER_AUCTION_ADDRESS,
@@ -141,8 +155,27 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
     getUserBalances();
   }, [currentDay]);
 
+  console.log(data?.winnerDeclareds);
+
+  const winners = useMemo(() => {
+    if (!data) {
+      return [];
+    } else if (!ethRate) {
+      return data.winnerDeclareds;
+    }
+
+    return data.winnerDeclareds.map(winner => {
+      const eth = utils.formatEther(winner.winnerPrize);
+
+      return {
+        ...winner,
+        winnerPrizeLabel: `${eth} ($${(eth * ethRate).toFixed(2)})`,
+      }
+    });
+  }, [data, ethRate]);
+
   const value = {
-    winners: data ? data.winnerDeclareds : [],
+    winners,
     bids: data ? data.bidPlaceds : [],
     isWinnersLoading: loading,
     getTotalPrize,
@@ -153,6 +186,7 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
     getUserBalances,
     userWinningBalance,
     currentDay,
+    ethRate,
   };
   return <WeatherAuctionContext.Provider value={value}>{children}</WeatherAuctionContext.Provider>;
 };

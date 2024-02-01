@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { WeatherAuctionContext } from './WeatherAuctionContext';
 import { useLazyQuery } from '@apollo/client';
 import { GET_BIDS } from './queries/auction';
-import { readContracts, writeContract } from '@wagmi/core';
+import { readContracts, writeContract, readContract } from '@wagmi/core';
 import WeatherAuctionABI from './weatherAuctionABI.json';
 import { utils } from 'ethers';
 import { CHAINS_MAP } from 'Constants/chains';
@@ -80,6 +80,8 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
 
   const getUserBalances = async () => {
     try {
+      if (!address) return
+
       const data = await readContracts({
         contracts: [
           {
@@ -98,20 +100,20 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
 
   const getAuctionStatusAndDay = async () => {
     try {
-      const data = await readContracts({
-        contracts: [
-          {
-            ...weatherAuctionContract,
-            functionName: 'auctionOpen',
-          },
-          {
-            ...weatherAuctionContract,
-            functionName: 'currentDay',
-          },
-        ],
+      const auctionOpen = await readContract({
+        ...weatherAuctionContract,
+        functionName: 'auctionOpen',
+        chainId: ARBITRUM_CHAIN_ID,
       });
-      setIsAuctionOpen(data[0]?.result as boolean);
-      setCurrentDay(Number(data[1]?.result));
+
+      const currentDay = await readContract({
+        ...weatherAuctionContract,
+        functionName: 'currentDay',
+        chainId: ARBITRUM_CHAIN_ID,
+      });
+
+      setIsAuctionOpen(auctionOpen as boolean);
+      setCurrentDay(Number(currentDay));
     } catch (err) {
       console.error(err);
       return err;
@@ -120,20 +122,10 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
 
   const getTotalPrize = async () => {
     try {
-      const data = await readContracts({
-        contracts: [
-          {
-            ...weatherAuctionContract,
-            functionName: 'totalTickets',
-          },
-          address
-            ? {
-                ...weatherAuctionContract,
-                functionName: 'userBalances',
-                args: [address],
-              }
-            : null,
-        ],
+      const data = await readContract({
+        ...weatherAuctionContract,
+        functionName: 'totalTickets',
+        chainId: ARBITRUM_CHAIN_ID,
       });
       console.log({ data });
       return data;

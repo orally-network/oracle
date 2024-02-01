@@ -14,7 +14,7 @@ export const PrizePool = () => {
   useEffect(() => {
     const getPools = async () => {
       const data = await getTotalPrize();
-      setPrize(Number(data[0].result) * TICKET_PRICE);
+      setPrize(Number(data) * TICKET_PRICE);
     };
     getPools();
   }, []);

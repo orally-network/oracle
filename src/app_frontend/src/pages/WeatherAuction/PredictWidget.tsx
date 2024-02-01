@@ -148,7 +148,7 @@ export const PredictWidget = () => {
               type="primary"
               onClick={makeBidAndVerify}
               loading={isConfirming}
-              disabled={!temperatureGuess}
+              disabled={!temperatureGuess || !isAuctionOpen}
             >
               Bid
             </Button>

@@ -25,15 +25,15 @@ export const TodayBidsTable = () => {
       title: 'Tickets',
       dataIndex: 'ticketCount',
       key: 'ticketCount',
-      render: (ticketCount: string) => <span>{`${ticketCount} ${ticketCount > 1 ? 'tickets' : 'ticket'}`}</span>,
+      render: (ticketCount: string) => (
+        <span>{`${ticketCount} ${+ticketCount > 1 ? 'tickets' : 'ticket'}`}</span>
+      ),
     },
     {
       title: 'Temperature',
       dataIndex: 'temperatureGuess',
       key: 'temperatureGuess',
-      render: (temp: string) => (
-        <span>{temp.slice(0, temp.length - 1) + '.' + temp.slice(temp.length - 1)}℃</span>
-      ),
+      render: (temp: string) => <span>{+temp / 10}℃</span>,
     },
   ];
 

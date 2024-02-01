@@ -26,9 +26,7 @@ const columns = [
     title: 'Temperature',
     dataIndex: 'temperature',
     key: 'temperatureGuess',
-    render: (temp: string) => (
-      <span>{temp.slice(0, temp.length - 1) + '.' + temp.slice(temp.length - 1)}℃</span>
-    ),
+    render: (temp: string) => <span>{+temp / 10}℃</span>,
   },
 ];
 

@@ -91,7 +91,14 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
           },
         ],
       });
-      setUserWinningBalance(utils.formatEther((data[0]?.result)));
+
+      if (data && data[0]?.status === 'failure') {
+        setUserWinningBalance(0);
+        throw new Error(data[0]?.error);
+      } else {
+        const userBalance: string = data[0]?.result;
+        setUserWinningBalance(+utils.formatEther(userBalance));
+      }
     } catch (err) {
       console.error(err);
       return err;
@@ -144,7 +151,7 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
   useEffect(() => {
     getAuctionStatusAndDay();
     getBids({ variables: { day: currentDay } });
-    getUserBalances();
+    // getUserBalances();
   }, [currentDay]);
 
   console.log(data?.winnerDeclareds);

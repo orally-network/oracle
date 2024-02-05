@@ -1,3 +1,5 @@
+@use './Styles/variables';
+
 .logo {
   border-radius: 50%;
   background-color: #091325;
@@ -48,6 +50,11 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  padding: 10px;
+
+  @media screen and (max-width: variables.$break-point-mobile) {
+    width: 100%;
+  }
 }
 
 .progress {

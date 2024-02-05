@@ -3,12 +3,21 @@
   align-items: center;
   background-color: inherit;
   padding-top: 16px;
+
+  @media screen and (max-width: 768px) {
+    margin-top: 40px;
+    padding-top: 10px;
+    flex-direction: column;
+  }
 }
 
 .logoBtn {
   display: flex;
   justify-content: center;
   align-items: center;
+  @media screen and (max-width: 768px) {
+    margin-bottom: 16px;
+  }
 }
 
 .logo {

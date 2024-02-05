@@ -144,6 +144,7 @@ export const orallyTheme = {
       colorBgContainer: '#0C172B',
       colorFillSecondary: '#4A6293',
       colorTextHeading: '#4A6293',
+      headerColor: '#fff',
     },
     Empty: {
       colorText: 'var(--primary-color, #1890FF)',

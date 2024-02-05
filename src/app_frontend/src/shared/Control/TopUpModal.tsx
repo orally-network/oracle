@@ -14,6 +14,7 @@ import { GeneralResponse } from 'Interfaces/common';
 import { useGlobalState } from 'Providers/GlobalState';
 
 const USDC_TOKEN_ADDRESS = '0xaf88d065e77c8cC2239327C5EDb3A432268e5831';
+const ARBITRUM_CHAIN_ID = 42161;
 
 interface TopUpWrapperProps {
   isTopUpModalOpen: boolean;
@@ -114,7 +115,7 @@ export const TopUpSybilModal = (props: TopUpWrapperProps) => {
       functionName: 'transfer',
       args: [sybilEthAddress.Ok, utils.parseUnits(String(amount || 0), 6)],
       enabled: Boolean(USDC_TOKEN_ADDRESS),
-      chainId: 42161,
+      chainId: ARBITRUM_CHAIN_ID,
     });
   }, [amount]);
 

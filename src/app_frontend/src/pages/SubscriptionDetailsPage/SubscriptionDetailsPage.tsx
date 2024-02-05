@@ -17,7 +17,13 @@ export const SubscriptionDetailsPage = () => {
     setIsSubscriptionLoading(true);
     try {
       const response: any = await pythiaCanister.get_subscription(chainId, id);
-      setSubscriptionData(response.Ok);
+
+      if (response.Err) {
+        setSubscriptionData(null);
+        throw new Error(response.Err);
+      } else {
+        setSubscriptionData(response.Ok);
+      }
     } catch (error) {
       console.log(error);
     } finally {

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Button, Drawer, Flex, Layout, Space, Typography } from 'antd';
 
 import { Feeds } from './FeedsList/Feeds';
-import CustomFeed from './CustomFeed';
 
 import styles from './Sybil.scss';
 import { PlusCircleOutlined } from '@ant-design/icons';
@@ -52,8 +51,6 @@ const Sybil = () => {
             </Button>
           </Flex>
           <Feeds />
-
-          {/* <CustomFeed /> */}
 
           {isNewFeedModalVisible && (
             <Drawer

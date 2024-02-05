@@ -26,7 +26,6 @@
       color: variables.$highlight-color;
     }
   }
-  
 }
 
 .support {
@@ -54,7 +53,7 @@
   top: calc(50% - 21px);
 
   @media screen and (max-width: variables.$break-point-mobile) {
-    top: -37px;
+    top: 12px;
     left: 12px;
     right: 0;
   }

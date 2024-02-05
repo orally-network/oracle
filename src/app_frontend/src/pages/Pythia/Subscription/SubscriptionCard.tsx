@@ -64,13 +64,17 @@ const SubscriptionCard = ({
       chain_id,
       name: method_name,
       gas_limit,
-      method_type: { Feed: feed, Random: random },
+      method_type: { Feed: feed, Random: random, Empty: empty },
       exec_condition,
+      abi,
     },
     owner,
-    contract_addr,
+    contract_addr: contractAddr,
     id,
   } = sub;
+
+  const contract_addr = isAddressHasOx(contractAddr);
+  const abiObj = JSON.parse(abi);
 
   const chain = CHAINS_MAP[chain_id as number];
   const frequency = exec_condition[0]?.Frequency || BigInt(3600); // remove hardcoded value after exec_condition will be required
@@ -87,7 +91,7 @@ const SubscriptionCard = ({
   }, [chain_id, addressData]);
 
   useEffect(() => {
-    if (chain_id && addressData) {
+    if (chain_id && addressData.address) {
       refetchBalance();
     }
   }, [chain_id, addressData]);
@@ -105,11 +109,11 @@ const SubscriptionCard = ({
             <div>{chain.name}</div>
             <Space>
               <Typography.Title level={4} style={{ margin: 0 }}>
-                {feed ? feed : 'Random'}
+                {feed ? feed : empty === null ? `Pure` : 'Random'}
               </Typography.Title>
             </Space>
-            <Typography.Text className={styles.sybilLink} onClick={() => navigate(`/sybil/${id}`)}>
-              DATA FEED <RightOutlined size={4} />
+            <Typography.Text className={styles.sybilLink} onClick={feed ? () => navigate(`/sybil/${id}`) : null}>
+              {feed ? (<>DATA FEED <RightOutlined size={4} /></>) : abiObj.name}
             </Typography.Text>
           </div>
 
@@ -139,7 +143,7 @@ const SubscriptionCard = ({
 
           <Flex gap={2} justify="space-between">
             <Typography.Title level={5}>
-              {truncateEthAddress(add0x(contract_addr))}{' '}
+              {truncateEthAddress(contract_addr)}{' '}
             </Typography.Title>
             <Space size={5}>
               <IconLink
@@ -151,7 +155,7 @@ const SubscriptionCard = ({
               {chain?.blockExplorers?.default?.url && (
                 <IconLink
                   onClick={stopPropagation}
-                  link={`${chain.blockExplorers.default.url}/address/${add0x(contract_addr)}`}
+                  link={`${chain.blockExplorers.default.url}/address/${contract_addr}`}
                   IconComponent={ExportOutlined}
                 />
               )}

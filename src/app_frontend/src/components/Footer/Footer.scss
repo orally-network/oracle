@@ -2,12 +2,21 @@
   display: flex;
   align-items: center;
   background-color: inherit;
+  margin-top: 10px;
+
+  @media screen and (max-width: 768px) {
+    margin-top: 40px;
+    flex-direction: column;
+  }
 }
 
 .logoBtn {
   display: flex;
   justify-content: center;
   align-items: center;
+  @media screen and (max-width: 768px) {
+    margin-bottom: 16px;
+  }
 }
 
 .logo {

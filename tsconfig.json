@@ -19,6 +19,7 @@
     "baseUrl": "./src",
     "esModuleInterop": true,
     "ignoreDeprecations": "5.0",
+    "resolveJsonModule": true,
     "paths": {
       "Components/*": [ "./app_frontend/src/components/*"],
       "Services/*": [ "./app_frontend/src/services/*"],

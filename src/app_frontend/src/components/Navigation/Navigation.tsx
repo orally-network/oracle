@@ -1,12 +1,13 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Menu } from 'antd';
-import { HomeFilled, UnorderedListOutlined } from '@ant-design/icons';
+import { CloudOutlined, HomeFilled, UnorderedListOutlined } from '@ant-design/icons';
 
 import styles from './Navigation.scss';
 
 interface NavigationProps {
   isDarkMode: boolean;
+  closeSideBar: () => void;
 }
 
 interface MenuItem {
@@ -17,7 +18,7 @@ interface MenuItem {
 
 const menuItems: MenuItem[] = [
   {
-    key: '1',
+    key: '0',
     icon: <HomeFilled />,
     label: (
       <NavLink
@@ -31,7 +32,7 @@ const menuItems: MenuItem[] = [
     ),
   },
   {
-    key: '2',
+    key: '1',
     icon: <UnorderedListOutlined />,
     label: (
       <NavLink
@@ -44,15 +45,30 @@ const menuItems: MenuItem[] = [
       </NavLink>
     ),
   },
+  {
+    key: '2',
+    icon: <CloudOutlined />,
+    label: (
+      <NavLink
+        to="/weather-auction"
+        className={({ isActive, isPending }) =>
+          isPending ? styles.pending : isActive ? styles.active : ''
+        }
+      >
+        Weather Auction
+      </NavLink>
+    ),
+  },
 ];
 
-export const Navigation = ({ isDarkMode }: NavigationProps) => {
+export const Navigation = ({ isDarkMode, closeSideBar }: NavigationProps) => {
   return (
     <Menu
       theme={isDarkMode ? 'dark' : 'light'}
       mode="inline"
       defaultSelectedKeys={['1']}
       items={menuItems}
+      onClick={closeSideBar}
     />
   );
 };

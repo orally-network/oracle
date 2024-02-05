@@ -1,8 +1,8 @@
 .logo {
   border-radius: 50%;
   background-color: #091325;
-  width: 46px;
-  height: 46px;
+  width: 76px;
+  height: 76px;
   position: relative;
   :global(.light-theme) & {
     background-color: gray;
@@ -17,8 +17,8 @@
 
 .status {
   position: absolute;
-  right: 3px;
-  bottom: 3px;
+  right: 15px;
+  bottom: 16px;
 
   .active {
     background-color: #00ff00;
@@ -37,6 +37,7 @@
 
 .label {
   font-size: 15px;
+  color: #4a6293;
 }
 
 .chainBg {

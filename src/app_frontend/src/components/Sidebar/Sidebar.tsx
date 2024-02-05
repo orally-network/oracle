@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSun, faMoon, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { Layout, Button } from 'antd';
@@ -8,13 +8,14 @@ import {
   ArrowRightOutlined,
   MenuOutlined,
   CloseOutlined,
-  SettingOutlined
+  SettingOutlined,
 } from '@ant-design/icons';
 
 import styles from './Sidebar.scss';
 import { Navigation } from 'Components/Navigation';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_DESKTOP_LARGE, BREAK_POINT_MOBILE } from 'Constants/ui';
+import { useOutsideClick } from 'Utils/useOutsideClick';
 
 const { Sider } = Layout;
 
@@ -26,12 +27,18 @@ interface SidebarProps {
 export const Sidebar = ({ toggleTheme, isDarkMode }: SidebarProps) => {
   const [collapsed, setCollapsed] = useState(true);
   const { width } = useWindowDimensions();
+  const siderRef = useRef(null);
 
   const isLargeDesktop = width >= BREAK_POINT_DESKTOP_LARGE;
   const isMobile = width <= BREAK_POINT_MOBILE;
 
+  useOutsideClick(siderRef, () => {
+    setCollapsed(true);
+  });
+
   return (
     <Sider
+      ref={siderRef}
       trigger={null}
       collapsible
       collapsed={collapsed}
@@ -43,8 +50,8 @@ export const Sidebar = ({ toggleTheme, isDarkMode }: SidebarProps) => {
         position: 'fixed',
         left: 0,
         bottom: 0,
-        zIndex: 3,
-        padding:  '0 0 50px',
+        zIndex: 1003,
+        padding: '0 0 50px',
       }}
     >
       <Navigation isDarkMode={isDarkMode} />
@@ -95,7 +102,7 @@ export const Sidebar = ({ toggleTheme, isDarkMode }: SidebarProps) => {
       <div className={styles.toggler}>
         {/* <FontAwesomeIcon onClick={toggleTheme} icon={isDarkMode ? faSun : faMoon} /> */}
         <div className={styles.support}>
-        <SettingOutlined />
+          <SettingOutlined />
         </div>
       </div>
     </Sider>

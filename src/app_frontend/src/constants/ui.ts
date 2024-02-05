@@ -1,4 +1,4 @@
-import { Unit } from "Interfaces/subscription";
+import { Unit } from 'Interfaces/subscription';
 
 export const BREAK_POINT_MOBILE = 640;
 export const BREAK_POINT_DESKTOP_LARGE = 1440;
@@ -10,7 +10,7 @@ export const MIN_FREQUENCY = 1800;
 export const MIN_BALANCE = 0.1;
 export const EMPTY_BALANCE = 0.001;
 
-export const DEFAULT_SUBSCRIPTIONS = 30;
+export const DEFAULT_SUBSCRIPTIONS = 10;
 export const DEFAULT_FEEDS_SIZE = 30;
 export const DEFAULT_TOP_UP_AMOUNT = 0.01;
 export const DEFAULT_SUBSCRIPTIONS_SIZE = 10;

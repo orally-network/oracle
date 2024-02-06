@@ -1,33 +1,33 @@
 :root {
   // colors
-  --primary-color: #1890FF; // #3024f6 previous -  #2F21FF on the old figma
-  --primary-color-hover: ##6B75FF;
-  --primary-bg-color: #28293D;
-  --sections-bg-color: #2D2F45;
-  --cards-bg-color: #0C172B;
-  --cards-border-color: #15223B;
-  --cards-section-bg-color: #3E405B;
+  --primary-color: #1890ff; // #3024f6 previous -  #2F21FF on the old figma
+  --primary-color-hover: ##6b75ff;
+  --primary-bg-color: #28293d;
+  --sections-bg-color: #2d2f45;
+  --cards-bg-color: #0c172b;
+  --cards-border-color: #15223b;
+  --cards-section-bg-color: #3e405b;
 
-  --elements-bg-color: #0C172B; //header, aside, footer, cards
+  --elements-bg-color: #0c172b; //header, aside, footer, cards
 
-  --highlight-color: #1766F9;
+  --highlight-color: #1766f9;
 
   //fonts
   --text-size: 12px; // 1rem
   --font-color: white;
-
+  
 }
 
-$background-color: #050B15;
-$hover-color: #2D72E5;
+$background-color: #050b15;
+$hover-color: #2d72e5;
 $element-background: rgba(26, 21, 41, 0.75);
 $text-color: var(--font-color, white);
 $text-size: var(--text-size, 12px);
 $desktop-text-size: 14px;
-$highlight-color: var(--highlight-color, #1766F9);
-$secondary-btn-color: #4A6293;
+$highlight-color: var(--highlight-color, #1766f9);
+$secondary-btn-color: #4a6293;
 $text-secondary-color: #cbcbcb;
-$primary-color: var(--primary-color, #1890FF);
+$primary-color: var(--primary-color, #1890ff);
 $secondary-color: rgba(208, 208, 208, 0.81);
 $red-color: rgba(230, 0, 0, 0.9);
 
@@ -40,7 +40,4 @@ $break-point-mobile: 640px;
   primaryColor: $primary-color;
   elementBackground: $element-background;
   background: $background-color;
-};
-
-
-
+}

@@ -1,11 +1,14 @@
+@use './Styles/variables';
+
 .container {
   display: flex;
   align-items: center;
   background-color: inherit;
-  margin-top: 10px;
+  padding-top: 16px;
 
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: variables.$break-point-mobile) {
     margin-top: 40px;
+    padding-top: 10px;
     flex-direction: column;
   }
 }
@@ -14,7 +17,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: variables.$break-point-mobile) {
     margin-bottom: 16px;
   }
 }

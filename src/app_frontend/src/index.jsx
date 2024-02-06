@@ -43,6 +43,14 @@ createWeb3Modal({
   projectId,
   chains,
   themeMode: 'dark',
+  themeVariables: {
+    '--w3m-accent': '#ff7a45',
+    '--w3m-border-radius-master': '1px',
+    '--wui-font-size-small': '12px',
+    '--wui-font-weight-medium': '400',
+    '--w3m-font-family':
+      '--apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+  },
 });
 
 const container = document.getElementById('app');

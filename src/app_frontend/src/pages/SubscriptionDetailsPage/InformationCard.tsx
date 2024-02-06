@@ -55,14 +55,14 @@ const InformationCard = ({ subscription }: InformationCardProps) => {
   const progress = (diffMs * 100) / (Number(frequency) * 1000);
 
   return (
-    <Flex gap="middle" className={styles.information}>
-      <Space direction="vertical" size="large" style={{ flex: 1 }}>
-        <Flex style={{ width: '100%' }}>
-          <Flex gap="middle" style={{ width: '100%' }} align="stretch">
+    <Flex gap="middle" className={styles.information} vertical={isMobile}>
+      <Space direction="vertical" size="middle" style={{ flex: 1 }}>
+        <Flex style={{ width: '100%' }} vertical={isMobile}>
+          <Flex gap="middle" style={{ width: '100%' }} align="stretch" vertical={isMobile}>
             <div className={styles.chainBg}>
               <Flex vertical gap="small" align="center">
                 <Flex className={styles.logo} align="center" justify="center">
-                  <ChainLogo chain={chain} />
+                  <ChainLogo chain={chain} size="large" />
                   <div className={styles.status}>
                     <Tooltip title={`Subscription is ${is_active ? '' : 'in'}active`}>
                       <div className={is_active ? styles.active : styles.inactive} />
@@ -70,7 +70,7 @@ const InformationCard = ({ subscription }: InformationCardProps) => {
                   </div>
                 </Flex>
                 <Flex vertical align="center">
-                  <div className={styles.label}> {chain.name}</div>
+                  <div className={styles.label}>{chain.name}</div>
                   <Space>
                     <Typography.Title level={4} style={{ margin: 0 }}>
                       {feed ? feed : 'Random'}
@@ -162,7 +162,7 @@ const InformationCard = ({ subscription }: InformationCardProps) => {
           </Flex>
         </Card>
       </Space>
-      <Space direction="vertical" size="large" style={{ width: '340px' }}>
+      <Space direction="vertical" size="middle" style={{ width: '340px' }}>
         <Card className={styles.cardIconBg} style={{ backgroundImage: 'url(gas_usage.png' }}>
           <Typography.Title level={5}>Gas Usage</Typography.Title>
           Gas limit
@@ -194,16 +194,19 @@ const InformationCard = ({ subscription }: InformationCardProps) => {
 };
 
 const Skeleton = () => {
+  const { width } = useWindowDimensions();
+
+  const isMobile = width < BREAK_POINT_MOBILE;
   return (
-    <Flex gap="middle" className={styles.information}>
-      <Space direction="vertical" size="large" style={{ flex: 1 }}>
-        <Flex style={{ width: '100%' }}>
-          <Flex gap="middle" style={{ width: '100%' }} align="stretch">
-            <Card style={{ width: '268px' }}>
+    <Flex gap="middle" className={styles.information} vertical={isMobile}>
+      <Space direction="vertical" size="middle" style={{ flex: 1 }}>
+        <Flex style={{ width: '100%' }} vertical={isMobile}>
+          <Flex gap="middle" style={{ width: '100%' }} align="stretch" vertical={isMobile}>
+            <Card style={{ width: isMobile ? '100%' : '268px' }}>
               <AntdSkeleton active paragraph={{ rows: 4 }} round loading />
             </Card>
             <Flex vertical gap="middle" justify="space-between">
-              <Card style={{ width: '270px' }}>
+              <Card style={{ width: isMobile ? '100%' : '270px' }}>
                 <AntdSkeleton active paragraph={{ rows: 2 }} round loading />
               </Card>
               <Card>
@@ -224,7 +227,7 @@ const Skeleton = () => {
           <AntdSkeleton active paragraph={{ rows: 5 }} round loading />
         </Card>
       </Space>
-      <Space direction="vertical" size="large" style={{ width: '340px' }}>
+      <Space direction="vertical" size="middle" style={{ width: '340px' }}>
         <Card>
           <AntdSkeleton active paragraph={{ rows: 3 }} round loading />
         </Card>

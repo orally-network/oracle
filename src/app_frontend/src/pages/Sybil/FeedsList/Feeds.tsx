@@ -31,7 +31,7 @@ export const Feeds = () => {
     case RemoteDataType.SUCCESS:
       return (
         <>
-          <Space wrap className={styles.subs} size={['large', 'middle']}>
+          <Space wrap className={styles.subs} size={['middle', 'middle']}>
             {feeds.map((feed, i) => (
               <FeedCard key={i} feed={feed} />
             ))}

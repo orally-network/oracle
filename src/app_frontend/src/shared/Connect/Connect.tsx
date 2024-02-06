@@ -10,7 +10,7 @@ const Connect = () => {
   const { width } = useWindowDimensions();
   const isMobile = width <= BREAK_POINT_MOBILE;
 
-  return <w3m-button balance={isMobile ? 'hide' : 'show'} />;
+  return <w3m-button balance={isMobile ? 'hide' : 'show'} size="sm" />;
 };
 
 export default Connect;

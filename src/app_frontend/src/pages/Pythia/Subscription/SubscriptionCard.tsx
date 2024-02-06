@@ -145,7 +145,7 @@ const SubscriptionCard = ({
             <Typography.Title level={5}>
               {truncateEthAddress(contract_addr)}{' '}
             </Typography.Title>
-            <Space size={5}>
+            <Space size={5} align="center">
               <IconLink
                 link={null}
                 IconComponent={CopyOutlined}
@@ -157,6 +157,7 @@ const SubscriptionCard = ({
                   onClick={stopPropagation}
                   link={`${chain.blockExplorers.default.url}/address/${contract_addr}`}
                   IconComponent={ExportOutlined}
+                  style={{ display: 'block' }}
                 />
               )}
             </Space>
@@ -187,6 +188,9 @@ const SubscriptionCard = ({
           style={{
             width: '100%',
             fontSize: '14px',
+            alignItems: 'center',
+            display: 'flex',
+            justifyContent: 'center',
           }}
         >
           View subscription

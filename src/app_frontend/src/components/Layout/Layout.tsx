@@ -19,7 +19,7 @@ export const BaseLayout = ({ children }: { children?: React.ReactNode }) => {
       <Header />
       <Layout className={isDarkMode ? 'dark-theme' : 'light-theme'}>
         <Sidebar toggleTheme={() => setIsDarkMode(!isDarkMode)} isDarkMode={isDarkMode} />
-        <Layout style={{ marginLeft: isMobile ? 0 : '47px', padding: '70px 20px 20px 30px' }}>
+        <Layout style={{ marginLeft: isMobile ? 0 : '47px', padding: '64px 20px 20px 30px' }}>
           {children ?? <Outlet />}
           <Footer />
         </Layout>

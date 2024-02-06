@@ -19,19 +19,21 @@ interface FeedCardProps {
 
 const getFeedImg = ({ feed_type, id, isWeather }) => {
   if (feed_type && id && feed_type.Default === null) {
-    return <FeedLogos feed={id} />
+    return <FeedLogos feed={id} />;
   }
 
   if (isWeather) {
     return <img src={weatherImg} alt="sun" />;
   }
 
-  return <BlockOutlined
-    style={{
-      fontSize: '35px',
-    }}
-  />;
-}
+  return (
+    <BlockOutlined
+      style={{
+        fontSize: '35px',
+      }}
+    />
+  );
+};
 
 const FeedCard = ({ feed }: FeedCardProps) => {
   const { address } = useAccount();
@@ -75,7 +77,7 @@ const FeedCard = ({ feed }: FeedCardProps) => {
           <div className={styles.info}>
             {/* <div>{id}</div> */}
             <Space>
-              <Typography.Title level={4} style={{ margin: 0 }}>
+              <Typography.Title level={4} style={{ margin: 0 }} ellipsis={true}>
                 {id}
               </Typography.Title>
             </Space>
@@ -96,7 +98,10 @@ const FeedCard = ({ feed }: FeedCardProps) => {
           <div className={styles.stat}>
             Last Data
             <br />
-            <Typography.Title level={5}>{(decimals?.[0] && !isWeather) ? '$' : ''}{lastRate.toFixed(3)}</Typography.Title>
+            <Typography.Title level={5}>
+              {decimals?.[0] && !isWeather ? '$' : ''}
+              {lastRate.toFixed(3)}
+            </Typography.Title>
           </div>
           <div className={styles.stat}>
             Last update <br />

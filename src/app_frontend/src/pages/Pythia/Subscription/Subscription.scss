@@ -46,7 +46,7 @@
 }
 
 .logoBg {
-  padding: 10px;
+  padding: 8px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -64,9 +64,8 @@
 .logo {
   border-radius: 50%;
   background-color: #091325;
-  margin-right: 14px;
-  width: 46px;
-  height: 46px;
+  width: 40px;
+  height: 40px;
   position: relative;
   :global(.light-theme) & {
     background-color: gray;

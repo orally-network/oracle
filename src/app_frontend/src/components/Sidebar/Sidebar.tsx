@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSun, faMoon, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { Layout, Button } from 'antd';
@@ -15,6 +15,7 @@ import styles from './Sidebar.scss';
 import { Navigation } from 'Components/Navigation';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_DESKTOP_LARGE, BREAK_POINT_MOBILE } from 'Constants/ui';
+import { useOutsideClick } from 'Utils/useOutsideClick';
 
 const { Sider } = Layout;
 
@@ -26,12 +27,18 @@ interface SidebarProps {
 export const Sidebar = ({ toggleTheme, isDarkMode }: SidebarProps) => {
   const [collapsed, setCollapsed] = useState(true);
   const { width } = useWindowDimensions();
+  const siderRef = useRef(null);
 
   const isLargeDesktop = width >= BREAK_POINT_DESKTOP_LARGE;
   const isMobile = width <= BREAK_POINT_MOBILE;
 
+  useOutsideClick(siderRef, () => {
+    setCollapsed(true);
+  });
+
   return (
     <Sider
+      ref={siderRef}
       trigger={null}
       collapsible
       collapsed={collapsed}
@@ -43,8 +50,8 @@ export const Sidebar = ({ toggleTheme, isDarkMode }: SidebarProps) => {
         position: 'fixed',
         left: 0,
         bottom: 0,
+        zIndex: 1003,
         top: isMobile ? 0 : '48px',
-        zIndex: 3,
         padding: isMobile ? '50px 0 50px' : '0 0 50px',
       }}
     >

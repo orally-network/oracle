@@ -1,3 +1,5 @@
+// https://openweathermap.org/weather-conditions - Weather condition codes for OpenWeatherMap API
+
 export const getWeatherIcon = (weatherData: any) => {
   const iconId = weatherData.weather[0].id;
   const windSpeed = weatherData.wind_speed;

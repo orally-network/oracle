@@ -1,0 +1,30 @@
+{
+  "settings": {
+      "editor.formatOnSave": true,
+      "[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.tabSize": 2
+      },
+      "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.tabSize": 2
+      },
+      "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.tabSize": 2
+    },
+      "[jsonc]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+      },
+      "prettier.configPath": ".prettierrc",
+      "files.trimTrailingWhitespace": true,
+      "javascript.preferences.importModuleSpecifier": "project-relative",
+      "typescript.preferences.importModuleSpecifier": "project-relative",
+  },
+  "extensions": {
+    "recommendations": [
+      "esbenp.prettier-vscode",
+      "dbaeumer.vscode-eslint"
+    ]
+  },
+}

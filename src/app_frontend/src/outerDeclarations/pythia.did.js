@@ -6,9 +6,10 @@ export const idlFactory = ({ IDL }) => {
     'block_gas_limit' : IDL.Nat,
     'min_balance' : IDL.Nat,
     'symbol' : IDL.Text,
+    'multicall_contract' : IDL.Text,
   });
   const Error = IDL.Variant({ 'Ok' : IDL.Null, 'Err' : IDL.Text });
-  const GetBalanceResponse = IDL.Variant({ 'Ok' : IDL.Nat, 'Err' : IDL.Text });
+  const NatResponse = IDL.Variant({ 'Ok' : IDL.Nat, 'Err' : IDL.Text });
   const GetChainRPCResponse = IDL.Variant({
     'Ok' : IDL.Text,
     'Err' : IDL.Text,
@@ -20,23 +21,40 @@ export const idlFactory = ({ IDL }) => {
     'block_gas_limit' : IDL.Nat,
     'min_balance' : IDL.Nat,
     'symbol' : IDL.Opt(IDL.Text),
+    'multicall_contract' : IDL.Opt(IDL.Text),
   });
   const GetPMAResponse = IDL.Variant({ 'Ok' : IDL.Text, 'Err' : IDL.Text });
   const SubscriptionStatus = IDL.Record({
+    'failures_counter' : IDL.Opt(IDL.Nat),
     'is_active' : IDL.Bool,
     'last_update' : IDL.Nat,
     'executions_counter' : IDL.Nat,
   });
   const MethodType = IDL.Variant({
     'Empty' : IDL.Null,
-    'Pair' : IDL.Text,
+    'Feed' : IDL.Text,
     'Random' : IDL.Text,
+  });
+  const PriceMutationType = IDL.Variant({
+    'Decrease' : IDL.Null,
+    'Both' : IDL.Null,
+    'Increase' : IDL.Null,
+  });
+  const ExecutionCondition = IDL.Variant({
+    'PriceMutation' : IDL.Record({
+      'mutation_rate' : IDL.Int64,
+      'creation_price' : IDL.Nat64,
+      'price_mutation_type' : PriceMutationType,
+      'feed_id' : IDL.Text,
+    }),
+    'Frequency' : IDL.Nat,
   });
   const Method = IDL.Record({
     'abi' : IDL.Text,
     'name' : IDL.Text,
     'chain_id' : IDL.Nat,
     'method_type' : MethodType,
+    'exec_condition' : IDL.Opt(ExecutionCondition),
     'gas_limit' : IDL.Nat,
   });
   const Subscription = IDL.Record({
@@ -45,7 +63,26 @@ export const idlFactory = ({ IDL }) => {
     'status' : SubscriptionStatus,
     'method' : Method,
     'owner' : IDL.Text,
-    'frequency' : IDL.Nat,
+    'label' : IDL.Text,
+  });
+  const GetSubscriptionResponse = IDL.Variant({
+    'Ok' : Subscription,
+    'Err' : IDL.Text,
+  });
+  const GetSubscriptionsFilter = IDL.Record({
+    'chain_ids' : IDL.Opt(IDL.Vec(IDL.Nat)),
+    'owner' : IDL.Opt(IDL.Text),
+    'search' : IDL.Opt(IDL.Text),
+    'method_type' : IDL.Opt(MethodType),
+    'is_active' : IDL.Opt(IDL.Bool),
+  });
+  const Pagination = IDL.Record({ 'page' : IDL.Nat64, 'size' : IDL.Nat64 });
+  const GetSubscriptionsResultWithPagination = IDL.Record({
+    'page' : IDL.Nat64,
+    'total_pages' : IDL.Nat64,
+    'size' : IDL.Nat64,
+    'total_items' : IDL.Nat64,
+    'items' : IDL.Vec(Subscription),
   });
   const WhitelistEntry = IDL.Record({
     'is_blacklisted' : IDL.Bool,
@@ -60,16 +97,23 @@ export const idlFactory = ({ IDL }) => {
     'Ok' : IDL.Bool,
     'Err' : IDL.Text,
   });
+  const PriceMutationCondition = IDL.Record({
+    'mutation_rate' : IDL.Int64,
+    'price_mutation_type' : PriceMutationType,
+    'feed_id' : IDL.Text,
+  });
   const SubscribeRequest = IDL.Record({
     'msg' : IDL.Text,
     'sig' : IDL.Text,
     'contract_addr' : IDL.Text,
     'method_abi' : IDL.Text,
+    'frequency_condition' : IDL.Opt(IDL.Nat),
     'is_random' : IDL.Bool,
+    'feed_id' : IDL.Opt(IDL.Text),
+    'price_mutation_condition' : IDL.Opt(PriceMutationCondition),
+    'label' : IDL.Text,
     'chain_id' : IDL.Nat,
     'gas_limit' : IDL.Nat,
-    'pair_id' : IDL.Opt(IDL.Text),
-    'frequency' : IDL.Nat,
   });
   const SubscribeResponse = IDL.Variant({ 'Ok' : IDL.Nat, 'Err' : IDL.Text });
   const UpdateSubscriptionRequest = IDL.Record({
@@ -78,26 +122,34 @@ export const idlFactory = ({ IDL }) => {
     'sig' : IDL.Text,
     'contract_addr' : IDL.Opt(IDL.Text),
     'method_abi' : IDL.Opt(IDL.Text),
+    'frequency_condition' : IDL.Opt(IDL.Nat),
     'is_random' : IDL.Opt(IDL.Bool),
+    'feed_id' : IDL.Opt(IDL.Text),
+    'price_mutation_condition' : IDL.Opt(PriceMutationCondition),
+    'label' : IDL.Opt(IDL.Text),
     'chain_id' : IDL.Nat,
     'gas_limit' : IDL.Opt(IDL.Nat),
-    'pair_id' : IDL.Opt(IDL.Text),
-    'frequency' : IDL.Opt(IDL.Nat),
   });
   return IDL.Service({
     'add_chain' : IDL.Func([CreateChainRequest], [Error], []),
     'add_to_whitelist' : IDL.Func([IDL.Text], [Error], []),
     'blacklist' : IDL.Func([IDL.Text], [Error], []),
+    'clear_balance' : IDL.Func([IDL.Nat, IDL.Text], [Error], []),
     'deposit' : IDL.Func([IDL.Nat, IDL.Text, IDL.Text, IDL.Text], [Error], []),
     'execute_publisher_job' : IDL.Func([], [Error], []),
     'execute_withdraw_job' : IDL.Func([], [Error], []),
-    'get_balance' : IDL.Func([IDL.Nat, IDL.Text], [GetBalanceResponse], []),
+    'get_balance' : IDL.Func([IDL.Nat, IDL.Text], [NatResponse], []),
     'get_chain_rpc' : IDL.Func([IDL.Nat], [GetChainRPCResponse], []),
     'get_chains' : IDL.Func([], [IDL.Vec(Chain)], []),
     'get_pma' : IDL.Func([], [GetPMAResponse], []),
+    'get_subscription' : IDL.Func(
+        [IDL.Nat, IDL.Nat],
+        [GetSubscriptionResponse],
+        [],
+      ),
     'get_subscriptions' : IDL.Func(
-        [IDL.Opt(IDL.Text)],
-        [IDL.Vec(Subscription)],
+        [IDL.Opt(GetSubscriptionsFilter), IDL.Opt(Pagination)],
+        [GetSubscriptionsResultWithPagination],
         [],
       ),
     'get_whitelist' : IDL.Func([], [GetWhiteListResponse], []),
@@ -127,6 +179,11 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'update_chain_min_balance' : IDL.Func([IDL.Nat, IDL.Nat], [Error], []),
+    'update_chain_multicall_contract' : IDL.Func(
+        [IDL.Nat, IDL.Text],
+        [Error],
+        [],
+      ),
     'update_chain_rpc' : IDL.Func([IDL.Nat, IDL.Text], [Error], []),
     'update_subs_limit_total' : IDL.Func([IDL.Nat], [Error], []),
     'update_subs_limit_wallet' : IDL.Func([IDL.Nat], [Error], []),

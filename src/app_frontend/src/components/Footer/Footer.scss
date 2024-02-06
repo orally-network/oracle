@@ -1,11 +1,30 @@
+@use './Styles/variables';
+
 .container {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  background-color: inherit;
+  padding-top: 16px;
+
+  @media screen and (max-width: variables.$break-point-mobile) {
+    margin-top: 40px;
+    padding-top: 10px;
+    flex-direction: column;
+  }
+}
+
+.logoBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  @media screen and (max-width: variables.$break-point-mobile) {
+    margin-bottom: 16px;
+  }
 }
 
 .logo {
-  width: 50%;
+  width: 180px;
+  border-radius: 12px;
   max-width: 300px;
-  margin-top: 15px;
+  display: block;
 }

@@ -16,12 +16,26 @@
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "baseUrl": "./",
+    "baseUrl": "./src",
     "esModuleInterop": true,
     "ignoreDeprecations": "5.0",
+    "resolveJsonModule": true,
     "paths": {
-      "~/*": ["*"]
+      "Components/*": [ "./app_frontend/src/components/*"],
+      "Services/*": [ "./app_frontend/src/services/*"],
+      "Constants/*": [ "./app_frontend/src/constants/*"],
+      "Interfaces/*": [ "./app_frontend/src/interfaces/*"],
+      "ApiHooks/*": [ "./app_frontend/src/apiHooks/*"],
+      "Utils/*": [ "./app_frontend/src/utils/*"],
+      "Styles/*": [ "./app_frontend/src/styles/*"],
+      "Assets/*":[ "./app_frontend/assets/*"],
+      "Declarations/*": [ "./declarations/*"],
+      "Shared/*": [ "./app_frontend/src/shared/*"],
+      "Pages/*": [ "./app_frontend/src/pages/*"],
+      "OD/*": [ "./app_frontend/src/outerDeclarations/*"],
+      "Providers/*": ["./app_frontend/src/providers/*"],
+      "Canisters/*": ["./app_frontend/src/canisters/*"],
     },
-    "outDir": "./dist"
+    "outDir": "./dist",
   }
 }

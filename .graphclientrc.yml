@@ -1,0 +1,9 @@
+# .graphclientrc.yml
+sources:
+  - name: weather-auction
+    handler:
+      graphql:
+        endpoint: https://api.studio.thegraph.com/query/61274/orally-weather-auction/version/latest
+
+documents:
+  - ./weather-auction-query.graphql

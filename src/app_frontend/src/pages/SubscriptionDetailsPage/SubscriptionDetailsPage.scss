@@ -1,0 +1,67 @@
+@use './Styles/variables';
+
+.logo {
+  border-radius: 50%;
+  background-color: #091325;
+  width: 76px;
+  height: 76px;
+  position: relative;
+  :global(.light-theme) & {
+    background-color: gray;
+  }
+}
+
+.information {
+  h5 {
+    padding-bottom: 12px;
+  }
+}
+
+.status {
+  position: absolute;
+  right: 15px;
+  bottom: 16px;
+
+  .active {
+    background-color: #00ff00;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .inactive {
+    width: 10px;
+    height: 10px;
+    background-color: #ff0000;
+    border-radius: 50%;
+  }
+}
+
+.label {
+  font-size: 15px;
+  color: #4a6293;
+}
+
+.chainBg {
+  background: linear-gradient(227deg, rgba(21, 143, 112, 0.6) 0%, rgba(6, 28, 26, 0.5) 100%);
+  width: 268px;
+  border-radius: 11px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 10px;
+
+  @media screen and (max-width: variables.$break-point-mobile) {
+    width: 100%;
+  }
+}
+
+.progress {
+  padding-bottom: 15px;
+}
+
+.cardIconBg {
+  background-repeat: no-repeat;
+  background-position: 90% center;
+}

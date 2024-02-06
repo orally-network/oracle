@@ -1,61 +1,43 @@
 .control {
   display: flex;
-  
-  .executionAddress {
-    display: flex;
-    min-width: 210px;
-    
-    .executionAddressInfo {
-      display: flex;
-      flex-direction: column;
-
-      .address {
-        cursor: pointer;
-        
-        &:active {
-            opacity: 0.5;
-        }
-      }
-
-      .balance {
-        font-size: 0.8em;
-        color: #999;
-      }
-    }
-    
-    .topUp {
-      margin-left: 10px;
-    }
-  }
-  
-  .actionBtns {
-    display: flex;
-    
-    .actionBtn {
-      margin-left: 5px;
-    }
-  }
-  
-  .subscribe {
-    //width: -webkit-fill-available;
-    width: 290px;
-  }
+  margin-top: 15px;
+  flex-direction: column;
 }
-
-.topUpModal {
+  
+.executionAddressInfo {
   display: flex;
   flex-direction: column;
-  
-  .topUpBtn {
-    margin-top: 20px;
-    width: 100%;
+  color: #4A6293;
+
+  .address {
+    cursor: pointer;
+    color: white;
+    
+    &:active {
+      opacity: 0.5;
+    }
   }
+ 
+}
+
+.balance {
+  font-size: 0.8em;
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+
+.topUp {
+  margin-left: 10px;
+}
+
+.subscribe {
+  width: 290px;
 }
 
 .subscribeModal {
   display: flex;
   flex-direction: column;
-  
+
   .input {
     margin-top: 20px;
   }

@@ -1,0 +1,78 @@
+@use 'Styles/variables';
+@import 'Styles/mix';
+
+.feed {
+  width: 240px;
+  justify-content: center;
+
+  @include hoverScale();
+
+  @media (max-width: 768px) {
+    margin: 25px 0;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.menu {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #111f37;
+  color: variables.$primary-color;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  order: 1px solid #111f37;
+
+  &:hover {
+    border: 1px solid variables.$primary-color;
+  }
+}
+
+.info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-right: 15px;
+}
+
+.stat {
+  position: relative;
+}
+
+.logoBg {
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 -15px;
+  background-color: #050b15;
+}
+
+.logoWrap {
+  width: 46px;
+  height: 46px;
+  border: 4px solid #050b15;
+  border-radius: 50%;
+
+  img {
+    width: auto;
+    height: 100%;
+    max-width: 35px;
+  }
+}
+
+.feedLogos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

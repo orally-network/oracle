@@ -1,0 +1,60 @@
+@use './Styles/variables';
+
+.logo {
+  padding-left: 25px;
+  margin-bottom: 25px;
+}
+
+.logoImg {
+  display: flex;
+  width: 120px;
+}
+
+.toggler {
+  position: absolute;
+  bottom: 20px;
+  left: 15px;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: 20px;
+  color: variables.$secondary-btn-color;
+
+  svg {
+    &:hover {
+      color: variables.$highlight-color;
+    }
+  }
+}
+
+.support {
+  @media screen and (max-width: variables.$break-point-mobile) {
+    border: 1px solid var(--primary-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--primary-color);
+  }
+}
+
+.active {
+  button {
+    border: 1px solid var(--primary-color);
+  }
+}
+
+.control {
+  position: absolute;
+  right: -21px;
+  top: calc(50% - 21px);
+
+  @media screen and (max-width: variables.$break-point-mobile) {
+    top: 12px;
+    left: 12px;
+    right: 0;
+  }
+}

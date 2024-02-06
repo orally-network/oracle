@@ -1,10 +1,12 @@
-const isDevelopment = false;
+const isDevelopment = false; // process.env.NODE_ENV === 'development'
+const isStaging = process.env.MODE === 'staging';
 
-const HOST = isDevelopment ? "http://127.0.0.1:4943" : "https://ic0.app";
-const DOMAIN = isDevelopment ? "localhost:4943" : "icp0.io";
+const HOST = 'https://ic0.app';
+const DOMAIN = isDevelopment ? 'localhost:4943' : 'icp0.io';
 
 export default {
   isDevelopment,
+  isStaging,
   HOST,
   DOMAIN,
   GOOGLE_ANALYTICS_TRACKING_CODE: process.env.GOOGLE_ANALYTICS_TRACKING_CODE,
@@ -12,15 +14,10 @@ export default {
   ALCHEMY_API_KEY: process.env.ALCHEMY_API_KEY,
   INFURA_API_KEY: process.env.INFURA_API_KEY,
   env: process.env.NODE_ENV,
+  ETHERSCAN_API_KEY: process.env.ETHERSCAN_API_KEY,
 
-  pythia_canister_id: isDevelopment
-    ? "avqkn-guaaa-aaaaa-qaaea-cai"
-    : "ettff-uaaaa-aaaag-abpcq-cai",
-  sybil_canister_id: isDevelopment
-    ? "by6od-j4aaa-aaaaa-qaadq-cai"
-    : "wth3l-tiaaa-aaaap-aa5uq-cai",
-    // : "tysiw-qaaaa-aaaak-qcikq-cai", // staging
-  treasurer_canister_id: isDevelopment
-    ? "by6od-j4aaa-aaaaa-qaadq-cai"
-    : "dvx6a-4aaaa-aaaag-qcbqq-cai",
+  THE_GRAPH_URL: process.env.THE_GRAPH_URL,
+
+  pythia_canister_id: isStaging ? 'xmz4o-gqaaa-aaaag-qcjva-cai' : 'ettff-uaaaa-aaaag-abpcq-cai',
+  sybil_canister_id: isStaging ? 'tysiw-qaaaa-aaaak-qcikq-cai' : 'wth3l-tiaaa-aaaap-aa5uq-cai',
 };

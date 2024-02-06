@@ -4,15 +4,12 @@
   transition: transform 0.3s;
 
   &:hover {
-    transform: scale(1.03);
+    transform: scale(1.01);
   }
 }
 
 @mixin card {
-  border-radius: 25px;
-  background-color: variables.$background-secondary-color;
-  padding: 16px 20px;
-  color: variables.$text-color;
+  margin: 10px;
 
   display: flex;
   flex-direction: column;

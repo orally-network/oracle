@@ -74,16 +74,6 @@ export const idlFactory = ({ IDL }) => {
     'key_name' : IDL.Text,
   });
   const GetCfgResponse = IDL.Variant({ 'Ok' : Cfg, 'Err' : IDL.Text });
-  const FeedTypeFilter = IDL.Variant({
-    'Default' : IDL.Null,
-    'Custom' : IDL.Null,
-  });
-  const GetFeedsFilter = IDL.Record({
-    'feed_type' : IDL.Opt(FeedTypeFilter),
-    'owner' : IDL.Opt(IDL.Text),
-    'search' : IDL.Opt(IDL.Text),
-  });
-  const Pagination = IDL.Record({ 'page' : IDL.Nat64, 'size' : IDL.Nat64 });
   const FeedStatus = IDL.Record({
     'requests_counter' : IDL.Nat64,
     'updated_counter' : IDL.Nat64,
@@ -99,6 +89,16 @@ export const idlFactory = ({ IDL }) => {
     'update_freq' : IDL.Nat64,
     'sources' : IDL.Opt(IDL.Vec(Source)),
   });
+  const FeedTypeFilter = IDL.Variant({
+    'Default' : IDL.Null,
+    'Custom' : IDL.Null,
+  });
+  const GetFeedsFilter = IDL.Record({
+    'feed_type' : IDL.Opt(FeedTypeFilter),
+    'owner' : IDL.Opt(IDL.Text),
+    'search' : IDL.Opt(IDL.Text),
+  });
+  const Pagination = IDL.Record({ 'page' : IDL.Nat64, 'size' : IDL.Nat64 });
   const GetFeedsResultWithPagination = IDL.Record({
     'page' : IDL.Nat64,
     'total_pages' : IDL.Nat64,
@@ -134,6 +134,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'get_balance' : IDL.Func([IDL.Text], [NatResponse], []),
     'get_cfg' : IDL.Func([], [GetCfgResponse], []),
+    'get_feed' : IDL.Func([IDL.Text], [IDL.Opt(Feed)], []),
     'get_feeds' : IDL.Func(
         [IDL.Opt(GetFeedsFilter), IDL.Opt(Pagination)],
         [GetFeedsResultWithPagination],

@@ -149,6 +149,11 @@ export const orallyTheme = {
     Empty: {
       colorText: 'var(--primary-color, #1890FF)',
     },
+    Alert: {
+      colorText: 'white',
+      colorWarningBg: '#553533',
+      colorWarningBorder: '#553533',
+    },
   },
 };
 

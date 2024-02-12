@@ -14,6 +14,17 @@ const CLOSE_AUCTION_SUBSCRIPTION_ID = 57;
 
 const PROVIDE_TEMPERATURE_SUBSCRIPTION_ID = 59;
 
+const options = {
+    timeZone: 'Europe/Lisbon',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+};
+const formatter = new Intl.DateTimeFormat([], options);
+
 export const PredictWidget = () => {
   const [temperatureGuess, setTemperatureGuess] = useState<string>('');
   const [ticketAmount, setTicketAmount] = useState<string>('');
@@ -80,7 +91,7 @@ export const PredictWidget = () => {
     const lastUpdateDateTime = new Date(Number(last_update) * 1000);
     const nextCloseDateTime = new Date(lastUpdateDateTime.getTime() + Number(frequency) * 1000);
 
-    return nextCloseDateTime.toLocaleString();
+    return formatter.format(nextCloseDateTime);
   }, [closeSubscriptionData]);
 
   const nextUpdateDateTime = useMemo(() => {
@@ -95,7 +106,7 @@ export const PredictWidget = () => {
     const lastUpdateDateTime = new Date(Number(last_update) * 1000);
     const nextUpdateDateTime = new Date(lastUpdateDateTime.getTime() + Number(frequency) * 1000);
 
-    return nextUpdateDateTime.toLocaleString();
+    return formatter.format(nextUpdateDateTime);
   }, [subscriptionData]);
 
   return (

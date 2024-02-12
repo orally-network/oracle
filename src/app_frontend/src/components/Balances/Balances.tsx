@@ -61,7 +61,7 @@ export const Balances = () => {
     setIsTopUpModalOpen(true);
   };
 
-  if (!addressData || !addressData.address) return <SignInButton chain={chains[0]} />;
+  if (!addressData || !addressData.signature) return <SignInButton chain={chains[0]} />;
 
   return (
     <>

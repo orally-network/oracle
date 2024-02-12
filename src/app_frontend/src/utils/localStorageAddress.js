@@ -22,5 +22,7 @@ export const setLocalStorageAddress = (address, message, signature) => {
 };
 
 export const getLocalStorageAddress = (address) => {
-  return JSON.parse(localStorage.getItem(localStorageAddressKey))?.[address];
+  return JSON.parse(localStorage.getItem(localStorageAddressKey))?.[address] ?? {
+    address,
+  };
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { WeatherAuctionContext } from './WeatherAuctionContext';
 import { useLazyQuery } from '@apollo/client';
 import { GET_BIDS } from './queries/auction';
-import { readContracts, writeContract, readContract } from '@wagmi/core';
+import { writeContract, readContract } from '@wagmi/core';
 import WeatherAuctionABI from './weatherAuctionABI.json';
 import { utils } from 'ethers';
 import { CHAINS_MAP } from 'Constants/chains';
@@ -82,21 +82,17 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
     try {
       if (!address) return
 
-      const data = await readContracts({
-        contracts: [
-          {
-            ...weatherAuctionContract,
-            functionName: 'userBalances',
-            args: [address],
-          },
-        ],
+      const userBalance = await readContract({
+        ...weatherAuctionContract,
+        functionName: 'userBalances',
+        args: [address],
+        chainId: ARBITRUM_CHAIN_ID,
       });
 
-      if (data && data[0]?.status === 'failure') {
+      if (!userBalance) {
         setUserWinningBalance(0);
-        throw new Error(data[0]?.error);
+        throw new Error(`No balance found for ${address}:${userBalance}`);
       } else {
-        const userBalance: string = data[0]?.result;
         setUserWinningBalance(+utils.formatEther(userBalance));
       }
     } catch (err) {
@@ -151,7 +147,7 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
   useEffect(() => {
     getAuctionStatusAndDay();
     getBids({ variables: { day: currentDay } });
-    // getUserBalances();
+    getUserBalances();
   }, [currentDay]);
 
   console.log(data?.winnerDeclareds);

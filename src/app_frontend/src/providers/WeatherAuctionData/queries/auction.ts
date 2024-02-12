@@ -8,6 +8,7 @@ export const GET_BIDS = gql`
       temperatureGuess
       day
       ticketCount
+      transactionHash
     }
     winnerDeclareds(first: 100, orderBy: day) {
       id
@@ -15,6 +16,7 @@ export const GET_BIDS = gql`
       day
       temperature
       winnerPrize
+      transactionHash
     }
   }
 `;

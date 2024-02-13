@@ -59,15 +59,22 @@ export const TodayBidsTable = () => {
     );
 
   const chartData = bids.reduce((acc, record) => {
-    const index = acc.findIndex((item: any) => item.temperatureGuess === record.temperatureGuess);
+    const index = acc.findIndex(
+      (item: any) => Number(item.temperatureGuess) === Number(record.temperatureGuess) / 10
+    );
     if (index !== -1) {
       acc[index].count++;
-      acc[index].mine = acc[index].mine || record.bidder === address ? acc[index].mine++ : 0;
+
+      if (record.bidder === address?.toLowerCase()) {
+        acc[index].mine++;
+      }
     } else {
+      const mine = record.bidder === address?.toLowerCase() ? 1 : 0;
+
       acc.push({
-        temperatureGuess: record.temperatureGuess / 10,
-        count: 1,
-        mine: record.bidder === address ? acc[index].mine++ : 0,
+        temperatureGuess: Number(record.temperatureGuess) / 10,
+        count: Number(record.ticketCount),
+        mine: mine,
       });
     }
     return acc;
@@ -93,7 +100,7 @@ export const TodayBidsTable = () => {
           }}
         />
       ) : (
-        renderChart(chartData)
+        renderChart(chartData.sort((a: any, b: any) => a.temperatureGuess - b.temperatureGuess))
       )}
     </Card>
   );

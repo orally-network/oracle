@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Menu } from 'antd';
-import { CloudOutlined, HomeFilled, UnorderedListOutlined } from '@ant-design/icons';
+import {
+  CloudOutlined,
+  DeploymentUnitOutlined,
+  HomeFilled,
+  UnorderedListOutlined,
+} from '@ant-design/icons';
 
 import styles from './Navigation.scss';
 
@@ -14,11 +19,13 @@ interface MenuItem {
   key: string;
   icon: React.ReactNode;
   label: string | React.ReactNode;
+  path: '/sybil' | '/pythia' | '/apollo' | '/weather-auction';
 }
 
 const menuItems: MenuItem[] = [
   {
     key: '0',
+    path: '/sybil',
     icon: <HomeFilled />,
     label: (
       <NavLink
@@ -33,6 +40,7 @@ const menuItems: MenuItem[] = [
   },
   {
     key: '1',
+    path: '/pythia',
     icon: <UnorderedListOutlined />,
     label: (
       <NavLink
@@ -47,6 +55,13 @@ const menuItems: MenuItem[] = [
   },
   {
     key: '2',
+    path: '/apollo',
+    icon: <DeploymentUnitOutlined />,
+    label: <NavLink to="/apollo">Apollo</NavLink>,
+  },
+  {
+    key: '3',
+    path: '/weather-auction',
     icon: <CloudOutlined />,
     label: (
       <NavLink
@@ -62,11 +77,20 @@ const menuItems: MenuItem[] = [
 ];
 
 export const Navigation = ({ isDarkMode, closeSideBar }: NavigationProps) => {
+  const [activeLink, setActiveLink] = useState('');
+
+  useEffect(() => {
+    setActiveLink(window.location.pathname);
+  }, []);
+
+  const activeLinkIndex = menuItems.findIndex((item) => item.path === activeLink);
+  const key = activeLinkIndex.toString();
+
   return (
     <Menu
       theme={isDarkMode ? 'dark' : 'light'}
       mode="inline"
-      defaultSelectedKeys={['1']}
+      defaultSelectedKeys={[key]}
       items={menuItems}
       onClick={closeSideBar}
     />

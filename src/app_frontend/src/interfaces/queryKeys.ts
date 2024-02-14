@@ -4,6 +4,7 @@ import { Filters } from './common';
 export enum QueryType {
   Subscriptions = 'subscriptions',
   Feeds = 'feeds',
+  Apollo = 'apollo',
 }
 
 export type EnsuredDynamicQueryKey<Types extends unknown[] = []> = EnsuredQueryKey<
@@ -22,4 +23,5 @@ export interface QueryKeys {
     page?: number,
     size?: number
   ) => EnsuredDynamicQueryKey<[Filters | undefined, number | undefined, number | undefined]>;
+  apollo: () => EnsuredDynamicQueryKey;
 }

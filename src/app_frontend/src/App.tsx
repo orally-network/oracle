@@ -19,6 +19,7 @@ import ErrorPage from 'Pages/ErrorPage';
 import { CACHE_TIME, QUERY_CLIENT_DEFAULT_RETRY_COUNT, TIME_TO_WAIT } from 'Constants/query';
 import { PythiaDataProvider } from 'Providers/PythiaData';
 import { WeatherAuction } from 'Pages/WeatherAuction';
+import { Apollo } from 'Pages/Apollo';
 
 const router = createBrowserRouter([
   {
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
       {
         path: `${ROUTES.WEATHER_AUCTION}`,
         element: <WeatherAuction />,
+      },
+      {
+        path: `${ROUTES.APOLLO}`,
+        element: <Apollo />,
       },
     ],
   },

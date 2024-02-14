@@ -25,9 +25,8 @@ export function renderChart(data: any) {
           bottom: 5,
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="temperatureGuess" />
-        <YAxis interval={1} domain={[0, 'dataMax+5']} />
+        <YAxis interval={1} domain={[0, 'dataMax+1']} />
         <Tooltip />
         <Legend />
         <Bar dataKey="others" stackId="a" fill="#1890FF" />

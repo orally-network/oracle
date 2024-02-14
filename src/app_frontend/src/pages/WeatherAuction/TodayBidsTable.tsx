@@ -79,7 +79,6 @@ export const TodayBidsTable = () => {
         acc[index].others--;
       }
     } else {
-      console.log({ record });
       const mine = record.bidder === address?.toLowerCase() ? 1 : 0;
 
       acc.push({

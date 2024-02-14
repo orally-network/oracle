@@ -23,6 +23,9 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
   const [isAuctionOpen, setIsAuctionOpen] = useState<boolean>(false);
   const [userWinningBalance, setUserWinningBalance] = useState<number>(0);
   const [currentDay, setCurrentDay] = useState<number>(0);
+  const [prize, setPrize] = useState(0);
+
+  const [newBids, setNewBids] = useState<any[]>([]);
 
   const feedsData = useGetSybilFeeds({
     page: 1,
@@ -42,7 +45,7 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
   };
 
   const sendAuctionData = async (temp: number, ticketAmount: number) => {
-    return await writeContract({
+    const res = await writeContract({
       address: WEATHER_AUCTION_ADDRESS,
       abi: WeatherAuctionABI,
       value: utils.parseUnits(
@@ -53,6 +56,18 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
       args: [temp], // in format with decimals=1, e.g. 16.6C = 166
       chainId: ARBITRUM_CHAIN_ID,
     });
+
+    console.log({ res });
+
+    setNewBids(current => [...current, {
+      bidder: address?.toLowerCase(),
+      day: currentDay,
+      id: 'NA' + Date.now(),
+      temperatureGuess: temp,
+      ticketCount: ticketAmount ? +ticketAmount : 1,
+      transactionHash: 'NA' + Date.now(),
+    }]);
+    getTotalPrize();
   };
 
   const withdraw = async () => {
@@ -131,6 +146,8 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
         chainId: ARBITRUM_CHAIN_ID,
       });
       console.log({ data });
+
+      setPrize(Number(data) * TICKET_PRICE);
       return data;
     } catch (err) {
       console.error(err);
@@ -148,6 +165,7 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
     getAuctionStatusAndDay();
     getBids({ variables: { day: currentDay } });
     getUserBalances();
+    getTotalPrize();
   }, [currentDay]);
 
   console.log(data?.winnerDeclareds);
@@ -171,9 +189,10 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
 
   const value = {
     winners,
-    bids: data ? data.bidPlaceds : [],
+    bids: data ? [...newBids, ...data.bidPlaceds] : [],
     isWinnersLoading: loading,
     getTotalPrize,
+    prize,
     sendAuctionData,
     isAuctionOpen,
     getBids,

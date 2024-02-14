@@ -1,23 +1,12 @@
 import { TICKET_PRICE } from 'Providers/WeatherAuctionData/WeatherAuctionProvider';
 import { useWeatherData } from 'Providers/WeatherAuctionData/useWeatherData';
 import { Card, Typography } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 export const PrizePool = () => {
-  const { getTotalPrize, ethRate } = useWeatherData();
-  const [prize, setPrize] = useState(0);
+  const { prize, ethRate } = useWeatherData();
 
   const prizeUsd = ethRate ? prize * Number(ethRate) : null;
-
-  //TODO: add ticket cost from data or ?
-
-  useEffect(() => {
-    const getPools = async () => {
-      const data = await getTotalPrize();
-      setPrize(Number(data) * TICKET_PRICE);
-    };
-    getPools();
-  }, []);
 
   return (
     <Card>

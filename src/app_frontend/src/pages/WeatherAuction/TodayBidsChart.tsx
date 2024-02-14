@@ -30,8 +30,8 @@ export function renderChart(data: any) {
         <YAxis interval={1} domain={[0, 'dataMax+5']} />
         <Tooltip />
         <Legend />
-        <Bar dataKey="count" stackId="a" fill="#1890FF" />
-        <Bar dataKey="mine" stackId="a" fill="#fff" />
+        <Bar dataKey="others" stackId="a" fill="#1890FF" />
+        <Bar dataKey="mine" stackId="a" fill="#2F21FF" />
       </BarChart>
     </ResponsiveContainer>
   );

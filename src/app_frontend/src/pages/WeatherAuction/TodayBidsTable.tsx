@@ -63,18 +63,20 @@ export const TodayBidsTable = () => {
       (item: any) => Number(item.temperatureGuess) === Number(record.temperatureGuess) / 10
     );
     if (index !== -1) {
-      acc[index].count++;
+      acc[index].others++;
 
       if (record.bidder === address?.toLowerCase()) {
         acc[index].mine++;
+        acc[index].others--;
       }
     } else {
+      console.log({ record });
       const mine = record.bidder === address?.toLowerCase() ? 1 : 0;
 
       acc.push({
         temperatureGuess: Number(record.temperatureGuess) / 10,
-        count: Number(record.ticketCount),
-        mine: mine,
+        others: mine ? 0 : Number(record.ticketCount),
+        mine: mine ? record.ticketCount : 0,
       });
     }
     return acc;

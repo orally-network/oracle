@@ -10,14 +10,21 @@ export const TodayBidsTable = () => {
   const { bids, isWinnersLoading } = useWeatherData();
   const { address } = useAccount();
 
-  const [isTableView, setIsTableView] = useState(true);
+  const [isTableView, setIsTableView] = useState(false);
 
   const columns = [
     {
       title: 'Address',
       dataIndex: 'bidder',
       key: 'bidder',
-      render: (address: string) => truncateAddressSymbolsNum(address, 8),
+      render: (address: string) => (
+        <span
+          onClick={() => navigator.clipboard.writeText(address)}
+          style={{ cursor: 'pointer' }}
+        >
+          {truncateAddressSymbolsNum(address, 8)}
+        </span>
+      ),
     },
     {
       title: 'Mine',
@@ -43,17 +50,19 @@ export const TodayBidsTable = () => {
 
   const cardView = () =>
     isTableView ? (
-      <TableOutlined
-        style={{
-          fontSize: '20px',
-          color: '#1890ff',
-        }}
-      />
-    ) : (
       <BarChartOutlined
         style={{
           fontSize: '20px',
           color: '#1890ff',
+          cursor: 'pointer',
+        }}
+      />
+    ) : (
+      <TableOutlined
+        style={{
+          fontSize: '20px',
+          color: '#1890ff',
+          cursor: 'pointer',
         }}
       />
     );

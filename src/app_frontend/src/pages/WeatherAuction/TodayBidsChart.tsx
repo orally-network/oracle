@@ -3,7 +3,6 @@ import React from 'react';
 import {
   BarChart,
   Bar,
-  CartesianGrid,
   XAxis,
   YAxis,
   ResponsiveContainer,
@@ -27,7 +26,7 @@ export function renderChart(data: any) {
       >
         <XAxis dataKey="temperatureGuess" />
         <YAxis interval={1} domain={[0, 'dataMax+1']} />
-        <Tooltip />
+        <Tooltip cursor={{ fill: 'transparent' }} />
         <Legend />
         <Bar dataKey="others" stackId="a" fill="#1890FF" />
         <Bar dataKey="mine" stackId="a" fill="#2F21FF" />

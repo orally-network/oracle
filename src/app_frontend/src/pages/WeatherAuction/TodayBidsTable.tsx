@@ -1,4 +1,4 @@
-import { Card, Table } from 'antd';
+import { Card, Table, Typography } from 'antd';
 import React, { useState } from 'react';
 import { useWeatherData } from 'Providers/WeatherAuctionData/useWeatherData';
 import { useAccount } from 'wagmi';
@@ -18,12 +18,9 @@ export const TodayBidsTable = () => {
       dataIndex: 'bidder',
       key: 'bidder',
       render: (address: string) => (
-        <span
-          onClick={() => navigator.clipboard.writeText(address)}
-          style={{ cursor: 'pointer' }}
-        >
+        <Typography.Text copyable={{ text: address }}>
           {truncateAddressSymbolsNum(address, 8)}
-        </span>
+        </Typography.Text>
       ),
     },
     {

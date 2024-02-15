@@ -9,10 +9,16 @@ export interface Feed {
   sources: Source[];
 }
 
+export type ApiKey = {
+  title: string;
+  key: string;
+};
+
 export interface Source {
   uri: string;
   resolver: string;
   expected_bytes: number[];
+  apiKeys: ApiKey[];
 }
 
 export interface FeedRequest extends Omit<Feed, 'owner' | 'data' | 'status'> {

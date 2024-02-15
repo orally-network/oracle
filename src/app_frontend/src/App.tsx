@@ -33,7 +33,7 @@ const router = createBrowserRouter([
       {
         // Default route navigation
         index: true,
-        element: <Navigate to={`/${ROUTES.PYTHIA}`} replace />,
+        element: <Navigate to={`/${ROUTES.WEATHER_AUCTION}`} replace />,
       },
       {
         path: ROUTES.SYBIL,

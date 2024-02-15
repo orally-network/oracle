@@ -62,7 +62,7 @@ const Control = ({
     return <Connect />;
   }
 
-  if (!addressData) {
+  if (!addressData || !addressData.signature) {
     return <SignInButton chain={chain} />;
   }
 

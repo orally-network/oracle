@@ -10,7 +10,7 @@ export const MIN_FREQUENCY = 1800;
 export const MIN_BALANCE = 0.1;
 export const EMPTY_BALANCE = 0.001;
 
-export const DEFAULT_SUBSCRIPTIONS = 10;
+export const DEFAULT_SUBSCRIPTIONS = 20;
 export const DEFAULT_FEEDS_SIZE = 30;
 export const DEFAULT_TOP_UP_AMOUNT = 0.01;
 export const DEFAULT_SUBSCRIPTIONS_SIZE = 10;

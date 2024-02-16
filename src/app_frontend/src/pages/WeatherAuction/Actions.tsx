@@ -7,7 +7,7 @@ import Button from 'Components/Button';
 export const Actions = () => {
   const { withdraw, userWinningBalance, ethRate } = useWeatherData();
 
-  const balanceUsd = ethRate ? userWinningBalance * Number(ethRate) : null;
+  const balanceUsd = ethRate ? userWinningBalance * ethRate : null;
 
   return (
     <Flex align="center" gap="small">

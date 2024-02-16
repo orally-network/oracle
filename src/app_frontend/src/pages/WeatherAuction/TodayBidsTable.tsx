@@ -76,9 +76,9 @@ export const TodayBidsTable = () => {
       />
     );
 
-  const chartData: ChartItem[] = bids.reduce((acc, record) => {
+  const chartData = bids.reduce<ChartItem[]>((acc, record) => {
     const index = acc.findIndex(
-      (item: any) => Number(item.temperatureGuess) === Number(record.temperatureGuess) / 10
+      (item: ChartItem) => Number(item.temperatureGuess) === Number(record.temperatureGuess) / 10
     );
 
     if (index !== -1) {

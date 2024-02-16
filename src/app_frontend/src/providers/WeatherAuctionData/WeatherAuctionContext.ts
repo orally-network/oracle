@@ -1,26 +1,27 @@
 import { WriteContractResult } from '@wagmi/core';
+import { Bidder, Winner } from 'Interfaces/weather';
 import { createContext } from 'react';
 
 export type WeatherData = {
-  winners: any[];
-  bids: any[];
+  winners: Winner[];
+  bids: Bidder[];
   isWinnersLoading: boolean;
-  sendAuctionData: (temp: number, amount: number) => Promise<WriteContractResult>;
+  sendAuctionData: (temp: number, amount: number) => Promise<void>;
   getTotalPrize: () => Promise<WriteContractResult>;
   prize: number;
-  isAuctionOpen: boolean;
+  isAuctionOpen: boolean | null;
   getBids: (vars: any) => void;
   withdraw: () => Promise<WriteContractResult>;
   userWinningBalance: number;
   currentDay: number;
-  ethRate: number,
+  ethRate: number;
 };
 
 export const WeatherAuctionContext = createContext<WeatherData>({
   winners: [],
   bids: [],
   isWinnersLoading: false,
-  sendAuctionData: async () => Promise.resolve({} as WriteContractResult),
+  sendAuctionData: async () => Promise.resolve(),
   getTotalPrize: async () => Promise.resolve({} as WriteContractResult),
   prize: 0,
   isAuctionOpen: false,

@@ -20,7 +20,7 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
   const { address } = useAccount();
   const { switchNetwork } = useSwitchNetwork();
   const { chain: currentChain } = useNetwork();
-  const [isAuctionOpen, setIsAuctionOpen] = useState<boolean>(false);
+  const [isAuctionOpen, setIsAuctionOpen] = useState<boolean | null>(null);
   const [userWinningBalance, setUserWinningBalance] = useState<number>(0);
   const [currentDay, setCurrentDay] = useState<number>(0);
   const [prize, setPrize] = useState(0);
@@ -59,14 +59,17 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
 
     console.log({ res });
 
-    setNewBids(current => [...current, {
-      bidder: address?.toLowerCase(),
-      day: currentDay,
-      id: 'NA' + Date.now(),
-      temperatureGuess: temp,
-      ticketCount: ticketAmount ? +ticketAmount : 1,
-      transactionHash: 'NA' + Date.now(),
-    }]);
+    setNewBids((current) => [
+      ...current,
+      {
+        bidder: address?.toLowerCase(),
+        day: currentDay,
+        id: 'NA' + Date.now(),
+        temperatureGuess: temp,
+        ticketCount: ticketAmount ? +ticketAmount : 1,
+        transactionHash: 'NA' + Date.now(),
+      },
+    ]);
     getTotalPrize();
   };
 
@@ -95,7 +98,7 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
 
   const getUserBalances = async () => {
     try {
-      if (!address) return
+      if (!address) return;
 
       const userBalance = await readContract({
         ...weatherAuctionContract,
@@ -163,10 +166,15 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
 
   useEffect(() => {
     getAuctionStatusAndDay();
-    getBids({ variables: { day: currentDay } });
     getUserBalances();
     getTotalPrize();
   }, [currentDay]);
+
+  useEffect(() => {
+    if (isAuctionOpen !== null) {
+      getBids({ variables: { day: currentDay } });
+    }
+  }, [isAuctionOpen]);
 
   console.log(data?.winnerDeclareds);
 
@@ -177,13 +185,13 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
       return data.winnerDeclareds;
     }
 
-    return data.winnerDeclareds.map(winner => {
+    return data.winnerDeclareds.map((winner) => {
       const eth = utils.formatEther(winner.winnerPrize);
 
       return {
         ...winner,
         winnerPrizeLabel: `${eth} ($${(eth * ethRate).toFixed(2)})`,
-      }
+      };
     });
   }, [data, ethRate]);
 

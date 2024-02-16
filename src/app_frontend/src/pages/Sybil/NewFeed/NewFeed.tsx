@@ -18,6 +18,7 @@ import { useSybilData } from 'Providers/SybilPairs';
 import { MAX_API_KEYS, MAX_SOURCES, MIN_BALANCE } from 'Constants/ui';
 import { Source } from 'Interfaces/feed';
 import { useGetSybilFeeds } from 'ApiHooks/useGetSybilFeeds';
+import { validateUrlKeys } from 'Utils/validateURLKeys';
 
 const TREASURER_CHAIN = CHAINS_MAP[42161];
 const USDT_TOKEN_POLYGON = '0xaf88d065e77c8cC2239327C5EDb3A432268e5831';
@@ -30,7 +31,7 @@ export const NewFeed = (params: any) => {
     uri: '',
     resolver: '',
     expected_bytes: [],
-    apiKeys: [],
+    api_keys: [],
   };
 
   const [feedId, setFeedId] = useState<string>(params.feedId ?? '');
@@ -42,7 +43,7 @@ export const NewFeed = (params: any) => {
   const [balance, setBalance] = useState(0);
 
   const newKey = (index: number) => ({
-    title: `Key${index}`, //TODO: add key
+    title: index === 0 ? 'key' : `key${index}`,
     key: '',
   });
 
@@ -82,7 +83,7 @@ export const NewFeed = (params: any) => {
 
   const addKey = (index: number) => {
     const newSources = [...sources];
-    newSources[index].apiKeys.push(newKey(newSources[index].apiKeys.length + 1));
+    newSources[index].api_keys.push(newKey(newSources[index].api_keys.length));
     setSources(newSources);
   };
 
@@ -99,7 +100,13 @@ export const NewFeed = (params: any) => {
             Custom: null,
           },
           update_freq: +frequency * 60,
-          sources,
+          // @ts-ignore
+          sources: sources.map((item) => ({
+            ...item,
+            uri: item.uri.trim(),
+            resolver: item.resolver.trim(),
+            api_keys: [item.api_keys],
+          })),
           decimals: isPriceFeed ? [Number(decimals)] : [],
           msg: addressData.message,
           sig: remove0x(addressData.signature),
@@ -122,16 +129,11 @@ export const NewFeed = (params: any) => {
     }
   };
 
-  const regex = new RegExp('^[a-zA-Z]+/[a-zA-Z0-9]+$');
-
   const isFeedIdValid =
-    regex.test(feedId) &&
     feeds &&
     feeds.data &&
     feeds.data.items &&
     !feeds.data.items?.some((feed) => feed.id === feedId.toUpperCase());
-
-  const isURIHasAllKeys = (s: Source) => s.apiKeys.every((key) => s.uri.includes(`{${key.title}}`));
 
   return (
     <Flex vertical={true} gap="large" style={{ paddingBottom: '60px' }}>
@@ -142,7 +144,6 @@ export const NewFeed = (params: any) => {
           disabled={isViewingMode}
           value={feedId}
           placeholder=".../USD"
-          pattern="^[a-zA-Z]+\/[a-zA-Z]+$"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFeedId(e.target.value.trim())}
           status={feedId !== '' ? (isFeedIdValid ? '' : 'error') : ''}
         />
@@ -206,7 +207,7 @@ export const NewFeed = (params: any) => {
             <Tooltip
               trigger={['focus']}
               title={
-                source.uri && source.apiKeys.length !== 0 ? 'URI should contain all keys' : null
+                source.uri && source.uri.includes('key') ? 'URI should contain all keys' : null
               }
               placement="topLeft"
             >
@@ -218,9 +219,7 @@ export const NewFeed = (params: any) => {
                   updateSource(index, { ...source, uri: e.target.value })
                 }
                 status={
-                  source.uri && source.apiKeys.length !== 0 && isURIHasAllKeys(source)
-                    ? 'error'
-                    : ''
+                  source.uri ? (validateUrlKeys(source.uri, source.api_keys) ? '' : 'error') : ''
                 }
               />
             </Tooltip>
@@ -237,11 +236,11 @@ export const NewFeed = (params: any) => {
             />
           </Space>
 
-          {source.apiKeys.map((key, idx) => (
+          {source.api_keys.map((key, idx) => (
             <Card
               key={idx}
               size="small"
-              title={'Key ' + (idx + 1)}
+              title={idx > 1 ? 'Key ' + (idx + 1) : 'Key'}
               extra={
                 <Button
                   type="text"
@@ -249,7 +248,7 @@ export const NewFeed = (params: any) => {
                   icon={<DeleteOutlined />}
                   onClick={() => {
                     const newSources = [...sources];
-                    newSources[index].apiKeys.splice(idx, 1);
+                    newSources[index].api_keys.splice(idx, 1);
                     setSources(newSources);
                   }}
                 />
@@ -259,13 +258,13 @@ export const NewFeed = (params: any) => {
                 <Space direction="vertical" style={{ width: '100%' }}>
                   <div className={styles.label}>Title</div>
                   <Input
-                    disabled={isViewingMode}
+                    disabled={true}
                     value={key.title}
                     placeholder="Title"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       updateSource(index, {
                         ...source,
-                        apiKeys: source.apiKeys.map((k, i) =>
+                        api_keys: source.api_keys.map((k, i) =>
                           i === idx ? { ...k, title: e.target.value } : k
                         ),
                       })
@@ -281,7 +280,7 @@ export const NewFeed = (params: any) => {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       updateSource(index, {
                         ...source,
-                        apiKeys: source.apiKeys.map((k, i) =>
+                        api_keys: source.api_keys.map((k, i) =>
                           i === idx ? { ...k, key: e.target.value } : k
                         ),
                       })
@@ -292,7 +291,7 @@ export const NewFeed = (params: any) => {
             </Card>
           ))}
 
-          {source.apiKeys.length !== MAX_API_KEYS && !isViewingMode && (
+          {source.api_keys.length !== MAX_API_KEYS && !isViewingMode && (
             <Button
               disabled={isViewingMode}
               style={{ alignSelf: 'flex-end' }}

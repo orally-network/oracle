@@ -18,7 +18,7 @@ export interface Source {
   uri: string;
   resolver: string;
   expected_bytes: number[];
-  apiKeys: ApiKey[];
+  api_keys: ApiKey[];
 }
 
 export interface FeedRequest extends Omit<Feed, 'owner' | 'data' | 'status'> {

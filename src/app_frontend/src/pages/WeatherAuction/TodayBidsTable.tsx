@@ -68,12 +68,13 @@ export const TodayBidsTable = () => {
     const index = acc.findIndex(
       (item: any) => Number(item.temperatureGuess) === Number(record.temperatureGuess) / 10
     );
+
     if (index !== -1) {
-      acc[index].others++;
+      acc[index].others += Number(record.ticketCount);
 
       if (record.bidder === address?.toLowerCase()) {
-        acc[index].mine++;
-        acc[index].others--;
+        acc[index].mine += Number(record.ticketCount);
+        acc[index].others -= Number(record.ticketCount);
       }
     } else {
       const mine = record.bidder === address?.toLowerCase() ? 1 : 0;
@@ -81,7 +82,7 @@ export const TodayBidsTable = () => {
       acc.push({
         temperatureGuess: Number(record.temperatureGuess) / 10,
         others: mine ? 0 : Number(record.ticketCount),
-        mine: mine ? record.ticketCount : 0,
+        mine: mine ? Number(record.ticketCount) : 0,
       });
     }
     return acc;

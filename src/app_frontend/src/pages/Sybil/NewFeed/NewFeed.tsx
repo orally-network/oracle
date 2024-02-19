@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Input, Flex, Space, Switch, Card, Tooltip } from 'antd';
 
@@ -34,8 +34,11 @@ export const NewFeed = (params: any) => {
     api_keys: [],
   };
 
+  const convertedFrequency = Number(params.frequency) / 60;
   const [feedId, setFeedId] = useState<string>(params.feedId ?? '');
-  const [frequency, setFrequency] = useState<string>(params.frequency ?? '');
+  const [frequency, setFrequency] = useState<string>(
+    params.frequency ? convertedFrequency.toString() : ''
+  );
   const [sources, setSources] = useState<Source[]>(params.sources ?? [newSource]);
   const [isCreating, setIsCreating] = useState(false);
   const [isPriceFeed, setIsPriceFeed] = useState(Boolean(params.decimals) ?? false);
@@ -236,7 +239,7 @@ export const NewFeed = (params: any) => {
             />
           </Space>
 
-          {source.api_keys.map((key, idx) => (
+          {(params.sources ? source.api_keys[0] : source.api_keys).map((key, idx) => (
             <Card
               key={idx}
               size="small"

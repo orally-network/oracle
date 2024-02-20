@@ -6,7 +6,7 @@ import React from 'react';
 export const PrizePool = () => {
   const { prize, ethRate } = useWeatherData();
 
-  const prizeUsd = ethRate ? prize * Number(ethRate) : null;
+  const prizeUsd = ethRate ? prize * ethRate : null;
 
   return (
     <Card>

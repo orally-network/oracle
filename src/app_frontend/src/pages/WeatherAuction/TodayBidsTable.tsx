@@ -1,16 +1,28 @@
-import { Card, Table, Typography } from 'antd';
+import { Card, Empty, Flex, Table, Typography } from 'antd';
 import React, { useState } from 'react';
 import { useWeatherData } from 'Providers/WeatherAuctionData/useWeatherData';
 import { useAccount } from 'wagmi';
 import { truncateAddressSymbolsNum } from 'Utils/addressUtils';
 import { TableOutlined, BarChartOutlined } from '@ant-design/icons';
 import { renderChart } from './TodayBidsChart';
+import Loader from 'Components/Loader';
+import { BREAK_POINT_MOBILE } from 'Constants/ui';
+import useWindowDimensions from 'Utils/useWindowDimensions';
+
+export interface ChartItem {
+  temperatureGuess: number;
+  others: number;
+  mine: number;
+}
 
 export const TodayBidsTable = () => {
   const { bids, isWinnersLoading } = useWeatherData();
   const { address } = useAccount();
 
   const [isTableView, setIsTableView] = useState(false);
+
+  const { width } = useWindowDimensions();
+  const isMobile = width < BREAK_POINT_MOBILE;
 
   const columns = [
     {
@@ -64,16 +76,17 @@ export const TodayBidsTable = () => {
       />
     );
 
-  const chartData = bids.reduce((acc, record) => {
+  const chartData = bids.reduce<ChartItem[]>((acc, record) => {
     const index = acc.findIndex(
-      (item: any) => Number(item.temperatureGuess) === Number(record.temperatureGuess) / 10
+      (item: ChartItem) => Number(item.temperatureGuess) === Number(record.temperatureGuess) / 10
     );
+
     if (index !== -1) {
-      acc[index].others++;
+      acc[index].others += Number(record.ticketCount);
 
       if (record.bidder === address?.toLowerCase()) {
-        acc[index].mine++;
-        acc[index].others--;
+        acc[index].mine += Number(record.ticketCount);
+        acc[index].others -= Number(record.ticketCount);
       }
     } else {
       const mine = record.bidder === address?.toLowerCase() ? 1 : 0;
@@ -81,7 +94,7 @@ export const TodayBidsTable = () => {
       acc.push({
         temperatureGuess: Number(record.temperatureGuess) / 10,
         others: mine ? 0 : Number(record.ticketCount),
-        mine: mine ? record.ticketCount : 0,
+        mine: mine ? Number(record.ticketCount) : 0,
       });
     }
     return acc;
@@ -106,8 +119,19 @@ export const TodayBidsTable = () => {
             return record.bidder === address?.toLowerCase() ? 'highlight' : '';
           }}
         />
+      ) : isWinnersLoading ? (
+        <Flex justify="center" align="center" style={{ minHeight: 170 }}>
+          <Loader />
+        </Flex>
+      ) : chartData.length === 0 ? (
+        <Flex justify="center" align="center">
+          <Empty />
+        </Flex>
       ) : (
-        renderChart(chartData.sort((a: any, b: any) => a.temperatureGuess - b.temperatureGuess))
+        renderChart(
+          chartData.sort((a: any, b: any) => a.temperatureGuess - b.temperatureGuess),
+          isMobile
+        )
       )}
     </Card>
   );

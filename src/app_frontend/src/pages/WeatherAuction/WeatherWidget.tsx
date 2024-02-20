@@ -6,12 +6,9 @@ import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import { getWeatherIcon } from 'Utils/mapWeatherData';
 import config from 'Constants/config';
 
-const WEATHER_SOURCE_1 =
-  `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/lisbon?unitGroup=metric&include=current&key=${config.weatherSource1Key}&contentType=json`;
-const WEATHER_SOURCE_2 =
-  `https://api.weatherapi.com/v1/current.json?key=${config.weatherSource2Key}&q=Lisbon&aqi=no`;
-const WEATHER_SOURCE_3 =
-  `https://api.openweathermap.org/data/3.0/onecall?lat=38.736946&lon=-9.142685&exclude=daily,hourly,minutely&appid=${config.weatherSource3Key}&units=metric`;
+const WEATHER_SOURCE_1 = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/lisbon?unitGroup=metric&include=current&key=${config.weatherSource1Key}&contentType=json`;
+const WEATHER_SOURCE_2 = `https://api.weatherapi.com/v1/current.json?key=${config.weatherSource2Key}&q=Lisbon&aqi=no`;
+const WEATHER_SOURCE_3 = `https://api.openweathermap.org/data/3.0/onecall?lat=38.736946&lon=-9.142685&exclude=daily,hourly,minutely&appid=${config.weatherSource3Key}&units=metric`;
 
 async function fetchWeatherResource(url: string) {
   try {
@@ -45,21 +42,13 @@ export const WeatherWidget = () => {
       const tempFromResult1 = result1?.currentConditions?.temp;
       const tempFromResult2 = result2?.current?.temp_c;
       const tempFromResult3 = result3?.current?.temp;
-      const tempArray = [tempFromResult1 ?? null, tempFromResult2 ?? null, tempFromResult3 ?? null].filter(Boolean);
+      const tempArray = [
+        tempFromResult1 ?? null,
+        tempFromResult2 ?? null,
+        tempFromResult3 ?? null,
+      ].filter(Boolean);
 
       const average = tempArray.reduce((a, b) => a + b, 0) / tempArray.length;
-
-      console.log({
-        tempFromResult1,
-        tempFromResult2,
-        tempFromResult3,
-        tempArray,
-        average,
-
-        result1,
-        result2,
-        result3,
-      });
 
       setWeatherData({
         ...result1,

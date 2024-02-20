@@ -4,24 +4,29 @@ import { Layout, Flex, Breadcrumb, Typography } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import FeedDetails from './FeedDetails';
+import { useGlobalState } from 'Providers/GlobalState';
+import { remove0x } from 'Utils/addressUtils';
 
 export const FeedDetailsPage = () => {
   const { id } = useParams();
   const [feedData, setFeedData] = useState<Feed | null>(null);
   const [isFeedLoading, setIsFeedLoading] = useState<boolean>(false);
+  const { addressData } = useGlobalState();
 
-  const fetchSubscription = async (id: string) => {
-    console.log(id);
+  const fetchFeed = async (id: string) => {
     setIsFeedLoading(true);
     try {
-      const response: any = await sybilCanister.get_feed(id.replace('-', '/'));
-      console.log(response);
+      const response: any = await sybilCanister.get_feed(
+        id.replace('-', '/'),
+        [addressData.message],
+        [remove0x(addressData.signature)]
+      );
 
       if (response.Err) {
         setFeedData(null);
         throw new Error(response.Err);
       } else {
-        setFeedData(response[0]);
+        setFeedData(response.Ok[0]);
       }
     } catch (error) {
       console.log(error);
@@ -31,10 +36,11 @@ export const FeedDetailsPage = () => {
   };
 
   useEffect(() => {
-    if (id) {
-      fetchSubscription(id);
+    if (id && addressData.message && addressData.signature) {
+      fetchFeed(id);
     }
-  }, [id]);
+  }, [id, addressData.message, addressData.signature]);
+
   return (
     <Layout.Content title="Sybil">
       <Flex gap="middle" vertical>

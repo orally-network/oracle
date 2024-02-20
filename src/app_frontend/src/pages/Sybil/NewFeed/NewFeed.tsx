@@ -239,60 +239,62 @@ export const NewFeed = (params: any) => {
             />
           </Space>
 
-          {(params.sources ? source.api_keys[0] : source.api_keys).map((key, idx) => (
-            <Card
-              key={idx}
-              size="small"
-              title={idx > 1 ? 'Key ' + (idx + 1) : 'Key'}
-              extra={
-                <Button
-                  type="text"
-                  disabled={isViewingMode}
-                  icon={<DeleteOutlined />}
-                  onClick={() => {
-                    const newSources = [...sources];
-                    newSources[index].api_keys.splice(idx, 1);
-                    setSources(newSources);
-                  }}
-                />
-              }
-            >
-              <Space size="middle" direction="vertical" style={{ width: '100%', paddingTop: 16 }}>
-                <Space direction="vertical" style={{ width: '100%' }}>
-                  <div className={styles.label}>Title</div>
-                  <Input
-                    disabled={true}
-                    value={key.title}
-                    placeholder="Title"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      updateSource(index, {
-                        ...source,
-                        api_keys: source.api_keys.map((k, i) =>
-                          i === idx ? { ...k, title: e.target.value } : k
-                        ),
-                      })
-                    }
-                  />
-                </Space>
-                <Space direction="vertical" style={{ width: '100%' }}>
-                  <div className={styles.label}>Code</div>
-                  <Input.Password
+          {(params.sources && source.api_keys.length ? source.api_keys[0] : source.api_keys).map(
+            (key, idx) => (
+              <Card
+                key={idx}
+                size="small"
+                title={idx > 1 ? 'Key ' + (idx + 1) : 'Key'}
+                extra={
+                  <Button
+                    type="text"
                     disabled={isViewingMode}
-                    value={key.key}
-                    placeholder="Code"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      updateSource(index, {
-                        ...source,
-                        api_keys: source.api_keys.map((k, i) =>
-                          i === idx ? { ...k, key: e.target.value } : k
-                        ),
-                      })
-                    }
+                    icon={<DeleteOutlined />}
+                    onClick={() => {
+                      const newSources = [...sources];
+                      newSources[index].api_keys.splice(idx, 1);
+                      setSources(newSources);
+                    }}
                   />
+                }
+              >
+                <Space size="middle" direction="vertical" style={{ width: '100%', paddingTop: 16 }}>
+                  <Space direction="vertical" style={{ width: '100%' }}>
+                    <div className={styles.label}>Title</div>
+                    <Input
+                      disabled={true}
+                      value={key.title}
+                      placeholder="Title"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        updateSource(index, {
+                          ...source,
+                          api_keys: source.api_keys.map((k, i) =>
+                            i === idx ? { ...k, title: e.target.value } : k
+                          ),
+                        })
+                      }
+                    />
+                  </Space>
+                  <Space direction="vertical" style={{ width: '100%' }}>
+                    <div className={styles.label}>Code</div>
+                    <Input.Password
+                      disabled={isViewingMode}
+                      value={key.key}
+                      placeholder="Code"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        updateSource(index, {
+                          ...source,
+                          api_keys: source.api_keys.map((k, i) =>
+                            i === idx ? { ...k, key: e.target.value } : k
+                          ),
+                        })
+                      }
+                    />
+                  </Space>
                 </Space>
-              </Space>
-            </Card>
-          ))}
+              </Card>
+            )
+          )}
 
           {source.api_keys.length !== MAX_API_KEYS && !isViewingMode && (
             <Button

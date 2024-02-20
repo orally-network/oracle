@@ -87,7 +87,7 @@ const FeedCard = ({ feed }: FeedCardProps) => {
         <div className={styles.header}>
           <div className={styles.info}>
             <Space>
-              <Typography.Title level={4} style={{ margin: 0 }} ellipsis={true}>
+              <Typography.Title level={4} style={{ margin: 0, maxWidth: 180 }} ellipsis={true}>
                 {id}
               </Typography.Title>
             </Space>

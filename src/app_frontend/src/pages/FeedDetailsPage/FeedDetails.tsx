@@ -1,42 +1,26 @@
 import React, { useState } from 'react';
-import {
-  Space,
-  Card,
-  Typography,
-  Flex,
-  Skeleton as AntdSkeleton,
-  Button,
-  Drawer,
-  Alert,
-} from 'antd';
-import ConfettiExplosion, { ConfettiProps } from 'react-confetti-explosion';
+import { Space, Card, Typography, Flex, Skeleton as AntdSkeleton, Button } from 'antd';
 
 import styles from './FeedDetailsPage.scss';
-import { add0x, isAddressHasOx, truncateEthAddress } from 'Utils/addressUtils';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import useWindowDimensions from 'Utils/useWindowDimensions';
-import { convertFrequencyDate, getStrMethodArgs } from 'Utils/helper';
+import { convertFrequencyDate } from 'Utils/helper';
 import { Feed } from 'Interfaces/feed';
 import { FeedLogos } from 'Pages/Sybil/FeedCard/FeedLogos';
+import config from 'Constants/config';
+import IconLink from 'Components/IconLink';
+import { ExportOutlined } from '@ant-design/icons';
+import { VerifyModal } from './VerifyModal';
 
 interface FeedDetailsProps {
   feed: Feed;
 }
-
-const mediumProps: ConfettiProps = {
-  force: 0.6,
-  duration: 2500,
-  particleCount: 100,
-  width: 1000,
-  colors: ['#2F21FF', '#0089D7', '#1890FF', '#4A6293', '#fff'],
-};
 
 const FeedDetails = ({ feed }: FeedDetailsProps) => {
   const { width } = useWindowDimensions();
   const isMobile = width < BREAK_POINT_MOBILE;
 
   const [isVerifySignatureModalVisible, setIsVerifySignatureModalVisible] = useState(false);
-  const [isSmallExploding, setIsSmallExploding] = React.useState(false);
 
   const {
     id,
@@ -46,19 +30,23 @@ const FeedDetails = ({ feed }: FeedDetailsProps) => {
     update_freq,
     feed_type,
     status: { last_update },
+    sources,
   } = feed;
   console.log(feed);
 
-  // const chain = CHAINS_MAP[chain_id as number];
+  const feedType =
+    feed_type.Custom === null
+      ? 'CustomPriceFeed'
+      : feed_type.Default === null
+        ? 'DefaultPriceFeed'
+        : '';
 
   const convertedFrequency = convertFrequencyDate(Number(update_freq));
-
   const lastUpdateDateTime = new Date(Number(last_update) * 1000);
-  // const frequency = exec_condition[0]?.Frequency || BigInt(3600);
 
-  // const nextUpdateDateTime = new Date(lastUpdateDateTime.getTime() + Number(frequency) * 1000);
-  // const diffMs = Math.abs(+new Date() - +nextUpdateDateTime);
-  // const progress = (diffMs * 100) / (Number(frequency) * 1000);
+  const rate = data && data.length && data[0].data ? data[0].data[feedType].rate : 0;
+  const lastRate =
+    rate && decimals && decimals[0] ? Number(rate) / Math.pow(10, Number(decimals[0])) : 0;
 
   return (
     <Flex gap="middle" vertical={isMobile} className={styles.details}>
@@ -82,14 +70,26 @@ const FeedDetails = ({ feed }: FeedDetailsProps) => {
         <Card>
           <Typography.Title level={5}>Price</Typography.Title>
           Last update price
+          <Typography.Title level={5}>{lastRate}</Typography.Title>
         </Card>
         <Card>
-          <Typography.Title level={5}>Author</Typography.Title>
-          AddrAuthoress
-          <Flex gap={2} justify="space-between">
-            <Typography.Title level={5} copyable>
-              {truncateEthAddress(add0x('trtrtr'))}
-            </Typography.Title>
+          <Typography.Title level={5}>Links</Typography.Title>
+
+          <Flex gap={2} justify="space-between" vertical>
+            <Space size="small">
+              <Typography.Text copyable>Get asset data</Typography.Text>
+              <IconLink
+                link={`https://${config.sybil_canister_id}.icp0.io/get_asset_data?id=${id}`}
+                IconComponent={ExportOutlined}
+              />
+            </Space>
+            <Space size="small">
+              <Typography.Text copyable>Get asset data with proof</Typography.Text>
+              <IconLink
+                link={`https://${config.sybil_canister_id}.icp0.io/get_asset_data_with_proof?id=${id}`}
+                IconComponent={ExportOutlined}
+              />
+            </Space>
           </Flex>
         </Card>
       </Flex>
@@ -110,50 +110,40 @@ const FeedDetails = ({ feed }: FeedDetailsProps) => {
       </Flex>
 
       <Flex gap="middle" vertical style={{ flex: 0.5 }}>
-        <Card>
-          <Typography.Title level={5}>Signature</Typography.Title>
-          <Button type="primary" onClick={() => setIsVerifySignatureModalVisible(true)}>
-            Verify
-          </Button>
-        </Card>
+        {data && data.length && data[0].signature?.length ? (
+          <Card>
+            <Typography.Title level={5}>Signature</Typography.Title>
+            <Button type="primary" onClick={() => setIsVerifySignatureModalVisible(true)}>
+              Verify
+            </Button>
+          </Card>
+        ) : null}
+
         <Card>
           <Typography.Title level={5}>Sources</Typography.Title>
+          {feed_type.Custom === null ? (
+            <Space direction="vertical" size="small">
+              {sources.length &&
+                sources[0].length &&
+                sources[0].map((source, index) => (
+                  <Typography.Text key={index} copyable>
+                    {source.uri}
+                  </Typography.Text>
+                ))}
+            </Space>
+          ) : (
+            'icons with links to sources'
+          )}
         </Card>
       </Flex>
 
       {isVerifySignatureModalVisible && (
-        <Drawer
-          title="Verify Signature"
-          placement="right"
-          onClose={(e) => {
-            e.stopPropagation();
-            setIsVerifySignatureModalVisible(false);
-          }}
-          open={isVerifySignatureModalVisible}
-          style={{ marginTop: '47px' }}
-          width={isMobile ? '90vw' : '362px'}
-        >
-          <Space size="small" direction="vertical">
-            <Typography.Paragraph>
-              The following message was used to calculate the median price for the BTC/USD Oracle.
-              You can verify its authenticity with Ethereum's ecrecover() function.
-            </Typography.Paragraph>
-            <Alert
-              message="Note: You can edit the message to prove that any changes will invalidate the signature."
-              type="warning"
-              showIcon
-            />
-            <pre>test</pre>
-            Validator Address
-            <Flex gap="small">
-              <Button>Done</Button>
-              <Button type="primary" onClick={() => setIsSmallExploding(!isSmallExploding)}>
-                Verify
-                {isSmallExploding && <ConfettiExplosion {...mediumProps} zIndex={1001} />}
-              </Button>
-            </Flex>
-          </Space>
-        </Drawer>
+        <VerifyModal
+          isVisible={isVerifySignatureModalVisible}
+          setIsVisible={setIsVerifySignatureModalVisible}
+          signatureData={data[0].signature[0]}
+          id={id}
+        />
       )}
     </Flex>
   );

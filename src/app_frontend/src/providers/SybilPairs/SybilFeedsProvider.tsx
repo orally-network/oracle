@@ -1,12 +1,16 @@
 import React, { useState, useMemo, useEffect } from 'react';
 
 import SybilFeedsContext from './SybilFeedsContext';
-import { FeedRequest, FilterFeedType } from 'Interfaces/feed';
+import { FeedRequest, FilterFeedType, SignatureData } from 'Interfaces/feed';
 import debounce from 'lodash.debounce';
 import sybilCanister from 'Canisters/sybilCanister';
 import { remove0x } from 'Utils/addressUtils';
 import logger from 'Utils/logger';
 import { AddressData, GeneralResponse } from 'Interfaces/common';
+import { readContract } from '@wagmi/core';
+import { ARBITRUM_CHAIN_ID } from 'Providers/WeatherAuctionData/WeatherAuctionProvider';
+
+const VERIFY_UNPACKED_CONTRACT_ADDRESS = '0x49353d54cc6d23079c6748a2a2160d39a5b3358e';
 
 const SybilFeedsProvider = ({ children }: any) => {
   const [page, setPage] = useState<number>(1);
@@ -63,6 +67,56 @@ const SybilFeedsProvider = ({ children }: any) => {
     return res;
   };
 
+  const readVerifyUnpacked = async (signatureData: SignatureData) => {
+    return await readContract({
+      address: VERIFY_UNPACKED_CONTRACT_ADDRESS,
+      abi: [
+        {
+          name: 'verifyUnpacked',
+          type: 'function',
+          stateMutability: 'nonpayable',
+          inputs: [
+            {
+              name: '_pairId',
+              type: 'string',
+            },
+            {
+              name: '_price',
+              type: 'uint256',
+            },
+            {
+              name: '_decimals',
+              type: 'uint256',
+            },
+            {
+              name: '_timestamp',
+              type: 'uint256',
+            },
+            {
+              name: '_signature',
+              type: 'bytes',
+            },
+          ],
+          outputs: [
+            {
+              name: '',
+              type: 'bool',
+            },
+          ],
+        },
+      ],
+      functionName: 'verifyUnpacked',
+      args: [
+        signatureData.pairId,
+        signatureData.price,
+        signatureData.decimals,
+        signatureData.timestamp,
+        signatureData.signature,
+      ],
+      chainId: ARBITRUM_CHAIN_ID,
+    });
+  };
+
   useEffect(() => {
     return () => {
       debouncedChangeHandler.cancel();
@@ -84,6 +138,7 @@ const SybilFeedsProvider = ({ children }: any) => {
       debouncedChangeHandler,
       fetchBalance,
       isBalanceLoading,
+      readVerifyUnpacked,
     };
   }, [page, feedType, searchQuery, showMine, setShowMine]);
 

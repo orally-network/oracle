@@ -18,7 +18,7 @@ const PythiaDataProvider = ({ children }: any) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [balance, setBalance] = useState(0);
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
-  const [pma, setPma] = useState('');
+  const [pma, setPma] = useState<`0x${string}`>('0x');
 
   const { addressData } = useGlobalState();
 

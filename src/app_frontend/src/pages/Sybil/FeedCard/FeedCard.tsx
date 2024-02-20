@@ -71,9 +71,10 @@ const FeedCard = ({ feed }: FeedCardProps) => {
   const { width } = useWindowDimensions();
   const isMobile = width <= BREAK_POINT_MOBILE;
 
-  const lastUpdateDateTime = new Date(Number(timestamp) * 1000);
+  const lastUpdateDateTime = timestamp ? new Date(Number(timestamp) * 1000) : new Date();
   const diffMs = Math.abs(+new Date() - +lastUpdateDateTime);
-  const lastRate = Number(rate) / Math.pow(10, Number(decimals?.[0]));
+  const lastRate =
+    rate && decimals && decimals[0] ? Number(rate) / Math.pow(10, Number(decimals[0])) : 0;
   const isWeather = id.toLowerCase().includes('weather');
 
   return (

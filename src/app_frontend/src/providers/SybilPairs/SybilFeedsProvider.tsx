@@ -85,7 +85,7 @@ const SybilFeedsProvider = ({ children }: any) => {
       fetchBalance,
       isBalanceLoading,
     };
-  }, [page, feedType, searchQuery, showMine]);
+  }, [page, feedType, searchQuery, showMine, setShowMine]);
 
   return <SybilFeedsContext.Provider value={value}>{children}</SybilFeedsContext.Provider>;
 };

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Space, Card, Typography, Flex, Skeleton as AntdSkeleton, Button } from 'antd';
+import { Space, Card, Typography, Flex, Skeleton as AntdSkeleton, Button, Tooltip } from 'antd';
 
 import styles from './FeedDetailsPage.scss';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
@@ -11,6 +11,8 @@ import config from 'Constants/config';
 import IconLink from 'Components/IconLink';
 import { ExportOutlined } from '@ant-design/icons';
 import { VerifyModal } from './VerifyModal';
+import { exchangeURLS } from 'Constants/sources';
+import weatherImg from 'Assets/weather.png';
 
 interface FeedDetailsProps {
   feed: Feed;
@@ -32,7 +34,6 @@ const FeedDetails = ({ feed }: FeedDetailsProps) => {
     status: { last_update },
     sources,
   } = feed;
-  console.log(feed);
 
   const feedType =
     feed_type.Custom === null
@@ -41,12 +42,19 @@ const FeedDetails = ({ feed }: FeedDetailsProps) => {
         ? 'DefaultPriceFeed'
         : '';
 
+  const lastUpdateDate = last_update
+    ? last_update
+    : data && data.length && data[0].data
+      ? data[0].data[feedType].timestamp
+      : 0;
+
   const convertedFrequency = convertFrequencyDate(Number(update_freq));
-  const lastUpdateDateTime = new Date(Number(last_update) * 1000);
+  const lastUpdateDateTime = new Date(Number(lastUpdateDate) * 1000);
 
   const rate = data && data.length && data[0].data ? data[0].data[feedType].rate : 0;
   const lastRate =
     rate && decimals && decimals[0] ? Number(rate) / Math.pow(10, Number(decimals[0])) : 0;
+  const isWeather = id.toLowerCase().includes('weather');
 
   return (
     <Flex gap="middle" vertical={isMobile} className={styles.details}>
@@ -59,7 +67,17 @@ const FeedDetails = ({ feed }: FeedDetailsProps) => {
         }}
       >
         <Flex align="center" justify="center">
-          <FeedLogos feed={id} size={76} />
+          {isWeather ? (
+            <img
+              src={weatherImg}
+              alt="sun"
+              style={{
+                maxWidth: '35px',
+              }}
+            />
+          ) : (
+            <FeedLogos feed={id} size={76} />
+          )}
         </Flex>
         <Typography.Title level={4} style={{ margin: 0, textAlign: 'center' }} ellipsis={true}>
           {id}
@@ -77,16 +95,16 @@ const FeedDetails = ({ feed }: FeedDetailsProps) => {
 
           <Flex gap={2} justify="space-between" vertical>
             <Space size="small">
-              <Typography.Text copyable>Get asset data</Typography.Text>
+              <Typography.Text copyable>Get feed data</Typography.Text>
               <IconLink
-                link={`https://${config.sybil_canister_id}.icp0.io/get_asset_data?id=${id}`}
+                link={`https://${config.sybil_canister_id}.icp0.io/get_feed_data?id=${id}`}
                 IconComponent={ExportOutlined}
               />
             </Space>
             <Space size="small">
-              <Typography.Text copyable>Get asset data with proof</Typography.Text>
+              <Typography.Text copyable>Get feed data with proof</Typography.Text>
               <IconLink
-                link={`https://${config.sybil_canister_id}.icp0.io/get_asset_data_with_proof?id=${id}`}
+                link={`https://${config.sybil_canister_id}.icp0.io/get_feed_data_with_proof?id=${id}`}
                 IconComponent={ExportOutlined}
               />
             </Space>
@@ -132,7 +150,21 @@ const FeedDetails = ({ feed }: FeedDetailsProps) => {
                 ))}
             </Space>
           ) : (
-            'icons with links to sources'
+            <Flex gap={4} align="center">
+              {exchangeURLS.map((exchange) => {
+                return (
+                  <Tooltip title={exchange.url} key={exchange.name}>
+                    <a href={exchange.url} style={{ maxWidth: 30 }}>
+                      {typeof exchange.logo === 'string' ? (
+                        <img src={exchange.logo} alt={exchange.name} width={30} />
+                      ) : (
+                        <exchange.logo width={30} height={30} />
+                      )}
+                    </a>
+                  </Tooltip>
+                );
+              })}
+            </Flex>
           )}
         </Card>
       </Flex>

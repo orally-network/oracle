@@ -185,7 +185,7 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
     }
 
     return bidsData.winnerDeclareds.map((winner: Winner) => {
-      const eth = utils.formatEther(winner.winnerPrize);
+      const eth = Number(utils.formatEther(winner.winnerPrize)).toFixed(4);
 
       return {
         ...winner,

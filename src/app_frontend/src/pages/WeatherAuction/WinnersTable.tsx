@@ -34,7 +34,7 @@ const columns = [
     dataIndex: 'winnerPrizeLabel',
     key: 'winnerPrizeLabel',
     render: (prizeLabel: string, winner: any) => (
-      <span>{prizeLabel ?? utils.formatEther(winner.winnerPrize)}</span>
+      <span>{prizeLabel ?? Number(utils.formatEther(winner.winnerPrize)).toFixed(4)}</span>
     ),
   },
   {

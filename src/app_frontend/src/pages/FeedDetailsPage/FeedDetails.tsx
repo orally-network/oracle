@@ -13,7 +13,6 @@ import { ExportOutlined } from '@ant-design/icons';
 import { VerifyModal } from './VerifyModal';
 import { exchangeURLS } from 'Constants/sources';
 import weatherImg from 'Assets/weather.png';
-import { useGetFeedDataWithProof } from 'ApiHooks/useGetFeedDataWithProof';
 import Button from 'Components/Button';
 
 interface FeedDetailsProps {
@@ -21,10 +20,10 @@ interface FeedDetailsProps {
 }
 
 const FeedDetails = ({ feed }: FeedDetailsProps) => {
+  console.log(feed);
   const { width } = useWindowDimensions();
   const isMobile = width < BREAK_POINT_MOBILE;
   const [isVerifySignatureModalVisible, setIsVerifySignatureModalVisible] = useState(false);
-  const { isLoading, verifyData } = useGetFeedDataWithProof({ id: feed.id });
 
   const {
     id,
@@ -132,12 +131,7 @@ const FeedDetails = ({ feed }: FeedDetailsProps) => {
       <Flex gap="middle" vertical style={{ flex: 0.5 }}>
         <Card>
           <Typography.Title level={5}>Signature</Typography.Title>
-          <Button
-            type="primary"
-            onClick={() => setIsVerifySignatureModalVisible(true)}
-            loading={isLoading}
-            disabled={isLoading}
-          >
+          <Button type="primary" onClick={() => setIsVerifySignatureModalVisible(true)}>
             Verify
           </Button>
         </Card>
@@ -181,9 +175,8 @@ const FeedDetails = ({ feed }: FeedDetailsProps) => {
         <VerifyModal
           isVisible={isVerifySignatureModalVisible}
           setIsVisible={setIsVerifySignatureModalVisible}
-          signatureData={data[0].signature[0]}
+          signatureAddress={data[0].signature[0]}
           id={id}
-          feedDataWithProof={verifyData}
         />
       )}
     </Flex>

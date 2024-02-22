@@ -51,3 +51,19 @@ export type SignatureData = {
   timestamp: number;
   signature: string;
 };
+
+export type VerifyData = {
+  data: {
+    DefaultPriceFeed?: {
+      rate: number;
+      decimals: number;
+      timestamp: number;
+    };
+    CustomPriceFeed?: {
+      rate: number;
+      decimals: number;
+      timestamp: number;
+    };
+  };
+  signature: string;
+};

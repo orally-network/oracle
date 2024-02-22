@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Space, Card, Typography, Flex, Drawer, Alert } from 'antd';
 import ConfettiExplosion, { ConfettiProps } from 'react-confetti-explosion';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import useWindowDimensions from 'Utils/useWindowDimensions';
-import config from 'Constants/config';
 import Loader from 'Components/Loader';
 import useSybilFeeds from 'Providers/SybilPairs/useSybilFeeds';
 import { add0x } from 'Utils/addressUtils';
@@ -12,6 +11,7 @@ import IconLink from 'Components/IconLink';
 import ReactJson from '@microlink/react-json-view';
 import { toast } from 'react-toastify';
 import Button from 'Components/Button';
+import { VerifyData } from 'Interfaces/feed';
 
 const confetti: ConfettiProps = {
   force: 0.6,
@@ -35,35 +35,27 @@ type VerifyModalProps = {
   setIsVisible: (isVisible: boolean) => void;
   signatureData: string;
   id: string;
+  feedDataWithProof: VerifyData;
 };
 
-export const VerifyModal = ({ isVisible, setIsVisible, signatureData, id }: VerifyModalProps) => {
+export const VerifyModal = ({
+  isVisible,
+  setIsVisible,
+  signatureData,
+  id,
+  feedDataWithProof,
+}: VerifyModalProps) => {
   const [isConfettiExplode, setIsConfettiExplode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [verifyData, setVerifyData] = useState({});
   const [isValid, setIsValid] = useState(false);
   const { readVerifyUnpacked } = useSybilFeeds();
+  const [verifyData, setVerifyData] = useState<VerifyData>({ ...feedDataWithProof });
 
   const { width } = useWindowDimensions();
   const isMobile = width < BREAK_POINT_MOBILE;
 
-  const getFeedDataWithProof = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch(
-        `https://${config.sybil_canister_id}.icp0.io/get_feed_data_with_proof?id=${id}`
-      );
-      const data = await response.json();
-      setVerifyData(data);
-      return data;
-    } catch (error) {
-      console.error('Error fetching feed data', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const onClickVerify = async () => {
+    setIsLoading(true);
     try {
       const verifyUnpacked = await readVerifyUnpacked({
         pairId: id,
@@ -89,12 +81,10 @@ export const VerifyModal = ({ isVisible, setIsVisible, signatureData, id }: Veri
       setIsConfettiExplode(true);
       toast.error('Something went wrong. Try again later.');
       setIsValid(false);
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    getFeedDataWithProof();
-  }, []);
 
   const confettiProps = isValid ? successConfetti : errorConfetti;
 
@@ -161,7 +151,7 @@ export const VerifyModal = ({ isVisible, setIsVisible, signatureData, id }: Veri
               displayObjectSize={false}
               displayDataTypes={false}
               collapseStringsAfterLength={300}
-              onEdit={(obj) => setVerifyData(obj)}
+              onEdit={(obj) => setVerifyData(obj?.updated_src)}
               indentWidth={2}
             />
           )}

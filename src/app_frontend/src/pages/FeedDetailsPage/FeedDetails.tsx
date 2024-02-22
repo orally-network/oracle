@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Space, Card, Typography, Flex, Skeleton as AntdSkeleton, Button, Tooltip } from 'antd';
+import { Space, Card, Typography, Flex, Skeleton as AntdSkeleton, Tooltip } from 'antd';
 
 import styles from './FeedDetailsPage.scss';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
@@ -13,6 +13,8 @@ import { ExportOutlined } from '@ant-design/icons';
 import { VerifyModal } from './VerifyModal';
 import { exchangeURLS } from 'Constants/sources';
 import weatherImg from 'Assets/weather.png';
+import { useGetFeedDataWithProof } from 'ApiHooks/useGetFeedDataWithProof';
+import Button from 'Components/Button';
 
 interface FeedDetailsProps {
   feed: Feed;
@@ -21,8 +23,8 @@ interface FeedDetailsProps {
 const FeedDetails = ({ feed }: FeedDetailsProps) => {
   const { width } = useWindowDimensions();
   const isMobile = width < BREAK_POINT_MOBILE;
-
   const [isVerifySignatureModalVisible, setIsVerifySignatureModalVisible] = useState(false);
+  const { isLoading, verifyData } = useGetFeedDataWithProof({ id: feed.id });
 
   const {
     id,
@@ -128,14 +130,17 @@ const FeedDetails = ({ feed }: FeedDetailsProps) => {
       </Flex>
 
       <Flex gap="middle" vertical style={{ flex: 0.5 }}>
-        {data && data.length && data[0].signature?.length ? (
-          <Card>
-            <Typography.Title level={5}>Signature</Typography.Title>
-            <Button type="primary" onClick={() => setIsVerifySignatureModalVisible(true)}>
-              Verify
-            </Button>
-          </Card>
-        ) : null}
+        <Card>
+          <Typography.Title level={5}>Signature</Typography.Title>
+          <Button
+            type="primary"
+            onClick={() => setIsVerifySignatureModalVisible(true)}
+            loading={isLoading}
+            disabled={isLoading}
+          >
+            Verify
+          </Button>
+        </Card>
 
         <Card>
           <Typography.Title level={5}>Sources</Typography.Title>
@@ -153,14 +158,17 @@ const FeedDetails = ({ feed }: FeedDetailsProps) => {
             <Flex gap={4} align="center">
               {exchangeURLS.map((exchange) => {
                 return (
-                  <Tooltip title={exchange.url} key={exchange.name}>
-                    <a href={exchange.url} style={{ maxWidth: 30 }}>
+                  <Tooltip
+                    title={<Typography.Text copyable>{exchange.url}</Typography.Text>}
+                    key={exchange.name}
+                  >
+                    <div style={{ maxWidth: 30 }}>
                       {typeof exchange.logo === 'string' ? (
                         <img src={exchange.logo} alt={exchange.name} width={30} />
                       ) : (
                         <exchange.logo width={30} height={30} />
                       )}
-                    </a>
+                    </div>
                   </Tooltip>
                 );
               })}
@@ -175,6 +183,7 @@ const FeedDetails = ({ feed }: FeedDetailsProps) => {
           setIsVisible={setIsVerifySignatureModalVisible}
           signatureData={data[0].signature[0]}
           id={id}
+          feedDataWithProof={verifyData}
         />
       )}
     </Flex>

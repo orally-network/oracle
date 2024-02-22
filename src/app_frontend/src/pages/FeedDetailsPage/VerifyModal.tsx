@@ -160,7 +160,7 @@ export const VerifyModal = ({
           Validator Address
           <Space size="small">
             <Typography.Text copyable ellipsis style={{ maxWidth: 300 }}>
-              {add0x(signatureData)}
+              {add0x(verifyData.signature)}
             </Typography.Text>
             <IconLink
               link={

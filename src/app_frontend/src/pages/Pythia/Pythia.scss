@@ -3,20 +3,21 @@
 }
 
 .notWhitelisted {
-  background-color: red;
+  background-color: #ff6a53;
   width: 110px;
-  border-radius: 10px;
+  border-radius: 8px;
   text-align: center;
   color: white;
-  margin-top: 5px;
   position: absolute;
   right: 35px;
+  top: -12px;
+  padding: 3px 5px;
 }
 
 .controls {
- display: flex;
- justify-content: end;
-  
+  display: flex;
+  justify-content: end;
+
   button {
     margin-left: 14px;
   }

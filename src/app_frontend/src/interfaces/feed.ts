@@ -3,7 +3,7 @@ export interface Feed {
   status: FeedStatus;
   decimals?: number[];
   owner: string;
-  data: FeedData[];
+  data: [FeedData[]];
   update_freq: number;
   feed_type: FeedType;
   sources: Source[];
@@ -39,7 +39,31 @@ export type FilterFeedType = 'Default' | 'Custom' | 'All';
 export interface FeedData {
   decimals: number; // bigint
   rate: number; // bigint
-  signature: string; // []
+  signature: [string]; // []
   symbol: string; // BTC/USD
   timestamp: number; // bigint
 }
+
+export type SignatureData = {
+  pairId: string;
+  price: number;
+  decimals: number;
+  timestamp: number;
+  signature: string;
+};
+
+export type VerifyData = {
+  data: {
+    DefaultPriceFeed?: {
+      rate: number;
+      decimals: number;
+      timestamp: number;
+    };
+    CustomPriceFeed?: {
+      rate: number;
+      decimals: number;
+      timestamp: number;
+    };
+  };
+  signature: string;
+};

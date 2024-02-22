@@ -19,6 +19,7 @@ import ErrorPage from 'Pages/ErrorPage';
 import { CACHE_TIME, QUERY_CLIENT_DEFAULT_RETRY_COUNT, TIME_TO_WAIT } from 'Constants/query';
 import { PythiaDataProvider } from 'Providers/PythiaData';
 import { WeatherAuction } from 'Pages/WeatherAuction';
+import { FeedDetailsPage } from 'Pages/FeedDetailsPage';
 import SybilFeedsProvider from 'Providers/SybilPairs/SybilFeedsProvider';
 
 const router = createBrowserRouter([
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
       {
         path: ROUTES.SYBIL,
         element: <Sybil />,
+      },
+      {
+        path: `${ROUTES.SYBIL}/:id`,
+        element: <FeedDetailsPage />,
       },
       {
         path: ROUTES.PYTHIA,

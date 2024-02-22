@@ -20,6 +20,7 @@ import { GeneralResponse } from 'Interfaces/common';
 
 import { FilterType } from 'Interfaces/subscription';
 import { SubscriptionList } from './SubscriptionList/SubscriptionList';
+import { Helmet } from 'react-helmet';
 
 const Pythia = () => {
   const [isWhitelisted, setIsWhitelisted] = useState(true);
@@ -175,48 +176,58 @@ const Pythia = () => {
   );
 
   return (
-    <Layout.Content className={styles.pythia} title="Pythia">
-      <Flex vertical align="center" wrap="wrap">
-        <Space size="middle" direction="vertical" style={{ width: '100%', position: 'relative' }}>
-          {!isWhitelisted && <div className={styles.notWhitelisted}>Not whitelisted</div>}
-          <Flex align="center" justify="space-between" gap={8}>
-            <Typography.Title style={{ minWidth: '70px' }} level={3}>
-              Pythia
-            </Typography.Title>
+    <>
+      <Helmet>
+        <meta
+          name="description"
+          content="Pythia - Setup any type of automation for your smart contract on any chain"
+        />
+        <meta property="og:image" content="pythia.png" />
+        <title>Orally Network | Pythia - On-Chain Automation</title>
+      </Helmet>
+      <Layout.Content className={styles.pythia} title="Pythia">
+        <Flex vertical align="center" wrap="wrap">
+          <Space size="middle" direction="vertical" style={{ width: '100%', position: 'relative' }}>
+            {!isWhitelisted && <div className={styles.notWhitelisted}>Not whitelisted</div>}
+            <Flex align="center" justify="space-between" gap={8}>
+              <Typography.Title style={{ minWidth: '70px' }} level={3}>
+                Pythia
+              </Typography.Title>
 
-            <FiltersBar />
-            <Button
-              type="primary"
-              size="large"
-              onClick={() => setIsNewSubscriptionModalVisible(!isNewSubscriptionModalVisible)}
-              icon={<PlusCircleOutlined />}
-              style={{ width: isMobile ? '40px' : 'auto', height: isMobile ? '40px' : 'auto' }}
-            >
-              {isMobile ? '' : 'Create subscription'}
-            </Button>
-          </Flex>
+              <FiltersBar />
+              <Button
+                type="primary"
+                size="large"
+                onClick={() => setIsNewSubscriptionModalVisible(!isNewSubscriptionModalVisible)}
+                icon={<PlusCircleOutlined />}
+                style={{ width: isMobile ? '40px' : 'auto', height: isMobile ? '40px' : 'auto' }}
+              >
+                {isMobile ? '' : 'Create subscription'}
+              </Button>
+            </Flex>
 
-          <SubscriptionList
-            startSubscription={startSubscription}
-            stopSubscription={stopSubscription}
-            withdraw={withdraw}
-          />
+            <SubscriptionList
+              startSubscription={startSubscription}
+              stopSubscription={stopSubscription}
+              withdraw={withdraw}
+            />
 
-          {isNewSubscriptionModalVisible && (
-            <Drawer
-              title="Create Subscription"
-              placement="right"
-              onClose={() => setIsNewSubscriptionModalVisible(false)}
-              open={isNewSubscriptionModalVisible}
-              style={{ marginTop: '47px' }}
-              width={isMobile ? '90vw' : '362px'}
-            >
-              <NewSubscription subscribe={subscribe} addressData={addressData} />
-            </Drawer>
-          )}
-        </Space>
-      </Flex>
-    </Layout.Content>
+            {isNewSubscriptionModalVisible && (
+              <Drawer
+                title="Create Subscription"
+                placement="right"
+                onClose={() => setIsNewSubscriptionModalVisible(false)}
+                open={isNewSubscriptionModalVisible}
+                style={{ marginTop: '47px' }}
+                width={isMobile ? '90vw' : '362px'}
+              >
+                <NewSubscription subscribe={subscribe} addressData={addressData} />
+              </Drawer>
+            )}
+          </Space>
+        </Flex>
+      </Layout.Content>
+    </>
   );
 };
 

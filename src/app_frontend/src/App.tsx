@@ -35,7 +35,11 @@ const router = createBrowserRouter([
       {
         // Default route navigation
         index: true,
-        element: <Navigate to={`/${ROUTES.WEATHER_AUCTION}`} replace />,
+        element: <Navigate to={`/${ROUTES.WEATHER_PREDICTION}`} replace />,
+      },
+      {
+        path: ROUTES.WEATHER_AUCTION,
+        element: <Navigate to={`/${ROUTES.WEATHER_PREDICTION}`} replace />,
       },
       {
         path: ROUTES.SYBIL,
@@ -54,7 +58,7 @@ const router = createBrowserRouter([
         element: <SubscriptionDetailsPage />,
       },
       {
-        path: `${ROUTES.WEATHER_AUCTION}`,
+        path: `${ROUTES.WEATHER_PREDICTION}`,
         element: <WeatherAuction />,
       },
     ],

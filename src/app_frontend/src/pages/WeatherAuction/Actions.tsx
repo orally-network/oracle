@@ -14,7 +14,7 @@ export const Actions = () => {
       <Flex vertical>
         <span>My winnings</span>
         <span className={styles.accentText}>
-          {userWinningBalance} ETH
+          {userWinningBalance.toFixed(4)} ETH
           {balanceUsd ? ` ($${balanceUsd.toFixed(2)})` : null}
         </span>
       </Flex>

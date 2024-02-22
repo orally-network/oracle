@@ -20,7 +20,6 @@ interface FeedDetailsProps {
 }
 
 const FeedDetails = ({ feed }: FeedDetailsProps) => {
-  console.log(feed);
   const { width } = useWindowDimensions();
   const isMobile = width < BREAK_POINT_MOBILE;
   const [isVerifySignatureModalVisible, setIsVerifySignatureModalVisible] = useState(false);

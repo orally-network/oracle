@@ -64,6 +64,9 @@ a {
 
 //TODO: define styles for react-select and remove overrides
 :global {
+  .variable-value {
+    word-break: break-all;
+  }
   .react-select__control {
     background-color: #081120 !important;
     border-color: #4a6293 !important;

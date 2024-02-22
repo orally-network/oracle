@@ -27,11 +27,13 @@ interface useGetSybilFeedsResult {
 }
 
 interface GetFeedsResponse {
-  items: Feed[];
-  page: number;
-  size: number;
-  total_items: number;
-  total_pages: number;
+  Ok: {
+    items: Feed[];
+    page: number;
+    size: number;
+    total_items: number;
+    total_pages: number;
+  };
 }
 
 export const useGetSybilFeeds = ({
@@ -61,10 +63,12 @@ export const useGetSybilFeeds = ({
                 page,
                 size: size || DEFAULT_FEEDS_SIZE,
               },
-            ]
+            ],
+        [], //TODO: add msg and sig
+        []
       );
 
-      feedsResponse.items.forEach((feed: Feed) => {
+      feedsResponse.Ok.items.forEach((feed: Feed) => {
         queryClient.setQueryDefaults(feed.id.toString(), {
           cacheTime: Infinity,
           staleTime: Infinity,
@@ -80,7 +84,7 @@ export const useGetSybilFeeds = ({
           totalItems: 10,
           totalPages: 1,
         },
-        items: feedsResponse.items,
+        items: feedsResponse.Ok.items,
       };
     },
     {

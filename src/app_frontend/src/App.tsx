@@ -19,6 +19,8 @@ import ErrorPage from 'Pages/ErrorPage';
 import { CACHE_TIME, QUERY_CLIENT_DEFAULT_RETRY_COUNT, TIME_TO_WAIT } from 'Constants/query';
 import { PythiaDataProvider } from 'Providers/PythiaData';
 import { WeatherAuction } from 'Pages/WeatherAuction';
+import { FeedDetailsPage } from 'Pages/FeedDetailsPage';
+import SybilFeedsProvider from 'Providers/SybilPairs/SybilFeedsProvider';
 
 const router = createBrowserRouter([
   {
@@ -33,11 +35,15 @@ const router = createBrowserRouter([
       {
         // Default route navigation
         index: true,
-        element: <Navigate to={`/${ROUTES.PYTHIA}`} replace />,
+        element: <Navigate to={`/${ROUTES.WEATHER_AUCTION}`} replace />,
       },
       {
         path: ROUTES.SYBIL,
         element: <Sybil />,
+      },
+      {
+        path: `${ROUTES.SYBIL}/:id`,
+        element: <FeedDetailsPage />,
       },
       {
         path: ROUTES.PYTHIA,
@@ -86,14 +92,16 @@ const App = () => {
           <QueryClientProvider client={queryClient}>
             <GlobalStateProvider>
               <PythiaDataProvider>
-                <RouterProvider
-                  router={router}
-                  fallbackElement={
-                    <Space size="large">
-                      <Spin size="large" />
-                    </Space>
-                  }
-                />
+                <SybilFeedsProvider>
+                  <RouterProvider
+                    router={router}
+                    fallbackElement={
+                      <Space size="large">
+                        <Spin size="large" />
+                      </Space>
+                    }
+                  />
+                </SybilFeedsProvider>
               </PythiaDataProvider>
             </GlobalStateProvider>
           </QueryClientProvider>

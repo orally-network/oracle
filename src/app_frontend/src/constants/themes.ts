@@ -43,7 +43,7 @@ export const orallyTheme = {
       colorText: 'white',
       colorFillAlter: '#091325',
       colorTextDisabled: 'white',
-      colorIcon: 'red',
+      colorIcon: '#4A6293',
       borderRadius: '8px',
     },
     Switch: {
@@ -117,7 +117,7 @@ export const orallyTheme = {
     Pagination: {
       itemBg: '#0C172B',
       colorBgContainer: '#0C172B',
-      colorBorder: 'red',
+      // colorBorder: 'red',
       borderRadius: 12,
       colorPrimary: 'var(--primary-color, #1766F9)',
       colorPrimaryHover: '#5393FF',
@@ -148,6 +148,11 @@ export const orallyTheme = {
     },
     Empty: {
       colorText: 'var(--primary-color, #1890FF)',
+    },
+    Alert: {
+      colorText: 'white',
+      colorWarningBg: '#553533',
+      colorWarningBorder: '#553533',
     },
   },
 };

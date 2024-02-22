@@ -9,21 +9,37 @@ import { NewFeed } from 'Pages/Sybil/NewFeed/NewFeed';
 import weatherImg from 'Assets/weather.png';
 
 import useWindowDimensions from 'Utils/useWindowDimensions';
-import { Feed } from 'Interfaces/feed';
+import { Feed, FeedType } from 'Interfaces/feed';
 import { FeedLogos } from './FeedLogos';
-import { BlockOutlined } from '@ant-design/icons';
+import { BlockOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 
 interface FeedCardProps {
   feed: Feed;
 }
 
-const getFeedImg = ({ feed_type, id, isWeather }) => {
-  if (feed_type && id && feed_type.Default === null) {
+export const getFeedImg = ({
+  feed_type,
+  id,
+  isWeather = false,
+}: {
+  feed_type: FeedType;
+  id: string;
+  isWeather?: boolean;
+}) => {
+  if (feed_type && id && feed_type.hasOwnProperty('Default')) {
     return <FeedLogos feed={id} />;
   }
 
   if (isWeather) {
-    return <img src={weatherImg} alt="sun" />;
+    return (
+      <img
+        src={weatherImg}
+        alt="sun"
+        style={{
+          maxWidth: '35px',
+        }}
+      />
+    );
   }
 
   return (
@@ -55,37 +71,39 @@ const FeedCard = ({ feed }: FeedCardProps) => {
   const { width } = useWindowDimensions();
   const isMobile = width <= BREAK_POINT_MOBILE;
 
-  const lastUpdateDateTime = new Date(Number(timestamp) * 1000);
+  const lastUpdateDateTime = timestamp ? new Date(Number(timestamp) * 1000) : new Date();
   const diffMs = Math.abs(+new Date() - +lastUpdateDateTime);
-  const lastRate = Number(rate) / Math.pow(10, Number(decimals?.[0]));
+  const lastRate =
+    rate && decimals && decimals[0] ? Number(rate) / Math.pow(10, Number(decimals[0])) : 0;
   const isWeather = id.toLowerCase().includes('weather');
 
-  const openDetails = useCallback(() => {
-    if (feed_type.Custom === null) {
-      setIsFeedDetailsVisible(true);
-    }
-  }, [feed_type]);
-
-  const closeDetails = useCallback(() => {
-    setIsFeedDetailsVisible(false);
-  }, []);
-
   return (
-    <Card hoverable={true} className={styles.feed}>
-      <Space size="small" direction="vertical" style={{ width: '100%' }} onClick={openDetails}>
+    <Card
+      hoverable={true}
+      className={styles.feed}
+      onClick={() => navigate(`/sybil/${id.replace('/', '-')}`)}
+    >
+      <Space size="small" direction="vertical" style={{ width: '100%' }}>
         <div className={styles.header}>
           <div className={styles.info}>
-            {/* <div>{id}</div> */}
             <Space>
-              <Typography.Title level={4} style={{ margin: 0 }} ellipsis={true}>
+              <Typography.Title level={4} style={{ margin: 0, maxWidth: 180 }} ellipsis={true}>
                 {id}
               </Typography.Title>
             </Space>
           </div>
 
-          {/* <div className={styles.menu} onClick={() => setIsFeedDetailsVisible(true)}>
-            {feed.owner === address?.toLowerCase?.() ? <EditOutlined /> : <EyeOutlined />}
-          </div> */}
+          {feed_type.hasOwnProperty('Custom') && (
+            <div
+              className={styles.menu}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsFeedDetailsVisible(true);
+              }}
+            >
+              <EyeOutlined />
+            </div>
+          )}
         </div>
 
         <div className={styles.logoBg}>
@@ -114,7 +132,10 @@ const FeedCard = ({ feed }: FeedCardProps) => {
         <Drawer
           title="Feed details"
           placement="right"
-          onClose={closeDetails}
+          onClose={(e) => {
+            e.stopPropagation();
+            setIsFeedDetailsVisible(false);
+          }}
           open={isFeedDetailsVisible}
           style={{ marginTop: '47px' }}
           width={isMobile ? '90vw' : '362px'}

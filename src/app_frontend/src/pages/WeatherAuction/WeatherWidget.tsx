@@ -4,6 +4,25 @@ import styles from './WeatherAuction.scss';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import { getWeatherIcon } from 'Utils/mapWeatherData';
+import config from 'Constants/config';
+
+const WEATHER_SOURCE_1 = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/lisbon?unitGroup=metric&include=current&key=${config.weatherSource1Key}&contentType=json`;
+const WEATHER_SOURCE_2 = `https://api.weatherapi.com/v1/current.json?key=${config.weatherSource2Key}&q=Lisbon&aqi=no`;
+const WEATHER_SOURCE_3 = `https://api.openweathermap.org/data/3.0/onecall?lat=38.736946&lon=-9.142685&exclude=daily,hourly,minutely&appid=${config.weatherSource3Key}&units=metric`;
+
+async function fetchWeatherResource(url: string) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      // throw new Error('Network response was not ok');
+
+      return null;
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 export const WeatherWidget = () => {
   const [weatherData, setWeatherData] = useState<any>(null);
@@ -14,20 +33,32 @@ export const WeatherWidget = () => {
   const fetchWeatherData = async () => {
     setIsWeatherDataLoading(true);
     try {
-      const res = await fetch(
-        'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/lisbon?unitGroup=metric&include=current&key=Y5447H4MUE2V3ERL33G7T7PX3&contentType=json'
-      );
-      // currentConditions.feelslike
-      const data = await res.json();
-      setWeatherData(data);
-      return data;
+      const [result1, result2, result3] = await Promise.all([
+        fetchWeatherResource(WEATHER_SOURCE_1),
+        fetchWeatherResource(WEATHER_SOURCE_2),
+        fetchWeatherResource(WEATHER_SOURCE_3),
+      ]);
+
+      const tempFromResult1 = result1?.currentConditions?.temp;
+      const tempFromResult2 = result2?.current?.temp_c;
+      const tempFromResult3 = result3?.current?.temp;
+      const tempArray = [
+        tempFromResult1 ?? null,
+        tempFromResult2 ?? null,
+        tempFromResult3 ?? null,
+      ].filter(Boolean);
+
+      const average = tempArray.reduce((a, b) => a + b, 0) / tempArray.length;
+
+      setWeatherData({
+        ...result1,
+        currentTemperature: Math.floor(average * 10) / 10,
+      });
+      return result1;
     } catch (err) {
       console.error(err);
       try {
-        const backupRes = await fetch(
-          'https://api.openweathermap.org/data/3.0/onecall?lat=38.736946&lon=-9.142685&exclude=daily,hourly,minutely&appid=c048e977b95196479fc9142cfa01295a&units=metric'
-        );
-        // current.feels_like
+        const backupRes = await fetch(WEATHER_SOURCE_2);
         const backupData = await backupRes.json();
         setWeatherData(backupData);
         return backupRes;
@@ -45,9 +76,7 @@ export const WeatherWidget = () => {
 
   const currentDate = new Date();
   const currentTemperature =
-    isWeatherDataLoading || !weatherData
-      ? 0
-      : weatherData?.currentConditions?.temp || weatherData?.current?.temp;
+    isWeatherDataLoading || !weatherData ? 0 : weatherData.currentTemperature;
 
   const weatherIcon = !weatherData
     ? 'clear-day'
@@ -84,7 +113,7 @@ export const WeatherWidget = () => {
 
           <Flex align="center" vertical>
             <div className={styles.temperature}>
-              {isWeatherDataLoading ? <Spin /> : currentTemperature.toFixed(1)}
+              {isWeatherDataLoading ? <Spin /> : currentTemperature}
               <span>℃</span>
             </div>
             <span className={styles.label}>right now</span>

@@ -16,6 +16,7 @@ interface SybilFeedsContextInterface {
   createFeed: (feed: FeedRequest) => Promise<any>;
   fetchBalance: (addressData: AddressData) => Promise<any>;
   isBalanceLoading: boolean;
+  readVerifyUnpacked: (signatureData: any) => Promise<any>;
 }
 
 const SybilFeedsContext = createContext<SybilFeedsContextInterface>({
@@ -32,6 +33,7 @@ const SybilFeedsContext = createContext<SybilFeedsContextInterface>({
   createFeed: () => Promise.resolve(),
   fetchBalance: () => Promise.resolve(),
   isBalanceLoading: false,
+  readVerifyUnpacked: () => Promise.resolve(),
 });
 
 export default SybilFeedsContext;

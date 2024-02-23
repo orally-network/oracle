@@ -54,7 +54,7 @@ export const FeedDetailsPage = () => {
 
         {isFeedLoading ? (
           <FeedDetails.Skeleton />
-        ) : feedData === null ? (
+        ) : feedData === null || feedData === undefined ? (
           <FeedDetails.Empty />
         ) : (
           <FeedDetails feed={feedData} />

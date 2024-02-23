@@ -12,6 +12,7 @@ import ReactJson from '@microlink/react-json-view';
 import { toast } from 'react-toastify';
 import Button from 'Components/Button';
 import { VerifyData } from 'Interfaces/feed';
+import { useGetFeedDataWithProof } from 'ApiHooks/useGetFeedDataWithProof';
 
 const confetti: ConfettiProps = {
   force: 0.6,
@@ -33,42 +34,43 @@ const successConfetti: ConfettiProps = {
 type VerifyModalProps = {
   isVisible: boolean;
   setIsVisible: (isVisible: boolean) => void;
-  signatureData: string;
+  signatureAddress: string;
   id: string;
-  feedDataWithProof: VerifyData;
 };
 
 export const VerifyModal = ({
   isVisible,
   setIsVisible,
-  signatureData,
+  signatureAddress,
   id,
-  feedDataWithProof,
 }: VerifyModalProps) => {
   const [isConfettiExplode, setIsConfettiExplode] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const { readVerifyUnpacked } = useSybilFeeds();
-  const [verifyData, setVerifyData] = useState<VerifyData>({ ...feedDataWithProof });
+
+  const { isLoading, verifyData } = useGetFeedDataWithProof({ id });
+
+  const [newVerifyData, setNewVerifyData] = useState<VerifyData | {}>({ ...verifyData });
 
   const { width } = useWindowDimensions();
   const isMobile = width < BREAK_POINT_MOBILE;
 
   const onClickVerify = async () => {
-    setIsLoading(true);
+    setIsVerifying(true);
     try {
       const verifyUnpacked = await readVerifyUnpacked({
         pairId: id,
-        price: verifyData.data.hasOwnProperty('DefaultPriceFeed')
-          ? verifyData.data.DefaultPriceFeed.rate
-          : verifyData.data.CustomPriceFeed.rate,
-        decimals: verifyData.data.hasOwnProperty('DefaultPriceFeed')
-          ? verifyData.data.DefaultPriceFeed.decimals
-          : verifyData.data.CustomPriceFeed.decimals,
-        timestamp: verifyData.data.hasOwnProperty('DefaultPriceFeed')
-          ? verifyData.data.DefaultPriceFeed.timestamp
-          : verifyData.data.CustomPriceFeed.timestamp,
-        signature: add0x(verifyData.signature),
+        price: newVerifyData.data.hasOwnProperty('DefaultPriceFeed')
+          ? newVerifyData.data.DefaultPriceFeed.rate
+          : newVerifyData.data.CustomPriceFeed.rate,
+        decimals: newVerifyData.data.hasOwnProperty('DefaultPriceFeed')
+          ? newVerifyData.data.DefaultPriceFeed.decimals
+          : newVerifyData.data.CustomPriceFeed.decimals,
+        timestamp: newVerifyData.data.hasOwnProperty('DefaultPriceFeed')
+          ? newVerifyData.data.DefaultPriceFeed.timestamp
+          : newVerifyData.data.CustomPriceFeed.timestamp,
+        signature: add0x(newVerifyData.signature),
       });
       setIsConfettiExplode(true);
       setIsValid(verifyUnpacked);
@@ -82,7 +84,7 @@ export const VerifyModal = ({
       toast.error('Something went wrong. Try again later.');
       setIsValid(false);
     } finally {
-      setIsLoading(false);
+      setIsVerifying(false);
     }
   };
 
@@ -114,7 +116,7 @@ export const VerifyModal = ({
           >
             Done
           </Button>
-          <Button type="primary" onClick={onClickVerify} disabled={isLoading}>
+          <Button type="primary" onClick={onClickVerify} disabled={isVerifying}>
             Verify
             {isConfettiExplode && <ConfettiExplosion {...confettiProps} zIndex={1001} />}
           </Button>
@@ -151,7 +153,7 @@ export const VerifyModal = ({
               displayObjectSize={false}
               displayDataTypes={false}
               collapseStringsAfterLength={300}
-              onEdit={(obj) => setVerifyData(obj?.updated_src)}
+              onEdit={(obj) => setNewVerifyData(obj?.updated_src)}
               indentWidth={2}
             />
           )}
@@ -160,7 +162,7 @@ export const VerifyModal = ({
           Validator Address
           <Space size="small">
             <Typography.Text copyable ellipsis style={{ maxWidth: 300 }}>
-              {add0x(verifyData.signature)}
+              {add0x(signatureAddress)}
             </Typography.Text>
             <IconLink
               link={

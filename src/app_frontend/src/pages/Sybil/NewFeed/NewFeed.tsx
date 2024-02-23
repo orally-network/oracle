@@ -46,7 +46,7 @@ export const NewFeed = (params: any) => {
   const [balance, setBalance] = useState(0);
 
   const newKey = (index: number) => ({
-    title: index === 0 ? 'key' : `key${index}`,
+    title: index === 0 ? 'key' : `key${index + 1}`,
     key: '',
   });
 
@@ -244,7 +244,7 @@ export const NewFeed = (params: any) => {
               <Card
                 key={idx}
                 size="small"
-                title={idx > 1 ? 'Key ' + (idx + 1) : 'Key'}
+                title={idx === 0 ? 'Key' : `Key ${idx + 1}`}
                 extra={
                   <Button
                     type="text"

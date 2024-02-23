@@ -5,6 +5,7 @@ import { truncateAddressSymbolsNum } from 'Utils/addressUtils';
 import { Card, Space, Table, Typography } from 'antd';
 import { utils } from 'ethers';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
 const columns = [
@@ -45,20 +46,36 @@ const columns = [
   },
 ];
 
-export const WinnersTable = () => {
+export const WinnersTable = ({
+  pageSize = 100,
+  day,
+  title,
+}: {
+  pageSize?: number;
+  day?: string;
+  title?: string;
+}) => {
   const { address } = useAccount();
   const { winners, isWinnersLoading } = useWeatherData();
+  const navigate = useNavigate();
 
   return (
-    <Card title="Previous Winners">
+    <Card title={title || 'Previous Winners'} style={{ flex: 1 }}>
       <Table
         columns={columns}
-        dataSource={winners}
-        pagination={{ position: ['bottomRight'], defaultPageSize: 100 }}
+        dataSource={day !== undefined ? winners.filter((winner) => winner.day === day) : winners}
+        pagination={{ position: ['bottomRight'], defaultPageSize: pageSize }}
         loading={isWinnersLoading}
         rowKey="id"
-        rowClassName={(record, index) => {
-          return record.winner === address?.toLowerCase() ? 'highlight' : '';
+        rowClassName={(record) => {
+          return record.winner === address?.toLowerCase() ? 'highlight' : 'pointer';
+        }}
+        onRow={(record) => {
+          return {
+            onClick: () => {
+              navigate(`/weather-prediction/${record.day}`);
+            },
+          };
         }}
       />
     </Card>

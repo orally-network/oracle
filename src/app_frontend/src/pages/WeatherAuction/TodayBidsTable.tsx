@@ -15,11 +15,17 @@ export interface ChartItem {
   mine: number;
 }
 
-export const TodayBidsTable = () => {
+export const TodayBidsTable = ({
+  isTable = false,
+  title,
+}: {
+  isTable?: boolean;
+  title?: string;
+}) => {
   const { bids, isWinnersLoading } = useWeatherData();
   const { address } = useAccount();
 
-  const [isTableView, setIsTableView] = useState(false);
+  const [isTableView, setIsTableView] = useState(isTable);
 
   const { width } = useWindowDimensions();
   const isMobile = width < BREAK_POINT_MOBILE;
@@ -30,7 +36,7 @@ export const TodayBidsTable = () => {
       dataIndex: 'bidder',
       key: 'bidder',
       render: (address: string) => (
-        <Typography.Text copyable={{ text: address }}>
+        <Typography.Text copyable={{ text: address }} style={{ minWidth: 150, display: 'block' }}>
           {truncateAddressSymbolsNum(address, 8)}
         </Typography.Text>
       ),
@@ -102,7 +108,7 @@ export const TodayBidsTable = () => {
 
   return (
     <Card
-      title="Today’s bids"
+      title={title || 'Today’s bids'}
       style={{ flex: 1 }}
       extra={<div onClick={() => setIsTableView(!isTableView)}>{cardView()}</div>}
     >

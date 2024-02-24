@@ -1,4 +1,5 @@
 import { Card, Flex, Layout, Space, Typography } from 'antd';
+import { useParams, Navigate } from 'react-router-dom';
 import React from 'react';
 import { Actions } from './Actions';
 import { WeatherWidget } from './WeatherWidget';
@@ -12,10 +13,19 @@ import { PrizePool } from './PrizePool';
 import { ExportOutlined } from '@ant-design/icons';
 import IconLink from 'Components/IconLink';
 import { truncateEthAddress } from 'Utils/addressUtils';
+import { predictionsMap } from 'Constants/predictions';
+import ROUTES from 'Constants/routes';
+import { useWeatherData } from 'Providers/WeatherAuctionData/useWeatherData';
 
 export const WeatherAuction = () => {
   const { width } = useWindowDimensions();
   const isMobile = width < BREAK_POINT_MOBILE;
+  const { predictionChainId } = useWeatherData();
+  const { city } = useParams();
+
+  if (!city || !predictionsMap[city]) {
+    return <Navigate to={`/${ROUTES.WEATHER_PREDICTION}/lisbon`} replace />
+  }
 
   return (
     <WeatherAuctionProvider>
@@ -23,10 +33,10 @@ export const WeatherAuction = () => {
         <Space size="middle" direction="vertical" style={{ width: '100%', position: 'relative' }}>
           <Flex align="center" justify="space-between" gap={8}>
             <Typography.Title style={{ minWidth: '70px' }} level={3}>
-              Weather Prediction ({truncateEthAddress("0x8B2B8E6e8bF338e6071E6Def286B8518B7BFF7F1")})
+              Weather Prediction ({truncateEthAddress(predictionsMap[city].contract[predictionChainId])})
               {' '}
               <IconLink
-                link="https://arbiscan.io/address/0x8B2B8E6e8bF338e6071E6Def286B8518B7BFF7F1"
+                link={`https://arbiscan.io/address/${predictionsMap[city].contract[predictionChainId]}`}
                 IconComponent={ExportOutlined}
               />
             </Typography.Title>

@@ -1,5 +1,5 @@
 import { Card, Flex, Layout, Space, Spin, Typography } from 'antd';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { WeatherAuctionProvider } from 'Providers/WeatherAuctionData/WeatherAuctionProvider';
@@ -13,23 +13,65 @@ import { useWeatherData } from 'Providers/WeatherAuctionData/useWeatherData';
 import { useParams } from 'react-router-dom';
 import styles from './WeatherDayDetails.scss';
 import { utils } from 'ethers';
+import { fetchTransaction } from '@wagmi/core';
 
 export const WeatherDayDetails = () => {
+  const [actualTemperature, setActualTemperature] = useState<number>(0);
   const { width } = useWindowDimensions();
   const isMobile = width < BREAK_POINT_MOBILE;
   const { day } = useParams();
 
-  const { setDay, winners, isWinnersLoading } = useWeatherData();
+  const { setDay, winners, isWinnersLoading, ethRate } = useWeatherData();
 
-  const winner = winners.find((winner) => winner.day === day);
+  const dayWinners = winners.filter((winner) => winner.day === day);
 
-  console.log('winner', winner);
+  const dayPrize = dayWinners.length
+    ? dayWinners.reduce(
+        (acc, currentValue) => acc + +utils.formatEther(currentValue.winnerPrize),
+        0
+      )
+    : 0;
 
   useEffect(() => {
     if (day !== undefined) {
       setDay(Number(day));
     }
   }, []);
+
+  useEffect(() => {
+    const asyncFn = async () => {
+      const tx = await fetchTransaction({
+        hash: dayWinners[0]?.transactionHash,
+      });
+
+      console.log({ tx });
+
+      const multicallInterface = new utils.Interface([
+        'function multicall((address,bytes,uint256)[])',
+      ]);
+
+      const decodedMulticallInput = multicallInterface.decodeFunctionData('multicall', tx.input);
+
+      console.log({ res: decodedMulticallInput?.[0]?.[0]?.[1] });
+
+      const callDataInterface = new utils.Interface([
+        'function updateTemperature(string, uint256, uint256, uint256)',
+      ]);
+
+      const decodedCallData = callDataInterface.decodeFunctionData(
+        'updateTemperature',
+        decodedMulticallInput?.[0]?.[0]?.[1]
+      );
+
+      console.log({ resCallData: decodedCallData });
+
+      console.log({ actualTemp: Number(decodedCallData[1]) });
+
+      setActualTemperature(Number(decodedCallData[1]));
+    };
+
+    asyncFn();
+  }, [dayWinners.length]);
 
   return (
     <Layout.Content className="weather-auction">
@@ -54,8 +96,8 @@ export const WeatherDayDetails = () => {
           >
             <Card
               style={{
-                flex: 1,
                 height: 177,
+                minWidth: isMobile ? '50%' : '200px',
               }}
             >
               Day
@@ -67,13 +109,22 @@ export const WeatherDayDetails = () => {
               style={{
                 flex: 1,
                 height: 177,
+                maxWidth: isMobile ? '50%' : '100%',
               }}
             >
               Prize
-              <Flex justify="center" align="center">
-                <div className={styles.bigFont}>
-                  {Number(utils.formatEther(winner?.winnerPrize || 0)).toFixed(4)}
-                </div>
+              <Flex justify="center" align="center" vertical>
+                {isWinnersLoading ? (
+                  <Spin />
+                ) : (
+                  <>
+                    <div className={styles.bigFont}>
+                      {dayWinners.length && dayPrize ? dayPrize.toFixed(4) : 0}
+                      <span> ETH</span>
+                    </div>
+                    <div>${ethRate && dayPrize ? dayPrize * ethRate : 0}</div>
+                  </>
+                )}
               </Flex>
             </Card>
           </Flex>
@@ -87,20 +138,29 @@ export const WeatherDayDetails = () => {
               style={{
                 flex: 1,
                 height: 177,
+                maxWidth: '50%',
               }}
             >
               Bid Temperature
               <Flex justify="center" align="center">
-                <div className={styles.bigFont}>
-                  {isWinnersLoading ? (
-                    <Spin />
-                  ) : winner && winner.temperature ? (
-                    Number(winner.temperature) / 10
-                  ) : (
-                    0
-                  )}
-                  <span>℃</span>
-                </div>
+                {isWinnersLoading ? (
+                  <Spin />
+                ) : (
+                  <Typography.Link
+                    href={`https://arbiscan.io/tx/${dayWinners[0]?.transactionHash}#eventlog`}
+                  >
+                    <div className={styles.bigFont}>
+                      {dayWinners.length ? (
+                        <>
+                          {Number(dayWinners[0].temperature) / 10}
+                          <span>℃</span>
+                        </>
+                      ) : (
+                        0
+                      )}
+                    </div>
+                  </Typography.Link>
+                )}
               </Flex>
             </Card>
             <Card
@@ -109,7 +169,23 @@ export const WeatherDayDetails = () => {
                 height: 177,
               }}
             >
-              Real Temperature
+              Actual Temperature
+              {isWinnersLoading ? (
+                <div>
+                  <Spin />
+                </div>
+              ) : (
+                <div className={styles.bigFont}>
+                  {actualTemperature ? (
+                    <>
+                      {actualTemperature / 10}
+                      <span>℃</span>
+                    </>
+                  ) : (
+                    0
+                  )}
+                </div>
+              )}
             </Card>
           </Flex>
         </Flex>

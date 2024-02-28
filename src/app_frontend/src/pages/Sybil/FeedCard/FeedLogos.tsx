@@ -7,7 +7,7 @@ interface FeedLogosProps {
 }
 
 export const FeedLogos = ({ feed, size = 46 }: FeedLogosProps) => {
-  const [firstCoin, secondCoin] = feed.split('/');
+  const [firstCoin, secondCoin = ''] = feed.split('/');
   const [isPlaceholder, setIsPlaceholder] = React.useState(false);
 
   return (

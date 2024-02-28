@@ -25,12 +25,14 @@ export const WeatherDayDetails = () => {
 
   const dayWinners = winners.filter((winner) => winner.day === day);
 
-  const dayPrize = dayWinners.length
-    ? dayWinners.reduce(
-        (acc, currentValue) => acc + +utils.formatEther(currentValue.winnerPrize),
-        0
-      )
-    : 0;
+  const dayPrize =
+    dayWinners.length > 0
+      ? dayWinners.reduce(
+          (acc, currentValue) => acc + +utils.formatEther(currentValue.winnerPrize),
+          0
+        )
+      : 0;
+  console.log({ dayWinners });
 
   useEffect(() => {
     if (day !== undefined) {
@@ -69,8 +71,9 @@ export const WeatherDayDetails = () => {
 
       setActualTemperature(Number(decodedCallData[1]));
     };
-
-    asyncFn();
+    if (dayWinners.length > 0) {
+      asyncFn();
+    }
   }, [dayWinners.length]);
 
   return (

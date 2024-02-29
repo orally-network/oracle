@@ -149,20 +149,20 @@ export const WeatherDayDetails = () => {
                 {isWinnersLoading ? (
                   <Spin />
                 ) : (
-                  <Typography.Link
-                    href={`https://arbiscan.io/tx/${dayWinners[0]?.transactionHash}#eventlog`}
-                  >
-                    <div className={styles.bigFont}>
-                      {dayWinners.length ? (
-                        <>
-                          {Number(dayWinners[0].temperature) / 10}
-                          <span>℃</span>
-                        </>
-                      ) : (
-                        0
-                      )}
-                    </div>
-                  </Typography.Link>
+                  // <Typography.Link
+                  //   href={`https://arbiscan.io/tx/${dayWinners[0]?.transactionHash}#eventlog`}
+                  // >
+                  <div className={styles.bigFont}>
+                    {dayWinners.length ? (
+                      <>
+                        {Number(dayWinners[0].temperature) / 10}
+                        <span>℃</span>
+                      </>
+                    ) : (
+                      0
+                    )}
+                  </div>
+                  // </Typography.Link>
                 )}
               </Flex>
             </Card>

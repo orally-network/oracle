@@ -12,6 +12,7 @@ import { useSearchParams } from 'react-router-dom';
 import useSybilData from 'Providers/SybilPairs/useSybilFeeds';
 import { FilterFeedType } from 'Interfaces/feed';
 import { NewFeed } from './NewFeed/NewFeed';
+import { Helmet } from 'react-helmet';
 
 const Sybil = () => {
   const [isNewFeedModalVisible, setIsNewFeedModalVisible] = useState(false);
@@ -32,39 +33,50 @@ const Sybil = () => {
   }, [searchParams, setFeedType, setShowMine]);
 
   return (
-    <Layout.Content className={styles.sybil}>
-      <Space size="middle" direction="vertical" style={{ width: '100%', position: 'relative' }}>
-        <Flex align="center" justify="space-between" gap={8}>
-          <Typography.Title style={{ minWidth: '70px' }} level={3}>
-            Sybil
-          </Typography.Title>
-          <Filters />
-          <Button
-            type="primary"
-            size="large"
-            onClick={() => setIsNewFeedModalVisible(!isNewFeedModalVisible)}
-            icon={<PlusCircleOutlined />}
-            style={{ width: isMobile ? '40px' : 'auto', height: isMobile ? '40px' : 'auto' }}
-          >
-            {isMobile ? '' : 'Create feed'}
-          </Button>
-        </Flex>
-        <Feeds />
+    <>
+      <Helmet>
+        <meta
+          name="description"
+          content="Sybil - Setup custom data feed to empower you smart contract with real world data "
+        />
+        <meta property="og:image" content="sybil.png" />
+        <title>Orally Network | Sybil - Permissionless Data Fetcher</title>
+      </Helmet>
 
-        {isNewFeedModalVisible && (
-          <Drawer
-            title="Create Feed"
-            placement="right"
-            onClose={() => setIsNewFeedModalVisible(false)}
-            open={isNewFeedModalVisible}
-            style={{ marginTop: '47px' }}
-            width={isMobile ? '90vw' : '362px'}
-          >
-            <NewFeed />
-          </Drawer>
-        )}
-      </Space>
-    </Layout.Content>
+      <Layout.Content className={styles.sybil}>
+        <Space size="middle" direction="vertical" style={{ width: '100%', position: 'relative' }}>
+          <Flex align="center" justify="space-between" gap={8}>
+            <Typography.Title style={{ minWidth: '70px' }} level={3}>
+              Sybil
+            </Typography.Title>
+            <Filters />
+            <Button
+              type="primary"
+              size="large"
+              onClick={() => setIsNewFeedModalVisible(!isNewFeedModalVisible)}
+              icon={<PlusCircleOutlined />}
+              style={{ width: isMobile ? '40px' : 'auto', height: isMobile ? '40px' : 'auto' }}
+            >
+              {isMobile ? '' : 'Create feed'}
+            </Button>
+          </Flex>
+          <Feeds />
+
+          {isNewFeedModalVisible && (
+            <Drawer
+              title="Create Feed"
+              placement="right"
+              onClose={() => setIsNewFeedModalVisible(false)}
+              open={isNewFeedModalVisible}
+              style={{ marginTop: '47px' }}
+              width={isMobile ? '90vw' : '362px'}
+            >
+              <NewFeed />
+            </Drawer>
+          )}
+        </Space>
+      </Layout.Content>
+    </>
   );
 };
 

@@ -5,6 +5,7 @@ import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import { getWeatherIcon } from 'Utils/mapWeatherData';
 import config from 'Constants/config';
+import { Helmet } from 'react-helmet';
 
 const WEATHER_SOURCE_1 = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/lisbon?unitGroup=metric&include=current&key=${config.weatherSource1Key}&contentType=json`;
 const WEATHER_SOURCE_2 = `https://api.weatherapi.com/v1/current.json?key=${config.weatherSource2Key}&q=Lisbon&aqi=no`;
@@ -85,41 +86,48 @@ export const WeatherWidget = () => {
   console.log({ weatherData });
 
   return (
-    <Flex gap="middle" vertical={isMobile}>
-      <Card
-        style={{ width: '177', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-      >
-        <Flex style={{ width: '104px', height: '104px' }} align="center" justify="center">
-          {isWeatherDataLoading ? (
-            <Spin />
-          ) : (
-            <img src={`weather/${weatherIcon}.svg`} alt="weather icon" />
-          )}
-        </Flex>
-      </Card>
-      <Card style={{ minWidth: isMobile ? 'auto' : 400 }}>
-        <Flex gap={isMobile ? 30 : 80}>
-          <Flex vertical gap="large">
-            <Typography.Title level={5}>Weather in Lisbon</Typography.Title>
-            <Flex vertical>
-              <span className={styles.label}>Date</span>
-              <span className={styles.text}>{currentDate.toLocaleDateString()}</span>
-            </Flex>
-            <Flex vertical>
-              <span className={styles.label}>Time</span>
-              <span className={styles.text}>{currentDate.toLocaleTimeString()}</span>
-            </Flex>
+    <>
+      <Helmet>
+        <meta name="description" content="Try to guess temperature and win the whole prize pool." />
+        <meta property="og:image" content="weather-prediction.png" />
+        <title>{`Predict the Weather | ${currentTemperature}`}</title>
+      </Helmet>
+      <Flex gap="middle" vertical={isMobile}>
+        <Card
+          style={{ width: '177', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+        >
+          <Flex style={{ width: '104px', height: '104px' }} align="center" justify="center">
+            {isWeatherDataLoading ? (
+              <Spin />
+            ) : (
+              <img src={`weather/${weatherIcon}.svg`} alt="weather icon" />
+            )}
           </Flex>
+        </Card>
+        <Card style={{ minWidth: isMobile ? 'auto' : 400 }}>
+          <Flex gap={isMobile ? 30 : 80}>
+            <Flex vertical gap="large">
+              <Typography.Title level={5}>Weather in Lisbon</Typography.Title>
+              <Flex vertical>
+                <span className={styles.label}>Date</span>
+                <span className={styles.text}>{currentDate.toLocaleDateString()}</span>
+              </Flex>
+              <Flex vertical>
+                <span className={styles.label}>Time</span>
+                <span className={styles.text}>{currentDate.toLocaleTimeString()}</span>
+              </Flex>
+            </Flex>
 
-          <Flex align="center" vertical>
-            <div className={styles.temperature}>
-              {isWeatherDataLoading ? <Spin /> : currentTemperature}
-              <span>℃</span>
-            </div>
-            <span className={styles.label}>right now</span>
+            <Flex align="center" vertical>
+              <div className={styles.temperature}>
+                {isWeatherDataLoading ? <Spin /> : currentTemperature}
+                <span>℃</span>
+              </div>
+              <span className={styles.label}>right now</span>
+            </Flex>
           </Flex>
-        </Flex>
-      </Card>
-    </Flex>
+        </Card>
+      </Flex>
+    </>
   );
 };

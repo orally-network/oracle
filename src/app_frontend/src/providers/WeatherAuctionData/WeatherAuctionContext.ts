@@ -1,6 +1,8 @@
 import { WriteContractResult } from '@wagmi/core';
 import { Bidder, Winner } from 'Interfaces/weather';
 import { createContext } from 'react';
+import { predictionsMap } from 'Constants/predictions';
+import { ARBITRUM_CHAIN_ID, TICKET_PRICE } from './contants';
 
 export type WeatherData = {
   winners: Winner[];
@@ -16,6 +18,9 @@ export type WeatherData = {
   currentDay: number;
   setDay: (day: number) => void;
   ethRate: number;
+  prediction: object;
+  predictionChainId: number;
+  ticketPrice: number;
 };
 
 export const WeatherAuctionContext = createContext<WeatherData>({
@@ -32,4 +37,7 @@ export const WeatherAuctionContext = createContext<WeatherData>({
   currentDay: 0,
   setDay: (day: number) => {},
   ethRate: 0,
+  prediction: predictionsMap.denver,
+  predictionChainId: ARBITRUM_CHAIN_ID,
+  ticketPrice: TICKET_PRICE,
 });

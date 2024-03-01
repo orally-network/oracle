@@ -43,6 +43,10 @@ const router = createBrowserRouter([
         element: <Navigate to={`/${ROUTES.WEATHER_PREDICTION}`} replace />,
       },
       {
+        path: ROUTES.WEATHER_PREDICTION,
+        element: <Navigate to={`/${ROUTES.WEATHER_PREDICTION}/denver`} replace />,
+      },
+      {
         path: ROUTES.SYBIL,
         element: <Sybil />,
       },
@@ -59,7 +63,7 @@ const router = createBrowserRouter([
         element: <SubscriptionDetailsPage />,
       },
       {
-        path: `${ROUTES.WEATHER_PREDICTION}`,
+        path: `${ROUTES.WEATHER_PREDICTION}/:city`,
         element: <WeatherAuction />,
       },
       {
@@ -85,7 +89,7 @@ const queryClient = new QueryClient({
 });
 
 const link = new HttpLink({
-  uri: 'https://api.studio.thegraph.com/query/61274/orally-weather-auction/version/latest',
+  uri: 'https://api.studio.thegraph.com/query/61274/orally-weather-auction/0.2.1',
 });
 
 export const client = new ApolloClient({

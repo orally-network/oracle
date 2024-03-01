@@ -40,7 +40,10 @@ const FeedDetails = ({ feed }: FeedDetailsProps) => {
       ? 'CustomPriceFeed'
       : feed_type.Default === null
         ? 'DefaultPriceFeed'
-        : '';
+        : feed_type.CustomNumber === null
+          ? 'CustomNumber'
+          : feed_type.CustomSitrng === null
+            ? 'CustomString' : '';
 
   const lastUpdateDate = last_update
     ? last_update

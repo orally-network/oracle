@@ -24,4 +24,6 @@ export default {
   weatherSource1Key: process.env.WEATHER_SOURCE_1_KEY,
   weatherSource2Key: process.env.WEATHER_SOURCE_2_KEY,
   weatherSource3Key: process.env.WEATHER_SOURCE_3_KEY,
+
+  zeroXApiKey: process.env.ZERO_X_API_KEY,
 };

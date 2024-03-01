@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 import { WeatherAuctionContext } from './WeatherAuctionContext';
 import { useLazyQuery } from '@apollo/client';
 import { GET_BIDS } from './queries/auction';
 import { writeContract, readContract } from '@wagmi/core';
 import WeatherAuctionABI from './weatherAuctionABI.json';
+import WeatherPredictionV2ABI from './WeatherPredictionV2ABI.json';
 import { utils } from 'ethers';
 import { CHAINS_MAP } from 'Constants/chains';
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
@@ -11,12 +13,15 @@ import { toast } from 'react-toastify';
 import { useGetSybilFeeds } from 'ApiHooks/useGetSybilFeeds';
 import { DEFAULT_FEEDS_SIZE } from 'Constants/ui';
 import { Winner } from 'Interfaces/weather';
-
-export const WEATHER_AUCTION_ADDRESS = '0x8B2B8E6e8bF338e6071E6Def286B8518B7BFF7F1';
-export const TICKET_PRICE = 0.001;
-export const ARBITRUM_CHAIN_ID = 42161;
+import { predictionsMap } from 'Constants/predictions';
+import { ARBITRUM_CHAIN_ID, TICKET_PRICE } from './contants';
 
 export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode }) => {
+  const { city } = useParams();
+  const prediction = city ? predictionsMap[city] : predictionsMap.denver;
+
+  const [ticketPrice, setTicketPrice] = useState(TICKET_PRICE);
+  const [predictionChainId, setPredictionChainId] = useState(ARBITRUM_CHAIN_ID);
   const [getBids, { loading, data: bidsData }] = useLazyQuery(GET_BIDS);
   const { address } = useAccount();
   const { switchNetwork } = useSwitchNetwork();
@@ -42,21 +47,20 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
   const ethRate = rate ? utils.formatUnits(rate, decimals) : null;
 
   const weatherAuctionContract = {
-    address: WEATHER_AUCTION_ADDRESS,
-    abi: WeatherAuctionABI,
+    address: prediction.contract[predictionChainId],
+    abi: prediction.version === 'v1' ? WeatherAuctionABI : WeatherPredictionV2ABI,
   };
 
   const sendAuctionData = async (temp: number, ticketAmount: number) => {
     const res = await writeContract({
-      address: WEATHER_AUCTION_ADDRESS,
-      abi: WeatherAuctionABI,
+      ...weatherAuctionContract,
       value: utils.parseUnits(
-        String(TICKET_PRICE * (ticketAmount ? +ticketAmount : 1)),
-        CHAINS_MAP[ARBITRUM_CHAIN_ID].nativeCurrency.decimals
+        String(ticketPrice * (ticketAmount ? +ticketAmount : 1)),
+        CHAINS_MAP[predictionChainId].nativeCurrency.decimals
       ), // amount of eth applied to transaction
       functionName: 'bid',
       args: [temp], // in format with decimals=1, e.g. 16.6C = 166
-      chainId: ARBITRUM_CHAIN_ID,
+      chainId: predictionChainId,
     });
 
     console.log({ res });
@@ -79,10 +83,9 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
     try {
       const res = await toast.promise(
         writeContract({
-          address: WEATHER_AUCTION_ADDRESS,
-          abi: WeatherAuctionABI,
+          ...weatherAuctionContract,
           functionName: 'withdraw',
-          chainId: ARBITRUM_CHAIN_ID,
+          chainId: predictionChainId,
         }),
         {
           pending: 'Withdrawing...',
@@ -106,10 +109,10 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
         ...weatherAuctionContract,
         functionName: 'userBalances',
         args: [address],
-        chainId: ARBITRUM_CHAIN_ID,
+        chainId: predictionChainId,
       });
 
-      if (!userBalance) {
+      if (!userBalance && Number(userBalance) !== 0) {
         setUserWinningBalance(0);
         throw new Error(`No balance found for ${address}:${userBalance}`);
       } else {
@@ -126,13 +129,13 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
       const auctionOpen = await readContract({
         ...weatherAuctionContract,
         functionName: 'auctionOpen',
-        chainId: ARBITRUM_CHAIN_ID,
+        chainId: predictionChainId,
       });
 
       const currentDay = await readContract({
         ...weatherAuctionContract,
         functionName: 'currentDay',
-        chainId: ARBITRUM_CHAIN_ID,
+        chainId: predictionChainId,
       });
 
       setIsAuctionOpen(auctionOpen as boolean);
@@ -148,11 +151,32 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
       const data = await readContract({
         ...weatherAuctionContract,
         functionName: 'totalTickets',
-        chainId: ARBITRUM_CHAIN_ID,
+        chainId: predictionChainId,
       });
       console.log({ data });
 
-      setPrize(Number(data) * TICKET_PRICE);
+      setPrize(Number(data) * ticketPrice);
+      return data;
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  };
+
+  const getTicketPrice = async () => {
+    try {
+      if (prediction.version === 'v1') {
+        return;
+      }
+
+      const data = await readContract({
+        ...weatherAuctionContract,
+        functionName: 'ticketPrice',
+        chainId: predictionChainId,
+      });
+      console.log({ Ticket: data });
+
+      setTicketPrice(Number(utils.formatEther(data)));
       return data;
     } catch (err) {
       console.error(err);
@@ -161,8 +185,8 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
   };
 
   useEffect(() => {
-    if (currentChain?.id !== ARBITRUM_CHAIN_ID && switchNetwork) {
-      switchNetwork(ARBITRUM_CHAIN_ID);
+    if (currentChain?.id !== predictionChainId && switchNetwork) {
+      switchNetwork(predictionChainId);
     }
   }, [currentChain?.id, switchNetwork]);
 
@@ -170,11 +194,12 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
     getAuctionStatusAndDay();
     getUserBalances();
     getTotalPrize();
+    getTicketPrice();
   }, [currentDay]);
 
   useEffect(() => {
     if (isAuctionOpen !== null) {
-      getBids({ variables: { day: day ?? currentDay } });
+      getBids({ variables: { day: day ?? currentDay, contract: prediction.contract[predictionChainId] } });
     }
   }, [isAuctionOpen, day]);
 
@@ -195,6 +220,8 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
     });
   }, [bidsData, ethRate]);
 
+  console.log({ predictionChainId });
+
   const value = {
     winners,
     bids: bidsData ? [...newBids, ...bidsData.bidPlaceds] : [],
@@ -210,6 +237,9 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
     currentDay,
     setDay,
     ethRate: Number(ethRate),
+    prediction,
+    predictionChainId,
+    ticketPrice,
   };
   return <WeatherAuctionContext.Provider value={value}>{children}</WeatherAuctionContext.Provider>;
 };

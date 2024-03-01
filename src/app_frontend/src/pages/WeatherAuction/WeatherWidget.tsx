@@ -6,10 +6,15 @@ import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import { getWeatherIcon } from 'Utils/mapWeatherData';
 import config from 'Constants/config';
 import { Helmet } from 'react-helmet';
+import { useWeatherData } from 'Providers/WeatherAuctionData/useWeatherData';
 
-const WEATHER_SOURCE_1 = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/lisbon?unitGroup=metric&include=current&key=${config.weatherSource1Key}&contentType=json`;
-const WEATHER_SOURCE_2 = `https://api.weatherapi.com/v1/current.json?key=${config.weatherSource2Key}&q=Lisbon&aqi=no`;
-const WEATHER_SOURCE_3 = `https://api.openweathermap.org/data/3.0/onecall?lat=38.736946&lon=-9.142685&exclude=daily,hourly,minutely&appid=${config.weatherSource3Key}&units=metric`;
+const getWeatherSources = (cityName, cityLat, cityLon) => {
+  const weatherSource1 = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${cityName}?unitGroup=metric&include=current&key=${config.weatherSource1Key}&contentType=json`;
+  const weatherSource2 = `https://api.weatherapi.com/v1/current.json?key=${config.weatherSource2Key}&q=${cityName}&aqi=no`;
+  const weatherSource3 = `https://api.openweathermap.org/data/3.0/onecall?lat=${cityLat}&lon=${cityLon}&exclude=daily,hourly,minutely&appid=${config.weatherSource3Key}&units=metric`;
+
+  return { weatherSource1, weatherSource2, weatherSource3 };
+};
 
 async function fetchWeatherResource(url: string) {
   try {
@@ -30,14 +35,17 @@ export const WeatherWidget = () => {
   const [isWeatherDataLoading, setIsWeatherDataLoading] = useState<boolean>(false);
   const { width } = useWindowDimensions();
   const isMobile = width < BREAK_POINT_MOBILE;
+  const { prediction } = useWeatherData();
+
+  const { weatherSource1, weatherSource2, weatherSource3 } = getWeatherSources(prediction.name, prediction.lat, prediction.lon);
 
   const fetchWeatherData = async () => {
     setIsWeatherDataLoading(true);
     try {
       const [result1, result2, result3] = await Promise.all([
-        fetchWeatherResource(WEATHER_SOURCE_1),
-        fetchWeatherResource(WEATHER_SOURCE_2),
-        fetchWeatherResource(WEATHER_SOURCE_3),
+        fetchWeatherResource(weatherSource1),
+        fetchWeatherResource(weatherSource2),
+        fetchWeatherResource(weatherSource3),
       ]);
 
       const tempFromResult1 = result1?.currentConditions?.temp;
@@ -59,7 +67,7 @@ export const WeatherWidget = () => {
     } catch (err) {
       console.error(err);
       try {
-        const backupRes = await fetch(WEATHER_SOURCE_2);
+        const backupRes = await fetch(weatherSource2);
         const backupData = await backupRes.json();
         setWeatherData(backupData);
         return backupRes;
@@ -107,7 +115,7 @@ export const WeatherWidget = () => {
         <Card style={{ minWidth: isMobile ? 'auto' : 400 }}>
           <Flex gap={isMobile ? 30 : 80}>
             <Flex vertical gap="large">
-              <Typography.Title level={5}>Weather in Lisbon</Typography.Title>
+              <Typography.Title level={5}>Weather in {prediction.title}</Typography.Title>
               <Flex vertical>
                 <span className={styles.label}>Date</span>
                 <span className={styles.text}>{currentDate.toLocaleDateString()}</span>

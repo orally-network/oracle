@@ -61,7 +61,7 @@ const FeedCard = ({ feed }: FeedCardProps) => {
   let symbol, rate, timestamp;
 
   if (data && data.length !== 0) {
-    const feed = data[0].data.DefaultPriceFeed ?? data[0].data.CustomPriceFeed;
+    const feed = data[0].data.DefaultPriceFeed ?? data[0].data.CustomPriceFeed ?? data[0].data.CustomNumber ?? data[0].data.CustomString;
 
     symbol = feed.symbol;
     rate = feed.rate;
@@ -93,7 +93,7 @@ const FeedCard = ({ feed }: FeedCardProps) => {
             </Space>
           </div>
 
-          {feed_type.hasOwnProperty('Custom') && (
+          {feed_type.hasOwnProperty('Custom') || feed_type.hasOwnProperty('CustomNumber') || feed_type.hasOwnProperty('CustomString') && (
             <div
               className={styles.menu}
               onClick={(e) => {

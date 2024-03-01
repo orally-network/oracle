@@ -14,6 +14,7 @@ import { useParams } from 'react-router-dom';
 import styles from './WeatherDayDetails.scss';
 import { utils } from 'ethers';
 import { fetchTransaction } from '@wagmi/core';
+import { ARBITRUM_CHAIN_ID } from 'Providers/WeatherAuctionData/contants';
 
 export const WeatherDayDetails = () => {
   const [actualTemperature, setActualTemperature] = useState<number>(0);
@@ -45,6 +46,7 @@ export const WeatherDayDetails = () => {
       try {
         const tx = await fetchTransaction({
           hash: dayWinners[0]?.transactionHash,
+          chainId: ARBITRUM_CHAIN_ID,
         });
 
         console.log({ tx });

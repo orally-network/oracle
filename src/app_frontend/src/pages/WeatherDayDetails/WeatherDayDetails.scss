@@ -1,0 +1,18 @@
+.bigFont {
+  font-size: 80px;
+  letter-spacing: -0.04em;
+  font-weight: 600;
+  color: #fff;
+
+  span {
+    font-size: 60px;
+    position: relative;
+  }
+
+  @media screen and (max-width: 768px) {
+    font-size: 60px;
+    span {
+      font-size: 40px;
+    }
+  }
+}

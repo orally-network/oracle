@@ -97,6 +97,7 @@ export const idlFactory = ({ IDL }) => {
     'Ok' : IDL.Bool,
     'Err' : IDL.Text,
   });
+  const TextResponse = IDL.Variant({ 'Ok' : IDL.Text, 'Err' : IDL.Text });
   const PriceMutationCondition = IDL.Record({
     'mutation_rate' : IDL.Int64,
     'price_mutation_type' : PriceMutationType,
@@ -158,6 +159,7 @@ export const idlFactory = ({ IDL }) => {
     'remove_from_whitelist' : IDL.Func([IDL.Text], [Error], []),
     'remove_subscription' : IDL.Func([IDL.Nat], [Error], []),
     'remove_subscriptions' : IDL.Func([], [Error], []),
+    'sign_message' : IDL.Func([IDL.Text], [TextResponse], []),
     'start_subscription' : IDL.Func(
         [IDL.Nat, IDL.Nat, IDL.Text, IDL.Text],
         [Error],

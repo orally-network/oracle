@@ -104,9 +104,10 @@ export const idlFactory = ({ IDL }) => {
     'status' : FeedStatus,
     'decimals' : IDL.Opt(IDL.Nat64),
     'owner' : IDL.Text,
+    'new_sources' : IDL.Opt(IDL.Vec(Source)),
     'data' : IDL.Opt(AssetDataResult),
     'update_freq' : IDL.Nat64,
-    'sources' : IDL.Opt(IDL.Vec(Source)),
+    'sources' : IDL.Opt(IDL.Vec(HttpSource)),
   });
   const GetFeedResponse = IDL.Variant({
     'Ok' : IDL.Opt(Feed),

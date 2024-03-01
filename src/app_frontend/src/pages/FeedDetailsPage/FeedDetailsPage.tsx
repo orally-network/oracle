@@ -18,8 +18,8 @@ export const FeedDetailsPage = () => {
     try {
       const response: any = await sybilCanister.get_feed(
         id.replace('-', '/'),
-        [addressData.message],
-        [remove0x(addressData.signature)]
+        addressData.message ? [addressData.message] : [],
+        remove0x(addressData.signature) ? [remove0x(addressData.signature)]: [],
       );
 
       if (response.Err) {

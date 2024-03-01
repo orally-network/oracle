@@ -3,8 +3,13 @@ import { QueryClient, useQuery, useQueryClient } from 'react-query';
 import { dynamicQueryKeys } from '../dynamicQueryKeys';
 import apolloCanister from 'Canisters/apolloCanister';
 import { ApolloInstance } from 'Interfaces/apollo';
+import { DEFAULT_APOLLO_ITEMS_SIZE } from 'Constants/ui';
 
-interface useGetApolloItemsProps {}
+type useGetApolloItemsProps = {
+  page?: number;
+  size?: number;
+  isGetAll?: boolean;
+};
 
 interface useGetApolloItemsResult {
   data: {
@@ -20,7 +25,19 @@ interface useGetApolloItemsResult {
   refetch: () => Promise<void>;
 }
 
-export const useGetApolloItems = (): useGetApolloItemsResult => {
+interface GetApolloDataResponse {
+  items: ApolloInstance[];
+  page: number;
+  size: number;
+  total_items: number;
+  total_pages: number;
+}
+
+export const useGetApolloItems = ({
+  page,
+  size,
+  isGetAll,
+}: useGetApolloItemsProps): useGetApolloItemsResult => {
   const queryClient: QueryClient = useQueryClient();
 
   const {
@@ -31,13 +48,22 @@ export const useGetApolloItems = (): useGetApolloItemsResult => {
     isSuccess,
     refetch: refetchQuery,
   } = useQuery(
-    [dynamicQueryKeys.apollo()],
+    [dynamicQueryKeys.apollo(), page, size],
     async () => {
-      const apolloItems: ApolloInstance[] = await apolloCanister.get_apollo_instances();
+      const apolloResponse: GetApolloDataResponse = await apolloCanister.get_apollo_instances(
+        isGetAll
+          ? []
+          : [
+              {
+                page,
+                size: size || DEFAULT_APOLLO_ITEMS_SIZE,
+              },
+            ]
+      );
 
-      console.log(apolloItems, 'apolloInstances');
+      console.log(apolloResponse, 'apolloInstances');
 
-      apolloItems.forEach((item: ApolloInstance) => {
+      apolloResponse.items.forEach((item: ApolloInstance) => {
         queryClient.setQueryDefaults(item.apollo_instance.canister_id.toString(), {
           cacheTime: Infinity,
           staleTime: Infinity,
@@ -48,12 +74,12 @@ export const useGetApolloItems = (): useGetApolloItemsResult => {
 
       return {
         meta: {
-          page: 1,
-          size: 10,
-          totalItems: 10,
-          totalPages: 1,
+          page: apolloResponse.page,
+          size: apolloResponse.size,
+          totalItems: apolloResponse.total_items,
+          totalPages: apolloResponse.total_pages,
         },
-        items: apolloItems,
+        items: apolloResponse.items,
       };
     },
     {

@@ -15,3 +15,5 @@ export const DEFAULT_FEEDS_SIZE = 30;
 export const DEFAULT_TOP_UP_AMOUNT = 0.01;
 export const DEFAULT_SUBSCRIPTIONS_SIZE = 10;
 export const MAX_SOURCES = 10;
+
+export const DEFAULT_APOLLO_ITEMS_SIZE = 10;

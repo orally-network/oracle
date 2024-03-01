@@ -75,10 +75,10 @@ export const useGetSybilFeeds = ({
 
       return {
         meta: {
-          page: 1,
-          size: 10,
-          totalItems: 10,
-          totalPages: 1,
+          page: feedsResponse.page,
+          size: feedsResponse,
+          totalItems: feedsResponse.total_items,
+          totalPages: feedsResponse.total_pages,
         },
         items: feedsResponse.items,
       };

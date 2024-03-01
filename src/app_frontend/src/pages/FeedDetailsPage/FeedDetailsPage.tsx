@@ -19,7 +19,7 @@ export const FeedDetailsPage = () => {
       const response: any = await sybilCanister.get_feed(
         id.replace('-', '/'),
         addressData.message ? [addressData.message] : [],
-        remove0x(addressData.signature) ? [remove0x(addressData.signature)]: [],
+        addressData.signature ? [remove0x(addressData.signature)] : []
       );
 
       if (response.Err) {
@@ -36,7 +36,7 @@ export const FeedDetailsPage = () => {
   };
 
   useEffect(() => {
-    if (id && addressData.message && addressData.signature) {
+    if (id) {
       fetchFeed(id);
     }
   }, [id, addressData.message, addressData.signature]);

@@ -67,7 +67,7 @@ const router = createBrowserRouter([
         element: <WeatherAuction />,
       },
       {
-        path: `${ROUTES.WEATHER_PREDICTION}/:day`,
+        path: `${ROUTES.WEATHER_PREDICTION}/:city/:day`,
         element: <WeatherDayDetailsWrapper />,
       },
     ],

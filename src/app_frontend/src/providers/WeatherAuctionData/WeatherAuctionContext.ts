@@ -18,7 +18,10 @@ export type WeatherData = {
   currentDay: number;
   setDay: (day: number) => void;
   ethRate: number;
-  prediction: object;
+  prediction: {
+    name: string;
+    title: string;
+  };
   predictionChainId: number;
   ticketPrice: number;
 };

@@ -42,35 +42,40 @@ export const WeatherDayDetails = () => {
 
   useEffect(() => {
     const asyncFn = async () => {
-      const tx = await fetchTransaction({
-        hash: dayWinners[0]?.transactionHash,
-      });
+      try {
+        const tx = await fetchTransaction({
+          hash: dayWinners[0]?.transactionHash,
+        });
 
-      console.log({ tx });
+        console.log({ tx });
 
-      const multicallInterface = new utils.Interface([
-        'function multicall((address,bytes,uint256)[])',
-      ]);
+        const multicallInterface = new utils.Interface([
+          'function multicall((address,bytes,uint256)[])',
+        ]);
 
-      const decodedMulticallInput = multicallInterface.decodeFunctionData('multicall', tx.input);
+        const decodedMulticallInput = multicallInterface.decodeFunctionData('multicall', tx.input);
 
-      console.log({ res: decodedMulticallInput?.[0]?.[0]?.[1] });
+        console.log({ res: decodedMulticallInput?.[0]?.[0]?.[1] });
 
-      const callDataInterface = new utils.Interface([
-        'function updateTemperature(string, uint256, uint256, uint256)',
-      ]);
+        const callDataInterface = new utils.Interface([
+          'function updateTemperature(string, uint256, uint256, uint256)',
+        ]);
 
-      const decodedCallData = callDataInterface.decodeFunctionData(
-        'updateTemperature',
-        decodedMulticallInput?.[0]?.[0]?.[1]
-      );
+        const decodedCallData = callDataInterface.decodeFunctionData(
+          'updateTemperature',
+          decodedMulticallInput?.[0]?.[0]?.[1]
+        );
 
-      console.log({ resCallData: decodedCallData });
+        console.log({ resCallData: decodedCallData });
 
-      console.log({ actualTemp: Number(decodedCallData[1]) });
+        console.log({ actualTemp: Number(decodedCallData[1]) });
 
-      setActualTemperature(Number(decodedCallData[1]));
+        setActualTemperature(Number(decodedCallData[1]));
+      } catch (e) {
+        console.error(e);
+      }
     };
+
     if (dayWinners.length > 0) {
       asyncFn();
     }
@@ -116,7 +121,7 @@ export const WeatherDayDetails = () => {
               }}
             >
               Prize
-              <Flex justify="center" align="center" vertical>
+              <Flex justify="center" align="center" vertical style={{ height: '100%' }}>
                 {isWinnersLoading ? (
                   <Spin />
                 ) : (
@@ -145,7 +150,7 @@ export const WeatherDayDetails = () => {
               }}
             >
               Bid Temperature
-              <Flex justify="center" align="center">
+              <Flex justify="center" align="center" style={{ height: '100%' }}>
                 {isWinnersLoading ? (
                   <Spin />
                 ) : (
@@ -173,22 +178,24 @@ export const WeatherDayDetails = () => {
               }}
             >
               Actual Temperature
-              {isWinnersLoading ? (
-                <div>
-                  <Spin />
-                </div>
-              ) : (
-                <div className={styles.bigFont}>
-                  {actualTemperature ? (
-                    <>
-                      {actualTemperature / 10}
-                      <span>℃</span>
-                    </>
-                  ) : (
-                    0
-                  )}
-                </div>
-              )}
+              <Flex justify="center" align="center" style={{ height: '100%' }}>
+                {isWinnersLoading ? (
+                  <div>
+                    <Spin />
+                  </div>
+                ) : (
+                  <div className={styles.bigFont}>
+                    {actualTemperature ? (
+                      <>
+                        {actualTemperature / 10}
+                        <span>℃</span>
+                      </>
+                    ) : (
+                      0
+                    )}
+                  </div>
+                )}
+              </Flex>
             </Card>
           </Flex>
         </Flex>

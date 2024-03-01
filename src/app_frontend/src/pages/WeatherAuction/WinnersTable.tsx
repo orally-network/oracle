@@ -56,7 +56,7 @@ export const WinnersTable = ({
   title?: string;
 }) => {
   const { address } = useAccount();
-  const { winners, isWinnersLoading } = useWeatherData();
+  const { winners, isWinnersLoading, prediction } = useWeatherData();
   const navigate = useNavigate();
 
   return (
@@ -73,7 +73,7 @@ export const WinnersTable = ({
         onRow={(record) => {
           return {
             onClick: () => {
-              navigate(`/weather-prediction/${record.day}`);
+              navigate(`/weather-prediction/${prediction.name}/${record.day}`);
             },
           };
         }}

@@ -93,7 +93,7 @@ const FeedCard = ({ feed }: FeedCardProps) => {
             </Space>
           </div>
 
-          {feed_type.hasOwnProperty('Custom') || feed_type.hasOwnProperty('CustomNumber') || feed_type.hasOwnProperty('CustomString') && (
+          {(feed_type.hasOwnProperty('Custom') || feed_type.hasOwnProperty('CustomNumber') || feed_type.hasOwnProperty('CustomString')) && (
             <div
               className={styles.menu}
               onClick={(e) => {

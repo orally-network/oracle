@@ -30,6 +30,7 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
   const [userWinningBalance, setUserWinningBalance] = useState<number>(0);
   const [currentDay, setCurrentDay] = useState<number>(0);
   const [prize, setPrize] = useState(0);
+  const [day, setDay] = useState<number | null>(null); // day for which we are fetching bids for details page
 
   const [newBids, setNewBids] = useState<any[]>([]);
 
@@ -198,9 +199,9 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
 
   useEffect(() => {
     if (isAuctionOpen !== null) {
-      getBids({ variables: { day: currentDay, contract: prediction.contract[predictionChainId] } });
+      getBids({ variables: { day: day ?? currentDay, contract: prediction.contract[predictionChainId] } });
     }
-  }, [isAuctionOpen]);
+  }, [isAuctionOpen, day]);
 
   const winners: Winner[] = useMemo(() => {
     if (!bidsData) {
@@ -234,6 +235,7 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
     getUserBalances,
     userWinningBalance,
     currentDay,
+    setDay,
     ethRate: Number(ethRate),
     prediction,
     predictionChainId,

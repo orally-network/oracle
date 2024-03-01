@@ -21,6 +21,7 @@ import { PythiaDataProvider } from 'Providers/PythiaData';
 import { WeatherAuction } from 'Pages/WeatherAuction';
 import { FeedDetailsPage } from 'Pages/FeedDetailsPage';
 import SybilFeedsProvider from 'Providers/SybilPairs/SybilFeedsProvider';
+import { WeatherDayDetailsWrapper } from 'Pages/WeatherDayDetails';
 
 const router = createBrowserRouter([
   {
@@ -64,6 +65,10 @@ const router = createBrowserRouter([
       {
         path: `${ROUTES.WEATHER_PREDICTION}/:city`,
         element: <WeatherAuction />,
+      },
+      {
+        path: `${ROUTES.WEATHER_PREDICTION}/:day`,
+        element: <WeatherDayDetailsWrapper />,
       },
     ],
   },

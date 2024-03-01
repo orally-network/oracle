@@ -36,7 +36,13 @@
 :global {
   .ant-table-row.highlight {
     color: var(--primary-color, '#1766F9');
+    cursor: pointer;
   }
+
+  .ant-table-row.pointer {
+    cursor: pointer;
+  }
+
   .weather-auction .ant-empty-description {
     color: #4a6293;
   }

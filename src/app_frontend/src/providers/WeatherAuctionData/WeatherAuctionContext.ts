@@ -16,6 +16,7 @@ export type WeatherData = {
   withdraw: () => Promise<WriteContractResult>;
   userWinningBalance: number;
   currentDay: number;
+  setDay: (day: number) => void;
   ethRate: number;
   prediction: object;
   predictionChainId: number;
@@ -34,6 +35,7 @@ export const WeatherAuctionContext = createContext<WeatherData>({
   withdraw: () => Promise.resolve({} as WriteContractResult),
   userWinningBalance: 0,
   currentDay: 0,
+  setDay: (day: number) => {},
   ethRate: 0,
   prediction: predictionsMap.denver,
   predictionChainId: ARBITRUM_CHAIN_ID,

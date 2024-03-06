@@ -21,8 +21,8 @@ export const Apollo = () => {
               Apollo
             </Typography.Title>
           </Flex>
+          <Items />
         </Space>
-        <Items />
       </Layout.Content>
     </ApolloDataProvider>
   );

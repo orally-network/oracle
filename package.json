@@ -114,5 +114,6 @@
     "typescript": "^5.0.4",
     "viem": "^1.18.8",
     "wagmi": "^1.4.5"
-  }
+  },
+  "packageManager": "yarn@1.22.19"
 }

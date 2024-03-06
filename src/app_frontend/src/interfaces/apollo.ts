@@ -4,9 +4,5 @@ export interface ApolloInstance {
     chain_id: number | bigint;
     is_active: boolean;
   };
+  chain_id: number | bigint;
 }
-
-// export interface ApolloGetInstancesResponse {
-//   apollo_instances: ApolloInstance[];
-//   chain_id: number | bigint;
-// }

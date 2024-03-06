@@ -5,7 +5,7 @@ interface PythiaDataContextInterface {
   fetchBalance: (chainId: BigInt | number, address: string) => void;
   balance: number;
   isBalanceLoading: boolean;
-  pma: string;
+  pma: `0x${string}`;
   deposit: (chainId: string, hash: string) => Promise<any>;
 
   page: number;

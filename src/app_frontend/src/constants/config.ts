@@ -23,4 +23,9 @@ export default {
 
   // TODO: Replace with the correct canister id for production
   apollo_canister_id: isStaging ? 'ndeka-riaaa-aaaak-afmaq-cai' : 'ndeka-riaaa-aaaak-afmaq-cai',
+  weatherSource1Key: process.env.WEATHER_SOURCE_1_KEY,
+  weatherSource2Key: process.env.WEATHER_SOURCE_2_KEY,
+  weatherSource3Key: process.env.WEATHER_SOURCE_3_KEY,
+
+  zeroXApiKey: process.env.ZERO_X_API_KEY,
 };

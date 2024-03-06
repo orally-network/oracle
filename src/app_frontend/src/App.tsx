@@ -20,6 +20,9 @@ import { CACHE_TIME, QUERY_CLIENT_DEFAULT_RETRY_COUNT, TIME_TO_WAIT } from 'Cons
 import { PythiaDataProvider } from 'Providers/PythiaData';
 import { WeatherAuction } from 'Pages/WeatherAuction';
 import { Apollo } from 'Pages/Apollo';
+import { FeedDetailsPage } from 'Pages/FeedDetailsPage';
+import SybilFeedsProvider from 'Providers/SybilPairs/SybilFeedsProvider';
+import { WeatherDayDetailsWrapper } from 'Pages/WeatherDayDetails';
 
 const router = createBrowserRouter([
   {
@@ -34,11 +37,23 @@ const router = createBrowserRouter([
       {
         // Default route navigation
         index: true,
-        element: <Navigate to={`/${ROUTES.PYTHIA}`} replace />,
+        element: <Navigate to={`/${ROUTES.WEATHER_PREDICTION}`} replace />,
+      },
+      {
+        path: ROUTES.WEATHER_AUCTION,
+        element: <Navigate to={`/${ROUTES.WEATHER_PREDICTION}`} replace />,
+      },
+      {
+        path: ROUTES.WEATHER_PREDICTION,
+        element: <Navigate to={`/${ROUTES.WEATHER_PREDICTION}/denver`} replace />,
       },
       {
         path: ROUTES.SYBIL,
         element: <Sybil />,
+      },
+      {
+        path: `${ROUTES.SYBIL}/:id`,
+        element: <FeedDetailsPage />,
       },
       {
         path: ROUTES.PYTHIA,
@@ -49,12 +64,16 @@ const router = createBrowserRouter([
         element: <SubscriptionDetailsPage />,
       },
       {
-        path: `${ROUTES.WEATHER_AUCTION}`,
+        path: `${ROUTES.WEATHER_PREDICTION}/:city`,
         element: <WeatherAuction />,
       },
       {
         path: `${ROUTES.APOLLO}`,
         element: <Apollo />,
+      },
+      {
+        path: `${ROUTES.WEATHER_PREDICTION}/:city/:day`,
+        element: <WeatherDayDetailsWrapper />,
       },
     ],
   },
@@ -75,7 +94,7 @@ const queryClient = new QueryClient({
 });
 
 const link = new HttpLink({
-  uri: 'https://api.studio.thegraph.com/query/61274/orally-weather-auction/version/latest',
+  uri: 'https://api.studio.thegraph.com/query/61274/orally-weather-auction/0.2.1',
 });
 
 export const client = new ApolloClient({
@@ -91,14 +110,16 @@ const App = () => {
           <QueryClientProvider client={queryClient}>
             <GlobalStateProvider>
               <PythiaDataProvider>
-                <RouterProvider
-                  router={router}
-                  fallbackElement={
-                    <Space size="large">
-                      <Spin size="large" />
-                    </Space>
-                  }
-                />
+                <SybilFeedsProvider>
+                  <RouterProvider
+                    router={router}
+                    fallbackElement={
+                      <Space size="large">
+                        <Spin size="large" />
+                      </Space>
+                    }
+                  />
+                </SybilFeedsProvider>
               </PythiaDataProvider>
             </GlobalStateProvider>
           </QueryClientProvider>

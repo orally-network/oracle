@@ -7,12 +7,12 @@ import styles from './Sybil.scss';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
-import SybilFeedsProvider from 'Providers/SybilPairs/SybilFeedsProvider';
 import { Filters } from './Filters/Filters';
 import { useSearchParams } from 'react-router-dom';
 import useSybilData from 'Providers/SybilPairs/useSybilFeeds';
 import { FilterFeedType } from 'Interfaces/feed';
 import { NewFeed } from './NewFeed/NewFeed';
+import { Helmet } from 'react-helmet';
 
 const Sybil = () => {
   const [isNewFeedModalVisible, setIsNewFeedModalVisible] = useState(false);
@@ -28,11 +28,21 @@ const Sybil = () => {
     if (typeFilter !== null) {
       setFeedType(typeFilter as FilterFeedType);
     }
+
     setShowMine(authorFilter === 'true' ? true : false);
   }, [searchParams, setFeedType, setShowMine]);
 
   return (
-    <SybilFeedsProvider>
+    <>
+      <Helmet>
+        <meta
+          name="description"
+          content="Sybil - Setup custom data feed to empower you smart contract with real world data "
+        />
+        <meta property="og:image" content="sybil.png" />
+        <title>Orally Network | Sybil - Permissionless Data Fetcher</title>
+      </Helmet>
+
       <Layout.Content className={styles.sybil}>
         <Space size="middle" direction="vertical" style={{ width: '100%', position: 'relative' }}>
           <Flex align="center" justify="space-between" gap={8}>
@@ -66,7 +76,7 @@ const Sybil = () => {
           )}
         </Space>
       </Layout.Content>
-    </SybilFeedsProvider>
+    </>
   );
 };
 

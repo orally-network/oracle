@@ -42,12 +42,14 @@ export const useGetSubscriptions = ({
 }: UseGetSubscriptionsProps): UseGetSubscriptionsResult => {
   const queryClient: QueryClient = useQueryClient();
 
-  const normalizedFilters = filters ? {
-    ...filters,
-    chain_ids: filters.chain_ids.length
-      ? [filters.chain_ids.map((value: string) => BigInt(value))]
-      : [],
-  } : [];
+  const normalizedFilters = filters
+    ? {
+        ...filters,
+        chain_ids: filters.chain_ids.length
+          ? [filters.chain_ids.map((value: string) => BigInt(value))]
+          : [],
+      }
+    : [];
 
   const {
     data,

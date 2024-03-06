@@ -5,14 +5,18 @@ import { useWeatherData } from 'Providers/WeatherAuctionData/useWeatherData';
 import { toast } from 'react-toastify';
 import pythiaCanister from 'Canisters/pythiaCanister';
 import { Subscription } from 'Interfaces/subscription';
-import { ARBITRUM_CHAIN_ID } from 'Providers/WeatherAuctionData/WeatherAuctionProvider';
 import { LoadingOutlined } from '@ant-design/icons';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 
-const CLOSE_AUCTION_SUBSCRIPTION_ID = 57;
-
-const PROVIDE_TEMPERATURE_SUBSCRIPTION_ID = 59;
+const options = {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+};
 
 export const PredictWidget = () => {
   const [temperatureGuess, setTemperatureGuess] = useState<string>('');
@@ -24,15 +28,20 @@ export const PredictWidget = () => {
   const [isSubscriptionLoading, setIsSubscriptionLoading] = useState<boolean>(false);
   // const [nextUpdateDateTime, setNextUpdateDateTime] = useState<string | null>(null);
 
-  const { sendAuctionData, isAuctionOpen, getBids, currentDay } = useWeatherData();
+  const { sendAuctionData, isAuctionOpen, getBids, currentDay, predictionChainId, prediction } = useWeatherData();
   const { width } = useWindowDimensions();
   const isMobile = width < BREAK_POINT_MOBILE;
+
+  const timeFormatter = new Intl.DateTimeFormat([], {
+    ...options,
+    timeZone: prediction.timeZone,
+  });
 
   const fetchSubscription = async () => {
     try {
       setIsSubscriptionLoading(true);
-      const closeSubResponse: any = await pythiaCanister.get_subscription(ARBITRUM_CHAIN_ID, CLOSE_AUCTION_SUBSCRIPTION_ID);
-      const provideTempSubResponse: any = await pythiaCanister.get_subscription(ARBITRUM_CHAIN_ID, PROVIDE_TEMPERATURE_SUBSCRIPTION_ID);
+      const closeSubResponse: any = await pythiaCanister.get_subscription(predictionChainId, prediction.closeAuctionSubscriptionId);
+      const provideTempSubResponse: any = await pythiaCanister.get_subscription(predictionChainId, prediction.provideTemperatureSubscriptionId);
       if (provideTempSubResponse.Err) {
         setSubscriptionData(null);
         throw new Error(provideTempSubResponse.Err);
@@ -50,13 +59,12 @@ export const PredictWidget = () => {
   const makeBidAndVerify = async () => {
     setIsConfirming(true);
     try {
-      const { hash } = await toast.promise(sendAuctionData(+temperatureGuess * 10, +ticketAmount), {
+      await toast.promise(sendAuctionData(+temperatureGuess * 10, +ticketAmount), {
         pending: 'Confirming transaction...',
         success: 'Transaction confirmed!',
         error: 'Transaction failed',
       });
-      console.log({ hash });
-      getBids({ variables: { day: currentDay } });
+      // getBids({ variables: { day: currentDay } });
     } catch (err) {
       console.error(err);
     } finally {
@@ -80,7 +88,7 @@ export const PredictWidget = () => {
     const lastUpdateDateTime = new Date(Number(last_update) * 1000);
     const nextCloseDateTime = new Date(lastUpdateDateTime.getTime() + Number(frequency) * 1000);
 
-    return nextCloseDateTime.toLocaleString();
+    return timeFormatter.format(nextCloseDateTime);
   }, [closeSubscriptionData]);
 
   const nextUpdateDateTime = useMemo(() => {
@@ -95,15 +103,15 @@ export const PredictWidget = () => {
     const lastUpdateDateTime = new Date(Number(last_update) * 1000);
     const nextUpdateDateTime = new Date(lastUpdateDateTime.getTime() + Number(frequency) * 1000);
 
-    return nextUpdateDateTime.toLocaleString();
+    return timeFormatter.format(nextUpdateDateTime);
   }, [subscriptionData]);
 
   return (
     <Card>
       <Flex gap="large" vertical>
-        <Typography.Title level={5}>How much degree will be today at {isSubscriptionLoading ? (
+        <Typography.Title level={5}>How much degree will be at {isSubscriptionLoading ? (
           <LoadingOutlined />
-        ) : (nextUpdateDateTime)}?</Typography.Title>
+        ) : (nextUpdateDateTime)}? {closeSubscriptionData?.status?.is_active ? '' : '[stopped]'}</Typography.Title>
         <Flex
           gap={isMobile ? 'middle' : 'large'}
           align={isMobile ? 'flex-start' : 'center'}

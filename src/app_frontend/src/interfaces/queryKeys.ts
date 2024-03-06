@@ -5,6 +5,7 @@ export enum QueryType {
   Subscriptions = 'subscriptions',
   Feeds = 'feeds',
   Apollo = 'apollo',
+  FeedDataWithProof = 'feedDataWithProof',
 }
 
 export type EnsuredDynamicQueryKey<Types extends unknown[] = []> = EnsuredQueryKey<
@@ -24,4 +25,5 @@ export interface QueryKeys {
     size?: number
   ) => EnsuredDynamicQueryKey<[Filters | undefined, number | undefined, number | undefined]>;
   apollo: () => EnsuredDynamicQueryKey;
+  feedDataWithProof: (id: string) => EnsuredDynamicQueryKey<[string]>;
 }

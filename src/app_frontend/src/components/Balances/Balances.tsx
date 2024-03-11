@@ -14,6 +14,7 @@ import { TopUpPythiaModal } from 'Shared/Control/TopUpModal';
 import { usePythiaData } from 'Providers/PythiaData';
 import { Chain } from 'Interfaces/chain';
 import { SignInButton } from 'Shared/SignInButton';
+import { useCurrentCanister } from 'Canisters/useCurrentCanister';
 
 type ChainBalance = {
   chainId: string | number;
@@ -21,6 +22,7 @@ type ChainBalance = {
 };
 
 export const Balances = () => {
+  const { currentCanister } = useCurrentCanister();
   const [balances, setBalances] = useState<ChainBalance[]>([]);
   const [activeChain, setActiveChain] = useState<Chain>();
   const [isBalancesLoading, setIsBalancesLoading] = useState(false);
@@ -31,9 +33,10 @@ export const Balances = () => {
 
   const fetchBalances = async () => {
     setIsBalancesLoading(true);
+    if(!currentCanister) return;
 
     const balancePromises = chains.map((chain) =>
-      pythiaCanister.get_balance(chain.chain_id, remove0x(addressData?.address))
+      currentCanister.canister.get_balance(chain.chain_id, remove0x(addressData?.address))
     );
 
     try {

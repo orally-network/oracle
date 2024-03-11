@@ -16,10 +16,11 @@ export const FeedDetailsPage = () => {
   const fetchFeed = async (id: string) => {
     setIsFeedLoading(true);
     try {
+      // TODO: sign before the request 
       const response: any = await sybilCanister.get_feed(
-        id.replace('-', '/'),
-        addressData.message ? [addressData.message] : [],
-        addressData.signature ? [remove0x(addressData.signature)] : []
+        id.replace('-', '/'), 
+        [],
+        []
       );
 
       if (response.Err) {

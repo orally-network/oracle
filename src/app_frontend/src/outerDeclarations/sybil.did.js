@@ -134,6 +134,14 @@ export const idlFactory = ({ IDL }) => {
     Ok: GetFeedsResultWithPagination,
     Err: IDL.Text,
   });
+  const MultipleAssetsDataResult = IDL.Record({
+    signature: IDL.Opt(IDL.Text),
+    data: IDL.Vec(AssetData),
+  });
+  const GetMultipleAssetsDataResponse = IDL.Variant({
+    Ok: MultipleAssetsDataResult,
+    Err: IDL.Text,
+  });
   const GetWhitelistResponse = IDL.Variant({
     Ok: IDL.Vec(IDL.Text),
     Err: IDL.Text,
@@ -163,6 +171,12 @@ export const idlFactory = ({ IDL }) => {
     get_feeds: IDL.Func(
       [IDL.Opt(GetFeedsFilter), IDL.Opt(Pagination), IDL.Opt(IDL.Text), IDL.Opt(IDL.Text)],
       [GetFeedsResponse],
+      []
+    ),
+    get_multiple_assets_data: IDL.Func([IDL.Vec(IDL.Text)], [GetMultipleAssetsDataResponse], []),
+    get_multiple_assets_data_with_proof: IDL.Func(
+      [IDL.Vec(IDL.Text)],
+      [GetMultipleAssetsDataResponse],
       []
     ),
     get_whitelist: IDL.Func([], [GetWhitelistResponse], []),

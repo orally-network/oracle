@@ -154,7 +154,7 @@ const FeedCard = ({ feed }: FeedCardProps) => {
 
 const Skeleton = () => {
   return (
-    <Card hoverable={true} className={styles.feed}>
+    <Card hoverable={true} className={styles.feed} style={{minWidth: 200}}>
       <AntdSkeleton active paragraph={{ rows: 3 }} round loading />
     </Card>
   );

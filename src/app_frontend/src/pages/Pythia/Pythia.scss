@@ -1,5 +1,9 @@
 .subs {
   padding: 0 23px;
+
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
 }
 
 .notWhitelisted {

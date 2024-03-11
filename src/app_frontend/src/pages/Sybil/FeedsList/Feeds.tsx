@@ -31,11 +31,11 @@ export const Feeds = () => {
     case RemoteDataType.SUCCESS:
       return (
         <>
-          <Space wrap className={styles.subs} size={['middle', 'middle']}>
+          <Flex wrap="wrap" className={styles.container} gap="middle">
             {feeds.map((feed, i) => (
               <FeedCard key={i} feed={feed} />
             ))}
-          </Space>
+          </Flex>
           <Pagination
             currentPage={Number(pagination?.page || 1)}
             total={Number(pagination?.totalItems)}
@@ -45,7 +45,7 @@ export const Feeds = () => {
       );
     case RemoteDataType.LOADING:
       return (
-        <Space wrap className={styles.subs} size={['large', 'middle']}>
+        <Space wrap className={styles.container} size={['large', 'middle']}>
           {Array.from(Array(DEFAULT_FEEDS_SIZE).keys()).map((i) => (
             <FeedCard.Skeleton key={i} />
           ))}

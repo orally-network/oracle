@@ -48,7 +48,7 @@ export const SubscriptionList = ({
     case RemoteDataType.SUCCESS:
       return (
         <>
-          <Space wrap className={styles.subs} size={['large', 'middle']}>
+          <Flex wrap="wrap" className={styles.subs} gap="middle">
             {subscriptions.map((sub, i) => (
               <SubscriptionCard
                 key={i}
@@ -59,7 +59,7 @@ export const SubscriptionList = ({
                 withdraw={withdraw}
               />
             ))}
-          </Space>
+          </Flex>
 
           <Pagination
             currentPage={Number(pagination?.page || 1)}

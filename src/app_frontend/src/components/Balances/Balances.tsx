@@ -3,7 +3,6 @@ import { Flex } from 'antd';
 import { useGlobalState } from 'Providers/GlobalState';
 
 import styles from './Balances.scss';
-import pythiaCanister from 'Canisters/pythiaCanister';
 import { remove0x } from 'Utils/addressUtils';
 import { SecondaryButton } from 'Components/SecondaryButton';
 import { DownloadOutlined } from '@ant-design/icons';
@@ -15,6 +14,7 @@ import { usePythiaData } from 'Providers/PythiaData';
 import { Chain } from 'Interfaces/chain';
 import { SignInButton } from 'Shared/SignInButton';
 import { useCurrentCanister } from 'Canisters/useCurrentCanister';
+import sybilCanister from 'Canisters/sybilCanister';
 
 type ChainBalance = {
   chainId: string | number;
@@ -31,17 +31,33 @@ export const Balances = () => {
 
   const { pma } = usePythiaData();
 
-  const fetchBalances = async () => {
+  const fetchSybilBalances = async () => {
     setIsBalancesLoading(true);
-    if(!currentCanister) return;
 
+    try {
+      const balance = await sybilCanister.get_balance(remove0x(addressData?.address));
+      setBalances([
+        {
+          chainId: 42161, // Arbitrum
+          balance: balance.Ok || Number(balance.Ok) === 0 ? balance.Ok : 0,
+        }
+      ]);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsBalancesLoading(false);
+    }
+  }
+
+  const fetchBalances = async () => {
+    if (!currentCanister) return;
+    setIsBalancesLoading(true);
     const balancePromises = chains.map((chain) =>
       currentCanister.canister.get_balance(chain.chain_id, remove0x(addressData?.address))
     );
 
     try {
       const balances = await Promise.all(balancePromises);
-
       const chainBalances: ChainBalance[] = chains.map((chain, index) => ({
         chainId: chain.chain_id,
         balance: balances[index].Ok || Number(balances[index].Ok) === 0 ? balances[index].Ok : 0,
@@ -55,9 +71,13 @@ export const Balances = () => {
   };
 
   useEffect(() => {
-    if (!addressData || !addressData.address) return;
-    fetchBalances();
-  }, [chains, addressData]);
+    if (!addressData || !addressData.address || !currentCanister) return;
+    if (currentCanister && currentCanister.name === 'sybil') {
+      fetchSybilBalances();
+    } else {
+      fetchBalances();
+    }
+  }, [chains, addressData, currentCanister]);
 
   const openTopUpModal = (chainId: string) => {
     setActiveChain(CHAINS_MAP[chainId]);

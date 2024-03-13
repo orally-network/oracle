@@ -9,10 +9,12 @@ import LogoText from 'Assets/logo.svg';
 
 import styles from './Header.scss';
 import { Balances } from 'Components/Balances';
+import { useLocation } from 'react-router-dom';
 
 const Header = () => {
   const { width } = useWindowDimensions();
   const [isBalancesModalVisible, setIsBalancesModalVisible] = useState(false);
+  const location = useLocation();
 
   const isMobile = width < BREAK_POINT_MOBILE;
 
@@ -28,9 +30,11 @@ const Header = () => {
       </div>
       <Space>
         <div className={styles.controls}>
-          <Button icon={<WalletOutlined />} onClick={() => setIsBalancesModalVisible(true)}>
-            {isMobile ? null : 'Balances'}
-          </Button>
+          {location.pathname.includes('weather') ? null : (
+            <Button icon={<WalletOutlined />} onClick={() => setIsBalancesModalVisible(true)}>
+              {isMobile ? null : 'Balances'}
+            </Button>
+          )}
         </div>
         <Connect />
       </Space>

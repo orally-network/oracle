@@ -69,7 +69,9 @@ const FeedDetails = ({ feed }: FeedDetailsProps) => {
           alignItems: 'center',
         }}
       >
-        <Flex align="center" justify="center">
+        <Flex align="center" justify="center" vertical style={{
+          height: '100%',
+        }}>
           {isWeather ? (
             <img
               src={weatherImg}
@@ -81,10 +83,11 @@ const FeedDetails = ({ feed }: FeedDetailsProps) => {
           ) : (
             <FeedLogos feed={id} size={76} />
           )}
+        
+          <Typography.Title level={4} style={{ margin: 0, textAlign: 'center' }} ellipsis={true}>
+            {id}
+          </Typography.Title>
         </Flex>
-        <Typography.Title level={4} style={{ margin: 0, textAlign: 'center' }} ellipsis={true}>
-          {id}
-        </Typography.Title>
       </Card>
 
       <Flex gap="middle" vertical style={{ width: isMobile ? '100%' : '270px' }}>
@@ -197,7 +200,7 @@ const Skeleton = () => {
           width: isMobile ? '100%' : '270px',
         }}
       >
-        <AntdSkeleton active paragraph={{ rows: 3 }} round loading />
+        <AntdSkeleton avatar active paragraph={{ rows: 1 }} round loading />
       </Card>
 
       <Flex gap="middle" style={{ flex: 1 }} vertical={isMobile}>

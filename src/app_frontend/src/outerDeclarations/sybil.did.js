@@ -81,6 +81,7 @@ export const idlFactory = ({ IDL }) => {
     rpc: IDL.Text,
     erc20_contract: IDL.Text,
     fee_per_byte: IDL.Nat,
+    whitelist: IDL.Vec(IDL.Text),
     chain_id: IDL.Nat,
   });
   const Cfg = IDL.Record({
@@ -157,14 +158,23 @@ export const idlFactory = ({ IDL }) => {
     evm_rpc_canister: IDL.Opt(IDL.Principal),
   });
   return IDL.Service({
+    add_to_balances_whitelist: IDL.Func([IDL.Vec(IDL.Text)], [Error], []),
     add_to_whitelist: IDL.Func([IDL.Text], [Error], []),
     clear_state: IDL.Func([], [Error], []),
     create_custom_feed: IDL.Func([CreateCustomFeedRequest], [Error], []),
     create_default_feed: IDL.Func([CreateDefaultFeedRequest], [Error], []),
     deposit: IDL.Func([IDL.Text, IDL.Text, IDL.Text], [Error], []),
     eth_address: IDL.Func([], [TextResponse], []),
-    get_asset_data: IDL.Func([IDL.Text], [GetAssetDataResponse], []),
-    get_asset_data_with_proof: IDL.Func([IDL.Text], [GetAssetDataWithProofResponse], []),
+    get_asset_data: IDL.Func(
+      [IDL.Text, IDL.Opt(IDL.Text), IDL.Opt(IDL.Text)],
+      [GetAssetDataResponse],
+      []
+    ),
+    get_asset_data_with_proof: IDL.Func(
+      [IDL.Text, IDL.Opt(IDL.Text), IDL.Opt(IDL.Text)],
+      [GetAssetDataWithProofResponse],
+      []
+    ),
     get_balance: IDL.Func([IDL.Text], [NatResponse], []),
     get_cfg: IDL.Func([], [GetCfgResponse], []),
     get_feed: IDL.Func([IDL.Text, IDL.Opt(IDL.Text), IDL.Opt(IDL.Text)], [GetFeedResponse], []),
@@ -173,9 +183,13 @@ export const idlFactory = ({ IDL }) => {
       [GetFeedsResponse],
       []
     ),
-    get_multiple_assets_data: IDL.Func([IDL.Vec(IDL.Text)], [GetMultipleAssetsDataResponse], []),
+    get_multiple_assets_data: IDL.Func(
+      [IDL.Vec(IDL.Text), IDL.Opt(IDL.Text), IDL.Opt(IDL.Text)],
+      [GetMultipleAssetsDataResponse],
+      []
+    ),
     get_multiple_assets_data_with_proof: IDL.Func(
-      [IDL.Vec(IDL.Text)],
+      [IDL.Vec(IDL.Text), IDL.Opt(IDL.Text), IDL.Opt(IDL.Text)],
       [GetMultipleAssetsDataResponse],
       []
     ),

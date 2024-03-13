@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import pythiaCanister from './pythiaCanister';
 import sybilCanister from "./sybilCanister";
+import apolloCanister from "./apolloCanister";
 
 type Canister = {
   name: string;
@@ -19,8 +20,7 @@ const CANISTERS: Canister[] = [
   },
   {
     name: 'apollo',
-    canister: null,
-    // canister: apolloCanister,
+    canister: apolloCanister,
   },
 ]
 

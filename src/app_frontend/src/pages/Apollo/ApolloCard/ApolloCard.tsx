@@ -104,7 +104,7 @@ const ApolloCard = ({ instance }: ApolloCardProps) => {
 
 const Skeleton = () => {
   return (
-    <Card hoverable={true} className={styles.feed}>
+    <Card hoverable={true} className={styles.item}>
       <AntdSkeleton active paragraph={{ rows: 3 }} round loading />
     </Card>
   );

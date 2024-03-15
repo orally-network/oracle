@@ -4,6 +4,7 @@ import { Filters } from './common';
 export enum QueryType {
   Subscriptions = 'subscriptions',
   Feeds = 'feeds',
+  Apollo = 'apollo',
   FeedDataWithProof = 'feedDataWithProof',
 }
 
@@ -23,5 +24,6 @@ export interface QueryKeys {
     page?: number,
     size?: number
   ) => EnsuredDynamicQueryKey<[Filters | undefined, number | undefined, number | undefined]>;
+  apollo: () => EnsuredDynamicQueryKey;
   feedDataWithProof: (id: string) => EnsuredDynamicQueryKey<[string]>;
 }

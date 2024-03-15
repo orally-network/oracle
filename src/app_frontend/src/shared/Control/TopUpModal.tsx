@@ -12,6 +12,7 @@ import { writeContract } from '@wagmi/core';
 import { useSybilData } from 'Providers/SybilPairs';
 import { GeneralResponse } from 'Interfaces/common';
 import { useGlobalState } from 'Providers/GlobalState';
+import { useApolloData } from 'Providers/ApolloData/useApolloData';
 
 const USDC_TOKEN_ADDRESS = '0xaf88d065e77c8cC2239327C5EDb3A432268e5831';
 const ARBITRUM_CHAIN_ID = 42161;
@@ -250,3 +251,82 @@ export const TopUpPythiaModal = (props: TopUpWrapperProps) => {
     />
   );
 };
+
+export const TopUpApolloModal = (props: TopUpWrapperProps) => {
+  const [amount, setAmount] = useState<string>(DEFAULT_TOP_UP_AMOUNT.toString());
+  const [isConfirming, setIsConfirming] = useState<boolean>(false);
+  const { deposit, fetchAma, ama } = useApolloData();
+
+  console.log(props)
+
+  const { sendTransactionAsync } = useSendTransaction({
+    to: ama,
+    value: utils.parseUnits(String(amount || 0), props.decimals),
+    chainId: props.chain.id,
+  });
+  
+  useEffect(() => {
+    fetchAma(props.chain.id);
+  }, []);
+
+  const topUp = useCallback(async () => {
+    setIsConfirming(true);
+    try {
+      const { hash } = await sendTransactionAsync();
+
+      props.setIsTopUpModalOpen(false);
+
+      console.log({ hash, id: props.chain.id });
+
+      const data = await toast.promise(
+        waitForTransaction({
+          hash,
+        }),
+        {
+          pending: `Sending ${amount} ${props.symbol} to ${ama}`,
+          success: `Sent successfully`,
+          error: {
+            render({ data }) {
+              logger.error(`Sending ${props.symbol}`, data);
+
+              return 'Something went wrong. Try again later.';
+            },
+          },
+        }
+      );
+
+      console.log({ data, hash });
+
+      await toast.promise(deposit(props.chain.id, hash), {
+        pending: `Deposit ${amount} ${props.symbol} to canister`,
+        success: `Deposited successfully`,
+        error: {
+          render({ data }) {
+            logger.error(`Depositing ${props.symbol}`, data);
+
+            return 'Deposit failed. Try again later.';
+          },
+        },
+      });
+
+      await props.refetchBalance();
+    } catch (error) {
+      console.log({ error });
+      toast.error('Something went wrong. Try again later.');
+    } finally {
+      setIsConfirming(false);
+    }
+  }, [amount, props.chain, sendTransactionAsync, props.refetchBalance]);
+
+  return (
+    <TopUpModal
+      {...props}
+      topUp={topUp}
+      amount={amount}
+      setAmount={setAmount}
+      isConfirming={isConfirming}
+      executionAddress={ama}
+    />
+  );
+
+}

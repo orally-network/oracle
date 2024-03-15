@@ -1,0 +1,24 @@
+.logoBg {
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 -15px;
+  background-color: #050b15;
+}
+
+.logoWrap {
+  border: solid #050b15;
+  border-radius: 50%;
+
+  img {
+    width: auto;
+    height: 100%;
+  }
+}
+
+.feedLogos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

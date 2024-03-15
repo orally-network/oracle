@@ -9,7 +9,7 @@ import { DownloadOutlined } from '@ant-design/icons';
 import ChainLogo from 'Shared/ChainLogo';
 import { CHAINS_MAP } from 'Constants/chains';
 import Loader from 'Components/Loader';
-import { TopUpPythiaModal } from 'Shared/Control/TopUpModal';
+import { TopUpApolloModal, TopUpPythiaModal, TopUpSybilModal } from 'Shared/Control/TopUpModal';
 import { usePythiaData } from 'Providers/PythiaData';
 import { Chain } from 'Interfaces/chain';
 import { SignInButton } from 'Shared/SignInButton';
@@ -40,14 +40,14 @@ export const Balances = () => {
         {
           chainId: 42161, // Arbitrum
           balance: balance.Ok || Number(balance.Ok) === 0 ? balance.Ok : 0,
-        }
+        },
       ]);
     } catch (e) {
       console.log(e);
     } finally {
       setIsBalancesLoading(false);
     }
-  }
+  };
 
   const fetchBalances = async () => {
     if (!currentCanister) return;
@@ -123,7 +123,7 @@ export const Balances = () => {
           ))
         )}
       </Flex>
-      {isTopUpModalOpen && (
+      {isTopUpModalOpen && currentCanister && currentCanister.name === 'pythia' ? (
         <TopUpPythiaModal
           isTopUpModalOpen={isTopUpModalOpen}
           setIsTopUpModalOpen={setIsTopUpModalOpen}
@@ -133,7 +133,26 @@ export const Balances = () => {
           decimals={activeChain?.nativeCurrency?.decimals}
           symbol={activeChain?.nativeCurrency?.symbol}
         />
-      )}
+      ) : isTopUpModalOpen && currentCanister && currentCanister.name === 'sybil' ? (
+        <TopUpSybilModal
+          isTopUpModalOpen={isTopUpModalOpen}
+          setIsTopUpModalOpen={setIsTopUpModalOpen}
+          executionAddress={pma} // todo: check this address for sybil
+          chain={activeChain}
+          refetchBalance={fetchSybilBalances}
+          decimals={activeChain?.nativeCurrency?.decimals}
+          symbol={activeChain?.nativeCurrency?.symbol}
+        />
+      ) :isTopUpModalOpen && currentCanister && currentCanister.name === 'apollo' ? (
+        <TopUpApolloModal
+          isTopUpModalOpen={isTopUpModalOpen}
+          setIsTopUpModalOpen={setIsTopUpModalOpen}
+          chain={activeChain}
+          refetchBalance={fetchBalances}
+          decimals={activeChain?.nativeCurrency?.decimals}
+          symbol={activeChain?.nativeCurrency?.symbol}
+        />
+      ) : null}
     </>
   );
 };

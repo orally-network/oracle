@@ -21,6 +21,8 @@ export default {
   pythia_canister_id: isStaging ? 'xmz4o-gqaaa-aaaag-qcjva-cai' : 'ettff-uaaaa-aaaag-abpcq-cai',
   sybil_canister_id: isStaging ? 'tysiw-qaaaa-aaaak-qcikq-cai' : 'wth3l-tiaaa-aaaap-aa5uq-cai',
 
+  // TODO: Replace with the correct canister id for production
+  apollo_canister_id: isStaging ? 'ndeka-riaaa-aaaak-afmaq-cai' : 'ndeka-riaaa-aaaak-afmaq-cai',
   weatherSource1Key: process.env.WEATHER_SOURCE_1_KEY,
   weatherSource2Key: process.env.WEATHER_SOURCE_2_KEY,
   weatherSource3Key: process.env.WEATHER_SOURCE_3_KEY,

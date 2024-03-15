@@ -1,21 +1,20 @@
-import { SybilFilters, RemoteDataType } from 'Interfaces/common';
+import { RemoteDataType } from 'Interfaces/common';
 import { QueryClient, useQuery, useQueryClient } from 'react-query';
 import { dynamicQueryKeys } from '../dynamicQueryKeys';
-import sybilCanister from 'Canisters/sybilCanister';
-import { Feed } from 'Interfaces/feed';
-import { DEFAULT_FEEDS_SIZE } from 'Constants/ui';
+import apolloCanister from 'Canisters/apolloCanister';
+import { ApolloInstance } from 'Interfaces/apollo';
+import { DEFAULT_APOLLO_ITEMS_SIZE } from 'Constants/ui';
 
-interface useGetSybilFeedsProps {
+type useGetApolloItemsProps = {
   page?: number;
   size?: number;
-  filters?: SybilFilters | [];
   isGetAll?: boolean;
-}
+};
 
-interface useGetSybilFeedsResult {
+interface useGetApolloItemsResult {
   data: {
     type: RemoteDataType;
-    items?: Feed[];
+    items?: ApolloInstance[];
     meta?: {
       page: number;
       size: number;
@@ -26,22 +25,19 @@ interface useGetSybilFeedsResult {
   refetch: () => Promise<void>;
 }
 
-interface GetFeedsResponse {
-  Ok: {
-    items: Feed[];
-    page: number;
-    size: number;
-    total_items: number;
-    total_pages: number;
-  };
+interface GetApolloDataResponse {
+  items: ApolloInstance[];
+  page: number;
+  size: number;
+  total_items: number;
+  total_pages: number;
 }
 
-export const useGetSybilFeeds = ({
+export const useGetApolloItems = ({
   page,
   size,
-  filters,
   isGetAll,
-}: useGetSybilFeedsProps): useGetSybilFeedsResult => {
+}: useGetApolloItemsProps): useGetApolloItemsResult => {
   const queryClient: QueryClient = useQueryClient();
 
   const {
@@ -52,39 +48,38 @@ export const useGetSybilFeeds = ({
     isSuccess,
     refetch: refetchQuery,
   } = useQuery(
-    [dynamicQueryKeys.subscriptions(), filters, page, size],
+    [dynamicQueryKeys.apollo(), page, size],
     async () => {
-      const feedsResponse: GetFeedsResponse = await sybilCanister.get_feeds(
-        isGetAll ? [] : [filters],
+      const apolloResponse: GetApolloDataResponse = await apolloCanister.get_apollo_instances(
         isGetAll
           ? []
           : [
               {
                 page,
-                size: size || DEFAULT_FEEDS_SIZE,
+                size: size || DEFAULT_APOLLO_ITEMS_SIZE,
               },
-            ],
-        [], //TODO: add msg and sig
-        []
+            ]
       );
 
-      feedsResponse.Ok.items.forEach((feed: Feed) => {
-        queryClient.setQueryDefaults(feed.id.toString(), {
+      console.log(apolloResponse, 'apolloInstances');
+
+      apolloResponse.items.forEach((item: ApolloInstance) => {
+        queryClient.setQueryDefaults(item.apollo_instance.canister_id.toString(), {
           cacheTime: Infinity,
           staleTime: Infinity,
         });
 
-        queryClient.setQueryData(feed.id.toString(), feed);
+        queryClient.setQueryData(item.apollo_instance.canister_id.toString(), item);
       });
 
       return {
         meta: {
-          page: feedsResponse.Ok.page,
-          size: feedsResponse.Ok.size,
-          totalItems: feedsResponse.Ok.total_items,
-          totalPages: feedsResponse.Ok.total_pages,
+          page: apolloResponse.page,
+          size: apolloResponse.size,
+          totalItems: apolloResponse.total_items,
+          totalPages: apolloResponse.total_pages,
         },
-        items: feedsResponse.Ok.items,
+        items: apolloResponse.items,
       };
     },
     {
@@ -97,7 +92,7 @@ export const useGetSybilFeeds = ({
     await refetchQuery();
   };
 
-  const feeds: Feed[] = data?.items ?? [];
+  const feeds: ApolloInstance[] = data?.items ?? [];
   console.log({ feeds });
 
   if (isError) {

@@ -8,6 +8,7 @@ interface PaginationProps {
   currentPage: number;
   total: number;
   setPage: (page: number) => void;
+  pageSize: number;
 }
 
 const itemRender: AntdPaginationProps['itemRender'] = (_, type, originalElement) => {
@@ -28,7 +29,7 @@ const itemRender: AntdPaginationProps['itemRender'] = (_, type, originalElement)
   return originalElement;
 };
 
-export const Pagination = ({ currentPage, total, setPage }: PaginationProps) => {
+export const Pagination = ({ currentPage, total, setPage, pageSize }: PaginationProps) => {
   return (
     <Flex justify="end" className={styles.paginationContainer}>
       <AntdPagination
@@ -36,6 +37,7 @@ export const Pagination = ({ currentPage, total, setPage }: PaginationProps) => 
         onChange={(page) => setPage(page)}
         total={Number(total)}
         itemRender={itemRender}
+        pageSize={pageSize}
       />
     </Flex>
   );

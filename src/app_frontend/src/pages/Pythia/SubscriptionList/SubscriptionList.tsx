@@ -65,6 +65,7 @@ export const SubscriptionList = ({
             currentPage={Number(pagination?.page || 1)}
             total={Number(pagination?.totalItems)}
             setPage={setPage}
+            pageSize={DEFAULT_SUBSCRIPTIONS}
           />
         </>
       );

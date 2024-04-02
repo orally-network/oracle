@@ -38,6 +38,7 @@ export const Feeds = () => {
           </Flex>
           <Pagination
             currentPage={Number(pagination?.page || 1)}
+            pageSize={DEFAULT_FEEDS_SIZE}
             total={Number(pagination?.totalItems)}
             setPage={setPage}
           />

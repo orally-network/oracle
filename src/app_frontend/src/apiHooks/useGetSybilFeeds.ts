@@ -77,12 +77,14 @@ export const useGetSybilFeeds = ({
         queryClient.setQueryData(feed.id.toString(), feed);
       });
 
+      console.log({ ok: feedsResponse.Ok });
+
       return {
         meta: {
-          page: 1,
-          size: 10,
-          totalItems: 10,
-          totalPages: 1,
+          page: feedsResponse.Ok.page,
+          size: feedsResponse.Ok.size,
+          totalItems: feedsResponse.Ok.total_items,
+          totalPages: feedsResponse.Ok.total_pages,
         },
         items: feedsResponse.Ok.items,
       };

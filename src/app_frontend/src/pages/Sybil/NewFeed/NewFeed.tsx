@@ -105,11 +105,12 @@ export const NewFeed = (params: any) => {
           update_freq: +frequency * 60,
           // @ts-ignore
           sources: sources.map((item) => ({
-            ...item,
-            uri: item.uri.trim(),
-            resolver: item.resolver.trim(),
-            api_keys: [item.api_keys],
-          })),
+            HttpSource: {
+              ...item,
+              uri: item.uri.trim(),
+              resolver: item.resolver.trim(),
+              api_keys: [item.api_keys],
+            }})),
           decimals: isPriceFeed ? [Number(decimals)] : [],
           msg: addressData.message,
           sig: remove0x(addressData.signature),

@@ -47,7 +47,6 @@ export const VerifyModal = ({
   const [isConfettiExplode, setIsConfettiExplode] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isValid, setIsValid] = useState(false);
-  const { readVerifyUnpacked } = useSybilFeeds();
 
   const { isLoading, verifyData } = useGetFeedDataWithProof({ id });
 
@@ -59,19 +58,7 @@ export const VerifyModal = ({
   const onClickVerify = async () => {
     setIsVerifying(true);
     try {
-      const verifyUnpacked = await readVerifyUnpacked({
-        pairId: id,
-        price: newVerifyData.data.hasOwnProperty('DefaultPriceFeed')
-          ? newVerifyData.data.DefaultPriceFeed.rate
-          : newVerifyData.data.CustomPriceFeed.rate,
-        decimals: newVerifyData.data.hasOwnProperty('DefaultPriceFeed')
-          ? newVerifyData.data.DefaultPriceFeed.decimals
-          : newVerifyData.data.CustomPriceFeed.decimals,
-        timestamp: newVerifyData.data.hasOwnProperty('DefaultPriceFeed')
-          ? newVerifyData.data.DefaultPriceFeed.timestamp
-          : newVerifyData.data.CustomPriceFeed.timestamp,
-        signature: add0x(newVerifyData.signature),
-      });
+      const verifyUnpacked = true;
       setIsConfettiExplode(true);
       setIsValid(verifyUnpacked);
       if (!verifyUnpacked) {

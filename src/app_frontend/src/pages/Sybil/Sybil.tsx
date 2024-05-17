@@ -8,7 +8,7 @@ import { PlusCircleOutlined } from '@ant-design/icons';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import { Filters } from './Filters/Filters';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import useSybilData from 'Providers/SybilPairs/useSybilFeeds';
 import { FilterFeedType } from 'Interfaces/feed';
 import { NewFeed } from './NewFeed/NewFeed';
@@ -17,6 +17,7 @@ import { Helmet } from 'react-helmet';
 const Sybil = () => {
   const [isNewFeedModalVisible, setIsNewFeedModalVisible] = useState(false);
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { setFeedType, setShowMine } = useSybilData();
 
   const { width } = useWindowDimensions();
@@ -58,6 +59,14 @@ const Sybil = () => {
               style={{ width: isMobile ? '40px' : 'auto', height: isMobile ? '40px' : 'auto' }}
             >
               {isMobile ? '' : 'Create feed'}
+            </Button>
+            <Button
+              type="primary"
+              size="large"
+              onClick={() => navigate('api-keys')}
+              style={{ width: isMobile ? '40px' : 'auto', height: isMobile ? '40px' : 'auto' }}
+            >
+              {'API Keys'}
             </Button>
           </Flex>
           <Feeds />

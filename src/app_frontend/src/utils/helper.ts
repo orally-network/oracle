@@ -18,6 +18,13 @@ export const mapChainsToOptions = (chains: any) => {
   }));
 };
 
+export const mapTokensToOptions = (tokens: any) => {
+  return tokens.map((token: any) => ({
+    value: token.address,
+    label: token.symbol,
+  }));
+};
+
 export const mapFeedsToOptions = (feeds: any) => {
   return feeds.map((feed: any) => ({
     value: feed.id,

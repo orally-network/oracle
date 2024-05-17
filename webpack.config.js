@@ -75,6 +75,8 @@ module.exports = (env, argv) => {
         OD: path.resolve(__dirname, './src/app_frontend/src/outerDeclarations/'),
         Providers: path.resolve(__dirname, './src/app_frontend/src/providers/'),
         Canisters: path.resolve(__dirname, './src/app_frontend/src/canisters/'),
+        ABIs: path.resolve(__dirname, './src/app_frontend/src/ABIs/'),
+        Stores: path.resolve(__dirname, './src/app_frontend/src/stores/'),
       },
     },
     output: {

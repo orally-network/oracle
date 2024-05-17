@@ -35,6 +35,7 @@
       "OD/*": [ "./app_frontend/src/outerDeclarations/*"],
       "Providers/*": ["./app_frontend/src/providers/*"],
       "Canisters/*": ["./app_frontend/src/canisters/*"],
+      "Stores/*": ["./app_frontend/src/stores/*"],
     },
     "outDir": "./dist",
   }

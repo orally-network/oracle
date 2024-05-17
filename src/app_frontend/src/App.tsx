@@ -22,6 +22,7 @@ import { WeatherAuction } from 'Pages/WeatherAuction';
 import { FeedDetailsPage } from 'Pages/FeedDetailsPage';
 import SybilFeedsProvider from 'Providers/SybilPairs/SybilFeedsProvider';
 import { WeatherDayDetailsWrapper } from 'Pages/WeatherDayDetails';
+import { APIKeys } from 'Pages/APIKeys';
 
 const router = createBrowserRouter([
   {
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
       {
         path: `${ROUTES.SYBIL}/:id`,
         element: <FeedDetailsPage />,
+      },
+      {
+        path: `${ROUTES.SYBIL}/api-keys`,
+        element: <APIKeys />,
       },
       {
         path: ROUTES.PYTHIA,

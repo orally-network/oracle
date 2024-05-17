@@ -9,9 +9,9 @@ import { usePythiaData } from 'Providers/PythiaData';
 import { DEFAULT_TOP_UP_AMOUNT } from 'Constants/ui';
 import sybilCanister from 'Canisters/sybilCanister';
 import { writeContract } from '@wagmi/core';
-import { useSybilData } from 'Providers/SybilPairs';
 import { GeneralResponse } from 'Interfaces/common';
 import { useGlobalState } from 'Providers/GlobalState';
+import { deposit } from 'Stores/useSybilBalanceStore';
 
 const USDC_TOKEN_ADDRESS = '0xaf88d065e77c8cC2239327C5EDb3A432268e5831';
 const ARBITRUM_CHAIN_ID = 42161;
@@ -33,6 +33,7 @@ interface TopUpModalProps extends TopUpWrapperProps {
   isConfirming: boolean;
 }
 
+// todo: deprecated
 const TopUpModal = ({
   isTopUpModalOpen,
   setIsTopUpModalOpen,
@@ -82,9 +83,9 @@ const TopUpModal = ({
 export const TopUpSybilModal = (props: TopUpWrapperProps) => {
   const [amount, setAmount] = useState<string>(DEFAULT_TOP_UP_AMOUNT.toString());
   const [isConfirming, setIsConfirming] = useState<boolean>(false);
-  const { deposit } = useSybilData();
   const { addressData } = useGlobalState();
 
+  // todo: use makeDepositTransfer
   const sendStablecoins = useCallback(async () => {
     const sybilEthAddress: GeneralResponse = await sybilCanister.eth_address();
     return writeContract({

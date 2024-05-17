@@ -1,28 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { Input, Flex, Space, Switch, Card, Tooltip } from 'antd';
 
-import { CHAINS_MAP } from 'Constants/chains';
 import Button from 'Components/Button';
+import { SybilBalance } from 'Shared/SybilBalance';
+import { SybilTopUp } from 'Shared/SybilTopUp';
 import logger from 'Utils/logger';
 
 import styles from './NewFeed.scss';
 import { DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { useGlobalState } from 'Providers/GlobalState';
-import { useBalance, useNetwork } from 'wagmi';
 import { remove0x } from 'Utils/addressUtils';
 import { SignInButton } from 'Shared/SignInButton';
-import { usePythiaData } from 'Providers/PythiaData';
-import Control from 'Shared/Control';
 import { useSybilData } from 'Providers/SybilPairs';
+import { useSybilBalanceStore } from 'Stores/useSybilBalanceStore';
 import { MAX_API_KEYS, MAX_SOURCES, MIN_BALANCE } from 'Constants/ui';
 import { Source } from 'Interfaces/feed';
 import { useGetSybilFeeds } from 'ApiHooks/useGetSybilFeeds';
 import { validateUrlKeys } from 'Utils/validateURLKeys';
-
-const TREASURER_CHAIN = CHAINS_MAP[42161];
-const USDT_TOKEN_POLYGON = '0xaf88d065e77c8cC2239327C5EDb3A432268e5831';
-const USDT_TOKEN_POLYGON_DECIMALS = 6;
 
 export const NewFeed = (params: any) => {
   const isViewingMode = Boolean(params.feedId);
@@ -43,7 +38,7 @@ export const NewFeed = (params: any) => {
   const [isCreating, setIsCreating] = useState(false);
   const [isPriceFeed, setIsPriceFeed] = useState(Boolean(params.decimals) ?? false);
   const [decimals, setDecimals] = useState(params.decimals ?? '9');
-  const [balance, setBalance] = useState(0);
+  const balance = useSybilBalanceStore((state) => state.balance);
 
   const newKey = (index: number) => ({
     title: index === 0 ? 'key' : `key${index + 1}`,
@@ -51,30 +46,8 @@ export const NewFeed = (params: any) => {
   });
 
   const { addressData } = useGlobalState();
-  const { pma } = usePythiaData();
-  const { fetchBalance, isBalanceLoading, createFeed } = useSybilData();
+  const { createFeed } = useSybilData();
   const feeds = useGetSybilFeeds({ isGetAll: true });
-
-  const { chain: currentChain } = useNetwork();
-
-  const refetchBalance = async () => {
-    const balanceResponse = await fetchBalance(addressData);
-    setBalance(balanceResponse);
-  };
-
-  useEffect(() => {
-    if (addressData) {
-      refetchBalance();
-    }
-  }, [addressData, refetchBalance]);
-
-  const { data: executionBalance } = useBalance({
-    address: pma,
-    chainId: TREASURER_CHAIN.id,
-    token: USDT_TOKEN_POLYGON,
-  });
-
-  console.log({ executionBalance });
 
   const addSource = () => {
     setSources([...sources, newSource]);
@@ -323,17 +296,9 @@ export const NewFeed = (params: any) => {
 
       {addressData && addressData.address ? (
         <Space direction="vertical" size="middle">
-          <Control
-            addressData={addressData}
-            balance={balance}
-            executionAddress={pma}
-            refetchBalance={refetchBalance}
-            isBalanceLoading={isBalanceLoading}
-            chain={TREASURER_CHAIN}
-            decimals={USDT_TOKEN_POLYGON_DECIMALS}
-            symbol="USDC"
-            isPythia={false}
-          />
+          <SybilBalance/>
+          <SybilTopUp />
+
           <Flex justify="flex-end">
             {!isViewingMode && (
               <Button
@@ -358,7 +323,7 @@ export const NewFeed = (params: any) => {
           </Flex>
         </Space>
       ) : (
-        <SignInButton chain={currentChain} style={{ alignSelf: 'flex-end' }} />
+        <SignInButton style={{ alignSelf: 'flex-end' }} />
       )}
     </Flex>
   );

@@ -1,9 +1,10 @@
 import { Button } from 'antd';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 
-import { useGlobalState } from 'Providers/GlobalState';
-import { useSybilDeposit } from 'Shared/SybilTopUp/useSybilDeposit';
 import { TopUpModal } from 'Shared/TopUpModal';
+import { useSybilBalanceStore, fetchBalanceAllowedChains, AllowedChain } from 'Stores/useSybilBalanceStore';
+
+import { useSybilDeposit } from './useSybilDeposit';
 
 export const SybilTopUp = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -12,9 +13,20 @@ export const SybilTopUp = () => {
     setIsModalVisible(true);
   }, []);
 
-  // todo: get chains and currencies from sybil
-  const { chains, isChainsLoading } = useGlobalState();
+  const allowedChains = useSybilBalanceStore((state) => state.allowedChains);
+  const isChainsLoading = useSybilBalanceStore((state) => state.isChainsLoading);
+
+  const [chain, setChain] = useState<AllowedChain | null>(null);
+
   const { isConfirming, sybilDeposit } = useSybilDeposit({ setIsModalVisible });
+
+  const handleClose = useCallback(() => setIsModalVisible(false), []);
+
+  useEffect(() => {
+    fetchBalanceAllowedChains().then(chains => {
+      setChain(chains[0]);
+    });
+  }, []);
 
   return  (
     <>
@@ -26,16 +38,19 @@ export const SybilTopUp = () => {
         Top Up
       </Button>
 
-      <TopUpModal
-        isOpen={isModalVisible}
-        close={() => setIsModalVisible(false)}
-        chains={chains}
-        isChainsLoading={isChainsLoading}
-        tokens={[]}
-        targetAddress=""
-        submit={sybilDeposit}
-        isConfirming={isConfirming}
-      />
+      {chain && (
+        <TopUpModal
+          isOpen={isModalVisible}
+          close={handleClose}
+          chains={allowedChains}
+          isChainsLoading={isChainsLoading}
+          tokens={chain ? chain.tokens : []}
+          submit={sybilDeposit}
+          isConfirming={isConfirming}
+          setChain={setChain}
+          chain={chain}
+        />
+      )}
     </>
   )
 };

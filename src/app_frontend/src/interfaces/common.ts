@@ -47,3 +47,7 @@ export type SybilFilters = {
   search: string[];
   feed_type: { [key: string]: string }[];
 };
+
+export type HashMap<K extends string | number | symbol, T> = {
+  [key in K]: T;
+};

@@ -1,11 +1,10 @@
-import { Address, erc20ABI, waitForTransaction, writeContract } from '@wagmi/core';
+import { erc20ABI, waitForTransaction, writeContract, Address } from '@wagmi/core';
 import { utils } from 'ethers';
-import { fetchBalance, useSybilBalanceStore, deposit } from 'Stores/useSybilBalanceStore';
+import { fetchBalance, useSybilBalanceStore, deposit, AllowedToken } from 'Stores/useSybilBalanceStore';
 import { useCallback, useState } from 'react';
 import { toast } from 'react-toastify';
 import { BALANCE_USD_DECIMALS } from 'Utils/balance';
 import logger from 'Utils/logger';
-import { TOKENS_MAP } from 'Constants/tokens';
 import { useGlobalState } from 'Providers/GlobalState';
 
 interface UseSybilDepositParams {
@@ -18,6 +17,7 @@ export const useSybilDeposit = ({ setIsModalVisible }: UseSybilDepositParams) =>
   const sybilEthAddress = useSybilBalanceStore((state) => state.sybilEthAddress);
   const { addressData } = useGlobalState();
 
+  // todo: handle if token is eth, so make another deposit transfer
   const makeDepositTransfer = useCallback(async (chainId: number, tokenAddress: Address, amount: number) => {
     return writeContract({
       address: tokenAddress,
@@ -29,11 +29,10 @@ export const useSybilDeposit = ({ setIsModalVisible }: UseSybilDepositParams) =>
     });
   }, [sybilEthAddress]);
 
-  const sybilDeposit = useCallback(async (chainId: number, tokenAddress: Address, amount: number) => {
+  const sybilDeposit = useCallback(async (chainId: number, token: AllowedToken, amount: number) => {
     setIsConfirming(true);
     try {
-      const token = TOKENS_MAP[tokenAddress];
-      const { hash } = await makeDepositTransfer(chainId, tokenAddress, amount);
+      const { hash } = await makeDepositTransfer(chainId, token.address, amount);
       console.log({ hash });
 
       setIsModalVisible(false);
@@ -69,7 +68,7 @@ export const useSybilDeposit = ({ setIsModalVisible }: UseSybilDepositParams) =>
         },
       });
 
-      await fetchBalance(addressData);
+      await fetchBalance(addressData.address);
     } catch (error) {
       console.log({ error });
       toast.error('Something went wrong. Try again later.');

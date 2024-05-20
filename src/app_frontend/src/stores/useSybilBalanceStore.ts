@@ -1,30 +1,51 @@
+import { create } from 'zustand';
 import { Address } from '@wagmi/core';
+
 import sybilCanister from 'Canisters/sybilCanister';
 import { AddressData, GeneralResponse } from 'Interfaces/common';
 import { remove0x } from 'Utils/addressUtils';
 import logger from 'Utils/logger';
-import { create } from 'zustand'
 
-type SybilBalance = {
-  balance: number;
-  isBalanceLoading: boolean;
-  error: string;
-  sybilEthAddress: Address;
+export interface AllowedToken {
+  address: Address;
+  symbol: string;
+  decimals: number;
 }
 
-export const useSybilBalanceStore = create<SybilBalance>()((set) => ({
+export interface AllowedChain {
+  chainId: number;
+  symbol: string;
+  // tokens: HashMap<string, AllowedToken>;
+  tokens: AllowedToken[];
+}
+
+export interface SybilBalance {
+  sybilEthAddress: Address;
+
+  balance: number;
+  isBalanceLoading: boolean;
+
+  // allowedChains: HashMap<number, AllowedChain>;
+  allowedChains: AllowedChain[],
+  isChainsLoading: boolean;
+
+  error: string;
+}
+
+export const useSybilBalanceStore = create<SybilBalance>()(() => ({
   sybilEthAddress: '0x',
 
   balance: 0,
   isBalanceLoading: false,
 
-  chains: [],
-  tokens: [],
+  allowedChains: {},
+  isChainsLoading: false,
 
   error: '',
 }));
 
 const fetchSybilEthAddress = async () => {
+  // @ts-ignore
   const res: GeneralResponse = await sybilCanister.eth_address();
 
   if (res.Ok) {
@@ -52,6 +73,7 @@ export const fetchBalance = async (address: string) => {
 };
 
 export const deposit = async (tx_hash: string, addressData: AddressData) => {
+  // @ts-ignore
   const res: GeneralResponse = await sybilCanister.deposit(
     tx_hash,
     addressData.message,
@@ -65,4 +87,30 @@ export const deposit = async (tx_hash: string, addressData: AddressData) => {
   }
 
   return res;
+};
+
+export const fetchBalanceAllowedChains = async () => {
+  useSybilBalanceStore.setState({ isChainsLoading: true });
+  const allowedChains: any = await sybilCanister.get_allowed_chains();
+  useSybilBalanceStore.setState({ isChainsLoading: false });
+
+  const chains = allowedChains.map(([chainId, chainData]: any) => ({
+    chainId,
+    symbol: chainData.coin_symbol,
+    tokens: chainData.erc20_contracts.map((tokenData: any) => ({
+      address: tokenData.erc20_contract,
+      symbol: tokenData.token_symbol,
+      decimals: tokenData.decimals,
+
+      value: tokenData.erc20_contract,
+      label: tokenData.token_symbol,
+    })),
+
+    value: chainId,
+    label: chainId,
+  }))
+
+  useSybilBalanceStore.setState({ allowedChains: chains });
+
+  return chains;
 };

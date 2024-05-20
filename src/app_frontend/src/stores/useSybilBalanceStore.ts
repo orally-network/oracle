@@ -95,7 +95,7 @@ export const fetchBalanceAllowedChains = async () => {
   useSybilBalanceStore.setState({ isChainsLoading: false });
 
   const chains = allowedChains.map(([chainId, chainData]: any) => ({
-    chainId,
+    chainId: Number(chainId),
     symbol: chainData.coin_symbol,
     tokens: chainData.erc20_contracts.map((tokenData: any) => ({
       address: tokenData.erc20_contract,
@@ -106,8 +106,8 @@ export const fetchBalanceAllowedChains = async () => {
       label: tokenData.token_symbol,
     })),
 
-    value: chainId,
-    label: chainId,
+    value: Number(chainId),
+    label: Number(chainId),
   }))
 
   useSybilBalanceStore.setState({ allowedChains: chains });

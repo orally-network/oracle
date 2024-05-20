@@ -12,7 +12,8 @@ export const EMPTY_BALANCE = 0.001;
 
 export const DEFAULT_SUBSCRIPTIONS = 20;
 export const DEFAULT_FEEDS_SIZE = 30;
-export const DEFAULT_TOP_UP_AMOUNT = 0.01;
+export const DEFAULT_TOP_UP_AMOUNT = 50;
+export const DEFAULT_TOP_UP_AMOUNT_ETH = 0.02;
 export const DEFAULT_SUBSCRIPTIONS_SIZE = 10;
 export const MAX_SOURCES = 10;
 export const MAX_API_KEYS = 5;

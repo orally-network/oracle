@@ -32,7 +32,7 @@ export const TopUpModal = ({
   chain,
 }: TopUpModalProps) => {
   const { chain: currentChain } = useNetwork();
-  const { switchNetwork } = useSwitchNetwork();
+  const { switchNetworkAsync } = useSwitchNetwork();
   const { address } = useAccount();
 
   const [token, setToken] = useState<AllowedToken>(chain.tokens[0]);
@@ -44,10 +44,10 @@ export const TopUpModal = ({
     address,
   });
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
     if (currentChain?.id && currentChain?.id !== chain.chainId) {
-      if (switchNetwork) {
-        switchNetwork(chain.chainId);
+      if (switchNetworkAsync) {
+        await switchNetworkAsync(chain.chainId);
       }
     }
 

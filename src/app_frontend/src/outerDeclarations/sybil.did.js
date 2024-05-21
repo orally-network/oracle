@@ -53,12 +53,14 @@ export const idlFactory = ({ IDL }) => {
     'Ok' : IDL.Vec(IDL.Tuple(IDL.Nat64, IDL.Vec(IDL.Text))),
     'Err' : IDL.Text,
   });
-  const AllowedChain = IDL.Record({
+  const SaveAllowedChain = IDL.Record({
     'rpc' : IDL.Text,
     'erc20_contracts' : IDL.Vec(ERC20Contract),
     'coin_symbol' : IDL.Text,
   });
-  const GetAllowedChainsResponse = IDL.Vec(IDL.Tuple(IDL.Nat64, AllowedChain));
+  const GetSaveAllowedChainsResponse = IDL.Vec(
+    IDL.Tuple(IDL.Nat64, SaveAllowedChain)
+  );
   const APIUser = IDL.Record({
     'last_request' : IDL.Nat64,
     'request_count_per_method' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat64)),
@@ -118,7 +120,7 @@ export const idlFactory = ({ IDL }) => {
     'fee_per_byte' : IDL.Nat,
     'whitelist' : IDL.Vec(IDL.Text),
     'chain_id' : IDL.Nat,
-    'allowed_chains' : IDL.Vec(IDL.Tuple(IDL.Nat64, AllowedChain)),
+    'allowed_chains' : IDL.Vec(IDL.Tuple(IDL.Nat64, SaveAllowedChain)),
     'treasure_address' : IDL.Text,
   });
   const Cfg = IDL.Record({
@@ -233,7 +235,7 @@ export const idlFactory = ({ IDL }) => {
       'FixedArray' : IDL.Vec(SolidityToken),
       'Bool' : IDL.Bool,
       'Uint' : IDL.Text,
-      'text' : IDL.Text,
+      'String' : IDL.Text,
       'Bytes' : IDL.Vec(IDL.Nat8),
       'Address' : IDL.Text,
       'FixedBytes' : IDL.Vec(IDL.Nat8),
@@ -246,7 +248,7 @@ export const idlFactory = ({ IDL }) => {
     'method' : IDL.Text,
     'chain_id' : IDL.Nat64,
     'timestamp' : IDL.Nat64,
-    'fee_symbol' : IDL.Nat,
+    'fee_symbol' : IDL.Text,
     'contract_address' : IDL.Text,
     'params' : IDL.Text,
   });
@@ -279,7 +281,7 @@ export const idlFactory = ({ IDL }) => {
     'chain_id' : IDL.Nat64,
     'addresses' : IDL.Opt(IDL.Vec(IDL.Text)),
     'timestamp' : IDL.Nat64,
-    'fee_symbol' : IDL.Nat,
+    'fee_symbol' : IDL.Text,
     'topics0' : IDL.Opt(IDL.Vec(IDL.Text)),
     'topics1' : IDL.Opt(IDL.Vec(IDL.Text)),
     'topics2' : IDL.Opt(IDL.Vec(IDL.Text)),
@@ -310,7 +312,7 @@ export const idlFactory = ({ IDL }) => {
   });
   return IDL.Service({
     'add_allowed_chain' : IDL.Func(
-        [IDL.Nat64, IDL.Text, IDL.Text],
+        [IDL.Nat64, IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
         [Error],
         [],
       ),
@@ -351,7 +353,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'eth_address' : IDL.Func([], [TextResponse], []),
     'get_all_chains_rpc' : IDL.Func([], [GetAllChainsRPCResponse], []),
-    'get_allowed_chains' : IDL.Func([], [GetAllowedChainsResponse], []),
+    'get_allowed_chains' : IDL.Func([], [GetSaveAllowedChainsResponse], []),
     'get_api_key' : IDL.Func([IDL.Text, IDL.Text], [TextResponse], []),
     'get_api_keys' : IDL.Func([], [GetAPIKeysResponse], []),
     'get_asset_data' : IDL.Func(

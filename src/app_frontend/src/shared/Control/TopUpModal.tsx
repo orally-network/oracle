@@ -149,7 +149,7 @@ export const TopUpSybilModal = (props: TopUpWrapperProps) => {
 
       console.log({ data, hash });
 
-      await toast.promise(deposit(hash, addressData), {
+      await toast.promise(deposit(ARBITRUM_CHAIN_ID, hash, addressData), {
         pending: `Deposit ${amount} ${props.symbol} to canister`,
         success: `Deposited successfully`,
         error: {

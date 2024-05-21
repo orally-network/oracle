@@ -20,7 +20,7 @@ export interface AllowedChain {
 }
 
 export interface SybilBalance {
-  sybilEthAddress: Address;
+  sybilTreasureAddress: Address;
 
   balance: number;
   isBalanceLoading: boolean;
@@ -33,28 +33,28 @@ export interface SybilBalance {
 }
 
 export const useSybilBalanceStore = create<SybilBalance>()(() => ({
-  sybilEthAddress: '0x',
+  sybilTreasureAddress: '0x',
 
   balance: 0,
   isBalanceLoading: false,
 
-  allowedChains: {},
+  allowedChains: [],
   isChainsLoading: false,
 
   error: '',
 }));
 
-const fetchSybilEthAddress = async () => {
+const fetchSybilTreasureAddress = async () => {
   // @ts-ignore
-  const res: GeneralResponse = await sybilCanister.eth_address();
+  const res: Address = await sybilCanister.get_treasure_address();
 
-  if (res.Ok) {
-    useSybilBalanceStore.setState({ sybilEthAddress: res.Ok });
+  if (res) {
+    useSybilBalanceStore.setState({ sybilTreasureAddress: res });
   } else {
-    logger.error(`Failed to get sybil eth address, ${res.Err}`);
+    logger.error(`Failed to get sybil eth address, ${res}`);
   }
 };
-fetchSybilEthAddress();
+fetchSybilTreasureAddress();
 
 export const fetchBalance = async (address: string) => {
   useSybilBalanceStore.setState({ isBalanceLoading: true });
@@ -72,10 +72,12 @@ export const fetchBalance = async (address: string) => {
   }
 };
 
-export const deposit = async (tx_hash: string, addressData: AddressData) => {
+export const deposit = async (chainId: number, tx_hash: string, addressData: AddressData) => {
   // @ts-ignore
   const res: GeneralResponse = await sybilCanister.deposit(
+    chainId,
     tx_hash,
+    [], // grantee
     addressData.message,
     remove0x(addressData.signature)
   );

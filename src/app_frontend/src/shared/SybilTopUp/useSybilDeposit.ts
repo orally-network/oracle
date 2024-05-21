@@ -1,9 +1,8 @@
-import { erc20ABI, waitForTransaction, writeContract, Address } from '@wagmi/core';
+import { erc20ABI, waitForTransaction, writeContract } from '@wagmi/core';
 import { utils } from 'ethers';
 import { fetchBalance, useSybilBalanceStore, deposit, AllowedToken } from 'Stores/useSybilBalanceStore';
 import { useCallback, useState } from 'react';
 import { toast } from 'react-toastify';
-import { BALANCE_USD_DECIMALS } from 'Utils/balance';
 import logger from 'Utils/logger';
 import { useGlobalState } from 'Providers/GlobalState';
 
@@ -14,25 +13,25 @@ interface UseSybilDepositParams {
 export const useSybilDeposit = ({ setIsModalVisible }: UseSybilDepositParams) => {
   const [isConfirming, setIsConfirming] = useState(false);
 
-  const sybilEthAddress = useSybilBalanceStore((state) => state.sybilEthAddress);
+  const sybilTreasureAddress = useSybilBalanceStore((state) => state.sybilTreasureAddress);
   const { addressData } = useGlobalState();
 
   // todo: handle if token is eth, so make another deposit transfer
-  const makeDepositTransfer = useCallback(async (chainId: number, tokenAddress: Address, amount: number) => {
+  const makeDepositTransfer = useCallback(async (chainId: number, token: AllowedToken, amount: number) => {
     return writeContract({
-      address: tokenAddress,
+      address: token.address,
       abi: erc20ABI,
       functionName: 'transfer',
       // @ts-ignore
-      args: [sybilEthAddress, utils.parseUnits(String(amount || 0), BALANCE_USD_DECIMALS)],
+      args: [sybilTreasureAddress, utils.parseUnits(String(amount || 0), token.decimals)],
       chainId,
     });
-  }, [sybilEthAddress]);
+  }, [sybilTreasureAddress]);
 
   const sybilDeposit = useCallback(async (chainId: number, token: AllowedToken, amount: number) => {
     setIsConfirming(true);
     try {
-      const { hash } = await makeDepositTransfer(chainId, token.address, amount);
+      const { hash } = await makeDepositTransfer(chainId, token, amount);
       console.log({ hash });
 
       setIsModalVisible(false);
@@ -42,7 +41,7 @@ export const useSybilDeposit = ({ setIsModalVisible }: UseSybilDepositParams) =>
           hash,
         }),
         {
-          pending: `Sending ${amount} ${token.symbol} to ${sybilEthAddress}`,
+          pending: `Sending ${amount} ${token.symbol} to ${sybilTreasureAddress}`,
           success: `Sent successfully`,
           error: {
             render({ data }) {
@@ -56,7 +55,7 @@ export const useSybilDeposit = ({ setIsModalVisible }: UseSybilDepositParams) =>
 
       console.log({ data, hash });
 
-      await toast.promise(deposit(hash, addressData), {
+      await toast.promise(deposit(chainId, hash, addressData), {
         pending: `Deposit ${amount} ${token.symbol} to canister`,
         success: `Deposited successfully`,
         error: {
@@ -75,7 +74,7 @@ export const useSybilDeposit = ({ setIsModalVisible }: UseSybilDepositParams) =>
     } finally {
       setIsConfirming(false);
     }
-  }, [setIsModalVisible, makeDepositTransfer, fetchBalance, addressData, sybilEthAddress]);
+  }, [setIsModalVisible, makeDepositTransfer, fetchBalance, addressData, sybilTreasureAddress]);
 
   return {
     isConfirming,

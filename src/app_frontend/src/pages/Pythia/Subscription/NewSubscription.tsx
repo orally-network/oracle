@@ -21,7 +21,7 @@ import { SingleValueSelect } from 'Components/Select';
 import { FrequencyType, OptionType } from 'Interfaces/subscription';
 import { BREAK_POINT_MOBILE, FREQUENCY_UNITS, MIN_BALANCE, MIN_FREQUENCY } from 'Constants/ui';
 
-import styles from './Subscription.scss';
+import styles from './Subscription.module.scss';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { useGetSybilFeeds } from 'ApiHooks/useGetSybilFeeds';
 import { useGlobalState } from 'Providers/GlobalState';

@@ -1,12 +1,12 @@
+import { utils } from 'ethers';
 import React, { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { WeatherAuctionContext } from './WeatherAuctionContext';
 import { useLazyQuery } from '@apollo/client';
 import { GET_BIDS } from './queries/auction';
 import { writeContract, readContract } from '@wagmi/core';
-import WeatherAuctionABI from './weatherAuctionABI.json';
+import WeatherAuctionABI from './WeatherAuctionABI.json';
 import WeatherPredictionV2ABI from './WeatherPredictionV2ABI.json';
-import { utils } from 'ethers';
 import { CHAINS_MAP } from 'Constants/chains';
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
 import { toast } from 'react-toastify';

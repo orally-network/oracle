@@ -8,7 +8,7 @@ import Button from 'Components/Button';
 import logger from 'Utils/logger';
 import { remove0x } from 'Utils/addressUtils';
 
-import styles from './Control.scss';
+import styles from './Control.module.scss';
 
 const fileTypes = ["JSON"];
 

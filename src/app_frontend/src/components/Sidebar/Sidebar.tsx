@@ -11,7 +11,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 
-import styles from './Sidebar.scss';
+import styles from './Sidebar.module.scss';
 import { Navigation } from 'Components/Navigation';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_DESKTOP_LARGE, BREAK_POINT_MOBILE } from 'Constants/ui';

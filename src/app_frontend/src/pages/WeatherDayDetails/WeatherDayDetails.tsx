@@ -11,7 +11,7 @@ import { TodayBidsTable } from 'Pages/WeatherAuction/TodayBidsTable';
 import { WinnersTable } from 'Pages/WeatherAuction/WinnersTable';
 import { useWeatherData } from 'Providers/WeatherAuctionData/useWeatherData';
 import { useParams } from 'react-router-dom';
-import styles from './WeatherDayDetails.scss';
+import styles from './WeatherDayDetails.module.scss';
 import { utils } from 'ethers';
 import { fetchTransaction } from '@wagmi/core';
 import { ARBITRUM_CHAIN_ID } from 'Providers/WeatherAuctionData/contants';

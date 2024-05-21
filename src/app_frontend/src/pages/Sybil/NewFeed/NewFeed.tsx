@@ -7,7 +7,7 @@ import { SybilBalance } from 'Shared/SybilBalance';
 import { SybilTopUp } from 'Shared/SybilTopUp';
 import logger from 'Utils/logger';
 
-import styles from './NewFeed.scss';
+import styles from './NewFeed.module.scss';
 import { DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { useGlobalState } from 'Providers/GlobalState';
 import { remove0x } from 'Utils/addressUtils';

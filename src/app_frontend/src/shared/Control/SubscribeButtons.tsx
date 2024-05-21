@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Spin, Space } from 'antd';
 import Button from 'Components/Button';
-import styles from './Control.scss';
+import styles from './Control.module.scss';
 import { toast } from 'react-toastify';
 import logger from 'Utils/logger';
 import { EMPTY_BALANCE, MIN_BALANCE } from 'Constants/ui';

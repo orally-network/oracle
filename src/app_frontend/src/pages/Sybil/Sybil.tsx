@@ -3,7 +3,6 @@ import { Button, Drawer, Flex, Layout, Space, Typography } from 'antd';
 
 import { Feeds } from './FeedsList/Feeds';
 
-import styles from './Sybil.scss';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
@@ -44,7 +43,7 @@ const Sybil = () => {
         <title>Orally Network | Sybil - Permissionless Data Fetcher</title>
       </Helmet>
 
-      <Layout.Content className={styles.sybil}>
+      <Layout.Content>
         <Space size="middle" direction="vertical" style={{ width: '100%', position: 'relative' }}>
           <Flex align="center" justify="space-between" gap={8}>
             <Typography.Title style={{ minWidth: '70px' }} level={3}>

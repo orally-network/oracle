@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { Menu } from 'antd';
 import { CloudOutlined, HomeFilled, UnorderedListOutlined } from '@ant-design/icons';
 
-import styles from './Navigation.scss';
+import styles from './Navigation.module.scss';
 
 interface NavigationProps {
   isDarkMode: boolean;

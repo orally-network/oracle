@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Space, Card, Typography, Flex, Skeleton as AntdSkeleton, Tooltip } from 'antd';
 
-import styles from './FeedDetailsPage.scss';
+import styles from './FeedDetailsPage.module.scss';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { convertFrequencyDate } from 'Utils/helper';

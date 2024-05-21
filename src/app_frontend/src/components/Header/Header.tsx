@@ -5,9 +5,8 @@ import { WalletOutlined } from '@ant-design/icons';
 import Connect from 'Shared/Connect';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
-import LogoText from 'Assets/logo.svg';
+import logoSrc from 'Assets/logo.svg';
 
-import styles from './Header.scss';
 import { Balances } from 'Components/Balances';
 import { useLocation } from 'react-router-dom';
 
@@ -20,16 +19,16 @@ const Header = () => {
 
   return (
     <Layout.Header
-      className={styles.header}
+      className="flex justify-between items-center fixed top-0 z-50 w-full shadow-header h-12"
       style={{
         paddingLeft: isMobile ? '65px' : '15px',
       }}
     >
-      <div className={styles.logo}>
-        <LogoText height={20} />
+      <div className="flex mr-7">
+        <img src={logoSrc} alt="logo" className="h-6" />
       </div>
       <Space>
-        <div className={styles.controls}>
+        <div className="my-1">
           {location.pathname.includes('weather') ? null : (
             <Button icon={<WalletOutlined />} onClick={() => setIsBalancesModalVisible(true)}>
               {isMobile ? null : 'Balances'}

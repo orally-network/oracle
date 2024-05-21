@@ -13,7 +13,7 @@ import {
 } from 'antd';
 import ChainLogo from 'Shared/ChainLogo';
 
-import styles from './SubscriptionDetailsPage.scss';
+import styles from './SubscriptionDetailsPage.module.scss';
 import { add0x, isAddressHasOx, truncateEthAddress } from 'Utils/addressUtils';
 import IconLink from 'Components/IconLink';
 import { stopPropagation } from 'Utils/reactUtils';

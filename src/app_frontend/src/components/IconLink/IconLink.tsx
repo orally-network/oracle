@@ -1,6 +1,6 @@
 import React from 'react';
 
-import styles from './IconLinks.scss';
+import styles from './IconLinks.module.scss';
 
 const IconLink = ({ link, IconComponent, ...rest }) => {
   return (

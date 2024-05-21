@@ -1,7 +1,7 @@
 import React from 'react';
 import { Space, Flex, Empty } from 'antd';
 
-import styles from './Feeds.scss';
+import styles from './Feeds.module.scss';
 import { Feed } from 'Interfaces/feed';
 import { useGetSybilFeeds } from 'ApiHooks/useGetSybilFeeds';
 import { RemoteDataType } from 'Interfaces/common';

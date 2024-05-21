@@ -2,7 +2,7 @@ import { Spin } from 'antd';
 import { SpinSize } from 'antd/es/spin';
 import React from 'react';
 
-import styles from './Loader.scss';
+import styles from './Loader.module.scss';
 
 const Loader = ({ size = 'default', isFullPage }: { size?: SpinSize; isFullPage?: boolean }) => {
   return (

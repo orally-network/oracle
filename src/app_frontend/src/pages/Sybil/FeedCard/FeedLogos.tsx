@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './FeedCard.scss';
+import styles from './FeedCard.module.scss';
 
 interface FeedLogosProps {
   feed: string;
@@ -40,7 +40,7 @@ export const FeedLogos = ({ feed, size = 46 }: FeedLogosProps) => {
               onError={(e: any) => {
                 e.target.onerror = null;
                 setIsPlaceholder(true);
-                // e.target.src = '/placeholder.png';
+                e.target.src = '/placeholder.png';
               }}
             />
           </div>
@@ -62,7 +62,7 @@ export const FeedLogos = ({ feed, size = 46 }: FeedLogosProps) => {
               onError={(e: any) => {
                 e.target.onerror = null;
                 setIsPlaceholder(true);
-                // e.target.src = '/placeholder.png';
+                e.target.src = '/placeholder.png';
               }}
             />
           </div>

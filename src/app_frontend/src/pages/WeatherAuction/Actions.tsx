@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './WeatherAuction.scss';
+import styles from './WeatherAuction.module.scss';
 import { useWeatherData } from 'Providers/WeatherAuctionData/useWeatherData';
 import { Flex } from 'antd';
 import Button from 'Components/Button';

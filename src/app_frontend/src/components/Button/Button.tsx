@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import cn from 'classnames';
 import { Button as AntdButton } from 'antd';
 
-import styles from './Button.scss';
+import styles from './Button.module.scss';
 import { ButtonProps as AntdButtonProps, ButtonType } from 'antd/es/button';
 
 interface ButtonProps extends AntdButtonProps {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Flex } from 'antd';
 import { useGlobalState } from 'Providers/GlobalState';
 
-import styles from './Balances.scss';
+import styles from './Balances.module.scss';
 import { remove0x } from 'Utils/addressUtils';
 import { SecondaryButton } from 'Components/SecondaryButton';
 import { DownloadOutlined } from '@ant-design/icons';

@@ -36,7 +36,9 @@
       "Providers/*": ["./app_frontend/src/providers/*"],
       "Canisters/*": ["./app_frontend/src/canisters/*"],
       "Stores/*": ["./app_frontend/src/stores/*"],
+      "Public/*": ["./public/*"],
     },
     "outDir": "./dist",
-  }
+  },
+  "include": ["vite.config.ts"],
 }

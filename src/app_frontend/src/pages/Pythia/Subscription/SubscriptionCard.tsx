@@ -27,7 +27,7 @@ import { usePythiaData } from 'Providers/PythiaData';
 import { truncateEthAddress } from 'Utils/addressUtils';
 import { stopPropagation } from 'Utils/reactUtils';
 import Button from 'Components/Button';
-import styles from './Subscription.scss';
+import styles from './Subscription.module.scss';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import IconLink from 'Components/IconLink';
 import { SubscriptionDetails } from './SubscriptionDetails';

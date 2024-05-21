@@ -6,7 +6,7 @@ import Connect from 'Shared/Connect';
 import { truncateEthAddress } from 'Utils/addressUtils';
 
 import { TopUpPythiaModal, TopUpSybilModal } from './TopUpModal';
-import styles from './Control.scss';
+import styles from './Control.module.scss';
 import { SecondaryButton } from 'Components/SecondaryButton';
 import { SignInButton } from 'Shared/SignInButton';
 

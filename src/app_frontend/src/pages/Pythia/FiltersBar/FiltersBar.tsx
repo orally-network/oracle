@@ -6,7 +6,7 @@ import { useSearchParams } from 'react-router-dom';
 import { usePythiaData } from 'Providers/PythiaData';
 import { mapChainsToOptions } from '../../../utils/helper';
 import { SecondaryButton } from 'Components/SecondaryButton';
-import styles from './FiltersBar.scss';
+import styles from './FiltersBar.module.scss';
 import { MultiSelect } from 'Components/Select';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';

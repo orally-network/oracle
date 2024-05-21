@@ -1,5 +1,9 @@
 @use './variables';
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @font-face {
   font-family: 'Gilroy-Light';
   src: url('./fonts/Gilroy-Light.ttf') format('truetype');

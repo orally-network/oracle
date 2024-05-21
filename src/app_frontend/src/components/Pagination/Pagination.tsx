@@ -1,7 +1,7 @@
 import React from 'react';
 import type { PaginationProps as AntdPaginationProps } from 'antd';
 import { Pagination as AntdPagination, Flex } from 'antd';
-import styles from './Pagination.scss';
+import styles from './Pagination.module.scss';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 
 interface PaginationProps {

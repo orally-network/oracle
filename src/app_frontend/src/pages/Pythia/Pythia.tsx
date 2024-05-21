@@ -15,7 +15,7 @@ import { BREAK_POINT_MOBILE } from 'Constants/ui';
 
 import FiltersBar from './FiltersBar';
 import NewSubscription from './Subscription/NewSubscription';
-import styles from './Pythia.scss';
+import styles from './Pythia.module.scss';
 import { GeneralResponse } from 'Interfaces/common';
 
 import { FilterType } from 'Interfaces/subscription';

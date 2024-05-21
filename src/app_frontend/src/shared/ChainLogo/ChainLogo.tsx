@@ -1,6 +1,6 @@
 import React from 'react';
 
-import styles from './ChainLogo.scss';
+import styles from './ChainLogo.module.scss';
 
 interface ChainLogoProps {
   chain: any;

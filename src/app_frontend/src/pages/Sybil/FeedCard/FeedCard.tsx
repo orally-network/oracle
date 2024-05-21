@@ -3,7 +3,7 @@ import { Space, Card, Typography, Flex, Drawer, Skeleton as AntdSkeleton } from 
 import { useAccount } from 'wagmi';
 import { useNavigate } from 'react-router-dom';
 
-import styles from './FeedCard.scss';
+import styles from './FeedCard.module.scss';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import { NewFeed } from 'Pages/Sybil/NewFeed/NewFeed';
 import weatherImg from 'Assets/weather.png';

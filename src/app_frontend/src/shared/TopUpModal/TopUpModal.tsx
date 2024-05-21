@@ -6,8 +6,6 @@ import { AllowedChain, AllowedToken } from 'Stores/useSybilBalanceStore';
 import { DEFAULT_TOP_UP_AMOUNT, DEFAULT_TOP_UP_AMOUNT_ETH } from 'Constants/ui';
 import { SingleValueSelect } from 'Components/Select';
 
-import styles from './TopUpModal.scss';
-
 interface TopUpModalProps {
   isOpen: boolean;
   close: (e: any) => void;
@@ -74,7 +72,7 @@ export const TopUpModal = ({
       <Flex vertical style={{ margin: '20px 0' }}>
         <Flex style={{ marginBottom: '20px' }} justify="space-around">
           <SingleValueSelect
-            className={styles.chainSelect}
+            className="w-170"
             classNamePrefix="react-select"
             options={chains}
             value={chain}
@@ -85,7 +83,7 @@ export const TopUpModal = ({
 
           <SingleValueSelect
             isToken
-            className={styles.chainSelect}
+            className="w-170"
             classNamePrefix="react-select"
             options={tokens}
             onChange={setToken}

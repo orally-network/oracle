@@ -8,7 +8,7 @@ import { GeneralResponse, RemoteDataType } from 'Interfaces/common';
 import { Pagination } from 'Components/Pagination/Pagination';
 
 import useSignature from 'Shared/useSignature';
-import styles from '../Pythia.scss';
+import styles from '../Pythia.module.scss';
 import { usePythiaData } from 'Providers/PythiaData';
 import { useAccount } from 'wagmi';
 

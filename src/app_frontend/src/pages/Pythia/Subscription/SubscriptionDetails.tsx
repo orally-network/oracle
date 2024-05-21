@@ -23,7 +23,7 @@ import useWindowDimensions from 'Utils/useWindowDimensions';
 import { toast } from 'react-toastify';
 import { useGetSybilFeeds } from 'ApiHooks/useGetSybilFeeds';
 
-import styles from './Subscription.scss';
+import styles from './Subscription.module.scss';
 import { RemoteDataType } from 'Interfaces/common';
 
 interface SubscriptionDetailsProps {

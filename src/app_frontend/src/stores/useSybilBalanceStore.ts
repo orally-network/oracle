@@ -91,6 +91,7 @@ export const deposit = async (chainId: number, tx_hash: string, addressData: Add
   return res;
 };
 
+// todo: add to tokens coin of the chain + change transfer for this case
 export const fetchBalanceAllowedChains = async () => {
   useSybilBalanceStore.setState({ isChainsLoading: true });
   const allowedChains: any = await sybilCanister.get_allowed_chains();

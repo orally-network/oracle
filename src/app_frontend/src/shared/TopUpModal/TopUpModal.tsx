@@ -38,19 +38,11 @@ export const TopUpModal = ({
   const [token, setToken] = useState<AllowedToken>(chain.tokens[0]);
   const [amount, setAmount] = useState<number>(chain.tokens[0].symbol === 'ETH' ? DEFAULT_TOP_UP_AMOUNT_ETH : DEFAULT_TOP_UP_AMOUNT);
 
-  console.log({
-    chainId: Number(chain.chainId),
-    token: token.address,
-    address,
-  })
-
-  const { data } = useBalance({
+  const { data: balance } = useBalance({
     chainId: Number(chain.chainId),
     token: token.address,
     address,
   });
-
-  console.log({ data });
 
   const handleSubmit = useCallback(() => {
     if (currentChain?.id && currentChain?.id !== chain.chainId) {
@@ -72,7 +64,7 @@ export const TopUpModal = ({
       style={{ top: '30%', right: '10px', maxWidth: '400px' }}
       title="Top Up"
       okButtonProps={{
-        disabled: currentChain?.id !== chain.chainId || amount < DEFAULT_TOP_UP_AMOUNT,
+        disabled: Number(balance?.formatted) < amount || amount <= 0,
       }}
       onOk={handleSubmit}
       open={isOpen}
@@ -106,11 +98,12 @@ export const TopUpModal = ({
         <Input
           type="number"
           value={amount}
+          className="m-10 w-50"
           onChange={useCallback((e: any) => setAmount(Number(e.target.value)), [])}
         />
 
         <Typography.Text style={{ marginTop: '5px', color: 'gray' }}>
-          Balance: {data ? data.formatted : '0'}
+          Balance: {balance ? balance.formatted : '0'}
         </Typography.Text>
       </Flex>
     </Modal>

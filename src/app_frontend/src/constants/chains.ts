@@ -8,6 +8,12 @@ import {
   arbitrum,
   arbitrumNova,
   zkSyncTestnet,
+  linea,
+  qMainnet,
+  qTestnet,
+  aurora,
+  auroraTestnet,
+  lineaTestnet,
 } from 'wagmi/chains';
 
 import ethereumImg from 'Assets/chains/ethereum.jpeg';
@@ -120,135 +126,27 @@ const CHAINS = [
     img: ultronImg,
   },
   {
-    id: 35443,
-    name: 'Q Testnet',
-    network: 'Q testnet',
-    nativeCurrency: {
-      name: 'Q',
-      symbol: 'Q',
-      decimals: 18,
-    },
-    rpcUrls: {
-      default: {
-        http: ['https://rpc.qtestnet.org'],
-      },
-      public: {
-        http: ['https://rpc.qtestnet.org'],
-      },
-    },
-    blockExplorers: {
-      default: {
-        name: 'Explorer Q Testnet',
-        url: 'https://explorer.qtestnet.org/',
-      },
-    },
-    testnet: true,
+    ...qTestnet,
     img: qImg,
     explorerType: ExplorerType.ScanExplorer,
   },
   {
-    id: 35441,
-    name: 'Q chain',
-    network: 'Q chain',
-    nativeCurrency: {
-      name: 'Q',
-      symbol: 'Q',
-      decimals: 18,
-    },
-    rpcUrls: {
-      default: {
-        http: ['https://rpc.q.org'],
-      },
-      public: {
-        http: ['https://rpc.q.org'],
-      },
-    },
-    blockExplorers: {
-      default: {
-        name: 'Explorer Q',
-        url: 'https://explorer.q.org',
-      },
-    },
+    ...qMainnet,
     img: qImg,
     explorerType: ExplorerType.ScanExplorer,
   },
   {
-    id: 1313161555,
-    name: 'Aurora Testnet',
-    network: 'Aurora testnet',
-    nativeCurrency: {
-      name: 'ETH',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    rpcUrls: {
-      default: {
-        http: ['https://testnet.aurora.dev'],
-      },
-      public: {
-        http: ['https://testnet.aurora.dev'],
-      },
-    },
-    blockExplorers: {
-      default: {
-        name: 'Explorer Aurora Testnet',
-        url: 'https://testnet.aurorascan.dev/',
-      },
-    },
-    testnet: true,
+    ...auroraTestnet,
     img: auroraImg,
     explorerType: ExplorerType.ScanExplorer,
   },
   {
-    id: 1313161554,
-    name: 'Aurora',
-    network: 'Aurora',
-    nativeCurrency: {
-      name: 'ETH',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    rpcUrls: {
-      default: {
-        http: ['https://mainnet.aurora.dev'],
-      },
-      public: {
-        http: ['https://mainnet.aurora.dev'],
-      },
-    },
-    blockExplorers: {
-      default: {
-        name: 'Explorer Aurora',
-        url: 'https://aurorascan.dev',
-      },
-    },
+    ...aurora,
     img: auroraImg,
     explorerType: ExplorerType.ScanExplorer,
   },
   {
-    id: 59140,
-    name: 'Linea Testnet',
-    network: 'Linea testnet',
-    nativeCurrency: {
-      name: 'Linea ETH',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    rpcUrls: {
-      default: {
-        http: ['https://rpc.goerli.linea.build'],
-      },
-      public: {
-        http: ['https://rpc.goerli.linea.build'],
-      },
-    },
-    blockExplorers: {
-      default: {
-        name: 'Explorer Linea Testnet',
-        url: 'https://goerli.lineascan.build/',
-      },
-    },
-    testnet: true,
+    ...lineaTestnet,
     img: lineaImg,
     explorerType: ExplorerType.ScanExplorer,
   },
@@ -362,56 +260,7 @@ const CHAINS = [
     explorerType: ExplorerType.BlockscoutExplorer,
   },
   {
-    id: 167008,
-    name: 'Taiko Katla',
-    network: 'Taiko Katla',
-    nativeCurrency: {
-      name: 'ETH',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    rpcUrls: {
-      default: {
-        http: ['https://rpc.katla.taiko.xyz/'],
-      },
-      public: {
-        http: ['https://rpc.katla.taiko.xyz/'],
-      },
-    },
-    blockExplorers: {
-      default: {
-        name: 'Explorer Taiko Katla',
-        url: 'https://explorer.katla.taiko.xyz/',
-      },
-    },
-    testnet: true,
-    img: taikoImg,
-    isBlockscoutExplorer: true,
-    explorerType: ExplorerType.BlockscoutExplorer,
-  },
-  {
-    id: 59144,
-    name: 'Linea Mainnet',
-    network: 'Linea Mainnet',
-    nativeCurrency: {
-      name: 'ETH',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    rpcUrls: {
-      default: {
-        http: ['https://linea-mainnet.infura.io/v3/{key}'],
-      },
-      public: {
-        http: ['https://linea-mainnet.infura.io/v3/{key}'],
-      },
-    },
-    blockExplorers: {
-      default: {
-        name: 'Explorer Linea Mainnet',
-        url: 'https://explorer.linea.build/',
-      },
-    },
+    ...linea,
     img: lineaImg,
     explorerType: ExplorerType.ScanExplorer,
   },

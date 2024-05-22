@@ -7,7 +7,7 @@ import { GlobalStateProvider } from 'Providers/GlobalState';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client/react';
 import { HttpLink } from '@apollo/client';
-import Rollbar from 'rollbar';
+import { NextUIProvider } from '@nextui-org/react';
 
 import { BaseLayout } from 'Components/Layout';
 
@@ -120,14 +120,16 @@ const App = () => {
             <GlobalStateProvider>
               <PythiaDataProvider>
                 <SybilFeedsProvider>
-                  <RouterProvider
-                    router={router}
-                    fallbackElement={
-                      <Space size="large">
-                        <Spin size="large" />
-                      </Space>
-                    }
-                  />
+                  <NextUIProvider>
+                    <RouterProvider
+                      router={router}
+                      fallbackElement={
+                        <Space size="large">
+                          <Spin size="large" />
+                        </Space>
+                      }
+                    />
+                  </NextUIProvider>
                 </SybilFeedsProvider>
               </PythiaDataProvider>
             </GlobalStateProvider>

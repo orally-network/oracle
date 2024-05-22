@@ -43,6 +43,8 @@ body {
   color: variables.$text-color;
   font-size: variables.$text-size;
 
+  height: 100vh;
+
   @media screen and (min-width: variables.$break-point-large-desktop) {
     font-size: variables.$desktop-text-size;
   }

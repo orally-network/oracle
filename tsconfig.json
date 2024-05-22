@@ -1,12 +1,78 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": ["es6", "dom", "es2016", "es2017"],
+    "baseUrl": "./src",
+    "esModuleInterop": true,
+    "ignoreDeprecations": "5.0",
+    "paths": {
+      "Components/*": [
+        "./app_frontend/src/components/*"
+      ],
+      "Services/*": [
+        "./app_frontend/src/services/*"
+      ],
+      "Constants/*": [
+        "./app_frontend/src/constants/*"
+      ],
+      "Interfaces/*": [
+        "./app_frontend/src/interfaces/*"
+      ],
+      "ApiHooks/*": [
+        "./app_frontend/src/apiHooks/*"
+      ],
+      "Utils/*": [
+        "./app_frontend/src/utils/*"
+      ],
+      "Styles/*": [
+        "./app_frontend/src/styles/*"
+      ],
+      "Assets/*": [
+        "./app_frontend/assets/*"
+      ],
+      "Declarations/*": [
+        "./declarations/*"
+      ],
+      "Shared/*": [
+        "./app_frontend/src/shared/*"
+      ],
+      "Pages/*": [
+        "./app_frontend/src/pages/*"
+      ],
+      "OD/*": [
+        "./app_frontend/src/outerDeclarations/*"
+      ],
+      "Providers/*": [
+        "./app_frontend/src/providers/*"
+      ],
+      "Canisters/*": [
+        "./app_frontend/src/canisters/*"
+      ],
+      "Stores/*": [
+        "./app_frontend/src/stores/*"
+      ],
+      "Public/*": [
+        "./public/*"
+      ]
+    },
+    "outDir": "./dist",
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": [
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "module": "ESNext",
+    "skipLibCheck": true,
     "sourceMap": true,
     "checkJs": false,
     "allowJs": true,
-    "jsx": "react",
-    "moduleResolution": "node",
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
     "noImplicitReturns": true,
@@ -14,31 +80,18 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
+    /* Linting */
+    "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "baseUrl": "./src",
-    "esModuleInterop": true,
-    "ignoreDeprecations": "5.0",
-    "resolveJsonModule": true,
-    "paths": {
-      "Components/*": [ "./app_frontend/src/components/*"],
-      "Services/*": [ "./app_frontend/src/services/*"],
-      "Constants/*": [ "./app_frontend/src/constants/*"],
-      "Interfaces/*": [ "./app_frontend/src/interfaces/*"],
-      "ApiHooks/*": [ "./app_frontend/src/apiHooks/*"],
-      "Utils/*": [ "./app_frontend/src/utils/*"],
-      "Styles/*": [ "./app_frontend/src/styles/*"],
-      "Assets/*":[ "./app_frontend/assets/*"],
-      "Declarations/*": [ "./declarations/*"],
-      "Shared/*": [ "./app_frontend/src/shared/*"],
-      "Pages/*": [ "./app_frontend/src/pages/*"],
-      "OD/*": [ "./app_frontend/src/outerDeclarations/*"],
-      "Providers/*": ["./app_frontend/src/providers/*"],
-      "Canisters/*": ["./app_frontend/src/canisters/*"],
-      "Stores/*": ["./app_frontend/src/stores/*"],
-      "Public/*": ["./public/*"],
-    },
-    "outDir": "./dist",
+    "noFallthroughCasesInSwitch": true
   },
-  "include": ["vite.config.ts"],
+  "include": [
+    "src"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
 }

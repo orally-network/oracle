@@ -1,6 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useSwitchNetwork, useNetwork, useBalance, useAccount } from 'wagmi';
-import { Typography } from 'antd';
 import { Input } from '@nextui-org/react';
 
 import { AllowedChain, AllowedToken } from 'Stores/useSybilBalanceStore';
@@ -95,13 +94,12 @@ export const TopUpModal = ({
           label="Amount"
           variant="bordered"
           value={String(amount)}
-          className=""
           onChange={useCallback((e: any) => setAmount(Number(e.target.value)), [])}
         />
 
-        <Typography.Text style={{ marginTop: '5px', color: 'gray' }}>
+        <div className="text-sm text-default-500">
           Balance: {balance ? balance.formatted : '0'}
-        </Typography.Text>
+        </div>
       </>
     </Modal>
   );

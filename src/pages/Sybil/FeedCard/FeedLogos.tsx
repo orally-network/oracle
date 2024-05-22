@@ -14,7 +14,7 @@ export const FeedLogos = ({ feed, size = 46 }: FeedLogosProps) => {
     <div className={styles.feedLogos}>
       {isPlaceholder ? (
         <img
-          src="/placeholder.png"
+          src="/assets/placeholder.png"
           alt="placeholder"
           style={{
             maxWidth: size === 46 ? '35px' : '50px',
@@ -32,7 +32,7 @@ export const FeedLogos = ({ feed, size = 46 }: FeedLogosProps) => {
             }}
           >
             <img
-              src={`/coins/${firstCoin.toLowerCase()}.svg`}
+              src={`/assets/coins/${firstCoin.toLowerCase()}.svg`}
               alt={`${firstCoin} logo`}
               style={{
                 maxWidth: size === 46 ? '35px' : '50px',
@@ -54,7 +54,7 @@ export const FeedLogos = ({ feed, size = 46 }: FeedLogosProps) => {
             }}
           >
             <img
-              src={`/coins/${secondCoin.toLowerCase()}.svg`}
+              src={`/assets/coins/${secondCoin.toLowerCase()}.svg`}
               alt={`${secondCoin} logo`}
               style={{
                 maxWidth: size === 46 ? '35px' : '50px',

@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useSwitchNetwork, useNetwork, useBalance, useAccount } from 'wagmi';
-import { Input, Typography } from 'antd';
+import { Typography } from 'antd';
+import { Input } from '@nextui-org/react';
 
 import { AllowedChain, AllowedToken } from 'Stores/useSybilBalanceStore';
 import { DEFAULT_TOP_UP_AMOUNT, DEFAULT_TOP_UP_AMOUNT_ETH } from 'Constants/ui';
@@ -91,8 +92,10 @@ export const TopUpModal = ({
 
         <Input
           type="number"
-          value={amount}
-          className="m-10 w-50"
+          label="Amount"
+          variant="bordered"
+          value={String(amount)}
+          className=""
           onChange={useCallback((e: any) => setAmount(Number(e.target.value)), [])}
         />
 

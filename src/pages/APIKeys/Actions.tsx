@@ -1,7 +1,6 @@
 import { Button, Flex } from 'antd';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import { useGlobalState } from 'Providers/GlobalState';
-import React from 'react';
 import { SignInButton } from 'Shared/SignInButton';
 import { SybilTopUp } from 'Shared/SybilTopUp';
 import useWindowDimensions from 'Utils/useWindowDimensions';

@@ -1,31 +1,30 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useSwitchNetwork, useNetwork, useBalance, useAccount } from 'wagmi';
-import { Input, Modal, Flex, Typography } from 'antd';
+import { Input, Typography } from 'antd';
 
 import { AllowedChain, AllowedToken } from 'Stores/useSybilBalanceStore';
 import { DEFAULT_TOP_UP_AMOUNT, DEFAULT_TOP_UP_AMOUNT_ETH } from 'Constants/ui';
 import { SingleValueSelect } from 'Components/Select';
+import { Modal } from 'Components/Modal';
 
 interface TopUpModalProps {
   isOpen: boolean;
-  close: (e: any) => void;
+  onOpenChange: (e: any) => void;
   chains: AllowedChain[];
   isChainsLoading: boolean;
   tokens: AllowedToken[];
   submit: (chain: number, token: AllowedToken, amount: number) => void;
-  isConfirming: boolean;
   setChain: (AllowedChain: any) => void;
   chain: AllowedChain;
 }
 
 export const TopUpModal = ({
   isOpen,
-  close,
+  onOpenChange,
   chains,
   isChainsLoading,
   tokens,
   submit,
-  isConfirming,
   setChain,
   chain,
 }: TopUpModalProps) => {
@@ -57,20 +56,24 @@ export const TopUpModal = ({
     setToken(chain.tokens[0]);
   }, []);
 
+  const actions = useMemo(() => [
+    {
+      label: 'Top Up',
+      onPress: handleSubmit,
+      variant: 'primary',
+      disabled: Number(balance?.formatted) < amount || amount <= 0,
+    },
+  ], [balance?.formatted, handleSubmit, amount]);
+
   return (
     <Modal
-      style={{ top: '30%', right: '10px', maxWidth: '400px' }}
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
       title="Top Up"
-      okButtonProps={{
-        disabled: Number(balance?.formatted) < amount || amount <= 0,
-      }}
-      onOk={handleSubmit}
-      open={isOpen}
-      onCancel={close}
-      confirmLoading={isConfirming}
+      actions={actions}
     >
-      <Flex vertical style={{ margin: '20px 0' }}>
-        <Flex style={{ marginBottom: '20px' }} justify="space-around">
+      <>
+        <div className="flex justify-around mb-20">
           <SingleValueSelect
             className="w-170"
             classNamePrefix="react-select"
@@ -91,7 +94,7 @@ export const TopUpModal = ({
             placeholder="Token"
             isLoading={isChainsLoading}
           />
-        </Flex>
+        </div>
 
         <Input
           type="number"
@@ -103,7 +106,7 @@ export const TopUpModal = ({
         <Typography.Text style={{ marginTop: '5px', color: 'gray' }}>
           Balance: {balance ? balance.formatted : '0'}
         </Typography.Text>
-      </Flex>
+      </>
     </Modal>
   );
 };

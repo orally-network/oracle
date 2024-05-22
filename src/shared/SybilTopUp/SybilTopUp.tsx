@@ -1,26 +1,21 @@
-import { Button } from 'antd';
-import React, { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { Button } from '@nextui-org/react';
 
 import { TopUpModal } from 'Shared/TopUpModal';
 import { useSybilBalanceStore, fetchBalanceAllowedChains, AllowedChain } from 'Stores/useSybilBalanceStore';
+import { useModal } from 'Components/Modal';
 
 import { useSybilDeposit } from './useSybilDeposit';
 
 export const SybilTopUp = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const openModal = useCallback(() => {
-    setIsModalVisible(true);
-  }, []);
+  const { isOpen, onOpen, onOpenChange } = useModal();
 
   const allowedChains = useSybilBalanceStore((state) => state.allowedChains);
   const isChainsLoading = useSybilBalanceStore((state) => state.isChainsLoading);
 
   const [chain, setChain] = useState<AllowedChain | null>(null);
 
-  const { isConfirming, sybilDeposit } = useSybilDeposit({ setIsModalVisible });
-
-  const handleClose = useCallback(() => setIsModalVisible(false), []);
+  const { isConfirming, sybilDeposit } = useSybilDeposit({ setIsModalVisible: onOpenChange });
 
   useEffect(() => {
     fetchBalanceAllowedChains().then(chains => {
@@ -31,22 +26,21 @@ export const SybilTopUp = () => {
   return  (
     <>
       <Button
-        type="primary"
-        size="large"
-        onClick={openModal}
+        color="primary"
+        onPress={onOpen}
+        isLoading={isConfirming}
       >
         Top Up
       </Button>
 
       {chain && (
         <TopUpModal
-          isOpen={isModalVisible}
-          close={handleClose}
+          isOpen={isOpen}
+          onOpenChange={onOpenChange}
           chains={allowedChains}
           isChainsLoading={isChainsLoading}
           tokens={chain ? chain.tokens : []}
           submit={sybilDeposit}
-          isConfirming={isConfirming}
           setChain={setChain}
           chain={chain}
         />

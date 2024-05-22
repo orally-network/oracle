@@ -1,7 +1,6 @@
 import { Breadcrumb, Flex, Layout, Typography } from 'antd';
 import { SybilBalance } from 'Shared/SybilBalance';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
-import React from 'react';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 
 import { Actions } from './Actions';

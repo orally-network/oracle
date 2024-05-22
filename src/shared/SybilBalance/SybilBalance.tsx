@@ -1,6 +1,6 @@
 import { Typography } from 'antd';
 import { useGlobalState } from 'Providers/GlobalState';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { formatBalance } from 'Utils/balance';
 import { useSybilBalanceStore, fetchBalance } from 'Stores/useSybilBalanceStore';
 

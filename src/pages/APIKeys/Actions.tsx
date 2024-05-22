@@ -1,28 +1,51 @@
-import { Button, Flex } from 'antd';
-import { BREAK_POINT_MOBILE } from 'Constants/ui';
+import { useCallback, useState } from 'react';
+import { Button } from '@nextui-org/react';
+
 import { useGlobalState } from 'Providers/GlobalState';
+import { toast } from 'react-toastify';
 import { SignInButton } from 'Shared/SignInButton';
 import { SybilTopUp } from 'Shared/SybilTopUp';
-import useWindowDimensions from 'Utils/useWindowDimensions';
+import { generateApiKey } from 'Stores/useSybilBalanceStore';
+import logger from 'Utils/logger.js';
 
 export const Actions = () => {
-  const { width } = useWindowDimensions();
-  const isMobile = width <= BREAK_POINT_MOBILE;
-
   const { addressData } = useGlobalState();
 
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handleGenerateApiKey = useCallback(async () => {
+    setIsGenerating(true);
+
+    const res = await toast.promise(generateApiKey(addressData), {
+      pending: `Generating API Key`,
+      success: {
+        render({ data }) {
+          return `Generated successfully: ${data}`;
+        },
+      },
+      error: {
+        render({ data }) {
+          logger.error(`Generating api key`, data);
+
+          return 'Generation failed. Try again later.';
+        },
+      },
+    });
+
+    setIsGenerating(false);
+    console.log({ res });
+  }, [addressData]);
+
   return (
-    <Flex justify="space-between" gap={8}>
+    <div className="flex justify-between gap-2">
       {addressData && addressData.signature ? (
         <>
           <SybilTopUp />
 
           <Button
-            type="primary"
-            size="large"
-            onClick={() => {
-            }}
-            style={{ height: isMobile ? '40px' : 'auto', minWidth: '50px' }}
+            color="primary"
+            onClick={handleGenerateApiKey}
+            isLoading={isGenerating}
           >
             Generate API Key
           </Button>
@@ -30,6 +53,6 @@ export const Actions = () => {
       ) : (
         <SignInButton style={{ alignSelf: 'flex-end' }}/>
       )}
-    </Flex>
+    </div>
   );
 };

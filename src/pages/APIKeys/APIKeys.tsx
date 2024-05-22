@@ -1,4 +1,4 @@
-import { Breadcrumb, Flex, Layout, Typography } from 'antd';
+import { Breadcrumb, Flex } from 'antd';
 import { SybilBalance } from 'Shared/SybilBalance';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import useWindowDimensions from 'Utils/useWindowDimensions';
@@ -10,22 +10,20 @@ export const APIKeys = () => {
   const isMobile = width <= BREAK_POINT_MOBILE;
 
   return (
-    <Layout.Content title="Sybil">
-      <Flex gap="middle" justify="space-between" vertical={isMobile}>
-        <Flex vertical>
-          <Breadcrumb
-            separator=">"
-            items={[{ title: 'Sybil', href: '/sybil' }, { title: 'API Keys' }]}
-          />
-          <Typography.Title level={3}>API Keys</Typography.Title>
-        </Flex>
+    <div className={`flex justify-between ${isMobile ? 'flex-col' : ''}`}>
+      <div className="flex flex-col">
+        <Breadcrumb
+          separator=">"
+          items={[{ title: 'Sybil', href: '/sybil' }, { title: 'API Keys' }]}
+        />
+        <h3 className="text-xl font-bold">API Keys</h3>
+      </div>
 
-        <Flex align="center" justify="space-between" gap={8} vertical={isMobile}>
-          <SybilBalance/>
+      <Flex align="center" justify="space-between" gap={8} vertical={isMobile}>
+        <SybilBalance/>
 
-          <Actions/>
-        </Flex>
+        <Actions/>
       </Flex>
-    </Layout.Content>
+    </div>
   );
 };

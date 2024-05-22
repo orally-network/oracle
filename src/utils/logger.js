@@ -1,5 +1,6 @@
 import rollbar from "rollbar";
 
+// todo: fix logging
 export default {
   log(...args) {
     console.log(...args);

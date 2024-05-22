@@ -125,3 +125,14 @@ export const fetchBalanceAllowedChains = async () => {
 
   return chains;
 };
+
+export const generateApiKey = async (addressData: AddressData) => {
+  const res: GeneralResponse = await sybilCanister.get_api_key(addressData.message, remove0x(addressData.signature));
+
+  if (res.Err) {
+    logger.error(`Failed to generate api key, ${res.Err}`);
+    throw new Error(`Failed to generate api key, ${res.Err}`);
+  }
+
+  return res.Ok;
+}

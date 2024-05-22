@@ -4,7 +4,7 @@ import { Input, Typography } from 'antd';
 
 import { AllowedChain, AllowedToken } from 'Stores/useSybilBalanceStore';
 import { DEFAULT_TOP_UP_AMOUNT, DEFAULT_TOP_UP_AMOUNT_ETH } from 'Constants/ui';
-import { SingleValueSelect } from 'Components/Select';
+import { NewSelect } from 'Components/Select/NewSelect';
 import { Modal } from 'Components/Modal';
 
 interface TopUpModalProps {
@@ -51,10 +51,10 @@ export const TopUpModal = ({
     submit(chain.chainId, token, amount);
   }, [chain.chainId, token, amount]);
 
-  const handleSetChain = useCallback((chain: AllowedChain) => {
-    setChain(chain);
-    setToken(chain.tokens[0]);
-  }, []);
+  const handleSetChain = useCallback((newChain: AllowedChain) => {
+    setChain(newChain);
+    setToken(newChain.tokens[0]);
+  }, [chain]);
 
   const actions = useMemo(() => [
     {
@@ -67,34 +67,27 @@ export const TopUpModal = ({
 
   return (
     <Modal
+      size="lg"
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       title="Top Up"
+      // @ts-ignore
       actions={actions}
     >
       <>
-        <div className="flex justify-around mb-20">
-          <SingleValueSelect
-            className="w-170"
-            classNamePrefix="react-select"
-            options={chains}
-            value={chain}
-            onChange={handleSetChain}
-            placeholder="Chain"
-            isLoading={isChainsLoading}
-          />
+        <NewSelect
+          items={chains}
+          handleChange={handleSetChain}
+          selectedItem={chain}
+          title="Chain"
+        />
 
-          <SingleValueSelect
-            isToken
-            className="w-170"
-            classNamePrefix="react-select"
-            options={tokens}
-            onChange={setToken}
-            value={token}
-            placeholder="Token"
-            isLoading={isChainsLoading}
-          />
-        </div>
+        <NewSelect
+          items={tokens}
+          handleChange={setToken}
+          selectedItem={token}
+          title="Token"
+        />
 
         <Input
           type="number"

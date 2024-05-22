@@ -1,4 +1,3 @@
-import { useRef, useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Space, Spin } from 'antd';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
@@ -105,13 +104,6 @@ export const client = new ApolloClient({
 });
 
 const App = () => {
-  const rollbarRef = useRef(null);
-
-  useEffect(() => {
-    // @ts-ignore
-    // rollbarRef.current = new Rollbar(ROLLBAR_CONFIG);
-  }, []);
-
   return (
     <RollbarProvider config={ROLLBAR_CONFIG}>
       <ErrorBoundary>
@@ -121,14 +113,16 @@ const App = () => {
               <PythiaDataProvider>
                 <SybilFeedsProvider>
                   <NextUIProvider>
-                    <RouterProvider
-                      router={router}
-                      fallbackElement={
-                        <Space size="large">
-                          <Spin size="large" />
-                        </Space>
-                      }
-                    />
+                    <main className="dark text-foreground bg-background">
+                      <RouterProvider
+                        router={router}
+                        fallbackElement={
+                          <Space size="large">
+                            <Spin size="large" />
+                          </Space>
+                        }
+                      />
+                    </main>
                   </NextUIProvider>
                 </SybilFeedsProvider>
               </PythiaDataProvider>

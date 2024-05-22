@@ -28,7 +28,7 @@ export const SybilTopUp = () => {
       <Button
         color="primary"
         onPress={onOpen}
-        isLoading={isConfirming}
+        isLoading={isConfirming || isChainsLoading}
       >
         Top Up
       </Button>

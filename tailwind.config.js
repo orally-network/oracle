@@ -11,6 +11,36 @@ module.exports = {
     extend: {},
   },
   darkMode: "class",
-  plugins: [nextui()],
+  plugins: [
+    nextui({
+      addCommonColors: true,
+      themes: {
+        light: {
+          colors: {
+            background: "#FFFFFF", // or DEFAULT
+            foreground: "#11181C", // or 50 to 900 DEFAULT
+            primary: {
+              //... 50 to 900
+              foreground: "#FFFFFF",
+              DEFAULT: "#006FEE",
+            },
+            // ... rest of the colors
+          },
+        },
+        dark: {
+          colors: {
+            background: "#050b15", // or DEFAULT
+            foreground: "#ECEDEE", // or 50 to 900 DEFAULT
+            primary: {
+              //... 50 to 900
+              foreground: "#FFFFFF",
+              DEFAULT: "#006FEE",
+            },
+          },
+          // ... rest of the colors
+        },
+      },
+    }),
+  ],
 }
 

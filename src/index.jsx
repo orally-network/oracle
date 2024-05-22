@@ -15,7 +15,6 @@ import CHAINS from 'Constants/chains';
 import App from './App';
 
 import 'Styles/index.scss';
-//import '!style-loader!css-loader!react-toastify/dist/ReactToastify.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 Modal.setAppElement('#app');

@@ -1,5 +1,7 @@
 import { MAX_FREQUENCY } from 'Constants/ui';
 import { FrequencyType, Unit } from 'Interfaces/subscription';
+import { TOKEN_IMAGES } from 'Constants/tokens';
+import { CHAINS_MAP } from 'Constants/chains';
 
 export const RAND_METHOD_TYPES = [
   'string',
@@ -18,10 +20,27 @@ export const mapChainsToOptions = (chains: any) => {
   }));
 };
 
+export const mapChainsToNewOptions = (chains: any) => {
+  return chains.map((chain: any) => {
+    const chainData = CHAINS_MAP[chain.chain_id];
+
+    return {
+      ...chain,
+      key: chainData.id,
+      label: chainData.name,
+      value: chainData.id,
+      avatar: chainData.img,
+    }
+  });
+};
+
 export const mapTokensToOptions = (tokens: any) => {
   return tokens.map((token: any) => ({
-    value: token.address,
+    ...token,
+    key: token.address,
     label: token.symbol,
+    value: token.address,
+    avatar: TOKEN_IMAGES[token.symbol.toUpperCase()],
   }));
 };
 

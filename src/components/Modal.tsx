@@ -1,5 +1,4 @@
 import { Modal as NextUIModal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from '@nextui-org/react';
-import { elementBackground } from 'Styles/variables.module.scss';
 
 export const useModal = () => {
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
@@ -25,14 +24,15 @@ interface ModalProps {
   actions?: Action[];
   children: React.ReactNode;
   title: string;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
 }
 
-export const Modal = ({ isOpen, onOpenChange, actions = [], children, title }: ModalProps) => {
+export const Modal = ({ isOpen, onOpenChange, actions = [], children, title, size }: ModalProps) => {
   return (
     <NextUIModal
+      size={size}
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      style={{ background: elementBackground }}
     >
       <ModalContent>
         {(onClose) => (
@@ -43,7 +43,7 @@ export const Modal = ({ isOpen, onOpenChange, actions = [], children, title }: M
             </ModalBody>
 
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button color="danger" variant="bordered" onPress={onClose}>
                 Close
               </Button>
               {actions.map(({ label, onPress, variant, disabled }) => (

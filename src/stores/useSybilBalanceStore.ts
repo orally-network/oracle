@@ -5,6 +5,8 @@ import sybilCanister from 'Canisters/sybilCanister';
 import { AddressData, GeneralResponse } from 'Interfaces/common';
 import { remove0x } from 'Utils/addressUtils';
 import logger from 'Utils/logger';
+import { CHAINS_MAP } from 'Constants/chains';
+import { TOKEN_IMAGES } from 'Constants/tokens';
 
 export interface AllowedToken {
   address: Address;
@@ -105,12 +107,18 @@ export const fetchBalanceAllowedChains = async () => {
       symbol: tokenData.token_symbol,
       decimals: tokenData.decimals,
 
+      // select fields
       value: tokenData.erc20_contract,
       label: tokenData.token_symbol,
+      key: tokenData.erc20_contract,
+      avatar: TOKEN_IMAGES[tokenData.token_symbol.toUpperCase()] ?? TOKEN_IMAGES.default,
     })),
 
+    // select fields
     value: Number(chainId),
-    label: Number(chainId),
+    label: CHAINS_MAP[chainId].name,
+    key: Number(chainId),
+    avatar: CHAINS_MAP[chainId].img,
   }))
 
   useSybilBalanceStore.setState({ allowedChains: chains });

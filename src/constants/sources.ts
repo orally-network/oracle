@@ -1,14 +1,14 @@
 import React from 'react';
 
-import coinbaseIcon from 'Assets/exchanges/coinbase.svg';
-import kucoinIcon from 'Assets/exchanges/kucoin.svg';
-import okxIcon from 'Assets/exchanges/okx.svg';
-import gateioIcon from 'Assets/exchanges/gateio.svg';
-import mexcIcon from 'Assets/exchanges/mexc.svg';
-import cryptocomIcon from 'Assets/exchanges/cryptocom.png';
-import poloniexIcon from 'Assets/exchanges/poloniex.png';
-import bitgetIcon from 'Assets/exchanges/bitget.svg';
-import digifinexIcon from 'Assets/exchanges/digifinex.svg';
+const coinbaseIcon = '/assets/exchanges/coinbase.svg';
+const kucoinIcon = '/assets/exchanges/kucoin.svg';
+const okxIcon = '/assets/exchanges/okx.svg';
+const gateioIcon = '/assets/exchanges/gateio.svg';
+const mexcIcon = '/assets/exchanges/mexc.svg';
+const cryptocomIcon = '/assets/exchanges/cryptocom.png';
+const poloniexIcon = '/assets/exchanges/poloniex.png';
+const bitgetIcon = '/assets/exchanges/bitget.svg';
+const digifinexIcon = '/assets/exchanges/digifinex.svg';
 
 type ExchangeSource = {
   name: string;

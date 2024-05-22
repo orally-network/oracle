@@ -9,13 +9,6 @@
     "Canister"
   ],
   "scripts": {
-    "optimize": "ic-cdk-optimizer .wasm -o -opt.wasm",
-    "build-stg": "webpack --mode production --env NODE_ENV=staging",
-    "prebuild": "npm run generate",
-    "start": "webpack serve --mode development --env NODE_ENV=development",
-    "start-stg": "webpack serve --mode development --env NODE_ENV=staging",
-    "prestart": "npm run generate",
-    "generate": "dfx generate",
     "deploy-ic": "dfx build app_frontend --network ic && dfx canister install app_frontend --network ic -m reinstall",
     "deploy-firebase": "npm run build && firebase deploy --only hosting:app-orally",
     "deploy-staging": "npm run build-stg && firebase deploy --only hosting:staging-app-orally",
@@ -121,6 +114,7 @@
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4",
     "viem": "^1.18.8",
+    "vite-plugin-node-polyfills": "^0.22.0",
     "vite-plugin-svgr": "^4.2.0",
     "wagmi": "^1.4.5",
     "zustand": "^4.5.2"

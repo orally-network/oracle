@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import styles from './FeedCard.module.scss';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import { NewFeed } from 'Pages/Sybil/NewFeed/NewFeed';
-import weatherImg from 'Assets/weather.png';
 
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { Feed, FeedType } from 'Interfaces/feed';
@@ -33,7 +32,7 @@ export const getFeedImg = ({
   if (isWeather) {
     return (
       <img
-        src={weatherImg}
+        src="/assets/weather.png"
         alt="sun"
         style={{
           maxWidth: '35px',

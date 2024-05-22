@@ -13,7 +13,7 @@ export default {
   ROLLBAR_ACCESS_TOKEN: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
   ALCHEMY_API_KEY: import.meta.env.VITE_ALCHEMY_API_KEY,
   INFURA_API_KEY: import.meta.env.VITE_INFURA_API_KEY,
-  env: import.meta.env.VITE_NODE_ENV,
+  env: import.meta.env.VITE_ENV,
   ETHERSCAN_API_KEY: import.meta.env.VITE_ETHERSCAN_API_KEY,
 
   THE_GRAPH_URL: import.meta.env.VITE_THE_GRAPH_URL,

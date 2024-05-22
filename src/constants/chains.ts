@@ -7,7 +7,7 @@ import {
   zkSync,
   arbitrum,
   arbitrumNova,
-  zkSyncTestnet,
+  zkSyncSepoliaTestnet,
   linea,
   qMainnet,
   qTestnet,
@@ -15,22 +15,22 @@ import {
   auroraTestnet,
   lineaTestnet,
 } from 'wagmi/chains';
-
-import ethereumImg from 'Assets/chains/ethereum.jpeg';
-import polygonImg from 'Assets/chains/polygon.jpeg';
-import ultronImg from 'Assets/chains/ultron.jpeg';
-import qImg from 'Assets/chains/q.svg';
-import auroraImg from 'Assets/chains/aurora.png';
-import arbitrumNovaImg from 'Assets/chains/arbitrum-nova.png';
-import lineaImg from 'Assets/chains/linea.svg';
-import bitfinityImg from 'Assets/chains/bitfinity.svg';
-import taikoImg from 'Assets/chains/taiko.svg';
-import zkSyncImg from 'Assets/chains/zkSync.png';
-import artheraImg from 'Assets/chains/arthera.png';
-import mantaImg from 'Assets/chains/manta.png';
-import blastImg from 'Assets/chains/blast.png';
-import arbitrumImg from 'Assets/chains/arbitrum.png';
 import { ExplorerType } from 'Interfaces/chain';
+
+const ethereumImg = '/assets/chains/ethereum.jpeg';
+const polygonImg = '/assets/chains/polygon.jpeg';
+const ultronImg = '/assets/chains/ultron.jpeg';
+const qImg = '/assets/chains/q.svg';
+const auroraImg = '/assets/chains/aurora.png';
+const arbitrumNovaImg = '/assets/chains/arbitrum-nova.png';
+const lineaImg = '/assets/chains/linea.svg';
+const bitfinityImg = '/assets/chains/bitfinity.svg';
+const taikoImg = '/assets/chains/taiko.svg';
+const zkSyncImg = '/assets/chains/zkSync.png';
+const artheraImg = '/assets/chains/arthera.png';
+const mantaImg = '/assets/chains/manta.png';
+const blastImg = '/assets/chains/blast.png';
+const arbitrumImg = '/assets/chains/arbitrum.png';
 
 const CHAINS = [
   {
@@ -75,7 +75,7 @@ const CHAINS = [
     explorerType: ExplorerType.ScanExplorer,
   },
   {
-    ...zkSyncTestnet,
+    ...zkSyncSepoliaTestnet,
     img: zkSyncImg,
     explorerType: ExplorerType.ScanExplorer,
   },

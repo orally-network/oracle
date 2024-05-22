@@ -58,7 +58,7 @@ const container = document.getElementById('app');
 
 const root = createRoot(container);
 
-import('./rollbar').then(() => {
+//import('rollbar').then(() => {
   root.render(
     <WagmiConfig config={wagmiConfig}>
       <App />
@@ -76,4 +76,4 @@ import('./rollbar').then(() => {
       />
     </WagmiConfig>
   );
-});
+//});

@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button, Space, Layout, Drawer } from 'antd';
 import { WalletOutlined } from '@ant-design/icons';
 
 import Connect from 'Shared/Connect';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
-import logoSrc from 'Assets/logo.svg';
 
 import { Balances } from 'Components/Balances';
 import { useLocation } from 'react-router-dom';
@@ -25,7 +24,7 @@ const Header = () => {
       }}
     >
       <div className="flex mr-7">
-        <img src={logoSrc} alt="logo" className="h-6" />
+        <img src="/assets/logo.svg" alt="logo" className="h-6" />
       </div>
       <Space>
         <div className="my-1">

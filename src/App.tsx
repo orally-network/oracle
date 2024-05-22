@@ -1,4 +1,4 @@
-import React from 'react';
+import { useRef, useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Space, Spin } from 'antd';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
@@ -7,13 +7,13 @@ import { GlobalStateProvider } from 'Providers/GlobalState';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client/react';
 import { HttpLink } from '@apollo/client';
+import Rollbar from 'rollbar';
 
 import { BaseLayout } from 'Components/Layout';
 
 import Pythia from 'Pages/Pythia';
 import Sybil from 'Pages/Sybil';
 import ROUTES from 'Constants/routes';
-import rollbar from './rollbar';
 import { SubscriptionDetailsPage } from 'Pages/SubscriptionDetailsPage';
 import ErrorPage from 'Pages/ErrorPage';
 import { CACHE_TIME, QUERY_CLIENT_DEFAULT_RETRY_COUNT, TIME_TO_WAIT } from 'Constants/query';
@@ -23,6 +23,8 @@ import { FeedDetailsPage } from 'Pages/FeedDetailsPage';
 import SybilFeedsProvider from 'Providers/SybilPairs/SybilFeedsProvider';
 import { WeatherDayDetailsWrapper } from 'Pages/WeatherDayDetails';
 import { APIKeys } from 'Pages/APIKeys';
+
+import ROLLBAR_CONFIG from './rollbar';
 
 const router = createBrowserRouter([
   {
@@ -103,8 +105,15 @@ export const client = new ApolloClient({
 });
 
 const App = () => {
+  const rollbarRef = useRef(null);
+
+  useEffect(() => {
+    // @ts-ignore
+    // rollbarRef.current = new Rollbar(ROLLBAR_CONFIG);
+  }, []);
+
   return (
-    <RollbarProvider instance={rollbar}>
+    <RollbarProvider config={ROLLBAR_CONFIG}>
       <ErrorBoundary>
         <ApolloProvider client={client}>
           <QueryClientProvider client={queryClient}>

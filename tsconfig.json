@@ -5,52 +5,46 @@
     "ignoreDeprecations": "5.0",
     "paths": {
       "Components/*": [
-        "./app_frontend/src/components/*"
+        "./components/*"
       ],
       "Services/*": [
-        "./app_frontend/src/services/*"
+        "./services/*"
       ],
       "Constants/*": [
-        "./app_frontend/src/constants/*"
+        "./constants/*"
       ],
       "Interfaces/*": [
-        "./app_frontend/src/interfaces/*"
+        "./interfaces/*"
       ],
       "ApiHooks/*": [
-        "./app_frontend/src/apiHooks/*"
+        "./apiHooks/*"
       ],
       "Utils/*": [
-        "./app_frontend/src/utils/*"
+        "./utils/*"
       ],
       "Styles/*": [
-        "./app_frontend/src/styles/*"
+        "./styles/*"
       ],
       "Assets/*": [
-        "./app_frontend/assets/*"
-      ],
-      "Declarations/*": [
-        "./declarations/*"
+        "./assets/*"
       ],
       "Shared/*": [
-        "./app_frontend/src/shared/*"
+        "./shared/*"
       ],
       "Pages/*": [
-        "./app_frontend/src/pages/*"
+        "./pages/*"
       ],
       "OD/*": [
-        "./app_frontend/src/outerDeclarations/*"
+        "./outerDeclarations/*"
       ],
       "Providers/*": [
-        "./app_frontend/src/providers/*"
+        "./providers/*"
       ],
       "Canisters/*": [
-        "./app_frontend/src/canisters/*"
+        "./canisters/*"
       ],
       "Stores/*": [
-        "./app_frontend/src/stores/*"
-      ],
-      "Public/*": [
-        "./public/*"
+        "./stores/*"
       ]
     },
     "outDir": "./dist",

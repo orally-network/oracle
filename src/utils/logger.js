@@ -1,4 +1,4 @@
-import rollbar from "../rollbar";
+import rollbar from "rollbar";
 
 export default {
   log(...args) {

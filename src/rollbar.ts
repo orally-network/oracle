@@ -1,9 +1,8 @@
-import Rollbar from "rollbar";
 import config from "Constants/config";
 
 const ROLLBAR_CONFIG = {
   accessToken: config.ROLLBAR_ACCESS_TOKEN,
-  enabled: true,
+  enabled: config.env === 'production',
   itemsPerMinute: 10,
   verbose: config.isDevelopment,
   captureUncaught: true,
@@ -24,6 +23,4 @@ const ROLLBAR_CONFIG = {
   },
 };
 
-const rollbar = new Rollbar(ROLLBAR_CONFIG);
-
-export default rollbar;
+export default ROLLBAR_CONFIG;

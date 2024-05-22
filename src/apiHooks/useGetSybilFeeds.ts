@@ -1,6 +1,6 @@
 import { SybilFilters, RemoteDataType } from 'Interfaces/common';
 import { QueryClient, useQuery, useQueryClient } from 'react-query';
-import { dynamicQueryKeys } from '../dynamicQueryKeys';
+import { dynamicQueryKeys } from '../dynamicQueryKeys.ts';
 import sybilCanister from 'Canisters/sybilCanister';
 import { Feed } from 'Interfaces/feed';
 import { DEFAULT_FEEDS_SIZE } from 'Constants/ui';

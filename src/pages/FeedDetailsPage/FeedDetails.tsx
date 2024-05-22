@@ -12,7 +12,6 @@ import IconLink from 'Components/IconLink';
 import { ExportOutlined } from '@ant-design/icons';
 import { VerifyModal } from './VerifyModal';
 import { exchangeURLS } from 'Constants/sources';
-import weatherImg from 'Assets/weather.png';
 import Button from 'Components/Button';
 
 interface FeedDetailsProps {
@@ -74,7 +73,7 @@ const FeedDetails = ({ feed }: FeedDetailsProps) => {
         }}>
           {isWeather ? (
             <img
-              src={weatherImg}
+              src="/assets/weather.png"
               alt="sun"
               style={{
                 maxWidth: '35px',

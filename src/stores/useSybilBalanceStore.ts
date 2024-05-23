@@ -46,7 +46,7 @@ export const useSybilBalanceStore = create<SybilBalance>()(() => ({
   error: '',
 }));
 
-const fetchSybilTreasureAddress = async () => {
+export const fetchSybilTreasureAddress = async () => {
   // @ts-ignore
   const res: Address = await sybilCanister.get_treasure_address();
 
@@ -56,8 +56,6 @@ const fetchSybilTreasureAddress = async () => {
     logger.error(`Failed to get sybil eth address, ${res}`);
   }
 };
-// todo: move to common preloaded place
-fetchSybilTreasureAddress();
 
 export const fetchBalance = async (address: string) => {
   useSybilBalanceStore.setState({ isBalanceLoading: true });

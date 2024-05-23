@@ -51,7 +51,7 @@ export const Modal = ({ isOpen, onOpenChange, actions = [], children, title, siz
                   key={label}
                   color={variant || 'primary'}
                   onPress={onPress}
-                  disabled={disabled}
+                  isDisabled={disabled}
                 >
                   {label}
                 </Button>

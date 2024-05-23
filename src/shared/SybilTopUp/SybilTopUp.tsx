@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@nextui-org/react';
 
 import { TopUpModal } from 'Shared/TopUpModal';
-import { useSybilBalanceStore, fetchBalanceAllowedChains, AllowedChain } from 'Stores/useSybilBalanceStore';
+import { useSybilBalanceStore, fetchBalanceAllowedChains, AllowedChain, fetchSybilTreasureAddress } from 'Stores/useSybilBalanceStore';
 import { useModal } from 'Components/Modal';
 
 import { useSybilDeposit } from './useSybilDeposit';
@@ -18,7 +18,10 @@ export const SybilTopUp = () => {
   const { isConfirming, sybilDeposit } = useSybilDeposit({ setIsModalVisible: onOpenChange });
 
   useEffect(() => {
-    fetchBalanceAllowedChains().then(chains => {
+    Promise.all([
+      fetchSybilTreasureAddress(),
+      fetchBalanceAllowedChains(),
+    ]).then(([_, chains]) => {
       setChain(chains[0]);
     });
   }, []);

@@ -25,6 +25,7 @@ export const Actions = () => {
       },
       error: {
         render({ data }) {
+          setIsGenerating(false);
           logger.error(`Generating api key`, data);
 
           return 'Generation failed. Try again later.';

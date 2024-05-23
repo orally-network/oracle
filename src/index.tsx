@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { ToastContainer } from 'react-toastify';
 import Modal from 'react-modal';
@@ -57,7 +56,7 @@ const container = document.getElementById('app');
 
 const root = createRoot(container);
 
-//import('rollbar').then(() => {
+import('./rollbarSetup').then(() => {
   root.render(
     <WagmiConfig config={wagmiConfig}>
       <App />
@@ -75,4 +74,4 @@ const root = createRoot(container);
       />
     </WagmiConfig>
   );
-//});
+});

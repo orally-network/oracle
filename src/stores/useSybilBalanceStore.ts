@@ -56,6 +56,7 @@ const fetchSybilTreasureAddress = async () => {
     logger.error(`Failed to get sybil eth address, ${res}`);
   }
 };
+// todo: move to common preloaded place
 fetchSybilTreasureAddress();
 
 export const fetchBalance = async (address: string) => {

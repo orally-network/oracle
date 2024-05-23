@@ -23,7 +23,7 @@ import SybilFeedsProvider from 'Providers/SybilPairs/SybilFeedsProvider';
 import { WeatherDayDetailsWrapper } from 'Pages/WeatherDayDetails';
 import { APIKeys } from 'Pages/APIKeys';
 
-import ROLLBAR_CONFIG from './rollbar';
+import rollbarSetup from './rollbarSetup';
 
 const router = createBrowserRouter([
   {
@@ -105,7 +105,7 @@ export const client = new ApolloClient({
 
 const App = () => {
   return (
-    <RollbarProvider config={ROLLBAR_CONFIG}>
+    <RollbarProvider instance={rollbarSetup}>
       <ErrorBoundary>
         <ApolloProvider client={client}>
           <QueryClientProvider client={queryClient}>

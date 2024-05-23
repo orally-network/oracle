@@ -1,3 +1,4 @@
+import Rollbar from 'rollbar';
 import config from "Constants/config";
 
 const ROLLBAR_CONFIG = {
@@ -23,4 +24,7 @@ const ROLLBAR_CONFIG = {
   },
 };
 
-export default ROLLBAR_CONFIG;
+// @ts-ignore
+const rollbarSetup = new Rollbar(ROLLBAR_CONFIG);
+
+export default rollbarSetup;

@@ -28,6 +28,7 @@ export default defineConfig({
       Canisters: path.resolve(__dirname, './src/canisters/'),
       ABIs: path.resolve(__dirname, './src/ABIs/'),
       Stores: path.resolve(__dirname, './src/stores/'),
+      SVGIcons: path.resolve(__dirname, './src/SVGIcons/'),
     },
   }
 })

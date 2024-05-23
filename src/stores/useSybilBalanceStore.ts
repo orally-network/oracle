@@ -126,11 +126,40 @@ export const fetchBalanceAllowedChains = async () => {
 };
 
 export const generateApiKey = async (addressData: AddressData) => {
+  // @ts-ignore
   const res: GeneralResponse = await sybilCanister.get_api_key(addressData.message, remove0x(addressData.signature));
 
   if (res.Err) {
     logger.error(`Failed to generate api key, ${res.Err}`);
     throw new Error(`Failed to generate api key, ${res.Err}`);
+  }
+
+  return res.Ok;
+}
+
+export const fetchApiKeys = async (addressData: AddressData) => {
+  // @ts-ignore
+  // this method in WIP
+  const res: GeneralResponse = await sybilCanister.get_api_keys(addressData.message, remove0x(addressData.signature));
+
+  // logic for adding to state
+
+  if (res.Err) {
+    logger.error(`Failed to get api keys, ${res.Err}`);
+    throw new Error(`Failed to get api keys, ${res.Err}`);
+  }
+
+  return res.Ok;
+}
+
+export const deleteApiKey = async (apiKey: string, addressData: AddressData) => {
+  // @ts-ignore
+  // this method in WIP
+  const res: GeneralResponse = await sybilCanister.revoke_api_key(apiKey, addressData.message, remove0x(addressData.signature));
+
+  if (res.Err) {
+    logger.error(`Failed to delete api key, ${res.Err}`);
+    throw new Error(`Failed to delete api key, ${res.Err}`);
   }
 
   return res.Ok;

@@ -45,7 +45,10 @@
       ],
       "Stores/*": [
         "./stores/*"
-      ]
+      ],
+      "SVGICons/*": [
+        "./SVGIcons/*"
+      ],
     },
     "outDir": "./dist",
     "target": "ES2020",

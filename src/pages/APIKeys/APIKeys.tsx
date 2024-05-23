@@ -1,5 +1,7 @@
 import { Flex } from 'antd';
 import { Breadcrumbs, BreadcrumbItem } from '@nextui-org/react';
+
+import { useFetchApiKeys } from 'Services/sybilService';
 import { SybilBalance } from 'Shared/SybilBalance';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import useWindowDimensions from 'Utils/useWindowDimensions';
@@ -10,6 +12,11 @@ import { KeysTable } from './KeysTable';
 export const APIKeys = () => {
   const { width } = useWindowDimensions();
   const isMobile = width <= BREAK_POINT_MOBILE;
+
+  const { data, isLoading } = useFetchApiKeys();
+  // console.log('api keys', { data });
+
+  // console.log('fetching keys', { data, isLoading, error });
 
   return (
     <div>

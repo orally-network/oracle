@@ -111,6 +111,7 @@
     "sass": "^1.57.1",
     "sass-loader": "^13.2.0",
     "siwe": "^1.1.6",
+    "sonner": "^1.4.41",
     "style-loader": "^3.3.1",
     "ts-loader": "^9.4.2",
     "ts-node": "^10.9.1",

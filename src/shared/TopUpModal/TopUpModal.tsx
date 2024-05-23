@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { useSwitchNetwork, useNetwork, useBalance, useAccount } from 'wagmi';
 import { Input } from '@nextui-org/react';
 
-import { AllowedChain, AllowedToken } from 'Stores/useSybilBalanceStore';
+import { AllowedChain, AllowedToken } from 'Services/sybilService';
 import { DEFAULT_TOP_UP_AMOUNT, DEFAULT_TOP_UP_AMOUNT_ETH } from 'Constants/ui';
 import { NewSelect } from 'Components/Select/NewSelect';
 import { Modal } from 'Components/Modal';
@@ -37,8 +37,9 @@ export const TopUpModal = ({
 
   const { data: balance } = useBalance({
     chainId: Number(chain.chainId),
-    token: token.address,
+    token: token?.address,
     address,
+    enabled: isOpen,
   });
 
   const handleSubmit = useCallback(async () => {

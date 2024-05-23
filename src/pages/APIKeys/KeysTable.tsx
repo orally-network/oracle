@@ -77,7 +77,6 @@ export const KeysTable = () => {
 
   const renderCell = useCallback((user, columnKey) => {
     const cellValue = user[columnKey];
-    console.log({ isOpen });
 
     switch (columnKey) {
       case 'name':

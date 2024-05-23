@@ -49,6 +49,25 @@ export const idlFactory = ({ IDL }) => {
     'update_freq' : IDL.Nat,
   });
   const TextResponse = IDL.Variant({ 'Ok' : IDL.Text, 'Err' : IDL.Text });
+  const APIUser = IDL.Record({
+    'last_request' : IDL.Nat64,
+    'request_count_per_method' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat64)),
+    'request_count_per_domain' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat64)),
+    'address' : IDL.Text,
+    'banned_domains' : IDL.Vec(IDL.Text),
+    'request_limit_by_domain' : IDL.Nat64,
+    'request_count' : IDL.Nat64,
+    'request_limit' : IDL.Nat64,
+  });
+  const SybilAPIKeys = IDL.Record({
+    'user_to_keys' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Vec(IDL.Text))),
+    'free_request_limit' : IDL.Nat64,
+    'keys_to_user' : IDL.Vec(IDL.Tuple(IDL.Text, APIUser)),
+  });
+  const GetAllAPIKeysResponse = IDL.Variant({
+    'Ok' : SybilAPIKeys,
+    'Err' : IDL.Text,
+  });
   const GetAllChainsRPCResponse = IDL.Variant({
     'Ok' : IDL.Vec(IDL.Tuple(IDL.Nat64, IDL.Vec(IDL.Text))),
     'Err' : IDL.Text,
@@ -61,23 +80,19 @@ export const idlFactory = ({ IDL }) => {
   const GetSaveAllowedChainsResponse = IDL.Vec(
     IDL.Tuple(IDL.Nat64, SaveAllowedChain)
   );
-  const APIUser = IDL.Record({
+  const Allowance = IDL.Record({
     'last_request' : IDL.Nat64,
     'request_count_per_method' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat64)),
     'request_count_per_domain' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat64)),
-    'address' : IDL.Text,
-    'banned_domains' : IDL.Vec(IDL.Text),
-    'request_limit_by_domain' : IDL.Nat64,
     'request_count' : IDL.Nat64,
-    'request_limit' : IDL.Nat64,
+    'grantor_address' : IDL.Text,
   });
-  const SybilAPIKey = IDL.Record({
-    'user_to_keys' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Vec(IDL.Text))),
-    'free_request_limit' : IDL.Nat64,
-    'keys_to_user' : IDL.Vec(IDL.Tuple(IDL.Text, APIUser)),
+  const GetAllowedDomainsResponse = IDL.Variant({
+    'Ok' : IDL.Vec(IDL.Tuple(IDL.Text, Allowance)),
+    'Err' : IDL.Text,
   });
   const GetAPIKeysResponse = IDL.Variant({
-    'Ok' : SybilAPIKey,
+    'Ok' : IDL.Vec(IDL.Tuple(IDL.Text, APIUser)),
     'Err' : IDL.Text,
   });
   const AssetData = IDL.Variant({
@@ -113,6 +128,12 @@ export const idlFactory = ({ IDL }) => {
     'Err' : IDL.Text,
   });
   const NatResponse = IDL.Variant({ 'Ok' : IDL.Nat, 'Err' : IDL.Text });
+  const RPCUrl = IDL.Record({ 'url' : IDL.Text, 'secret' : IDL.Opt(IDL.Text) });
+  const AllowedChain = IDL.Record({
+    'rpc' : RPCUrl,
+    'erc20_contracts' : IDL.Vec(ERC20Contract),
+    'coin_symbol' : IDL.Text,
+  });
   const BalancesCfg = IDL.Record({
     'rpc' : IDL.Text,
     'erc20_contract' : IDL.Text,
@@ -120,7 +141,7 @@ export const idlFactory = ({ IDL }) => {
     'fee_per_byte' : IDL.Nat,
     'whitelist' : IDL.Vec(IDL.Text),
     'chain_id' : IDL.Nat,
-    'allowed_chains' : IDL.Vec(IDL.Tuple(IDL.Nat64, SaveAllowedChain)),
+    'allowed_chains' : IDL.Vec(IDL.Tuple(IDL.Nat64, AllowedChain)),
     'treasure_address' : IDL.Text,
   });
   const Cfg = IDL.Record({
@@ -196,7 +217,7 @@ export const idlFactory = ({ IDL }) => {
     'Err' : IDL.Text,
   });
   const GetUserAPIKeysResponse = IDL.Variant({
-    'Ok' : IDL.Opt(IDL.Vec(IDL.Text)),
+    'Ok' : IDL.Vec(IDL.Text),
     'Err' : IDL.Text,
   });
   const GetUserByKeyResponse = IDL.Variant({
@@ -352,10 +373,16 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'eth_address' : IDL.Func([], [TextResponse], []),
+    'generate_api_key' : IDL.Func([IDL.Text, IDL.Text], [TextResponse], []),
+    'get_all_api_keys' : IDL.Func([], [GetAllAPIKeysResponse], []),
     'get_all_chains_rpc' : IDL.Func([], [GetAllChainsRPCResponse], []),
     'get_allowed_chains' : IDL.Func([], [GetSaveAllowedChainsResponse], []),
-    'get_api_key' : IDL.Func([IDL.Text, IDL.Text], [TextResponse], []),
-    'get_api_keys' : IDL.Func([], [GetAPIKeysResponse], []),
+    'get_allowed_domains' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [GetAllowedDomainsResponse],
+        [],
+      ),
+    'get_api_keys' : IDL.Func([IDL.Text, IDL.Text], [GetAPIKeysResponse], []),
     'get_asset_data' : IDL.Func(
         [IDL.Text, IDL.Opt(IDL.Text), IDL.Opt(IDL.Text)],
         [GetAssetDataResponse],
@@ -367,8 +394,10 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'get_balance' : IDL.Func([IDL.Text], [NatResponse], []),
+    'get_base_fee' : IDL.Func([], [IDL.Nat], []),
     'get_cfg' : IDL.Func([], [GetCfgResponse], []),
     'get_chain_rpc' : IDL.Func([IDL.Nat64], [GetChainsRPCResponse], []),
+    'get_fee_per_byte' : IDL.Func([], [IDL.Nat], []),
     'get_feed' : IDL.Func(
         [IDL.Text, IDL.Opt(IDL.Text), IDL.Opt(IDL.Text)],
         [GetFeedResponse],
@@ -458,7 +487,7 @@ export const idlFactory = ({ IDL }) => {
     'remove_default_feed' : IDL.Func([IDL.Text], [Error], []),
     'remove_from_whitelist' : IDL.Func([IDL.Text], [Error], []),
     'restrict' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [Error], []),
-    'revoke_key' : IDL.Func([IDL.Text], [], []),
+    'revoke_key' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
     'revoke_keys' : IDL.Func([IDL.Text], [Error], []),
     'sign_message' : IDL.Func([IDL.Text], [TextResponse], []),
     'update_cfg' : IDL.Func([UpdateCfg], [Error], []),

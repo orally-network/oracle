@@ -1,5 +1,7 @@
 import { createRoot } from 'react-dom/client';
+// todo: remove it after full integration
 import { ToastContainer } from 'react-toastify';
+import { Toaster } from 'sonner';
 import Modal from 'react-modal';
 import { WagmiConfig, configureChains } from 'wagmi';
 import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react';
@@ -60,6 +62,8 @@ import('./rollbarSetup').then(() => {
   root.render(
     <WagmiConfig config={wagmiConfig}>
       <App />
+
+      <Toaster />
 
       <ToastContainer
         position="top-right"

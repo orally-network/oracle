@@ -1,8 +1,9 @@
 import { erc20ABI, waitForTransaction, writeContract } from '@wagmi/core';
 import { utils } from 'ethers';
-import { fetchBalance, useSybilBalanceStore, deposit, AllowedToken } from 'Stores/useSybilBalanceStore';
 import { useCallback, useState } from 'react';
 import { toast } from 'react-toastify';
+
+import { useFetchSybilTreasureAddress, useDeposit, AllowedToken } from 'Services/sybilService';
 import logger from 'Utils/logger';
 import { useGlobalState } from 'Providers/GlobalState';
 
@@ -13,7 +14,8 @@ interface UseSybilDepositParams {
 export const useSybilDeposit = ({ setIsModalVisible }: UseSybilDepositParams) => {
   const [isConfirming, setIsConfirming] = useState(false);
 
-  const sybilTreasureAddress = useSybilBalanceStore((state) => state.sybilTreasureAddress);
+  const { data: sybilTreasureAddress } = useFetchSybilTreasureAddress();
+  const { mutate: deposit } = useDeposit();
   const { addressData } = useGlobalState();
 
   // todo: handle if token is eth, so make another deposit transfer
@@ -55,26 +57,18 @@ export const useSybilDeposit = ({ setIsModalVisible }: UseSybilDepositParams) =>
 
       console.log({ data, hash });
 
-      await toast.promise(deposit(chainId, hash, addressData), {
-        pending: `Deposit ${amount} ${token.symbol} to canister`,
-        success: `Deposited successfully`,
-        error: {
-          render({ data }) {
-            logger.error(`Depositing ${token.symbol}`, data);
-
-            return 'Deposit failed. Try again later.';
-          },
-        },
+      deposit({
+        chainId,
+        tx_hash: hash,
       });
 
-      await fetchBalance(addressData.address);
     } catch (error) {
       console.log({ error });
       toast.error('Something went wrong. Try again later.');
     } finally {
       setIsConfirming(false);
     }
-  }, [setIsModalVisible, makeDepositTransfer, fetchBalance, addressData, sybilTreasureAddress]);
+  }, [setIsModalVisible, makeDepositTransfer, addressData, sybilTreasureAddress]);
 
   return {
     isConfirming,

@@ -13,7 +13,7 @@ import { useGlobalState } from 'Providers/GlobalState';
 import { remove0x } from 'Utils/addressUtils';
 import { SignInButton } from 'Shared/SignInButton';
 import { useSybilData } from 'Providers/SybilPairs';
-import { useSybilBalanceStore } from 'Stores/useSybilBalanceStore';
+import { useFetchBalance } from 'Services/sybilService';
 import { MAX_API_KEYS, MAX_SOURCES, MIN_BALANCE } from 'Constants/ui';
 import { Source } from 'Interfaces/feed';
 import { useGetSybilFeeds } from 'ApiHooks/useGetSybilFeeds';
@@ -38,7 +38,7 @@ export const NewFeed = (params: any) => {
   const [isCreating, setIsCreating] = useState(false);
   const [isPriceFeed, setIsPriceFeed] = useState(Boolean(params.decimals) ?? false);
   const [decimals, setDecimals] = useState(params.decimals ?? '9');
-  const balance = useSybilBalanceStore((state) => state.balance);
+  const { data: balance } = useFetchBalance();
 
   const newKey = (index: number) => ({
     title: index === 0 ? 'key' : `key${index + 1}`,

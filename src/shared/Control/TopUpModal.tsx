@@ -11,7 +11,7 @@ import sybilCanister from 'Canisters/sybilCanister';
 import { writeContract } from '@wagmi/core';
 import { GeneralResponse } from 'Interfaces/common';
 import { useGlobalState } from 'Providers/GlobalState';
-import { deposit } from 'Stores/useSybilBalanceStore';
+import { useDeposit } from 'Services/sybilService';
 
 const USDC_TOKEN_ADDRESS = '0xaf88d065e77c8cC2239327C5EDb3A432268e5831';
 const ARBITRUM_CHAIN_ID = 42161;
@@ -85,6 +85,8 @@ export const TopUpSybilModal = (props: TopUpWrapperProps) => {
   const [isConfirming, setIsConfirming] = useState<boolean>(false);
   const { addressData } = useGlobalState();
 
+  const { mutate: deposit } = useDeposit();
+
   // todo: use makeDepositTransfer
   const sendStablecoins = useCallback(async () => {
     const sybilEthAddress: GeneralResponse = await sybilCanister.eth_address();
@@ -149,26 +151,17 @@ export const TopUpSybilModal = (props: TopUpWrapperProps) => {
 
       console.log({ data, hash });
 
-      await toast.promise(deposit(ARBITRUM_CHAIN_ID, hash, addressData), {
-        pending: `Deposit ${amount} ${props.symbol} to canister`,
-        success: `Deposited successfully`,
-        error: {
-          render({ data }) {
-            logger.error(`Depositing ${props.symbol}`, data);
-
-            return 'Deposit failed. Try again later.';
-          },
-        },
+      deposit({
+        chainId: ARBITRUM_CHAIN_ID,
+        tx_hash: hash,
       });
-
-      await props.refetchBalance();
     } catch (error) {
       console.log({ error });
       toast.error('Something went wrong. Try again later.');
     } finally {
       setIsConfirming(false);
     }
-  }, [amount, props.chain, props.executionAddress, sendStablecoins, props.refetchBalance]);
+  }, [amount, props.chain, props.executionAddress, sendStablecoins, props.refetchBalance, deposit]);
 
   return (
     <TopUpModal

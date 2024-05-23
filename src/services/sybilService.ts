@@ -1,0 +1,211 @@
+import { useQuery, useMutation, useQueryClient } from 'react-query';
+
+import { Address } from '@wagmi/core';
+import { CHAINS_MAP } from 'Constants/chains';
+import { TOKEN_IMAGES } from 'Constants/tokens';
+import sybilCanister from 'Canisters/sybilCanister';
+import { GeneralResponse } from 'Interfaces/common';
+import { remove0x } from 'Utils/addressUtils';
+import { useGlobalState } from 'Providers/GlobalState';
+import logger from 'Utils/logger';
+
+import { okOrErrResponseWrapper, toastWrapper } from './utils';
+
+// useQuery/useMutation + sybil request + toast
+
+export interface AllowedToken {
+  address: Address;
+  symbol: string;
+  decimals: number;
+}
+
+export interface AllowedChain {
+  chainId: number;
+  symbol: string;
+  tokens: AllowedToken[];
+}
+
+// query
+export const useFetchApiKeys = () => {
+  const { addressData } = useGlobalState();
+
+  return useQuery({
+    queryKey: ['apiKeys', addressData],
+    queryFn: async () => {
+      const promise = sybilCanister.get_api_keys(addressData.message, remove0x(addressData.signature)) as Promise<GeneralResponse>;
+      const wrappedPromise = okOrErrResponseWrapper(promise);
+
+      const res = await wrappedPromise;
+
+      // formatter
+
+      logger.log('[service] queried api keys', { res });
+
+      return res;
+    },
+    onError: (error) => {
+      logger.error('[service] Failed to query api keys', error);
+    },
+    keepPreviousData: true,
+    enabled: Boolean(addressData && addressData.signature),
+  });
+};
+
+// mutate
+export const useGenerateApiKey = () => {
+  const { addressData } = useGlobalState();
+  const queryClient = useQueryClient();
+
+  const { mutateAsync, mutate, data, isLoading, error } = useMutation({
+    // @ts-ignore
+    mutationFn: async () => {
+      const promise = sybilCanister.generate_api_key(addressData.message, remove0x(addressData.signature)) as Promise<GeneralResponse>;
+      const wrappedPromise = okOrErrResponseWrapper(promise);
+
+      const res = await toastWrapper(wrappedPromise);
+
+      console.log('[service] generated api key', { res });
+
+      return res;
+    },
+    onError: (error, variables, context) => {
+      logger.error(`[service] Failed to generate api key`, error, variables, context);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['apiKeys'] });
+    },
+    enabled: Boolean(addressData && addressData.signature),
+  });
+
+  return {
+    data,
+    isLoading,
+    error,
+    mutateAsync,
+    mutate,
+  };
+};
+
+// todo: add to tokens coin of the chain + change transfer for this case
+// query
+export const useFetchAllowedChains = () => useQuery({
+  queryKey: ['allowedChains'],
+  queryFn: async () => {
+    const allowedChains: any = await sybilCanister.get_allowed_chains();
+
+    const chains: AllowedChain[] = allowedChains.map(([chainId, chainData]: any) => ({
+      chainId: Number(chainId),
+      symbol: chainData.coin_symbol,
+      tokens: chainData.erc20_contracts.map((tokenData: any) => ({
+        address: tokenData.erc20_contract,
+        symbol: tokenData.token_symbol,
+        decimals: tokenData.decimals,
+
+        // select fields
+        value: tokenData.erc20_contract,
+        label: tokenData.token_symbol,
+        key: tokenData.erc20_contract,
+        avatar: TOKEN_IMAGES[tokenData.token_symbol.toUpperCase()] ?? TOKEN_IMAGES.default,
+      })),
+
+      // select fields
+      value: Number(chainId),
+      label: CHAINS_MAP[chainId].name,
+      key: Number(chainId),
+      avatar: CHAINS_MAP[chainId].img,
+    }));
+
+    logger.log('[service] queried allowed chains', { chains });
+
+    return chains;
+  },
+  onError: (error) => {
+    logger.error('[service] Failed to query allowed chains', error);
+  },
+  keepPreviousData: true,
+});
+
+// query
+export const useFetchSybilTreasureAddress = () => useQuery({
+  queryKey: ['treasureAddress'],
+  queryFn: async () => {
+    const res: Address = await sybilCanister.get_treasure_address() as Address;
+
+    logger.log('[service] queried treasurer address', { res });
+
+    return res;
+  },
+  onError: (error) => {
+    logger.error('[service] Failed to query treasurer address', error);
+  },
+  keepPreviousData: true,
+});
+
+// mutate
+export const useDeposit = () => {
+  const { addressData } = useGlobalState();
+  const queryClient = useQueryClient();
+
+  const { mutateAsync, mutate, data, isLoading, error } = useMutation({
+    // @ts-ignore
+    mutationFn: async ({ chainId, tx_hash }: { chainId: number, tx_hash: string }) => {
+      const promise = sybilCanister.deposit(
+        chainId,
+        tx_hash,
+        [], // grantee
+        addressData.message,
+        remove0x(addressData.signature)
+      ) as Promise<GeneralResponse>;
+      const wrappedPromise = okOrErrResponseWrapper(promise);
+
+      // todo[1]: add logic for saving tx_hash to local storage for future checks if user close window, but deposit wasn't successful - to retry it
+
+      const res = await toastWrapper(wrappedPromise);
+
+      logger.log('[service] deposited', { res });
+
+      return res;
+    },
+    onError: (error: any, variables: any, context: any) => {
+      logger.error(`[service] Failed to deposit`, error, variables, context);
+    },
+    onSuccess: () => {
+      // todo[1]: clear localstorage here
+
+      queryClient.invalidateQueries({ queryKey: ['balance'] });
+    },
+    enabled: Boolean(addressData && addressData.signature),
+  });
+
+  return {
+    data,
+    isLoading,
+    error,
+    mutateAsync,
+    mutate,
+  };
+};
+
+// query
+export const useFetchBalance = () => {
+  const { addressData } = useGlobalState();
+
+  return useQuery({
+    queryKey: ['balance', addressData.address],
+    queryFn: async () => {
+      const promise = sybilCanister.get_balance(addressData.address) as Promise<GeneralResponse>;
+      const wrappedPromise = okOrErrResponseWrapper(promise);
+
+      const res = await wrappedPromise;
+
+      logger.log('[service] queried balance', { res });
+
+      return Number(res);
+    },
+    onError: (error) => {
+      logger.error('[service] Failed to query balance', error);
+    },
+    keepPreviousData: true,
+    enabled: Boolean(addressData && addressData.address),
+  });
+};

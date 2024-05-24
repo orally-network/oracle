@@ -9,7 +9,7 @@ interface UseSybilDepositParams {
 }
 
 export const useSybilDeposit = ({ setIsModalVisible }: UseSybilDepositParams) => {
-  const { data: sybilTreasureAddress } = useFetchSybilTreasureAddress();
+  const { data: treasureAddress } = useFetchSybilTreasureAddress();
 
   const { writeContractWithWait, isPending: isTransferring } = useWriteContractWithWait('Transferring funds to Sybil');
   const { mutate: deposit, isPending: isDepositing } = useDeposit();
@@ -22,7 +22,7 @@ export const useSybilDeposit = ({ setIsModalVisible }: UseSybilDepositParams) =>
       address: token.address,
       abi: erc20Abi,
       functionName: 'transfer',
-      args: [sybilTreasureAddress, parseUnits(String(amount || 0), Number(token.decimals))],
+      args: [treasureAddress, parseUnits(String(amount || 0), Number(token.decimals))],
       chainId,
     });
 
@@ -32,7 +32,7 @@ export const useSybilDeposit = ({ setIsModalVisible }: UseSybilDepositParams) =>
         tx_hash: hash,
       });
     }
-  }, [setIsModalVisible, sybilTreasureAddress]);
+  }, [setIsModalVisible, treasureAddress]);
 
   return {
     isDepositing: isDepositing || isTransferring,

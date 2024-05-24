@@ -1,10 +1,9 @@
-import { useCallback, useState } from 'react';
-import { Chip, Tooltip, User } from '@nextui-org/react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { Table } from 'Components/Table';
 import { DeleteIcon } from 'SVGICons/DeleteIcon';
 import { Modal, useModal } from 'Components/Modal';
-import { useFetchApiKeys } from 'Services/sybilService';
+import { useFetchApiKeys, type ApiKey, useFetchBaseFee, useDeleteApiKey } from 'Services/sybilService';
 
 const columns = [
   {
@@ -12,7 +11,7 @@ const columns = [
     label: 'API Key',
   },
   {
-    key: 'requests',
+    key: 'requestCount',
     label: 'Requests',
   },
   {
@@ -29,44 +28,6 @@ const columns = [
   },
 ];
 
-const mock_rows = [
-  {
-    key: 1,
-    apiKey: '8cb0484843cb524acac128d14830e6e7',
-    requests: 1_000,
-    spent: 10.245,
-    limit: 100_000,
-  },
-  {
-    key: 2,
-    apiKey: '8cb0484843cb524acac128d14830e6e7',
-    requests: 1_000,
-    spent: 10.245,
-    limit: 100_000,
-  },
-  {
-    key: 3,
-    apiKey: '8cb0484843cb524acac128d14830e6e7',
-    requests: 1_000,
-    spent: 10.245,
-    limit: 100_000,
-  },
-  {
-    key: 4,
-    apiKey: '8cb0484843cb524acac128d14830e6e7',
-    requests: 1_000,
-    spent: 10.245,
-    limit: 100_000,
-  },
-  {
-    key: 5,
-    apiKey: '8cb0484843cb524acac128d14830e6e7',
-    requests: 1_000,
-    spent: 10.245,
-    limit: 100_000,
-  },
-];
-
 const statusColorMap = {
   active: 'success',
   paused: 'danger',
@@ -74,41 +35,35 @@ const statusColorMap = {
 };
 
 export const KeysTable = () => {
-  const { isOpen, onOpenChange, onOpen } = useModal();
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const { isOpen, onOpenChange, onOpen, onClose } = useModal();
 
-  const { data, isLoading } = useFetchApiKeys();
+  const { data: baseFee, isLoading: isFeeLoading } = useFetchBaseFee();
+  const { data: apiKeys, isLoading } = useFetchApiKeys();
+  const { mutate: deleteApiKey } = useDeleteApiKey();
 
-  const renderCell = useCallback((user, columnKey) => {
-    const cellValue = user[columnKey];
+  const renderCell = useCallback((apiKey: ApiKey, columnKey: string) => {
+    const cellValue = apiKey[columnKey];
 
     switch (columnKey) {
-      case 'name':
-        return (
-          <User
-            avatarProps={{ radius: 'lg', src: user.avatar }}
-            description={user.email}
-            name={cellValue}
-          >
-            {user.email}
-          </User>
-        );
-      case 'role':
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-sm capitalize">{cellValue}</p>
-            <p className="text-bold text-sm capitalize text-default-400">{user.team}</p>
-          </div>
-        );
-      case 'status':
-        return (
-          <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
-            {cellValue}
-          </Chip>
-        );
+      case 'spent':
+        return apiKey.requestCount ? apiKey.requestCount * Number(baseFee) : 0;
+      // case 'status':
+      //   return (
+      //     <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
+      //       {cellValue}
+      //     </Chip>
+      //   );
       case 'actions':
         return (
           <div className="relative flex items-center gap-2">
-            <span onClick={onOpen} className="text-lg text-danger cursor-pointer active:opacity-50">
+            <span
+              onClick={() => {
+                setSelectedKey(apiKey.apiKey);
+                onOpen();
+              }}
+              className="text-lg text-danger cursor-pointer active:opacity-50"
+            >
               <DeleteIcon/>
             </span>
           </div>
@@ -116,29 +71,38 @@ export const KeysTable = () => {
       default:
         return cellValue;
     }
-  }, [isOpen, onOpen, onOpenChange]);
+  }, [onOpen, baseFee]);
+
+  const deleteAction = useMemo(() => [
+    {
+      label: 'Delete',
+      onPress: () => {
+        if (selectedKey) {
+          deleteApiKey({ apiKey: selectedKey });
+          setSelectedKey(null);
+          onClose();
+        }
+      },
+      variant: 'danger',
+    },
+  ], [selectedKey]);
 
   return (
     <>
       <Table
         ariaLabel="API Keys"
         columns={columns}
-        rows={mock_rows}
+        rows={apiKeys ?? []}
         renderCell={renderCell}
-        isLoading={isLoading}
+        isLoading={isLoading || isFeeLoading}
       />
 
       <Modal
         title="Are you sure?"
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        actions={[
-          {
-            label: 'Delete',
-            onPress: () => {},
-            variant: 'danger',
-          },
-        ]}
+        // @ts-ignore
+        actions={deleteAction}
       >
         <div>You will not be able to recover this key.</div>
       </Modal>

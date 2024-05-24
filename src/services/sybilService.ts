@@ -1,8 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { type Address, type Hash } from 'viem';
-import { CHAINS_MAP } from 'Constants/chains';
-import { TOKEN_IMAGES } from 'Constants/tokens';
 import sybilCanister from 'Canisters/sybilCanister';
 import { GeneralResponse } from 'Interfaces/common';
 import { remove0x } from 'Utils/addressUtils';
@@ -26,7 +24,7 @@ export interface AllowedChain {
 }
 
 export interface ApiKey {
-  key: string;
+  apiKey: string;
   ownerAddress: Address;
   bannedDomains: string[];
   lastRequest: number;
@@ -51,23 +49,24 @@ export const useFetchApiKeys = () => {
         const res = await wrappedPromise;
 
         // formatter
-        const apiKeys = res.map(([key, keyData]: any) => {
+        const apiKeys: ApiKey[] = res.map(([apiKey, keyData]: any) => {
           return {
-            key,
+            key: apiKey,
+            apiKey,
             ownerAddress: keyData.address,
             bannedDomains: keyData.banned_domains,
             lastRequest: keyData.last_request,
-            requestCount: keyData.request_count,
+            requestCount: Number(keyData.request_count),
             requestCountPerDomain: keyData.request_count_per_domain,
             requestCountPerMethod: keyData.request_count_per_method,
-            requestLimit: keyData.request_limit,
+            requestLimit: Number(keyData.request_limit),
             requestLimitByDomain: keyData.request_limit_by_domain,
           };
         });
 
         logger.log('[service] queried api keys', { res, apiKeys });
 
-        return res;
+        return apiKeys;
       } catch (error) {
         logger.error('[service] Failed to query api keys', error);
       }
@@ -219,5 +218,51 @@ export const useFetchBalance = () => {
       return;
     },
     enabled: Boolean(addressData && addressData.address),
+  });
+};
+
+// query
+export const useFetchBaseFee = () => useQuery({
+  queryKey: ['baseFee'],
+  queryFn: async () => {
+    try {
+      const res = await sybilCanister.get_base_fee();
+
+      logger.log('[service] queried base fee', { res });
+
+      return Number(res);
+    } catch (error) {
+      logger.error('[service] Failed to query base fee', error);
+    }
+
+    return;
+  },
+});
+
+// mutate
+export const useDeleteApiKey = () => {
+  const { addressData } = useGlobalState();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    // @ts-ignore
+    mutationFn: async ({ apiKey }: { apiKey: string }) => {
+      const promise = sybilCanister.revoke_key(
+        apiKey,
+        addressData.message,
+        remove0x(addressData.signature),
+      );
+      const res = await toastWrapper(promise, 'Delete Key');
+
+      logger.log('[service] delete key', { res });
+
+      return res;
+    },
+    onError: (error: any, variables: any, context: any) => {
+      logger.error(`[service] Failed to delete key`, error, variables, context);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['apiKeys'] });
+    },
   });
 };

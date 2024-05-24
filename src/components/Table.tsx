@@ -7,6 +7,7 @@ import {
   TableRow,
   TableCell,
   getKeyValue,
+  Spinner,
 } from '@nextui-org/react';
 
 interface Column {
@@ -15,9 +16,7 @@ interface Column {
   align?: 'start' | 'center' | 'end';
 }
 
-interface Row {
-  [key: string]: string | number;
-}
+type Row = Record<string, string | number> & any;
 
 interface TableProps {
   ariaLabel?: string;
@@ -51,6 +50,7 @@ export const Table = ({
       <TableBody
         items={rows}
         isLoading={isLoading}
+        loadingContent={<Spinner label="Loading..." />}
         emptyContent={'No rows to display.'}
       >
         {(item) => (

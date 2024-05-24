@@ -14,18 +14,18 @@ export const okOrErrResponseWrapper = async (promise: Promise<GeneralResponse>) 
   return res.Ok;
 };
 
-export const toastWrapper = async (promise: Promise<any>) => {
+export const toastWrapper = async (promise: Promise<any>, notifyPrefix?: string) => {
   return new Promise((resolve, reject) => {
     toast.promise(promise, {
-      loading: 'Processing...',
+      loading: `${notifyPrefix ? notifyPrefix + ' p' : 'P'}rocessing...`,
       success: (data) => {
         resolve(data);
-        return `Processed successfully ${data ? `:${data}` : ''}`;
+        return `${notifyPrefix ? notifyPrefix + ' p' : 'P'}rocessed successfully ${data ? `:${data}` : ''}`;
       },
       error: (data) => {
-        logger.error(`Failed ${data}`);
+        logger.error(`${notifyPrefix ? notifyPrefix + ' f' : 'F'}ailed ${data}`);
         reject(data);
-        return `Failed. Try again later.`;
+        return `${notifyPrefix ? notifyPrefix + ' f' : 'F'}ailed. Try again later.`;
       },
     });
   });

@@ -1,5 +1,5 @@
 import { SybilFilters, RemoteDataType } from 'Interfaces/common';
-import { QueryClient, useQuery, useQueryClient } from 'react-query';
+import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 import { dynamicQueryKeys } from '../dynamicQueryKeys.ts';
 import sybilCanister from 'Canisters/sybilCanister';
 import { Feed } from 'Interfaces/feed';
@@ -51,9 +51,9 @@ export const useGetSybilFeeds = ({
     isError,
     isSuccess,
     refetch: refetchQuery,
-  } = useQuery(
-    [dynamicQueryKeys.subscriptions(), filters, page, size],
-    async () => {
+  } = useQuery({
+    queryKey: [dynamicQueryKeys.subscriptions(), filters, page, size],
+    queryFn: async () => {
       const feedsResponse: GetFeedsResponse = await sybilCanister.get_feeds(
         isGetAll ? [] : [filters],
         isGetAll
@@ -89,11 +89,9 @@ export const useGetSybilFeeds = ({
         items: feedsResponse.Ok.items,
       };
     },
-    {
-      staleTime: 30 * 1000,
-      keepPreviousData: true,
-    }
-  );
+    staleTime: 30 * 1000,
+    keepPreviousData: true,
+  });
 
   const refetch = async (): Promise<void> => {
     await refetchQuery();

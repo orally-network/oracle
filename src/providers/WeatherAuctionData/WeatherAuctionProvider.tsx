@@ -1,14 +1,14 @@
-import { utils } from 'ethers';
+import { formatUnits, parseUnits, formatEther } from 'viem';
 import React, { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { WeatherAuctionContext } from './WeatherAuctionContext';
 import { useLazyQuery } from '@apollo/client';
 import { GET_BIDS } from './queries/auction';
-import { writeContract, readContract } from '@wagmi/core';
+import { writeContract, readContract } from 'wagmi/actions';
 import WeatherAuctionABI from './WeatherAuctionABI.json';
 import WeatherPredictionV2ABI from './WeatherPredictionV2ABI.json';
 import { CHAINS_MAP } from 'Constants/chains';
-import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
+import { useAccount, useSwitchChain, useConfig } from 'wagmi';
 import { toast } from 'react-toastify';
 import { useGetSybilFeeds } from 'ApiHooks/useGetSybilFeeds';
 import { DEFAULT_FEEDS_SIZE } from 'Constants/ui';
@@ -18,14 +18,14 @@ import { ARBITRUM_CHAIN_ID, TICKET_PRICE } from './contants';
 
 export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode }) => {
   const { city } = useParams();
+  const config = useConfig();
   const prediction = city ? predictionsMap[city] : predictionsMap.denver;
 
   const [ticketPrice, setTicketPrice] = useState(TICKET_PRICE);
   const [predictionChainId, setPredictionChainId] = useState(ARBITRUM_CHAIN_ID);
   const [getBids, { loading, data: bidsData }] = useLazyQuery(GET_BIDS);
-  const { address } = useAccount();
-  const { switchNetwork } = useSwitchNetwork();
-  const { chain: currentChain } = useNetwork();
+  const { address, chain: currentChain } = useAccount();
+  const { switchChain } = useSwitchChain();
   const [isAuctionOpen, setIsAuctionOpen] = useState<boolean | null>(null);
   const [userWinningBalance, setUserWinningBalance] = useState<number>(0);
   const [currentDay, setCurrentDay] = useState<number>(0);
@@ -44,7 +44,7 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
     },
   });
   const { rate, decimals } = feedsData.data.items?.[0]?.data?.[0]?.data?.DefaultPriceFeed ?? {};
-  const ethRate = rate ? utils.formatUnits(rate, decimals) : null;
+  const ethRate = rate ? formatUnits(rate, decimals) : null;
 
   const weatherAuctionContract = {
     address: prediction.contract[predictionChainId],
@@ -52,9 +52,9 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
   };
 
   const sendAuctionData = async (temp: number, ticketAmount: number) => {
-    const res = await writeContract({
+    const res = await writeContract(config, {
       ...weatherAuctionContract,
-      value: utils.parseUnits(
+      value: parseUnits(
         String(ticketPrice * (ticketAmount ? +ticketAmount : 1)),
         CHAINS_MAP[predictionChainId].nativeCurrency.decimals
       ), // amount of eth applied to transaction
@@ -82,7 +82,7 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
   const withdraw = async () => {
     try {
       const res = await toast.promise(
-        writeContract({
+        writeContract(config, {
           ...weatherAuctionContract,
           functionName: 'withdraw',
           chainId: predictionChainId,
@@ -105,7 +105,7 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
     try {
       if (!address) return;
 
-      const userBalance = await readContract({
+      const userBalance = await readContract(config, {
         ...weatherAuctionContract,
         functionName: 'userBalances',
         args: [address],
@@ -116,7 +116,7 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
         setUserWinningBalance(0);
         throw new Error(`No balance found for ${address}:${userBalance}`);
       } else {
-        setUserWinningBalance(+utils.formatEther(userBalance));
+        setUserWinningBalance(+formatEther(userBalance));
       }
     } catch (err) {
       console.error(err);
@@ -126,13 +126,13 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
 
   const getAuctionStatusAndDay = async () => {
     try {
-      const auctionOpen = await readContract({
+      const auctionOpen = await readContract(config, {
         ...weatherAuctionContract,
         functionName: 'auctionOpen',
         chainId: predictionChainId,
       });
 
-      const currentDay = await readContract({
+      const currentDay = await readContract(config, {
         ...weatherAuctionContract,
         functionName: 'currentDay',
         chainId: predictionChainId,
@@ -148,7 +148,7 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
 
   const getTotalPrize = async () => {
     try {
-      const data = await readContract({
+      const data = await readContract(config, {
         ...weatherAuctionContract,
         functionName: 'totalTickets',
         chainId: predictionChainId,
@@ -169,14 +169,14 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
         return;
       }
 
-      const data = await readContract({
+      const data = await readContract(config, {
         ...weatherAuctionContract,
         functionName: 'ticketPrice',
         chainId: predictionChainId,
       });
       console.log({ Ticket: data });
 
-      setTicketPrice(Number(utils.formatEther(data)));
+      setTicketPrice(Number(formatEther(data)));
       return data;
     } catch (err) {
       console.error(err);
@@ -185,10 +185,10 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
   };
 
   useEffect(() => {
-    if (currentChain?.id !== predictionChainId && switchNetwork) {
-      switchNetwork(predictionChainId);
+    if (currentChain?.id !== predictionChainId && switchChain) {
+      switchChain({ chainId: predictionChainId });
     }
-  }, [currentChain?.id, switchNetwork]);
+  }, [currentChain?.id, switchChain]);
 
   useEffect(() => {
     getAuctionStatusAndDay();
@@ -211,7 +211,7 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
     }
 
     return bidsData.winnerDeclareds.map((winner: Winner) => {
-      const eth = Number(utils.formatEther(winner.winnerPrize)).toFixed(4);
+      const eth = Number(formatEther(winner.winnerPrize)).toFixed(4);
 
       return {
         ...winner,

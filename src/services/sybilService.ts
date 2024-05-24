@@ -1,6 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { Address } from '@wagmi/core';
+import { type Address, type Hash } from 'viem';
 import { CHAINS_MAP } from 'Constants/chains';
 import { TOKEN_IMAGES } from 'Constants/tokens';
 import sybilCanister from 'Canisters/sybilCanister';
@@ -32,21 +32,23 @@ export const useFetchApiKeys = () => {
   return useQuery({
     queryKey: ['apiKeys', addressData],
     queryFn: async () => {
-      const promise = sybilCanister.get_api_keys(addressData.message, remove0x(addressData.signature)) as Promise<GeneralResponse>;
-      const wrappedPromise = okOrErrResponseWrapper(promise);
+      try {
+        const promise = sybilCanister.get_api_keys(addressData.message, remove0x(addressData.signature)) as Promise<GeneralResponse>;
+        const wrappedPromise = okOrErrResponseWrapper(promise);
 
-      const res = await wrappedPromise;
+        const res = await wrappedPromise;
 
-      // formatter
+        // formatter
 
-      logger.log('[service] queried api keys', { res });
+        logger.log('[service] queried api keys', { res });
 
-      return res;
+        return res;
+      } catch (error) {
+        logger.error('[service] Failed to query api keys', error);
+      }
+
+      return;
     },
-    onError: (error) => {
-      logger.error('[service] Failed to query api keys', error);
-    },
-    keepPreviousData: true,
     enabled: Boolean(addressData && addressData.signature),
   });
 };
@@ -56,7 +58,7 @@ export const useGenerateApiKey = () => {
   const { addressData } = useGlobalState();
   const queryClient = useQueryClient();
 
-  const { mutateAsync, mutate, data, isLoading, error } = useMutation({
+  const { mutateAsync, mutate, data, isPending, error } = useMutation({
     // @ts-ignore
     mutationFn: async () => {
       const promise = sybilCanister.generate_api_key(addressData.message, remove0x(addressData.signature)) as Promise<GeneralResponse>;
@@ -74,12 +76,11 @@ export const useGenerateApiKey = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['apiKeys'] });
     },
-    enabled: Boolean(addressData && addressData.signature),
   });
 
   return {
     data,
-    isLoading,
+    isPending,
     error,
     mutateAsync,
     mutate,
@@ -91,54 +92,58 @@ export const useGenerateApiKey = () => {
 export const useFetchAllowedChains = () => useQuery({
   queryKey: ['allowedChains'],
   queryFn: async () => {
-    const allowedChains: any = await sybilCanister.get_allowed_chains();
+    try {
+      const allowedChains: any = await sybilCanister.get_allowed_chains();
 
-    const chains: AllowedChain[] = allowedChains.map(([chainId, chainData]: any) => ({
-      chainId: Number(chainId),
-      symbol: chainData.coin_symbol,
-      tokens: chainData.erc20_contracts.map((tokenData: any) => ({
-        address: tokenData.erc20_contract,
-        symbol: tokenData.token_symbol,
-        decimals: tokenData.decimals,
+      const chains: AllowedChain[] = allowedChains.map(([chainId, chainData]: any) => ({
+        chainId: Number(chainId),
+        symbol: chainData.coin_symbol,
+        tokens: chainData.erc20_contracts.map((tokenData: any) => ({
+          address: tokenData.erc20_contract,
+          symbol: tokenData.token_symbol,
+          decimals: tokenData.decimals,
+
+          // select fields
+          value: tokenData.erc20_contract,
+          label: tokenData.token_symbol,
+          key: tokenData.erc20_contract,
+          avatar: TOKEN_IMAGES[tokenData.token_symbol.toUpperCase()] ?? TOKEN_IMAGES.default,
+        })),
 
         // select fields
-        value: tokenData.erc20_contract,
-        label: tokenData.token_symbol,
-        key: tokenData.erc20_contract,
-        avatar: TOKEN_IMAGES[tokenData.token_symbol.toUpperCase()] ?? TOKEN_IMAGES.default,
-      })),
+        value: Number(chainId),
+        label: CHAINS_MAP[chainId].name,
+        key: Number(chainId),
+        avatar: CHAINS_MAP[chainId].img,
+      }));
 
-      // select fields
-      value: Number(chainId),
-      label: CHAINS_MAP[chainId].name,
-      key: Number(chainId),
-      avatar: CHAINS_MAP[chainId].img,
-    }));
+      logger.log('[service] queried allowed chains', { chains });
 
-    logger.log('[service] queried allowed chains', { chains });
+      return chains;
+    } catch (error) {
+      logger.error('[service] Failed to query allowed chains', error);
+    }
 
-    return chains;
+    return;
   },
-  onError: (error) => {
-    logger.error('[service] Failed to query allowed chains', error);
-  },
-  keepPreviousData: true,
 });
 
 // query
 export const useFetchSybilTreasureAddress = () => useQuery({
   queryKey: ['treasureAddress'],
   queryFn: async () => {
-    const res: Address = await sybilCanister.get_treasure_address() as Address;
+    try {
+      const res: Address = await sybilCanister.get_treasure_address() as Address;
 
-    logger.log('[service] queried treasurer address', { res });
+      logger.log('[service] queried treasurer address', { res });
 
-    return res;
+      return res;
+    } catch (error) {
+      logger.error('[service] Failed to query treasurer address', error);
+    }
+
+    return;
   },
-  onError: (error) => {
-    logger.error('[service] Failed to query treasurer address', error);
-  },
-  keepPreviousData: true,
 });
 
 // mutate
@@ -146,9 +151,9 @@ export const useDeposit = () => {
   const { addressData } = useGlobalState();
   const queryClient = useQueryClient();
 
-  const { mutateAsync, mutate, data, isLoading, error } = useMutation({
+  return useMutation({
     // @ts-ignore
-    mutationFn: async ({ chainId, tx_hash }: { chainId: number, tx_hash: string }) => {
+    mutationFn: async ({ chainId, tx_hash }: { chainId: number, tx_hash: Hash }) => {
       const promise = sybilCanister.deposit(
         chainId,
         tx_hash,
@@ -160,7 +165,7 @@ export const useDeposit = () => {
 
       // todo[1]: add logic for saving tx_hash to local storage for future checks if user close window, but deposit wasn't successful - to retry it
 
-      const res = await toastWrapper(wrappedPromise);
+      const res = await toastWrapper(wrappedPromise, 'Deposit');
 
       logger.log('[service] deposited', { res });
 
@@ -174,16 +179,7 @@ export const useDeposit = () => {
 
       queryClient.invalidateQueries({ queryKey: ['balance'] });
     },
-    enabled: Boolean(addressData && addressData.signature),
   });
-
-  return {
-    data,
-    isLoading,
-    error,
-    mutateAsync,
-    mutate,
-  };
 };
 
 // query
@@ -193,19 +189,21 @@ export const useFetchBalance = () => {
   return useQuery({
     queryKey: ['balance', addressData.address],
     queryFn: async () => {
-      const promise = sybilCanister.get_balance(addressData.address) as Promise<GeneralResponse>;
-      const wrappedPromise = okOrErrResponseWrapper(promise);
+      try {
+        const promise = sybilCanister.get_balance(addressData.address) as Promise<GeneralResponse>;
+        const wrappedPromise = okOrErrResponseWrapper(promise);
 
-      const res = await wrappedPromise;
+        const res = await wrappedPromise;
 
-      logger.log('[service] queried balance', { res });
+        logger.log('[service] queried balance', { res });
 
-      return Number(res);
+        return Number(res);
+      } catch (error) {
+        logger.error('[service] Failed to query balance', error);
+      }
+
+      return;
     },
-    onError: (error) => {
-      logger.error('[service] Failed to query balance', error);
-    },
-    keepPreviousData: true,
     enabled: Boolean(addressData && addressData.address),
   });
 };

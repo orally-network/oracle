@@ -8,7 +8,7 @@ import { useGenerateApiKey } from 'Services/sybilService';
 export const Actions = () => {
   const { addressData } = useGlobalState();
 
-  const { mutate: generateApiKey, isLoading } = useGenerateApiKey();
+  const { mutate: generateApiKey, isPending } = useGenerateApiKey();
 
   return (
     <div className="flex justify-between gap-2">
@@ -19,7 +19,7 @@ export const Actions = () => {
           <Button
             color="primary"
             onClick={generateApiKey as any}
-            isLoading={isLoading}
+            isLoading={isPending}
           >
             Generate API Key
           </Button>

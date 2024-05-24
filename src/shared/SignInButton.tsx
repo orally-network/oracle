@@ -1,16 +1,17 @@
-import logger from 'Utils/logger';
 import { Button, ButtonProps } from 'antd';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
+import { useAccount } from 'wagmi';
+
+import logger from 'Utils/logger';
 import useSignature from 'Shared/useSignature';
-import {useNetwork} from "wagmi";
 
 interface SignInButtonProps extends ButtonProps {
 }
 export const SignInButton = (props: SignInButtonProps) => {
   const [isSigning, setIsSigning] = useState(false);
   const { signMessage } = useSignature();
-  const { chain: currentChain } = useNetwork();
+  const { chain: currentChain } = useAccount();
 
   const signMessageHandler = async () => {
     setIsSigning(true);

@@ -1,6 +1,8 @@
+import { useTokenBalance } from 'Services/wagmiService';
 import { useState, useCallback, useMemo } from 'react';
-import { useSwitchNetwork, useNetwork, useBalance, useAccount } from 'wagmi';
+import { useSwitchChain, useAccount } from 'wagmi';
 import { Input } from '@nextui-org/react';
+import { type Address } from 'viem';
 
 import { AllowedChain, AllowedToken } from 'Services/sybilService';
 import { DEFAULT_TOP_UP_AMOUNT, DEFAULT_TOP_UP_AMOUNT_ETH } from 'Constants/ui';
@@ -16,6 +18,8 @@ interface TopUpModalProps {
   submit: (chain: number, token: AllowedToken, amount: number) => void;
   setChain: (AllowedChain: any) => void;
   chain: AllowedChain;
+  token: AllowedToken,
+  setToken: (AllowedToken: any) => void;
 }
 
 export const TopUpModal = ({
@@ -27,25 +31,25 @@ export const TopUpModal = ({
   submit,
   setChain,
   chain,
+  token,
+  setToken,
 }: TopUpModalProps) => {
-  const { chain: currentChain } = useNetwork();
-  const { switchNetworkAsync } = useSwitchNetwork();
-  const { address } = useAccount();
+  const { switchChainAsync } = useSwitchChain();
+  const { address, chain: currentChain } = useAccount();
 
-  const [token, setToken] = useState<AllowedToken>(chain.tokens[0]);
-  const [amount, setAmount] = useState<number>(chain.tokens[0].symbol === 'ETH' ? DEFAULT_TOP_UP_AMOUNT_ETH : DEFAULT_TOP_UP_AMOUNT);
+  const [amount, setAmount] = useState<number>(tokens[0].symbol === 'ETH' ? DEFAULT_TOP_UP_AMOUNT_ETH : DEFAULT_TOP_UP_AMOUNT);
 
-  const { data: balance } = useBalance({
-    chainId: Number(chain.chainId),
-    token: token?.address,
-    address,
-    enabled: isOpen,
+  const { balance } = useTokenBalance({
+    tokenAddress: token?.address,
+    address: address as Address,
+    chainId: chain.chainId,
+    enabled: Boolean(isOpen && address),
   });
 
   const handleSubmit = useCallback(async () => {
     if (currentChain?.id && currentChain?.id !== chain.chainId) {
-      if (switchNetworkAsync) {
-        await switchNetworkAsync(chain.chainId);
+      if (switchChainAsync) {
+        await switchChainAsync({ chainId: chain.chainId });
       }
     }
 
@@ -55,14 +59,14 @@ export const TopUpModal = ({
   const handleSetChain = useCallback((newChain: AllowedChain) => {
     setChain(newChain);
     setToken(newChain.tokens[0]);
-  }, [chain]);
+  }, []);
 
   const actions = useMemo(() => [
     {
       label: 'Top Up',
       onPress: handleSubmit,
       variant: 'primary',
-      disabled: Number(balance?.formatted) < amount || amount <= 0,
+      disabled: !balance || Number(balance?.formatted) < amount || amount <= 0,
     },
   ], [balance?.formatted, handleSubmit, amount]);
 

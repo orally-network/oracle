@@ -1,11 +1,6 @@
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Space, Spin } from 'antd';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
-import { Provider as RollbarProvider, ErrorBoundary } from '@rollbar/react';
 import { GlobalStateProvider } from 'Providers/GlobalState';
-import { ApolloClient, InMemoryCache } from '@apollo/client';
-import { ApolloProvider } from '@apollo/client/react';
-import { HttpLink } from '@apollo/client';
 import { NextUIProvider } from '@nextui-org/react';
 
 import { BaseLayout } from 'Components/Layout';
@@ -15,7 +10,7 @@ import Sybil from 'Pages/Sybil';
 import ROUTES from 'Constants/routes';
 import { SubscriptionDetailsPage } from 'Pages/SubscriptionDetailsPage';
 import ErrorPage from 'Pages/ErrorPage';
-import { CACHE_TIME, QUERY_CLIENT_DEFAULT_RETRY_COUNT, TIME_TO_WAIT } from 'Constants/query';
+// import { CACHE_TIME, QUERY_CLIENT_DEFAULT_RETRY_COUNT, TIME_TO_WAIT } from 'Constants/query';
 import { PythiaDataProvider } from 'Providers/PythiaData';
 import { WeatherAuction } from 'Pages/WeatherAuction';
 import { FeedDetailsPage } from 'Pages/FeedDetailsPage';
@@ -23,7 +18,6 @@ import SybilFeedsProvider from 'Providers/SybilPairs/SybilFeedsProvider';
 import { WeatherDayDetailsWrapper } from 'Pages/WeatherDayDetails';
 import { APIKeys } from 'Pages/APIKeys';
 
-import rollbarSetup from './rollbarSetup';
 
 const router = createBrowserRouter([
   {
@@ -80,35 +74,8 @@ const router = createBrowserRouter([
   },
 ]);
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: TIME_TO_WAIT,
-      refetchOnMount: true,
-      refetchOnReconnect: true,
-      refetchOnWindowFocus: false,
-      refetchInterval: TIME_TO_WAIT,
-      cacheTime: CACHE_TIME,
-      retry: QUERY_CLIENT_DEFAULT_RETRY_COUNT,
-    },
-  },
-});
-
-const link = new HttpLink({
-  uri: 'https://api.studio.thegraph.com/query/61274/orally-weather-auction/0.2.1',
-});
-
-export const client = new ApolloClient({
-  link: link,
-  cache: new InMemoryCache(),
-});
-
 const App = () => {
   return (
-    <RollbarProvider instance={rollbarSetup}>
-      <ErrorBoundary>
-        <ApolloProvider client={client}>
-          <QueryClientProvider client={queryClient}>
             <GlobalStateProvider>
               <PythiaDataProvider>
                 <SybilFeedsProvider>
@@ -127,10 +94,6 @@ const App = () => {
                 </SybilFeedsProvider>
               </PythiaDataProvider>
             </GlobalStateProvider>
-          </QueryClientProvider>
-        </ApolloProvider>
-      </ErrorBoundary>
-    </RollbarProvider>
   );
 };
 

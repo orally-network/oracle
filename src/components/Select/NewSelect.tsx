@@ -17,12 +17,13 @@ interface SelectProps {
 
 export const NewSelect = ({ items, handleChange, selectedItem, title }: SelectProps) => {
   const handleSelectionChange = useCallback((e) => {
+    console.log({ e: e.target.value })
     const item = items.find((item) => item.key == e.target.value);
 
     handleChange(item);
   }, [items]);
 
-  const selectedKeys = useMemo(() => [selectedItem.key], [selectedItem]);
+  const selectedKeys = useMemo(() => [selectedItem?.key], [selectedItem]);
 
   return (
     <Select

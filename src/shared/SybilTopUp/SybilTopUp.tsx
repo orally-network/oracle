@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@nextui-org/react';
 
 import { TopUpModal } from 'Shared/TopUpModal';
-import { useFetchAllowedChains, AllowedChain } from 'Services/sybilService';
+import { useFetchAllowedChains, AllowedChain, AllowedToken } from 'Services/sybilService';
 import { useModal } from 'Components/Modal';
 
 import { useSybilDeposit } from './useSybilDeposit';
@@ -11,14 +11,16 @@ export const SybilTopUp = () => {
   const { isOpen, onOpen, onOpenChange } = useModal();
 
   const [chain, setChain] = useState<AllowedChain | null>(null);
+  const [token, setToken] = useState<AllowedToken | null>(null);
 
-  const { isConfirming, sybilDeposit } = useSybilDeposit({ setIsModalVisible: onOpenChange });
+  const { isDepositing, sybilDeposit } = useSybilDeposit({ setIsModalVisible: onOpenChange });
 
   const { data: allowedChains, isLoading: isChainsLoading } = useFetchAllowedChains();
 
   useEffect(() => {
     if (allowedChains && allowedChains.length > 0) {
       setChain(allowedChains[0]);
+      setToken(allowedChains[0].tokens[0]);
     }
   }, [allowedChains]);
 
@@ -27,7 +29,7 @@ export const SybilTopUp = () => {
       <Button
         color="primary"
         onPress={onOpen}
-        isLoading={isConfirming || isChainsLoading}
+        isLoading={isDepositing || isChainsLoading}
       >
         Top Up
       </Button>
@@ -38,10 +40,12 @@ export const SybilTopUp = () => {
           onOpenChange={onOpenChange}
           chains={allowedChains}
           isChainsLoading={isChainsLoading}
-          tokens={chain ? chain.tokens : []}
+          tokens={chain.tokens}
           submit={sybilDeposit}
           setChain={setChain}
           chain={chain}
+          setToken={setToken}
+          token={token}
         />
       )}
     </>

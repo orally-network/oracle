@@ -29,6 +29,7 @@ export default defineConfig({
       ABIs: path.resolve(__dirname, './src/ABIs/'),
       Stores: path.resolve(__dirname, './src/stores/'),
       SVGIcons: path.resolve(__dirname, './src/SVGIcons/'),
+      Hooks: path.resolve(__dirname, './src/hooks/'),
     },
   }
 })

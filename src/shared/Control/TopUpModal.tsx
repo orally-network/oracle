@@ -1,16 +1,14 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { useSendTransaction, useSwitchNetwork, useNetwork } from 'wagmi';
+import { useSendTransaction, useAccount, useSwitchChain, useConfig } from 'wagmi';
 import { utils } from 'ethers';
 import { Input, Modal, Flex } from 'antd';
-import { waitForTransaction } from '@wagmi/core';
+import { waitForTransactionReceipt, writeContract } from 'wagmi/actions';
 import logger from 'Utils/logger';
 import { usePythiaData } from 'Providers/PythiaData';
 import { DEFAULT_TOP_UP_AMOUNT } from 'Constants/ui';
 import sybilCanister from 'Canisters/sybilCanister';
-import { writeContract } from '@wagmi/core';
 import { GeneralResponse } from 'Interfaces/common';
-import { useGlobalState } from 'Providers/GlobalState';
 import { useDeposit } from 'Services/sybilService';
 
 const USDC_TOKEN_ADDRESS = '0xaf88d065e77c8cC2239327C5EDb3A432268e5831';
@@ -45,8 +43,8 @@ const TopUpModal = ({
   topUp,
   isConfirming,
 }: TopUpModalProps) => {
-  const { chain: currentChain } = useNetwork();
-  const { switchNetwork } = useSwitchNetwork();
+  const { chain: currentChain } = useAccount();
+  const { switchChain } = useSwitchChain();
 
   console.log({
     chain,
@@ -56,10 +54,10 @@ const TopUpModal = ({
   });
 
   useEffect(() => {
-    if (currentChain?.id !== chain.id && switchNetwork) {
-      switchNetwork(chain.id);
+    if (currentChain?.id !== chain.id && switchChain) {
+      switchChain({ chainId: chain.id });
     }
-  }, [chain.id, currentChain?.id, switchNetwork]);
+  }, [chain.id, currentChain?.id, switchChain]);
 
   return (
     <Modal
@@ -83,14 +81,14 @@ const TopUpModal = ({
 export const TopUpSybilModal = (props: TopUpWrapperProps) => {
   const [amount, setAmount] = useState<string>(DEFAULT_TOP_UP_AMOUNT.toString());
   const [isConfirming, setIsConfirming] = useState<boolean>(false);
-  const { addressData } = useGlobalState();
+  const config = useConfig();
 
   const { mutate: deposit } = useDeposit();
 
   // todo: use makeDepositTransfer
   const sendStablecoins = useCallback(async () => {
     const sybilEthAddress: GeneralResponse = await sybilCanister.eth_address();
-    return writeContract({
+    return writeContract(config, {
       address: USDC_TOKEN_ADDRESS,
       abi: [
         {
@@ -117,7 +115,6 @@ export const TopUpSybilModal = (props: TopUpWrapperProps) => {
       ],
       functionName: 'transfer',
       args: [sybilEthAddress.Ok, utils.parseUnits(String(amount || 0), 6)],
-      enabled: Boolean(USDC_TOKEN_ADDRESS),
       chainId: ARBITRUM_CHAIN_ID,
     });
   }, [amount]);
@@ -125,7 +122,7 @@ export const TopUpSybilModal = (props: TopUpWrapperProps) => {
   const topUp = useCallback(async () => {
     setIsConfirming(true);
     try {
-      const { hash } = await sendStablecoins();
+      const hash = await sendStablecoins();
       console.log({ hash });
 
       props.setIsTopUpModalOpen(false);
@@ -133,7 +130,7 @@ export const TopUpSybilModal = (props: TopUpWrapperProps) => {
       console.log({ hash, id: props.chain.id });
 
       const data = await toast.promise(
-        waitForTransaction({
+        waitForTransactionReceipt(config, {
           hash,
         }),
         {
@@ -178,24 +175,28 @@ export const TopUpPythiaModal = (props: TopUpWrapperProps) => {
   const [amount, setAmount] = useState<string>(DEFAULT_TOP_UP_AMOUNT.toString());
   const [isConfirming, setIsConfirming] = useState<boolean>(false);
   const { deposit } = usePythiaData();
+  const config = useConfig();
 
   const { sendTransactionAsync } = useSendTransaction({
-    to: props.executionAddress,
-    value: utils.parseUnits(String(amount || 0), props.decimals),
-    chainId: props.chain.id,
+    // chainId: props.chain.id,
   });
 
   const topUp = useCallback(async () => {
     setIsConfirming(true);
     try {
-      const { hash } = await sendTransactionAsync();
+      const hash = await sendTransactionAsync({
+        // @ts-ignore
+        to: props.executionAddress,
+        // @ts-ignore
+        value: utils.parseUnits(String(amount || 0), props.decimals),
+      });
 
       props.setIsTopUpModalOpen(false);
 
       console.log({ hash, id: props.chain.id });
 
       const data = await toast.promise(
-        waitForTransaction({
+        waitForTransactionReceipt(config, {
           hash,
         }),
         {

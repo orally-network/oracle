@@ -13,7 +13,8 @@ import { useWeatherData } from 'Providers/WeatherAuctionData/useWeatherData';
 import { useParams } from 'react-router-dom';
 import styles from './WeatherDayDetails.module.scss';
 import { utils } from 'ethers';
-import { fetchTransaction } from '@wagmi/core';
+import { fetchTransaction } from 'wagmi/actions';
+import { useConfig } from 'wagmi';
 import { ARBITRUM_CHAIN_ID } from 'Providers/WeatherAuctionData/contants';
 
 export const WeatherDayDetails = () => {
@@ -21,6 +22,7 @@ export const WeatherDayDetails = () => {
   const { width } = useWindowDimensions();
   const isMobile = width < BREAK_POINT_MOBILE;
   const { day } = useParams();
+  const config = useConfig();
 
   const { setDay, winners, isWinnersLoading, ethRate } = useWeatherData();
 
@@ -44,7 +46,7 @@ export const WeatherDayDetails = () => {
   useEffect(() => {
     const asyncFn = async () => {
       try {
-        const tx = await fetchTransaction({
+        const tx = await fetchTransaction(config, {
           hash: dayWinners[0]?.transactionHash,
           chainId: ARBITRUM_CHAIN_ID,
         });

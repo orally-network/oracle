@@ -1,4 +1,4 @@
-import { WriteContractResult } from '@wagmi/core';
+import { WriteContractResult } from 'wagmi/actions';
 import { Bidder, Winner } from 'Interfaces/weather';
 import { createContext } from 'react';
 import { predictionsMap } from 'Constants/predictions';

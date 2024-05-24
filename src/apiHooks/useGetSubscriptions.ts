@@ -1,5 +1,5 @@
 import { Filters, RemoteDataType } from 'Interfaces/common';
-import { QueryClient, useQuery, useQueryClient } from 'react-query';
+import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 import { dynamicQueryKeys } from '../dynamicQueryKeys.ts';
 import { Subscription } from 'Interfaces/subscription';
 import pythiaCanister from 'Canisters/pythiaCanister';

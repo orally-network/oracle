@@ -14,6 +14,8 @@ import logger from 'Utils/logger';
 import { remove0x } from 'Utils/addressUtils';
 
 import styles from './CustomFeed.scss';
+import { useTokenBalance } from 'Services/wagmiService';
+import { Address } from 'viem';
 
 const TREASURER_CHAIN = CHAINS_MAP[137];
 const USDT_TOKEN_POLYGON = '0xc2132D05D31c914a87C6611C10748AEb04B58e8F';
@@ -36,10 +38,17 @@ const CustomFeed = () => {
   const { signMessage } = useSignature({ canister: 'sybil' });
   const { addressData } = useGlobalState();
 
-  const { data: executionBalance } = useBalance({
+//  const { data: executionBalance } = useBalance({
+//    address: addressData?.executionAddress,
+//    chainId: TREASURER_CHAIN.id,
+//    token: USDT_TOKEN_POLYGON,
+//  });
+
+  const { balance: executionBalance } = useTokenBalance({
+    tokenAddress: USDT_TOKEN_POLYGON,
     address: addressData?.executionAddress,
     chainId: TREASURER_CHAIN.id,
-    token: USDT_TOKEN_POLYGON,
+    enabled: Boolean(addressData?.executionAddress),
   });
 
   const createCustomFeed = useCallback(async () => {

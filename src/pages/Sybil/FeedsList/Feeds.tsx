@@ -1,4 +1,3 @@
-import React from 'react';
 import { Space, Flex, Empty } from 'antd';
 
 import styles from './Feeds.module.scss';

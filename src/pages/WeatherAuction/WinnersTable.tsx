@@ -3,8 +3,7 @@ import IconLink from 'Components/IconLink';
 import { useWeatherData } from 'Providers/WeatherAuctionData/useWeatherData';
 import { truncateAddressSymbolsNum } from 'Utils/addressUtils';
 import { Card, Space, Table, Typography } from 'antd';
-import { utils } from 'ethers';
-import React from 'react';
+import { formatEther } from 'viem';
 import { useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
@@ -35,7 +34,7 @@ const columns = [
     dataIndex: 'winnerPrizeLabel',
     key: 'winnerPrizeLabel',
     render: (prizeLabel: string, winner: any) => (
-      <span>{prizeLabel ?? Number(utils.formatEther(winner.winnerPrize)).toFixed(4)}</span>
+      <span>{prizeLabel ?? Number(formatEther(winner.winnerPrize)).toFixed(4)}</span>
     ),
   },
   {

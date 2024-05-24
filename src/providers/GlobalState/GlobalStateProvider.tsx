@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, useAccountEffect } from 'wagmi';
 
 import { getLocalStorageAddress } from 'Utils/localStorageAddress';
 
@@ -20,6 +20,15 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
   });
 
   const { address } = useAccount();
+
+  useAccountEffect({
+    onConnect(data) {
+      console.log('connected', data)
+    },
+    onDisconnect() {
+      console.log('disconnected')
+    },
+  })
 
   const fetchChains = async () => {
     setIsChainsLoading(true);

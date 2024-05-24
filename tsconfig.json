@@ -49,6 +49,9 @@
       "SVGICons/*": [
         "./SVGIcons/*"
       ],
+      "Hooks/*": [
+        "./hooks/*"
+      ],
     },
     "outDir": "./dist",
     "target": "ES2020",

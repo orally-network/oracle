@@ -1,4 +1,4 @@
-import { QueryClient, useQuery, useQueryClient } from 'react-query';
+import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 import { dynamicQueryKeys } from '../dynamicQueryKeys.ts';
 
 import config from 'Constants/config';

@@ -1,4 +1,4 @@
-import { EnsuredQueryKey } from 'react-query';
+import { EnsuredQueryKey } from '@tanstack/react-query';
 import { Filters } from './common';
 
 export enum QueryType {

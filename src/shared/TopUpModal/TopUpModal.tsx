@@ -43,7 +43,7 @@ export const TopUpModal = ({
     tokenAddress: token?.address,
     address: address as Address,
     chainId: chain.chainId,
-    enabled: Boolean(isOpen && address),
+    enabled: Boolean(token?.address && isOpen && address),
   });
 
   const handleSubmit = useCallback(async () => {
@@ -55,11 +55,6 @@ export const TopUpModal = ({
 
     submit(chain.chainId, token, amount);
   }, [chain.chainId, token, amount]);
-
-  const handleSetChain = useCallback((newChain: AllowedChain) => {
-    setChain(newChain);
-    setToken(newChain.tokens[0]);
-  }, []);
 
   const actions = useMemo(() => [
     {
@@ -82,7 +77,7 @@ export const TopUpModal = ({
       <>
         <NewSelect
           items={chains}
-          handleChange={handleSetChain}
+          handleChange={setChain}
           selectedItem={chain}
           title="Chain"
         />

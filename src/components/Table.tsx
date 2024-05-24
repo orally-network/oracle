@@ -24,13 +24,23 @@ interface TableProps {
   columns: Column[];
   rows: Row[];
   renderCell?: (row: Row, columnKey: string) => React.ReactNode;
+  isLoading: boolean,
 }
 
 const defaultRenderCell = (row: Row, columnKey: string) => getKeyValue(row, columnKey);
 
-export const Table = ({ ariaLabel, columns, rows, renderCell = defaultRenderCell }: TableProps) => {
+export const Table = ({
+  ariaLabel,
+  columns,
+  rows,
+  renderCell = defaultRenderCell,
+  isLoading,
+}: TableProps) => {
   return (
-    <NextUITable aria-label={ariaLabel ?? 'Table'}>
+    <NextUITable
+      isStriped
+      aria-label={ariaLabel ?? 'Table'}
+    >
       <TableHeader columns={columns}>
         {(column) => (
           <TableColumn key={column.key} align={column.align}>
@@ -38,7 +48,11 @@ export const Table = ({ ariaLabel, columns, rows, renderCell = defaultRenderCell
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody items={rows} emptyContent={"No rows to display."}>
+      <TableBody
+        items={rows}
+        isLoading={isLoading}
+        emptyContent={'No rows to display.'}
+      >
         {(item) => (
           <TableRow key={item.id}>
             {/* @ts-ignore */}

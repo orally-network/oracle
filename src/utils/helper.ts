@@ -20,30 +20,6 @@ export const mapChainsToOptions = (chains: any) => {
   }));
 };
 
-export const mapChainsToNewOptions = (chains: any) => {
-  return chains.map((chain: any) => {
-    const chainData = CHAINS_MAP[chain.chain_id];
-
-    return {
-      ...chain,
-      key: chainData.id,
-      label: chainData.name,
-      value: chainData.id,
-      avatar: chainData.img,
-    }
-  });
-};
-
-export const mapTokensToOptions = (tokens: any) => {
-  return tokens.map((token: any) => ({
-    ...token,
-    key: token.address,
-    label: token.symbol,
-    value: token.address,
-    avatar: TOKEN_IMAGES[token.symbol.toUpperCase()],
-  }));
-};
-
 export const mapFeedsToOptions = (feeds: any) => {
   return feeds.map((feed: any) => ({
     value: feed.id,

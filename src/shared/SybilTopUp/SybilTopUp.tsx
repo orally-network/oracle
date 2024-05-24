@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Button } from '@nextui-org/react';
 
 import { TopUpModal } from 'Shared/TopUpModal';
 import { useFetchAllowedChains, AllowedChain, AllowedToken } from 'Services/sybilService';
 import { useModal } from 'Components/Modal';
+import { mapTokensToOptions, mapChainsToNewOptions, mapTokenToOption } from 'Utils/mappers.ts';
 
 import { useSybilDeposit } from './useSybilDeposit';
 
@@ -17,12 +18,21 @@ export const SybilTopUp = () => {
 
   const { data: allowedChains, isLoading: isChainsLoading } = useFetchAllowedChains();
 
+  const mappedChains = useMemo(() => allowedChains && mapChainsToNewOptions(allowedChains), [allowedChains]);
+  const mappedTokens = useMemo(() => chain && mapTokensToOptions(chain.tokens), [chain]);
+
   useEffect(() => {
-    if (allowedChains && allowedChains.length > 0) {
-      setChain(allowedChains[0]);
-      setToken(allowedChains[0].tokens[0]);
+    if (mappedChains && mappedChains.length > 0) {
+      setChain(mappedChains[0]);
+      setToken(mapTokenToOption(mappedChains[0].tokens[0]));
     }
-  }, [allowedChains]);
+  }, [mappedChains]);
+
+  useEffect(() => {
+    if (chain && chain.tokens.length > 0) {
+      setToken(mapTokenToOption(chain.tokens[0]));
+    }
+  }, [chain]);
 
   return  (
     <>
@@ -34,13 +44,13 @@ export const SybilTopUp = () => {
         Top Up
       </Button>
 
-      {allowedChains && chain && (
+      {mappedChains && chain && token && (
         <TopUpModal
           isOpen={isOpen}
           onOpenChange={onOpenChange}
-          chains={allowedChains}
+          chains={mappedChains}
           isChainsLoading={isChainsLoading}
-          tokens={chain.tokens}
+          tokens={mappedTokens}
           submit={sybilDeposit}
           setChain={setChain}
           chain={chain}

@@ -25,6 +25,18 @@ export interface AllowedChain {
   tokens: AllowedToken[];
 }
 
+export interface ApiKey {
+  key: string;
+  ownerAddress: Address;
+  bannedDomains: string[];
+  lastRequest: number;
+  requestCount: number;
+  requestCountPerDomain: Record<string, number>;
+  requestCountPerMethod: Record<string, number>;
+  requestLimit: number;
+  requestLimitByDomain: Record<string, number>;
+}
+
 // query
 export const useFetchApiKeys = () => {
   const { addressData } = useGlobalState();
@@ -39,8 +51,21 @@ export const useFetchApiKeys = () => {
         const res = await wrappedPromise;
 
         // formatter
+        const apiKeys = res.map(([key, keyData]: any) => {
+          return {
+            key,
+            ownerAddress: keyData.address,
+            bannedDomains: keyData.banned_domains,
+            lastRequest: keyData.last_request,
+            requestCount: keyData.request_count,
+            requestCountPerDomain: keyData.request_count_per_domain,
+            requestCountPerMethod: keyData.request_count_per_method,
+            requestLimit: keyData.request_limit,
+            requestLimitByDomain: keyData.request_limit_by_domain,
+          };
+        });
 
-        logger.log('[service] queried api keys', { res });
+        logger.log('[service] queried api keys', { res, apiKeys });
 
         return res;
       } catch (error) {
@@ -93,33 +118,22 @@ export const useFetchAllowedChains = () => useQuery({
   queryKey: ['allowedChains'],
   queryFn: async () => {
     try {
-      const allowedChains: any = await sybilCanister.get_allowed_chains();
+      const res: any = await sybilCanister.get_allowed_chains();
 
-      const chains: AllowedChain[] = allowedChains.map(([chainId, chainData]: any) => ({
+      // formatter
+      const allowedChains: AllowedChain[] = res.map(([chainId, chainData]: any) => ({
         chainId: Number(chainId),
         symbol: chainData.coin_symbol,
         tokens: chainData.erc20_contracts.map((tokenData: any) => ({
           address: tokenData.erc20_contract,
           symbol: tokenData.token_symbol,
           decimals: tokenData.decimals,
-
-          // select fields
-          value: tokenData.erc20_contract,
-          label: tokenData.token_symbol,
-          key: tokenData.erc20_contract,
-          avatar: TOKEN_IMAGES[tokenData.token_symbol.toUpperCase()] ?? TOKEN_IMAGES.default,
         })),
-
-        // select fields
-        value: Number(chainId),
-        label: CHAINS_MAP[chainId].name,
-        key: Number(chainId),
-        avatar: CHAINS_MAP[chainId].img,
       }));
 
-      logger.log('[service] queried allowed chains', { chains });
+      logger.log('[service] queried allowed chains', { res, allowedChains });
 
-      return chains;
+      return allowedChains;
     } catch (error) {
       logger.error('[service] Failed to query allowed chains', error);
     }

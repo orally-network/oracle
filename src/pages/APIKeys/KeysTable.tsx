@@ -4,6 +4,7 @@ import { Chip, Tooltip, User } from '@nextui-org/react';
 import { Table } from 'Components/Table';
 import { DeleteIcon } from 'SVGICons/DeleteIcon';
 import { Modal, useModal } from 'Components/Modal';
+import { useFetchApiKeys } from 'Services/sybilService';
 
 const columns = [
   {
@@ -75,6 +76,8 @@ const statusColorMap = {
 export const KeysTable = () => {
   const { isOpen, onOpenChange, onOpen } = useModal();
 
+  const { data, isLoading } = useFetchApiKeys();
+
   const renderCell = useCallback((user, columnKey) => {
     const cellValue = user[columnKey];
 
@@ -122,6 +125,7 @@ export const KeysTable = () => {
         columns={columns}
         rows={mock_rows}
         renderCell={renderCell}
+        isLoading={isLoading}
       />
 
       <Modal

@@ -60,7 +60,7 @@ export const useFetchApiKeys = () => {
             requestCountPerDomain: keyData.request_count_per_domain,
             requestCountPerMethod: keyData.request_count_per_method,
             requestLimit: Number(keyData.request_limit),
-            requestLimitByDomain: keyData.request_limit_by_domain,
+            requestLimitByDomain: Number(keyData.request_limit_by_domain),
           };
         });
 
@@ -82,7 +82,7 @@ export const useGenerateApiKey = () => {
   const { addressData } = useGlobalState();
   const queryClient = useQueryClient();
 
-  const { mutateAsync, mutate, data, isPending, error } = useMutation({
+  return useMutation({
     // @ts-ignore
     mutationFn: async () => {
       const promise = sybilCanister.generate_api_key(addressData.message, remove0x(addressData.signature)) as Promise<GeneralResponse>;
@@ -101,14 +101,6 @@ export const useGenerateApiKey = () => {
       queryClient.invalidateQueries({ queryKey: ['apiKeys'] });
     },
   });
-
-  return {
-    data,
-    isPending,
-    error,
-    mutateAsync,
-    mutate,
-  };
 };
 
 // todo: add to tokens coin of the chain + change transfer for this case
@@ -226,11 +218,11 @@ export const useFetchBaseFee = () => useQuery({
   queryKey: ['baseFee'],
   queryFn: async () => {
     try {
-      const res = await sybilCanister.get_base_fee();
+      const res = await sybilCanister.get_base_fee() as bigint;
 
       logger.log('[service] queried base fee', { res });
 
-      return Number(res);
+      return res;
     } catch (error) {
       logger.error('[service] Failed to query base fee', error);
     }

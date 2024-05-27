@@ -24,6 +24,7 @@ interface TableProps {
   rows: Row[];
   renderCell?: (row: Row, columnKey: string) => React.ReactNode;
   isLoading: boolean,
+  topContent?: React.ReactNode;
 }
 
 const defaultRenderCell = (row: Row, columnKey: string) => getKeyValue(row, columnKey);
@@ -34,11 +35,13 @@ export const Table = ({
   rows,
   renderCell = defaultRenderCell,
   isLoading,
+  topContent,
 }: TableProps) => {
   return (
     <NextUITable
       isStriped
       aria-label={ariaLabel ?? 'Table'}
+      topContent={topContent}
     >
       <TableHeader columns={columns}>
         {(column) => (

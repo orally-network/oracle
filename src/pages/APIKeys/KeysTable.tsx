@@ -1,9 +1,19 @@
+import { useGlobalState } from 'Providers/GlobalState';
 import { useCallback, useMemo, useState } from 'react';
+import { Button, Progress, Tooltip } from '@nextui-org/react';
+import { formatUnits } from 'viem';
 
 import { Table } from 'Components/Table';
 import { DeleteIcon } from 'SVGICons/DeleteIcon';
 import { Modal, useModal } from 'Components/Modal';
-import { useFetchApiKeys, type ApiKey, useFetchBaseFee, useDeleteApiKey } from 'Services/sybilService';
+import {
+  useFetchApiKeys,
+  type ApiKey,
+  useFetchBaseFee,
+  useDeleteApiKey,
+  useGenerateApiKey
+} from 'Services/sybilService';
+import { BALANCE_USD_DECIMALS } from 'Utils/balance';
 
 const columns = [
   {
@@ -28,35 +38,32 @@ const columns = [
   },
 ];
 
-const statusColorMap = {
-  active: 'success',
-  paused: 'danger',
-  vacation: 'warning',
-};
-
 export const KeysTable = () => {
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const { isOpen, onOpenChange, onOpen, onClose } = useModal();
 
+  const { addressData } = useGlobalState();
+
   const { data: baseFee, isLoading: isFeeLoading } = useFetchBaseFee();
   const { data: apiKeys, isLoading } = useFetchApiKeys();
   const { mutate: deleteApiKey } = useDeleteApiKey();
+  const { mutate: generateApiKey, isPending } = useGenerateApiKey();
 
   const renderCell = useCallback((apiKey: ApiKey, columnKey: string) => {
     const cellValue = apiKey[columnKey];
 
     switch (columnKey) {
       case 'spent':
-        return apiKey.requestCount ? apiKey.requestCount * Number(baseFee) : 0;
-      // case 'status':
-      //   return (
-      //     <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
-      //       {cellValue}
-      //     </Chip>
-      //   );
+        return apiKey.requestCount && baseFee ? `$${formatUnits(BigInt(apiKey.requestCount) * baseFee, BALANCE_USD_DECIMALS)}` : 0;
+      case 'limit':
+        return (
+          <Tooltip content={`${apiKey.requestCount}/${apiKey.requestLimit}`}>
+            <Progress aria-label="Loading..." value={apiKey.requestCount} maxValue={apiKey.requestLimit} />
+          </Tooltip>
+        );
       case 'actions':
         return (
-          <div className="relative flex items-center gap-2">
+          <div className="flex items-center text-center">
             <span
               onClick={() => {
                 setSelectedKey(apiKey.apiKey);
@@ -87,14 +94,32 @@ export const KeysTable = () => {
     },
   ], [selectedKey]);
 
+  const topContent = useMemo(() => {
+    return (
+      <div className="flex justify-between">
+        <p className="text-lg">API Keys allow you to access the Sybil API.</p>
+
+        <Button
+          color="primary"
+          onClick={generateApiKey as any}
+          isLoading={isPending}
+          isDisabled={!addressData.signature}
+        >
+          Generate API Key
+        </Button>
+      </div>
+    )
+  }, [addressData.signature, isPending, generateApiKey]);
+
   return (
     <>
       <Table
         ariaLabel="API Keys"
         columns={columns}
-        rows={apiKeys ?? []}
+        rows={isFeeLoading || !apiKeys ? [] : apiKeys}
         renderCell={renderCell}
         isLoading={isLoading || isFeeLoading}
+        topContent={topContent}
       />
 
       <Modal

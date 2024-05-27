@@ -10,7 +10,7 @@ import {
   Spinner,
 } from '@nextui-org/react';
 
-interface Column {
+export interface Column {
   key: string;
   label: string;
   align?: 'start' | 'center' | 'end';

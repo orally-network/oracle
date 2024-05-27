@@ -23,14 +23,20 @@ export interface AllowedChain {
   tokens: AllowedToken[];
 }
 
-export interface ApiKey {
-  apiKey: string;
+export type AllowedDomain = {
+  key: string;
+  domain: string;
   ownerAddress: Address;
-  bannedDomains: string[];
   lastRequest: number;
   requestCount: number;
-  requestCountPerDomain: Record<string, number>;
   requestCountPerMethod: Record<string, number>;
+  // requestLimit: number;
+};
+
+export type ApiKey = Omit<AllowedDomain, 'domain'> & {
+  apiKey: string;
+  bannedDomains: string[];
+  requestCountPerDomain: Record<string, number>;
   requestLimit: number;
   requestLimitByDomain: Record<string, number>;
 }
@@ -77,6 +83,45 @@ export const useFetchApiKeys = () => {
   });
 };
 
+// query
+export const useFetchAllowedDomains = () => {
+  const { addressData } = useGlobalState();
+
+  return useQuery({
+    queryKey: ['allowedDomains', addressData],
+    queryFn: async () => {
+      try {
+        const promise = sybilCanister.get_allowed_domains(addressData.message, remove0x(addressData.signature)) as Promise<GeneralResponse>;
+        const wrappedPromise = okOrErrResponseWrapper(promise);
+
+        const res = await wrappedPromise;
+
+        // formatter
+        const allowedDomains: AllowedDomain[] = res.map(([domain, domainData]: any) => {
+          return {
+            key: domain,
+            domain,
+            ownerAddress: domainData.grantor_address,
+            lastRequest: domainData.last_request,
+            requestCount: Number(domainData.request_count),
+            requestCountPerMethod: domainData.request_count_per_method,
+            // requestLimit: Number(domainData.request_limit),
+          };
+        });
+
+        logger.log('[service] queried allowed domains', { res, allowedDomains });
+
+        return allowedDomains;
+      } catch (error) {
+        logger.error('[service] Failed to query allowed domains', error);
+      }
+
+      return;
+    },
+    enabled: Boolean(addressData && addressData.signature),
+  });
+};
+
 // mutate
 export const useGenerateApiKey = () => {
   const { addressData } = useGlobalState();
@@ -99,6 +144,32 @@ export const useGenerateApiKey = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['apiKeys'] });
+    },
+  });
+};
+
+// mutate
+export const useGrantDomain = () => {
+  const { addressData } = useGlobalState();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    // @ts-ignore
+    mutationFn: async (domain: string) => {
+      const promise = sybilCanister.grant(domain, addressData.message, remove0x(addressData.signature)) as Promise<GeneralResponse>;
+      const wrappedPromise = okOrErrResponseWrapper(promise);
+
+      const res = await toastWrapper(wrappedPromise, 'Grant Domain');
+
+      console.log('[service] granted domain', { res });
+
+      return res;
+    },
+    onError: (error, variables, context) => {
+      logger.error(`[service] Failed to grant domain`, error, variables, context);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['allowedDomains'] });
     },
   });
 };
@@ -238,7 +309,7 @@ export const useDeleteApiKey = () => {
 
   return useMutation({
     // @ts-ignore
-    mutationFn: async ({ apiKey }: { apiKey: string }) => {
+    mutationFn: async (apiKey: string) => {
       const promise = sybilCanister.revoke_key(
         apiKey,
         addressData.message,
@@ -255,6 +326,34 @@ export const useDeleteApiKey = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['apiKeys'] });
+    },
+  });
+};
+
+// mutate
+export const useBanDomain = () => {
+  const { addressData } = useGlobalState();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    // @ts-ignore
+    mutationFn: async (domain: string) => {
+      const promise = sybilCanister.restrict(
+        domain,
+        addressData.message,
+        remove0x(addressData.signature),
+      );
+      const res = await toastWrapper(promise, 'Ban Domain');
+
+      logger.log('[service] ban domain', { res });
+
+      return res;
+    },
+    onError: (error: any, variables: any, context: any) => {
+      logger.error(`[service] Failed to ban domain`, error, variables, context);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['allowedDomains'] });
     },
   });
 };

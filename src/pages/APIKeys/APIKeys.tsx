@@ -7,6 +7,7 @@ import useWindowDimensions from 'Utils/useWindowDimensions';
 
 import { Actions } from './Actions';
 import { KeysTable } from './KeysTable';
+import { DomainsTable } from './DomainsTable';
 
 export const APIKeys = () => {
   const { width } = useWindowDimensions();
@@ -32,6 +33,10 @@ export const APIKeys = () => {
 
       <div className="my-5">
         <KeysTable />
+      </div>
+
+      <div className="my-5">
+        <DomainsTable />
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 {
   "hosting": [{
-    "public": "dist",
+    "public": "dist/",
     "site": "app-orally",
     "ignore": [
       "firebase.json",
@@ -14,7 +14,7 @@
       }
     ]
   },{
-    "public": "dist",
+    "public": "dist/",
     "site": "staging-app-orally",
     "ignore": [
       "firebase.json",
@@ -24,7 +24,7 @@
     "rewrites": [
       {
         "source": "**",
-        "destination": "../index.html"
+        "destination": "/index.html"
       }
     ]
   }]

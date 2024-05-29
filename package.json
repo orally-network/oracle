@@ -35,7 +35,6 @@
     "assert": "2.0.0",
     "autoprefixer": "^10.4.19",
     "buffer": "6.0.3",
-    "copy-webpack-plugin": "^11.0.0",
     "eslint": "^8.51.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-react": "^7.33.2",
@@ -43,18 +42,15 @@
     "eslint-plugin-react-refresh": "^0.4.6",
     "events": "3.3.0",
     "firebase-tools": "^13.0.2",
-    "html-webpack-plugin": "5.5.0",
     "http-proxy-middleware": "^2.0.6",
     "postcss": "^8.4.38",
     "prettier": "^3.0.3",
     "process": "0.11.10",
     "stream-browserify": "3.0.0",
     "tailwindcss": "^3.4.3",
-    "terser-webpack-plugin": "^5.3.3",
     "util": "0.12.4",
     "vite": "^5.2.0",
-    "vite-tsconfig-paths": "^4.3.2",
-    "webpack-dev-server": "^4.8.1"
+    "vite-tsconfig-paths": "^4.3.2"
   },
   "engines": {
     "node": "^12 || ^14 || ^16 || ^18"
@@ -78,7 +74,6 @@
     "@microlink/react-json-view": "^1.23.0",
     "@nextui-org/react": "^2.3.6",
     "@rollbar/react": "^0.11.1",
-    "@svgr/webpack": "^6.5.1",
     "@tanstack/react-query": "^5.37.1",
     "@types/http-proxy-middleware": "^1.0.0",
     "@types/recharts": "^1.8.28",
@@ -87,7 +82,6 @@
     "axios": "^1.2.3",
     "classnames": "^2.3.2",
     "css-loader": "^6.7.3",
-    "dotenv-webpack": "^8.0.1",
     "ethers": "^5.5.1",
     "framer-motion": "^11.2.6",
     "graphql": "^16.8.1",

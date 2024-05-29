@@ -1,8 +1,8 @@
-import { useGlobalState } from 'Providers/GlobalState';
 import { useCallback, useMemo, useState } from 'react';
-import { Button, Progress, Tooltip } from '@nextui-org/react';
+import { Button, Progress, Tooltip, type TableProps } from '@nextui-org/react';
 import { formatUnits } from 'viem';
 
+import { useGlobalState } from 'Providers/GlobalState';
 import { Table, type Column } from 'Components/Table';
 import { DeleteIcon } from 'SVGICons/DeleteIcon';
 import { Modal, useModal } from 'Components/Modal';
@@ -33,7 +33,7 @@ const columns: Column[] = [
   },
 ];
 
-interface SybilTableProps {
+interface SybilTableProps extends Pick<TableProps, 'selectionMode' | 'onSelectionChange' | 'selectedKeys'> {
   items: any[];
   add: () => void;
   remove: (key: string) => void;
@@ -44,7 +44,7 @@ interface SybilTableProps {
   additionalColumns?: Column[],
 }
 
-export const SybilTable = ({ items, add, remove, isLoading, isAdding, addLabel, title, additionalColumns }: SybilTableProps) => {
+export const SybilTable = ({ items, add, remove, isLoading, isAdding, addLabel, title, additionalColumns, selectionMode, selectedKeys, onSelectionChange }: SybilTableProps) => {
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const { isOpen, onOpenChange, onOpen, onClose } = useModal();
 
@@ -125,6 +125,11 @@ export const SybilTable = ({ items, add, remove, isLoading, isAdding, addLabel, 
         renderCell={renderCell}
         isLoading={isLoading || isFeeLoading}
         topContent={topContent}
+
+        selectionMode={selectionMode}
+        // @ts-ignore
+        selectedKeys={selectedKeys}
+        onSelectionChange={onSelectionChange}
       />
 
       <Modal

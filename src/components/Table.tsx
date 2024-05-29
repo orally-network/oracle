@@ -8,6 +8,7 @@ import {
   TableCell,
   getKeyValue,
   Spinner,
+  TableProps as NextUITableProps,
 } from '@nextui-org/react';
 
 export interface Column {
@@ -18,13 +19,13 @@ export interface Column {
 
 type Row = Record<string, string | number> & any;
 
-interface TableProps {
+interface TableProps extends NextUITableProps {
   ariaLabel?: string;
   columns: Column[];
   rows: Row[];
   renderCell?: (row: Row, columnKey: string) => React.ReactNode;
   isLoading: boolean,
-  topContent?: React.ReactNode;
+  selectedKeys?: string[];
 }
 
 const defaultRenderCell = (row: Row, columnKey: string) => getKeyValue(row, columnKey);
@@ -36,12 +37,15 @@ export const Table = ({
   renderCell = defaultRenderCell,
   isLoading,
   topContent,
+  ...rest
 }: TableProps) => {
   return (
     <NextUITable
       isStriped
+      color="primary"
       aria-label={ariaLabel ?? 'Table'}
       topContent={topContent}
+      {...rest}
     >
       <TableHeader columns={columns}>
         {(column) => (

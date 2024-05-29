@@ -8,6 +8,7 @@ import useWindowDimensions from 'Utils/useWindowDimensions';
 import { Actions } from './Actions';
 import { KeysTable } from './KeysTable';
 import { DomainsTable } from './DomainsTable';
+import { Example } from './Example.tsx';
 
 export const APIKeys = () => {
   const { width } = useWindowDimensions();
@@ -29,6 +30,10 @@ export const APIKeys = () => {
 
           <Actions/>
         </Flex>
+      </div>
+
+      <div className="flex justify-center mb-5">
+        <Example />
       </div>
 
       <div className="my-5">

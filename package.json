@@ -18,6 +18,7 @@
     "dev": "VITE_ENV=development VITE_MODE=staging vite --force",
     "dev-prod": "VITE_ENV=development VITE_MODE=production vite serve",
     "build": "VITE_ENV=production VITE_MODE=production vite build",
+    "build-stg": "VITE_ENV=production VITE_MODE=staging vite build",
     "lint": "eslint . --ext js,jsx,ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },

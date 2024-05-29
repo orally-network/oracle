@@ -2,9 +2,9 @@
   "canisters": {
     "app_frontend": {
       "frontend": {
-        "entrypoint": "dist/app_frontend/index.html"
+        "entrypoint": "./index.html"
       },
-      "source": ["dist/app_frontend/"],
+      "source": ["dist/"],
       "type": "assets"
     }
   },

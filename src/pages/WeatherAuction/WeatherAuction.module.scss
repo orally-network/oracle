@@ -1,0 +1,48 @@
+@use './Styles/variables';
+
+.accentText {
+  color: var(--primary-color, '#1766F9');
+}
+
+.label {
+  color: #4a6293;
+}
+
+.text {
+  color: #fff;
+}
+
+.temperature {
+  font-size: 90px;
+  letter-spacing: -0.04em;
+  font-weight: 600;
+  color: #fff;
+
+  span {
+    font-size: 60px;
+    position: relative;
+  }
+
+  @media screen and (max-width: variables.$break-point-mobile) {
+    font-size: 40px;
+
+    span {
+      font-size: 30px;
+    }
+  }
+}
+
+:global {
+  .ant-table-row.highlight {
+    color: var(--primary-color, '#1766F9');
+    cursor: pointer;
+  }
+
+  .ant-table-row.pointer {
+    cursor: pointer;
+  }
+
+  .weather-auction .ant-empty-description {
+    color: #4a6293;
+  }
+}

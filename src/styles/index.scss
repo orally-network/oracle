@@ -1,0 +1,185 @@
+@use './variables';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Gilroy-Light';
+  src: url('./fonts/Gilroy-Light.ttf') format('truetype');
+}
+
+* {
+  box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0 !important;
+}
+
+body {
+  margin: 0;
+  font-family:
+    Gilroy-Light,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'Roboto',
+    'Oxygen',
+    'Ubuntu',
+    'Cantarell',
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: variables.$background-color;
+  color: variables.$text-color;
+  font-size: variables.$text-size;
+
+  height: 100vh;
+
+  @media screen and (min-width: variables.$break-point-large-desktop) {
+    font-size: variables.$desktop-text-size;
+  }
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+a {
+  color: white;
+  text-decoration: none; /* no underline */
+}
+
+:global(#app) {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  --wui-font-weight-medium: 400;
+  --wui-font-size-small: 12px;
+}
+
+//TODO: define styles for react-select and remove overrides
+:global {
+  .variable-value {
+    word-break: break-all;
+  }
+  .react-select__control {
+    background-color: #081120 !important;
+    border-color: #4a6293 !important;
+    border-radius: 8px !important;
+    color: #4a6293 !important;
+
+    &--is-focused {
+      border-color: #1766f9 !important;
+    }
+  }
+
+  .react-select__placeholder {
+    color: #4a6293 !important;
+  }
+
+  .react-select__single-value {
+    color: white !important;
+  }
+
+  .react-select__indicator {
+    color: #1766f9 !important;
+  }
+
+  .react-select__indicator-separator {
+    background-color: #1766f9 !important;
+  }
+
+  .react-select__option:hover,
+  .react-select__option:active,
+  .react-select__option:focus,
+  .react-select__option--is-focused {
+    background-color: #081a3c !important;
+  }
+
+  .react-select__menu {
+    background-color: #091325 !important;
+    :global(.light-theme) & {
+      background-color: gray;
+    }
+  }
+
+  .react-select__value-container {
+    flex-wrap: nowrap !important;
+    overflow-x: scroll !important;
+  }
+
+  .react-select__multi-value {
+    min-width: 40% !important;
+  }
+
+  .ant-drawer-close {
+    color: variables.$primary-color !important;
+    position: absolute;
+    right: 20px;
+  }
+
+  .ant-btn-primary {
+    &.ant-btn-primary[disabled] {
+      border: none;
+    }
+  }
+
+  .ant-btn-text.ant-btn {
+    color: variables.$primary-color;
+  }
+
+  .ant-progress-line {
+    margin-bottom: 0 !important;
+  }
+
+  .ant-pagination .ant-pagination-item {
+    border-color: #4a6293;
+    background-color: #0c172b;
+  }
+
+  .ant-radio-checked .ant-radio-inner:after {
+    background-color: #1766f9 !important;
+  }
+
+  .ant-radio-button-wrapper-checked {
+    border-color: #1766f9 !important;
+    color: #1766f9 !important;
+  }
+
+  .ant-drawer-title {
+    font-size: 20px !important;
+  }
+
+  .ant-input-group-addon {
+    color: var(--primary-color) !important;
+  }
+
+  .ant-input-clear-icon {
+    color: var(--primary-color) !important;
+  }
+
+  .ant-tag {
+    margin-inline-end: 0 !important;
+  }
+
+  .ant-menu {
+    @media screen and (min-width: variables.$break-point-large-desktop) {
+      font-size: 16px;
+    }
+  }
+
+  .ant-card-body {
+    height: 100%;
+  }
+}

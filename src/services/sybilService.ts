@@ -6,6 +6,7 @@ import { GeneralResponse } from 'Interfaces/common';
 import { remove0x } from 'Utils/addressUtils';
 import { useGlobalState } from 'Providers/GlobalState';
 import logger from 'Utils/logger';
+import { DEFAULT_DOMAIN_LIMIT_PER_DAY } from 'Constants/ui';
 
 import { okOrErrResponseWrapper, toastWrapper } from './utils';
 
@@ -30,14 +31,14 @@ export type AllowedDomain = {
   lastRequest: number;
   requestCount: number;
   requestCountPerMethod: Record<string, number>;
-  // requestLimit: number;
+  requestLimit: number;
+  requestCountToday: number,
 };
 
 export type ApiKey = Omit<AllowedDomain, 'domain'> & {
   apiKey: string;
   bannedDomains: string[];
   requestCountPerDomain: Record<string, number>;
-  requestLimit: number;
   requestLimitByDomain: Record<string, number>;
 }
 
@@ -67,6 +68,7 @@ export const useFetchApiKeys = () => {
             requestCountPerMethod: keyData.request_count_per_method,
             requestLimit: Number(keyData.request_limit),
             requestLimitByDomain: Number(keyData.request_limit_by_domain),
+            requestCountToday: Number(keyData.request_count_today),
           };
         });
 
@@ -105,7 +107,8 @@ export const useFetchAllowedDomains = () => {
             lastRequest: domainData.last_request,
             requestCount: Number(domainData.request_count),
             requestCountPerMethod: domainData.request_count_per_method,
-            // requestLimit: Number(domainData.request_limit),
+            requestLimit: Number(domainData.request_limit),
+            requestCountToday: Number(domainData.request_count_today),
           };
         });
 
@@ -156,7 +159,7 @@ export const useGrantDomain = () => {
   return useMutation({
     // @ts-ignore
     mutationFn: async (domain: string) => {
-      const promise = sybilCanister.grant(domain, addressData.message, remove0x(addressData.signature)) as Promise<GeneralResponse>;
+      const promise = sybilCanister.grant(domain, [DEFAULT_DOMAIN_LIMIT_PER_DAY], addressData.message, remove0x(addressData.signature)) as Promise<GeneralResponse>;
       const wrappedPromise = okOrErrResponseWrapper(promise);
 
       const res = await toastWrapper(wrappedPromise, 'Grant Domain');

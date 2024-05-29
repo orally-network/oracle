@@ -54,6 +54,7 @@ export const idlFactory = ({ IDL }) => {
     'request_count_per_method' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat64)),
     'request_count_per_domain' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat64)),
     'address' : IDL.Text,
+    'request_count_today' : IDL.Nat64,
     'banned_domains' : IDL.Vec(IDL.Text),
     'request_limit_by_domain' : IDL.Nat64,
     'request_count' : IDL.Nat64,
@@ -84,8 +85,10 @@ export const idlFactory = ({ IDL }) => {
     'last_request' : IDL.Nat64,
     'request_count_per_method' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat64)),
     'request_count_per_domain' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat64)),
+    'request_count_today' : IDL.Nat64,
     'request_count' : IDL.Nat64,
     'grantor_address' : IDL.Text,
+    'request_limit' : IDL.Nat64,
   });
   const GetAllowedDomainsResponse = IDL.Variant({
     'Ok' : IDL.Vec(IDL.Tuple(IDL.Text, Allowance)),
@@ -438,7 +441,11 @@ export const idlFactory = ({ IDL }) => {
         [GetAssetDataResponse],
         [],
       ),
-    'grant' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [Error], []),
+    'grant' : IDL.Func(
+        [IDL.Text, IDL.Opt(IDL.Nat64), IDL.Text, IDL.Text],
+        [Error],
+        [],
+      ),
     'is_feed_exists' : IDL.Func([IDL.Text], [IDL.Bool], []),
     'is_whitelisted' : IDL.Func([IDL.Text], [BoolResponse], []),
     'read_contract' : IDL.Func(

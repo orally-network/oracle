@@ -8,15 +8,12 @@ import { DeleteIcon } from 'SVGICons/DeleteIcon';
 import { Modal, useModal } from 'Components/Modal';
 import {
   type ApiKey,
+  type AllowedDomain,
   useFetchBaseFee,
 } from 'Services/sybilService';
 import { BALANCE_USD_DECIMALS } from 'Utils/balance';
 
 const columns: Column[] = [
-  {
-    key: 'apiKey',
-    label: 'API Key',
-  },
   {
     key: 'requestCount',
     label: 'Requests',
@@ -27,7 +24,7 @@ const columns: Column[] = [
   },
   {
     key: 'limit',
-    label: 'Limit',
+    label: 'Limit (1d)',
   },
   {
     key: 'actions',
@@ -55,16 +52,16 @@ export const SybilTable = ({ items, add, remove, isLoading, isAdding, addLabel, 
 
   const { data: baseFee, isLoading: isFeeLoading } = useFetchBaseFee();
 
-  const renderCell = useCallback((apiKey: ApiKey, columnKey: string) => {
-    const cellValue = apiKey[columnKey];
+  const renderCell = useCallback((item: ApiKey | AllowedDomain, columnKey: string) => {
+    const cellValue = item[columnKey];
 
     switch (columnKey) {
       case 'spent':
-        return apiKey.requestCount && baseFee ? `$${formatUnits(BigInt(apiKey.requestCount) * baseFee, BALANCE_USD_DECIMALS)}` : 0;
+        return item.requestCount && baseFee ? `$${formatUnits(BigInt(item.requestCount) * baseFee, BALANCE_USD_DECIMALS)}` : 0;
       case 'limit':
         return (
-          <Tooltip content={`${apiKey.requestCount}/${apiKey.requestLimit}`}>
-            <Progress aria-label="Loading..." value={apiKey.requestCount} maxValue={apiKey.requestLimit} />
+          <Tooltip content={`${item.requestCountToday}/${item.requestLimit}`}>
+            <Progress aria-label="Loading..." value={item.requestCountToday} maxValue={item.requestLimit} />
           </Tooltip>
         );
       case 'actions':
@@ -72,7 +69,8 @@ export const SybilTable = ({ items, add, remove, isLoading, isAdding, addLabel, 
           <div className="flex items-center text-center">
             <span
               onClick={() => {
-                setSelectedKey(apiKey.apiKey ?? apiKey.domain);
+                // @ts-ignore
+                setSelectedKey(item.apiKey ?? item.domain);
                 onOpen();
               }}
               className="text-lg text-danger cursor-pointer active:opacity-50"

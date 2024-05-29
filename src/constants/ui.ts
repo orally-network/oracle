@@ -17,3 +17,5 @@ export const DEFAULT_TOP_UP_AMOUNT_ETH = 0.02;
 export const DEFAULT_SUBSCRIPTIONS_SIZE = 10;
 export const MAX_SOURCES = 10;
 export const MAX_API_KEYS = 5;
+
+export const DEFAULT_DOMAIN_LIMIT_PER_DAY = 10_000;

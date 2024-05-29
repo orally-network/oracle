@@ -1,3 +1,4 @@
+import { Column } from 'Components/Table.tsx';
 import {
   useFetchApiKeys,
   useDeleteApiKey,
@@ -5,6 +6,13 @@ import {
 } from 'Services/sybilService';
 
 import { SybilTable } from './SybilTable';
+
+const additionalColumns: Column[] = [
+  {
+    label: 'API Key',
+    key: 'apiKey',
+  },
+];
 
 export const KeysTable = () => {
   const { data: apiKeys, isLoading } = useFetchApiKeys();
@@ -21,6 +29,7 @@ export const KeysTable = () => {
         isAdding={isPending}
         addLabel="Generate API Key"
         title="API Keys allow you to access the Sybil API."
+        additionalColumns={additionalColumns}
       />
     </>
   )

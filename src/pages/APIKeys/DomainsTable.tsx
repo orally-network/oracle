@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { Input } from '@nextui-org/react';
 
 import { Modal, useModal } from 'Components/Modal.tsx';
+import { type Column } from 'Components/Table';
 import {
   useBanDomain,
   useFetchAllowedDomains,
@@ -10,7 +11,7 @@ import {
 
 import { SybilTable } from './SybilTable';
 
-const additionalColumns = [
+const additionalColumns: Column[] = [
   {
     label: 'Domain',
     key: 'domain',

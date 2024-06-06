@@ -61,6 +61,7 @@ export const idlFactory = ({ IDL }) => {
     'FailedToDelete' : IDL.Text,
     'FailedToRestartTimer' : IDL.Text,
     'FailedToCreate' : IDL.Text,
+    'FailedToSendCycles' : IDL.Text,
     'TxWasNotSentToAMA' : IDL.Null,
   });
   const ApolloError = IDL.Variant({
@@ -74,6 +75,7 @@ export const idlFactory = ({ IDL }) => {
   const Result = IDL.Variant({ 'Ok' : IDL.Null, 'Err' : ApolloError });
   const ApolloInstance = IDL.Record({
     'apollo_main_address' : IDL.Text,
+    'apollo_coordinator' : IDL.Text,
     'canister_id' : IDL.Principal,
     'chain_id' : IDL.Nat,
     'is_active' : IDL.Bool,
@@ -156,6 +158,7 @@ export const idlFactory = ({ IDL }) => {
         [Result],
         [],
       ),
+    'send_cycles' : IDL.Func([IDL.Nat, IDL.Principal, IDL.Nat], [Result], []),
     'start' : IDL.Func([IDL.Nat], [Result], []),
     'start_once' : IDL.Func([IDL.Nat], [Result], []),
     'stop' : IDL.Func([IDL.Nat], [Result], []),

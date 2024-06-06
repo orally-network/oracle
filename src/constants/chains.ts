@@ -16,6 +16,7 @@ import {
   lineaTestnet,
 } from 'wagmi/chains';
 import { ExplorerType } from 'Interfaces/chain';
+import config from 'Constants/config';
 
 const ethereumImg = '/assets/chains/ethereum.jpeg';
 const polygonImg = '/assets/chains/polygon.jpeg';
@@ -47,6 +48,12 @@ const CHAINS = [
   },
   {
     ...sepolia,
+    rpcUrls: {
+      default: {
+        http: [`https://sepolia.infura.io/v3/${config.INFURA_API_KEY}`],
+      },
+    },
+    // fromBlock: 6011603,
     img: ethereumImg,
     explorerType: ExplorerType.ScanExplorer,
   },

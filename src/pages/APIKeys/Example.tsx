@@ -86,10 +86,12 @@ export const Example = () => {
   }, []);
 
   const handleApiKeyChange = useCallback(() => {
-    if (apiKeys && apiKeys.length > 0) {
+    if (selectedApiKey) {
+      updateSelectedApiKey(null);
+    } else if (apiKeys && apiKeys.length > 0) {
       updateSelectedApiKey(apiKeys[0].key);
     }
-  }, [apiKeys]);
+  }, [apiKeys, selectedApiKey]);
 
   const selectedFeed = useMemo(() => [feed], [feed]);
   const selectedMethod = useMemo(() => [method], [method]);

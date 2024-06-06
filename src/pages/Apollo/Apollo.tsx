@@ -2,10 +2,15 @@ import { BreadcrumbItem, Breadcrumbs } from '@nextui-org/react';
 
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import useWindowDimensions from 'Utils/useWindowDimensions';
+import { useFetchApolloInstances } from 'Services/apolloService';
 
 export const Apollo = () => {
   const { width } = useWindowDimensions();
   const isMobile = width <= BREAK_POINT_MOBILE;
+
+  const { data } = useFetchApolloInstances();
+
+  console.log({ data });
 
   return (
     <div>
@@ -18,7 +23,7 @@ export const Apollo = () => {
         </div>
       </div>
 
-      
+
     </div>
   )
 };

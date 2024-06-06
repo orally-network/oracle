@@ -195,9 +195,11 @@ export const Example = () => {
           <span>
             {bytes && `&bytes=true`}
           </span>
-          <span>
-            {cacheTtl && `&cache_ttl=1800`} // 30 minutes
-          </span>
+          {cacheTtl && (
+            <span>
+              &cache_ttl=1800 // 30 minutes
+            </span>
+          )}
         </Snippet>
 
         <Snippet className="flex align-middle" size="md">

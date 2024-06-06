@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Menu } from 'antd';
-import { CloudOutlined, HomeFilled, UnorderedListOutlined } from '@ant-design/icons';
+import { CloudOutlined, HomeFilled, UnorderedListOutlined, AccountBookFilled } from '@ant-design/icons';
 
 import styles from './Navigation.module.scss';
 
@@ -47,6 +47,20 @@ const menuItems: MenuItem[] = [
   },
   {
     key: '2',
+    icon: <AccountBookFilled />,
+    label: (
+      <NavLink
+        to="/apollo"
+        className={({ isActive, isPending }) =>
+          isPending ? styles.pending : isActive ? styles.active : ''
+        }
+      >
+        Apollo
+      </NavLink>
+    ),
+  },
+  {
+    key: '3',
     icon: <CloudOutlined />,
     label: (
       <NavLink
@@ -66,7 +80,6 @@ export const Navigation = ({ isDarkMode, closeSideBar }: NavigationProps) => {
     <Menu
       theme={isDarkMode ? 'dark' : 'light'}
       mode="inline"
-      defaultSelectedKeys={['1']}
       items={menuItems}
       onClick={closeSideBar}
     />

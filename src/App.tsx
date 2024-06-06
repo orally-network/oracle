@@ -7,7 +7,7 @@ import { BaseLayout } from 'Components/Layout';
 
 import Pythia from 'Pages/Pythia';
 import Sybil from 'Pages/Sybil';
-import ROUTES from 'Constants/routes';
+import ROUTES from 'Constants/routes.ts';
 import { SubscriptionDetailsPage } from 'Pages/SubscriptionDetailsPage';
 import ErrorPage from 'Pages/ErrorPage';
 import { PythiaDataProvider } from 'Providers/PythiaData';
@@ -16,6 +16,7 @@ import { FeedDetailsPage } from 'Pages/FeedDetailsPage';
 import SybilFeedsProvider from 'Providers/SybilPairs/SybilFeedsProvider';
 import { WeatherDayDetailsWrapper } from 'Pages/WeatherDayDetails';
 import { APIKeys } from 'Pages/APIKeys';
+import { Apollo } from 'Pages/Apollo';
 
 
 const router = createBrowserRouter([
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
       {
         path: `${ROUTES.SYBIL}/api-keys`,
         element: <APIKeys/>,
+      },
+      {
+        path: `${ROUTES.APOLLO}`,
+        element: <Apollo/>,
       },
       {
         path: ROUTES.PYTHIA,

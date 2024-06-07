@@ -1,6 +1,7 @@
-import { Card, CardBody, CardHeader, CardFooter, Spinner } from '@nextui-org/react';
+import { Card, CardBody, CardHeader, Spinner, Avatar } from '@nextui-org/react';
 
 import { type ApolloInstance, useGetParsedApolloCoordinatorLogs } from 'Services/apolloService';
+import { CHAINS_MAP } from 'Constants/chains';
 
 interface ApolloInstanceCardProps {
   instance: ApolloInstance;
@@ -13,17 +14,24 @@ export const ApolloInstanceCard = ({ instance }: ApolloInstanceCardProps) => {
     true
   );
 
-  // console.log(instance.chainId, { parsedLogs });
+  console.log(instance.chainId, { parsedLogs });
 
   return (
-    <Card>
+    <Card className="">
       {isLoading ? (
-          <Spinner />
-        ) : (
-        <CardBody>
-          Apollo Instance Card
-        </CardBody>
-        )}
+        <Spinner className="p-4" />
+      ) : (
+        <>
+          <CardHeader>
+            <Avatar src={CHAINS_MAP[instance.chainId].img} />
+
+
+          </CardHeader>
+          <CardBody>
+            Apollo Instance Card
+          </CardBody>
+        </>
+      )}
     </Card>
   );
 };

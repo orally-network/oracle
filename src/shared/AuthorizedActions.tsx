@@ -1,15 +1,14 @@
 import { useGlobalState } from 'Providers/GlobalState';
 import { SignInButton } from 'Shared/SignInButton';
-import { SybilTopUp } from 'Shared/SybilTopUp';
 
-export const Actions = () => {
+export const AuthorizedActions = ({ children }: any) => {
   const { addressData } = useGlobalState();
 
   return (
     <div className="flex justify-between gap-2">
       {addressData && addressData.signature ? (
         <>
-          <SybilTopUp />
+          {children}
         </>
       ) : (
         <SignInButton style={{ alignSelf: 'flex-end' }}/>

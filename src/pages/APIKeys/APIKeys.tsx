@@ -4,11 +4,12 @@ import { Breadcrumbs, BreadcrumbItem } from '@nextui-org/react';
 import { SybilBalance } from 'Shared/SybilBalance';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import useWindowDimensions from 'Utils/useWindowDimensions';
+import { AuthorizedActions } from 'Shared/AuthorizedActions';
 
-import { Actions } from './Actions';
+import { SybilTopUp } from 'Shared/SybilTopUp';
 import { KeysTable } from './KeysTable';
 import { DomainsTable } from './DomainsTable';
-import { Example } from './Example.tsx';
+import { Example } from './Example';
 
 export const APIKeys = () => {
   const { width } = useWindowDimensions();
@@ -28,7 +29,9 @@ export const APIKeys = () => {
         <Flex align="center" justify="space-between" gap={8} vertical={isMobile}>
           <SybilBalance/>
 
-          <Actions/>
+          <AuthorizedActions>
+            <SybilTopUp/>
+          </AuthorizedActions>
         </Flex>
       </div>
 

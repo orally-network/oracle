@@ -5,16 +5,17 @@ import { useQuery } from '@tanstack/react-query';
 import apolloCanister from 'Canisters/apolloCanister';
 import logger from 'Utils/logger';
 import { CHAINS_MAP } from 'Constants/chains';
+import { AllowedChain } from 'Interfaces/common';
+import { nativeEthToken } from 'Constants/tokens';
 
 // useQuery/useMutation + apollo request + toast
 
-export interface ApolloInstance {
-  chainId: number;
+export type ApolloInstance = AllowedChain & {
   canisterId: string;
   isActive: boolean;
   evmAddress: string;
   apolloCoordinator: string;
-}
+};
 
 // query
 const APOLLO_INSTANCES_QUERY_KEY = 'apolloInstances';
@@ -30,6 +31,8 @@ export const useFetchApolloInstances = () => useQuery({
       // formatter
       const apolloInstances: ApolloInstance[] = res.items.map((apolloInstance: any) => ({
         chainId: apolloInstance.chain_id,
+        symbol: CHAINS_MAP[apolloInstance.chain_id].nativeCurrency.symbol,
+        tokens: [nativeEthToken],
         canisterId: apolloInstance.apollo_instance.canister_id.toString(),
         isActive: apolloInstance.apollo_instance.is_active,
         evmAddress: apolloInstance.apollo_instance.apollo_main_address,
@@ -61,7 +64,7 @@ export const useGetApolloCoordinatorLogs = (chainId: number, provider: providers
         address: coordinatorAddress,
         topics: [
           [
-            utils.id('RandomFeedRequested(uint256,string,uint256,address)'),
+            utils.id('RandomFeedRequested(uint256,uint256,uint256,address)'),
             utils.id('DataFeedRequested(uint256,string,uint256,address)'),
           ],
         ],
@@ -98,7 +101,7 @@ export const useGetParsedApolloCoordinatorLogs = (chainId: number, coordinatorAd
 
       const logs = [];
 
-      if (onlyLast) {
+      if (data.length >= 1 && onlyLast) {
         logs.push(contract.interface.parseLog(data[data.length - 1]));
       } else {
         data.forEach((log: any) => {

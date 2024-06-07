@@ -4,22 +4,22 @@ import { useSwitchChain, useAccount } from 'wagmi';
 import { Input } from '@nextui-org/react';
 import { type Address } from 'viem';
 
-import { AllowedChain, AllowedToken } from 'Services/sybilService';
 import { DEFAULT_TOP_UP_AMOUNT, DEFAULT_TOP_UP_AMOUNT_ETH } from 'Constants/ui';
 import { NewSelect } from 'Components/Select/NewSelect';
 import { Modal } from 'Components/Modal';
+import { AllowedChain, AllowedToken } from 'Interfaces/common';
 
 interface TopUpModalProps {
   isOpen: boolean;
   onOpenChange: (e: any) => void;
   chains: AllowedChain[];
-  isChainsLoading: boolean;
+  isChainsLoading?: boolean;
   tokens: AllowedToken[];
   submit: (chain: number, token: AllowedToken, amount: number) => void;
   setChain: (AllowedChain: any) => void;
   chain: AllowedChain;
   token: AllowedToken,
-  setToken: (AllowedToken: any) => void;
+  setToken?: (AllowedToken: any) => void;
 }
 
 export const TopUpModal = ({
@@ -37,7 +37,7 @@ export const TopUpModal = ({
   const { switchChainAsync } = useSwitchChain();
   const { address, chain: currentChain } = useAccount();
 
-  const [amount, setAmount] = useState<number>(tokens[0].symbol === 'ETH' ? DEFAULT_TOP_UP_AMOUNT_ETH : DEFAULT_TOP_UP_AMOUNT);
+  const [amount, setAmount] = useState<number>(token.symbol === 'ETH' ? DEFAULT_TOP_UP_AMOUNT_ETH : DEFAULT_TOP_UP_AMOUNT);
 
   const { balance } = useTokenBalance({
     tokenAddress: token?.address,

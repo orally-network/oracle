@@ -86,6 +86,7 @@ export const useGetApolloCoordinatorLogs = (chainId: number, provider: providers
 
     return;
   },
+  enabled: Boolean(chainId && provider && coordinatorAddress),
 });
 // logs parser
 export const useGetParsedApolloCoordinatorLogs = (chainId: number, coordinatorAddress: string, onlyLast: boolean = true) => {
@@ -130,6 +131,32 @@ export const useGetParsedApolloCoordinatorLogs = (chainId: number, coordinatorAd
 };
 
 // query balance (with chainId)
+// query
+const APOLLO_BALANCE_QUERY_KEY = 'balance';
+export const useFetchApolloBalance = (chainId: number) => {
+  const { addressData } = useGlobalState();
+
+  return useQuery({
+    queryKey: [APOLLO_BALANCE_QUERY_KEY, chainId, addressData.address],
+    queryFn: async () => {
+      try {
+        const promise = apolloCanister.get_balance(chainId, addressData.address) as Promise<GeneralResponse>;
+        const wrappedPromise = okOrErrResponseWrapper(promise);
+
+        const res = await wrappedPromise;
+
+        logger.log('[service][apollo] queried apollo balance', { res });
+
+        return res;
+      } catch (error) {
+        logger.error('[service][apollo] Failed to query apollo balance', error);
+      }
+
+      return;
+    },
+    enabled: Boolean(chainId && addressData.address),
+  });
+}
 
 // add allowance (spender)
 
@@ -164,7 +191,7 @@ export const useDeposit = () => {
     onSuccess: ({ chainId }) => {
       // todo[1]: clear localstorage here
 
-      queryClient.invalidateQueries({ queryKey: ['balance', chainId] });
+      queryClient.invalidateQueries({ queryKey: [APOLLO_BALANCE_QUERY_KEY, chainId, addressData.address] });
     },
   });
 };

@@ -1,6 +1,7 @@
 import { Card, CardBody, CardHeader, Spinner, Avatar } from '@nextui-org/react';
+import { formatEther } from 'viem';
 
-import { type ApolloInstance, useGetParsedApolloCoordinatorLogs } from 'Services/apolloService';
+import { type ApolloInstance, useGetParsedApolloCoordinatorLogs, useFetchApolloBalance } from 'Services/apolloService';
 import { CHAINS_MAP } from 'Constants/chains';
 
 interface ApolloInstanceCardProps {
@@ -14,7 +15,9 @@ export const ApolloInstanceCard = ({ instance }: ApolloInstanceCardProps) => {
     true
   );
 
-  console.log(instance.chainId, { parsedLogs });
+  const { data: balance, isLoading: isBalanceLoading } = useFetchApolloBalance(instance.chainId);
+
+  console.log(instance.chainId, { parsedLogs, balance });
 
   return (
     <Card className="">
@@ -23,9 +26,17 @@ export const ApolloInstanceCard = ({ instance }: ApolloInstanceCardProps) => {
       ) : (
         <>
           <CardHeader>
-            <Avatar src={CHAINS_MAP[instance.chainId].img} />
+            <div className="flex flex-1 row gap-3 items-center">
+              <Avatar src={CHAINS_MAP[instance.chainId].img} />
 
+              <div className="text-lg">
+                {CHAINS_MAP[instance.chainId].name}
+              </div>
+            </div>
 
+            <div className="text-lg">
+              Balance: {!balance || isBalanceLoading ? '...' : Number(formatEther(balance)).toFixed(3)} ETH
+            </div>
           </CardHeader>
           <CardBody>
             Apollo Instance Card

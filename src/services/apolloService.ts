@@ -1,12 +1,17 @@
 import { Contract, providers, utils } from 'ethers';
 import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import apolloCanister from 'Canisters/apolloCanister';
 import logger from 'Utils/logger';
 import { CHAINS_MAP } from 'Constants/chains';
 import { AllowedChain } from 'Interfaces/common';
 import { nativeEthToken } from 'Constants/tokens';
+import { remove0x } from 'Utils/addressUtils';
+import { useGlobalState } from 'Providers/GlobalState';
+import { GeneralResponse } from 'Interfaces/common';
+
+import { okOrErrResponseWrapper, toastWrapper } from './utils';
 
 // useQuery/useMutation + apollo request + toast
 
@@ -122,4 +127,44 @@ export const useGetParsedApolloCoordinatorLogs = (chainId: number, coordinatorAd
     logger.error('[service][apollo] Failed to parse apollo coordinator logs', error);
     return { data: null, isLoading: false };
   }
+};
+
+// query balance (with chainId)
+
+// add allowance (spender)
+
+// mutate
+export const useDeposit = () => {
+  const { addressData } = useGlobalState();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    // @ts-ignore
+    mutationFn: async ({ chainId, tx_hash }: { chainId: number, tx_hash: Hash }) => {
+      const promise = apolloCanister.deposit(
+        chainId,
+        tx_hash,
+        [], // allowance
+        addressData.message,
+        remove0x(addressData.signature)
+      ) as Promise<GeneralResponse>;
+      const wrappedPromise = okOrErrResponseWrapper(promise);
+
+      // todo[1]: add logic for saving tx_hash to local storage for future checks if user close window, but deposit wasn't successful - to retry it
+
+      const res = await toastWrapper(wrappedPromise, 'Deposit');
+
+      logger.log('[service][apollo] deposited', { res });
+
+      return { res, tx_hash, chainId };
+    },
+    onError: (error: any, variables: any, context: any) => {
+      logger.error(`[service][apollo] Failed to deposit`, error, variables, context);
+    },
+    onSuccess: ({ chainId }) => {
+      // todo[1]: clear localstorage here
+
+      queryClient.invalidateQueries({ queryKey: ['balance', chainId] });
+    },
+  });
 };

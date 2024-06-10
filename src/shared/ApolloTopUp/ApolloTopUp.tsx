@@ -4,7 +4,6 @@ import { Button } from '@nextui-org/react';
 import { TopUpModal } from 'Shared/TopUpModal';
 import { useModal } from 'Components/Modal';
 import { mapTokenToOption, mapChainsToNewOptions } from 'Utils/mappers';
-import { AllowedChain } from 'Interfaces/common';
 import { type ApolloInstance } from 'Services/apolloService';
 import { nativeEthToken } from 'Constants/tokens';
 
@@ -19,11 +18,14 @@ const mappedNativeToken = mapTokenToOption(nativeEthToken);
 const tokens = [mappedNativeToken];
 
 export const ApolloTopUp = ({ apolloInstances, isChainsLoading }: ApolloTopUpProps) => {
-  const { isOpen, onOpen, onOpenChange } = useModal();
+  const { isOpen, onOpen, onOpenChange, onClose } = useModal();
 
-  const [chain, setChain] = useState<AllowedChain | null>(null);
+  const [chain, setChain] = useState<ApolloInstance | null>(null);
 
-  const { isDepositing, apolloDeposit } = useApolloDeposit();
+  const { isDepositing, apolloDeposit } = useApolloDeposit({
+    closeModal: onClose,
+    chain,
+  });
 
   const mappedChains = useMemo(() => apolloInstances && mapChainsToNewOptions(apolloInstances), [apolloInstances]);
 

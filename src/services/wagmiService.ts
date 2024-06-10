@@ -1,7 +1,8 @@
 import { useCallback, useState } from 'react';
 import { Address, erc20Abi, formatUnits } from 'viem';
-import { useConfig, useReadContracts, useWriteContract } from 'wagmi';
+import { useConfig, useReadContracts, useWriteContract, useSendTransaction, useBalance } from 'wagmi';
 import { waitForTransactionReceipt } from 'wagmi/actions';
+import { nativeEthToken } from 'Constants/tokens';
 
 import logger from 'Utils/logger';
 
@@ -15,7 +16,9 @@ interface UseTokenBalanceProps {
 }
 
 export const useTokenBalance = ({ tokenAddress, address, enabled, chainId }: UseTokenBalanceProps) => {
-  const { data: [balance, decimals, symbol] = [], ...rest } = useReadContracts({
+  const isNativeEth = tokenAddress === nativeEthToken.address;
+
+  const { data: [tokenBalance, tokenDecimals, tokenSymbol] = [], ...tokenRest } = useReadContracts({
     allowFailure: false,
     contracts: [
       {
@@ -39,9 +42,24 @@ export const useTokenBalance = ({ tokenAddress, address, enabled, chainId }: Use
       },
     ],
     query: {
-      enabled,
+      enabled: enabled && !isNativeEth,
     },
   });
+
+  const { data: ethData, ...ethRest } = useBalance({
+    address,
+    chainId,
+    query: {
+      enabled: enabled && isNativeEth,
+    },
+  });
+
+  const { balance, decimals, symbol, ...rest } = {
+    balance: tokenBalance ?? ethData?.value,
+    decimals: tokenDecimals ?? ethData?.decimals,
+    symbol: tokenSymbol ?? ethData?.symbol,
+    ...(tokenRest ?? ethRest),
+  };
 
   return {
     balance: balance && decimals && symbol ? {
@@ -84,5 +102,38 @@ export const useWriteContractWithWait = (notifyPrefix?: string) => {
     ...rest,
     isPending,
     writeContractWithWait,
+  };
+}
+
+export const useSendTransactionWithWait = (notifyPrefix?: string) => {
+  const [isPending, setIsPending] = useState(false);
+
+  const config = useConfig();
+  const { sendTransactionAsync, ...rest } = useSendTransaction();
+
+  const sendTransactionWithWait = useCallback(async (params: any) => {
+    setIsPending(true);
+
+    try {
+      const hash = await sendTransactionAsync(params);
+
+      const res = await toastWrapper(waitForTransactionReceipt(config, { hash }), notifyPrefix);
+
+      logger.log('[service][wagmi] useSendTransactionWithWait(ed)', { res, hash });
+
+      return hash;
+    } catch (err) {
+      logger.error('[service][wagmi] useSendTransactionWithWait failed', err);
+    } finally {
+      setIsPending(false);
+    }
+
+    return;
+  }, [config]);
+
+  return {
+    ...rest,
+    isPending,
+    sendTransactionWithWait,
   };
 }

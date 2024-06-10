@@ -1,6 +1,7 @@
 import { Contract, providers, utils } from 'ethers';
 import { useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { type Address } from 'viem';
 
 import apolloCanister from 'Canisters/apolloCanister';
 import logger from 'Utils/logger';
@@ -158,8 +159,6 @@ export const useFetchApolloBalance = (chainId: number) => {
   });
 }
 
-// add allowance (spender)
-
 // mutate
 export const useDeposit = () => {
   const { addressData } = useGlobalState();
@@ -192,6 +191,34 @@ export const useDeposit = () => {
       // todo[1]: clear localstorage here
 
       queryClient.invalidateQueries({ queryKey: [APOLLO_BALANCE_QUERY_KEY, chainId, addressData.address] });
+    },
+  });
+};
+
+// add allowance (spender)
+// mutate
+export const useGrantAllowance = () => {
+  const { addressData } = useGlobalState();
+
+  return useMutation({
+    // @ts-ignore
+    mutationFn: async ({ chainId, spender }: { chainId: number, spender: Address }) => {
+      const promise = apolloCanister.grant(
+        chainId,
+        spender,
+        addressData.message,
+        remove0x(addressData.signature)
+      ) as Promise<GeneralResponse>;
+      const wrappedPromise = okOrErrResponseWrapper(promise);
+
+      const res = await toastWrapper(wrappedPromise, 'Grant allowance');
+
+      logger.log('[service][apollo] spender added', { res });
+
+      return res;
+    },
+    onError: (error: any, variables: any, context: any) => {
+      logger.error(`[service][apollo] Failed to add spender`, error, variables, context);
     },
   });
 };

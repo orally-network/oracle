@@ -5,6 +5,7 @@ import useWindowDimensions from 'Utils/useWindowDimensions';
 import { useFetchApolloInstances, type ApolloInstance } from 'Services/apolloService';
 import { AuthorizedActions } from 'Shared/AuthorizedActions';
 import { ApolloTopUp } from 'Shared/ApolloTopUp';
+import { ApolloAddSpender } from 'Shared/ApolloAddSpender';
 
 import { ApolloInstanceCard } from './ApolloInstanceCard';
 
@@ -26,6 +27,11 @@ export const Apollo = () => {
 
         <AuthorizedActions>
           <ApolloTopUp
+            apolloInstances={apolloInstances}
+            isChainsLoading={isLoading}
+          />
+
+          <ApolloAddSpender
             apolloInstances={apolloInstances}
             isChainsLoading={isLoading}
           />

@@ -23,6 +23,7 @@ export const useApolloDeposit = ({ closeModal, chain }: UseApolloDepositParams) 
     const hash = await sendTransactionWithWait({
       to: chain.evmAddress,
       value: parseEther(String(amount || 0)),
+      chainId,
     });
 
     if (hash) {

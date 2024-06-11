@@ -1,5 +1,4 @@
-import React from 'react';
-import styles from './FeedCard.module.scss';
+import { useState } from 'react';
 
 interface FeedLogosProps {
   feed: string;
@@ -8,10 +7,10 @@ interface FeedLogosProps {
 
 export const FeedLogos = ({ feed, size = 46 }: FeedLogosProps) => {
   const [firstCoin, secondCoin = ''] = feed.split('/');
-  const [isPlaceholder, setIsPlaceholder] = React.useState(false);
+  const [isPlaceholder, setIsPlaceholder] = useState(false);
 
   return (
-    <div className={styles.feedLogos}>
+    <div className="flex justify-center items-center">
       {isPlaceholder ? (
         <img
           src="/assets/placeholder.png"
@@ -24,7 +23,7 @@ export const FeedLogos = ({ feed, size = 46 }: FeedLogosProps) => {
       ) : (
         <>
           <div
-            className={styles.logoWrap}
+            className="flex border-solid rounded-full border-background"
             style={{
               width: `${size}px`,
               height: `${size}px`,
@@ -45,7 +44,7 @@ export const FeedLogos = ({ feed, size = 46 }: FeedLogosProps) => {
             />
           </div>
           <div
-            className={styles.logoWrap}
+            className="flex border-solid rounded-full border-background"
             style={{
               marginLeft: size === 46 ? '-15px' : '-25px',
               width: `${size}px`,

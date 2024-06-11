@@ -58,9 +58,11 @@ export const useFetchApolloInstances = () => useQuery({
 
 // query
 const APOLLO_COORDINATOR_LOGS_QUERY_KEY = 'apolloCoordinatorLogs';
+export const EVENT_NAME_DATA_FEED_REQUESTED = 'DataFeedRequested';
+export const EVENT_NAME_RANDOM_FEED_REQUESTED = 'RandomFeedRequested';
 const APOLLO_COORDINATOR_CONTRACT_EVENTS_ABI = [
-  'event DataFeedRequested(uint256 indexed requestId, string dataFeedId, uint256 callbackGasLimit, address indexed requester);',
-  'event RandomFeedRequested(uint256 indexed requestId, uint256 callbackGasLimit, uint256 numWords, address indexed requester);'
+  `event ${EVENT_NAME_DATA_FEED_REQUESTED}(uint256 indexed requestId, string dataFeedId, uint256 callbackGasLimit, address indexed requester);`,
+  `event ${EVENT_NAME_RANDOM_FEED_REQUESTED}(uint256 indexed requestId, uint256 callbackGasLimit, uint256 numWords, address indexed requester);`
 ];
 export const useGetApolloCoordinatorLogs = (chainId: number, provider: providers.BaseProvider, coordinatorAddress: string) => useQuery({
   queryKey: [APOLLO_COORDINATOR_LOGS_QUERY_KEY, chainId, coordinatorAddress],

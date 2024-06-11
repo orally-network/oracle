@@ -30,6 +30,7 @@ module.exports = {
         dark: {
           colors: {
             background: "#050b15", // or DEFAULT
+            background2: "#0C172B",
             foreground: "#ECEDEE", // or 50 to 900 DEFAULT
             primary: {
               //... 50 to 900

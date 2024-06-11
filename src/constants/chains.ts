@@ -16,7 +16,7 @@ import {
   lineaTestnet,
 } from 'wagmi/chains';
 import { ExplorerType } from 'Interfaces/chain';
-import config from 'Constants/config';
+// import config from 'Constants/config';
 
 const ethereumImg = '/assets/chains/ethereum.jpeg';
 const polygonImg = '/assets/chains/polygon.jpeg';
@@ -32,7 +32,7 @@ const artheraImg = '/assets/chains/arthera.png';
 const mantaImg = '/assets/chains/manta.png';
 const blastImg = '/assets/chains/blast.png';
 const arbitrumImg = '/assets/chains/arbitrum.png';
-import zircuitImg from '/assets/chains/zircuit.png';
+const zircuitImg = '/assets/chains/zircuit.png';
 
 const CHAINS = [
   {
@@ -48,12 +48,12 @@ const CHAINS = [
   },
   {
     ...sepolia,
-    rpcUrls: {
-      default: {
-        http: [`https://sepolia.infura.io/v3/${config.INFURA_API_KEY}`],
-      },
-    },
-    // fromBlock: 6011603,
+    // rpcUrls: {
+    //   default: {
+    //     http: [`https://sepolia.infura.io/v3/${config.INFURA_API_KEY}`],
+    //   },
+    // },
+    fromBlock: 6071603,
     img: ethereumImg,
     explorerType: ExplorerType.ScanExplorer,
   },

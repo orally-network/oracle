@@ -6,7 +6,7 @@ import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { convertFrequencyDate } from 'Utils/helper';
 import { Feed } from 'Interfaces/feed';
-import { FeedLogos } from 'Pages/Sybil/FeedCard/FeedLogos';
+import { FeedLogos } from 'Components/FeedLogos';
 import config from 'Constants/config';
 import IconLink from 'Components/IconLink';
 import { ExportOutlined } from '@ant-design/icons';

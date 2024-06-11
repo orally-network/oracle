@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { Space, Card, Typography, Flex, Drawer, Skeleton as AntdSkeleton } from 'antd';
 import { useAccount } from 'wagmi';
 import { useNavigate } from 'react-router-dom';
@@ -9,8 +9,8 @@ import { NewFeed } from 'Pages/Sybil/NewFeed/NewFeed';
 
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { Feed, FeedType } from 'Interfaces/feed';
-import { FeedLogos } from './FeedLogos';
-import { BlockOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
+import { FeedLogos } from 'Components/FeedLogos';
+import { BlockOutlined, EyeOutlined } from '@ant-design/icons';
 
 interface FeedCardProps {
   feed: Feed;

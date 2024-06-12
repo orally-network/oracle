@@ -56,6 +56,7 @@ const CHAINS = [
     fromBlock: 6071603,
     img: ethereumImg,
     explorerType: ExplorerType.ScanExplorer,
+    multicallAddress: '0x15EAc62512C24Ad46988a838b2c8ACa4Dce2aE26',
   },
   {
     ...arbitrum,

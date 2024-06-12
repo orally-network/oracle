@@ -1,3 +1,4 @@
+import { utils } from 'ethers';
 import { toast } from 'sonner';
 
 import { GeneralResponse } from 'Interfaces/common';
@@ -30,3 +31,43 @@ export const toastWrapper = async (promise: Promise<any>, notifyPrefix?: string)
     });
   });
 };
+
+// Function to attempt decoding
+export const tryDecode = (callData: string) => {
+  try {
+    // console.log({ callData });
+
+    // Attempt to decode as first structure (uint256, uint256[])
+    const decoded = utils.defaultAbiCoder.decode(
+      ["uint256", "uint256[]"],
+      utils.hexDataSlice(callData, 4)
+    );
+    // console.log("Decoded as (uint256, uint256[]):", decoded);
+
+    return {
+      requestId: decoded[0]._isBigNumber && decoded[0].toNumber(),
+      randomWords: decoded[1].map((randomWord: any) => randomWord._isBigNumber && randomWord.toNumber()),
+    }
+  } catch (error1) {
+    try {
+      // If the first attempt fails, try the second structure
+      const decoded = utils.defaultAbiCoder.decode(
+        ["uint256", "string", "uint256", "uint256", "uint256"],
+        utils.hexDataSlice(callData, 4)
+        );
+      // console.log("Decoded as (uint256, string, uint256, uint256, uint256):", decoded);
+
+      return {
+        requestId: decoded[0]._isBigNumber && decoded[0].toNumber(),
+        dataFeedId: decoded[1],
+        rate: decoded[2]._isBigNumber && decoded[2].toNumber(),
+        decimals: decoded[3]._isBigNumber && decoded[3].toNumber(),
+        timestamp: decoded[4]._isBigNumber && decoded[4].toNumber(),
+      }
+    } catch (error2) {
+      console.error("Decoding failed for both structures:", error1, error2);
+    }
+  }
+
+  return {};
+}

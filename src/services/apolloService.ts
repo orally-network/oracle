@@ -1,5 +1,3 @@
-import { Contract, providers, utils } from 'ethers';
-import { useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { type Address } from 'viem';
 
@@ -19,8 +17,8 @@ import { okOrErrResponseWrapper, toastWrapper } from './utils';
 export type ApolloInstance = AllowedChain & {
   canisterId: string;
   isActive: boolean;
-  evmAddress: string;
-  apolloCoordinator: string;
+  evmAddress: Address;
+  apolloCoordinator: Address;
 };
 
 // query
@@ -55,83 +53,6 @@ export const useFetchApolloInstances = () => useQuery({
     return;
   },
 });
-
-// query
-const APOLLO_COORDINATOR_LOGS_QUERY_KEY = 'apolloCoordinatorLogs';
-export const EVENT_NAME_DATA_FEED_REQUESTED = 'DataFeedRequested';
-export const EVENT_NAME_RANDOM_FEED_REQUESTED = 'RandomFeedRequested';
-const APOLLO_COORDINATOR_CONTRACT_EVENTS_ABI = [
-  `event ${EVENT_NAME_DATA_FEED_REQUESTED}(uint256 indexed requestId, string dataFeedId, uint256 callbackGasLimit, address indexed requester);`,
-  `event ${EVENT_NAME_RANDOM_FEED_REQUESTED}(uint256 indexed requestId, uint256 callbackGasLimit, uint256 numWords, address indexed requester);`
-];
-export const useGetApolloCoordinatorLogs = (chainId: number, provider: providers.BaseProvider, coordinatorAddress: string) => useQuery({
-  queryKey: [APOLLO_COORDINATOR_LOGS_QUERY_KEY, chainId, coordinatorAddress],
-  queryFn: async () => {
-    try {
-      const logs = await provider.getLogs({
-        address: coordinatorAddress,
-        topics: [
-          [
-            utils.id('RandomFeedRequested(uint256,uint256,uint256,address)'),
-            utils.id('DataFeedRequested(uint256,string,uint256,address)'),
-          ],
-        ],
-        fromBlock: CHAINS_MAP[chainId].fromBlock ?? 'earliest',
-        toBlock: 'latest'
-      });
-
-      logger.log('[service][apollo] queried apollo coordinator logs', { logs, chainId });
-
-      return logs;
-    } catch (error) {
-      logger.error('[service][apollo] Failed to query apollo coordinator logs', error);
-    }
-
-    return;
-  },
-  enabled: Boolean(chainId && provider && coordinatorAddress),
-});
-// logs parser
-export const useGetParsedApolloCoordinatorLogs = (chainId: number, coordinatorAddress: string, onlyLast: boolean = true) => {
-  try {
-    const rpc = CHAINS_MAP[chainId].rpcUrls.default.http[0];
-    const provider = new providers.JsonRpcProvider(rpc);
-
-    const { data, ...rest } = useGetApolloCoordinatorLogs(chainId, provider, coordinatorAddress);
-
-    const parsedLogs = useMemo(() => {
-      if (!data) return;
-
-      const contract = new Contract(
-        coordinatorAddress,
-        APOLLO_COORDINATOR_CONTRACT_EVENTS_ABI,
-        provider
-      );
-
-      const logs = [];
-
-      if (data.length >= 1 && onlyLast) {
-        logs.push(contract.interface.parseLog(data[data.length - 1]));
-      } else {
-        data.forEach((log: any) => {
-          logs.push(contract.interface.parseLog(log));
-        });
-      }
-
-      logger.log('[service][apollo] parsed apollo coordinator logs', { logs, chainId });
-
-      return logs;
-    }, [data, coordinatorAddress, onlyLast]);
-
-    return {
-      data: parsedLogs,
-      ...rest,
-    };
-  } catch (error) {
-    logger.error('[service][apollo] Failed to parse apollo coordinator logs', error);
-    return { data: null, isLoading: false };
-  }
-};
 
 // query balance (with chainId)
 // query

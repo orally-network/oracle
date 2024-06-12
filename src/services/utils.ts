@@ -34,26 +34,28 @@ export const toastWrapper = async (promise: Promise<any>, notifyPrefix?: string)
 
 // Function to attempt decoding
 export const tryDecode = (callData: string) => {
+  const bytes = utils.defaultAbiCoder.decode(["bytes"], utils.hexDataSlice(callData, 4));
+
   try {
-    // console.log({ callData });
+    // console.log({ callData, bytes });
 
     // Attempt to decode as first structure (uint256, uint256[])
     const decoded = utils.defaultAbiCoder.decode(
       ["uint256", "uint256[]"],
-      utils.hexDataSlice(callData, 4)
+      bytes[0],
     );
     // console.log("Decoded as (uint256, uint256[]):", decoded);
 
     return {
       requestId: decoded[0]._isBigNumber && decoded[0].toNumber(),
-      randomWords: decoded[1].map((randomWord: any) => randomWord._isBigNumber && randomWord.toNumber()),
+      randomWords: decoded[1].map((randomWord: any) => randomWord._isBigNumber && randomWord.toString()),
     }
   } catch (error1) {
     try {
       // If the first attempt fails, try the second structure
       const decoded = utils.defaultAbiCoder.decode(
         ["uint256", "string", "uint256", "uint256", "uint256"],
-        utils.hexDataSlice(callData, 4)
+        bytes[0],
         );
       // console.log("Decoded as (uint256, string, uint256, uint256, uint256):", decoded);
 

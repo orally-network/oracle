@@ -215,7 +215,7 @@ export const useGetMulticallLogs = (chainId: number, apolloEvmAddress: Address) 
       callsData: log.args.callsData.map((callData: any) => tryDecode(callData.callData)),
       sender: log.args.sender,
     }),
-    (log: any) => log.args.sender.toLowerCase() !== apolloEvmAddress.toLowerCase()
+    (log: any) => log.args.sender.toLowerCase() === apolloEvmAddress.toLowerCase()
   );
 
   return { data, ...rest };

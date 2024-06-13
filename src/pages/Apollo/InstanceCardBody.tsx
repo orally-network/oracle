@@ -39,7 +39,7 @@ const getRequestedData = (requestLogName: string, requestedData: any) => {
 }
 
 export const InstanceCardBody = ({ instance }: InstanceCardBodyProps) => {
-  const { data: parsedLogs, isLoading: isCoordinatorLogsLoading } = useGetApolloCoordinatorLogs(
+  const { data: coordinatorLogs, isLoading: isCoordinatorLogsLoading } = useGetApolloCoordinatorLogs(
     instance.chainId,
     instance.apolloCoordinator,
   );
@@ -49,7 +49,7 @@ export const InstanceCardBody = ({ instance }: InstanceCardBodyProps) => {
     instance.evmAddress,
   );
 
-  const lastCoordinatorLog = useMemo(() => parsedLogs?.[parsedLogs?.length - 1], [parsedLogs]);
+  const lastCoordinatorLog = useMemo(() => coordinatorLogs?.[coordinatorLogs?.length - 1], [coordinatorLogs]);
   const lastMulticallLog = useMemo(() => multicallLogs?.[multicallLogs?.length - 1], [multicallLogs]);
 
   if (isCoordinatorLogsLoading) {

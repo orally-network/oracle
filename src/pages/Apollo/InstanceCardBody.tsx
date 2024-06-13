@@ -52,8 +52,6 @@ export const InstanceCardBody = ({ instance }: InstanceCardBodyProps) => {
   const lastCoordinatorLog = useMemo(() => parsedLogs?.[parsedLogs?.length - 1], [parsedLogs]);
   const lastMulticallLog = useMemo(() => multicallLogs?.[multicallLogs?.length - 1], [multicallLogs]);
 
-  console.log({ instance, lastCoordinatorLog, lastMulticallLog })
-
   if (isCoordinatorLogsLoading) {
     return <Spinner className="p-4"/>;
   }

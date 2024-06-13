@@ -171,7 +171,7 @@ export const useGetLogs = (chainId: number, abi: any, address: Address, topics: 
       const filteredLogs = filter ? parsedlogs.filter(filter) : parsedlogs;
       const logs = mapper ? filteredLogs.map(mapper) : filteredLogs;
 
-      logger.log('[service][apollo] queried logs', { responseLogs, logs, chainId });
+      // logger.log('[service][apollo] queried logs', { responseLogs, logs, chainId });
 
       return logs;
     } catch (error) {

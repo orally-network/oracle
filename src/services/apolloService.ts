@@ -43,7 +43,7 @@ export const useFetchApolloInstances = () => useQuery({
         apolloCoordinator: apolloInstance.apollo_instance.apollo_coordinator,
       }));
 
-      logger.log('[service][apollo] queried apollo instances', { res, apolloInstances });
+      // logger.log('[service][apollo] queried apollo instances', { res, apolloInstances });
 
       return apolloInstances;
     } catch (error) {
@@ -69,7 +69,7 @@ export const useFetchApolloBalance = (chainId: number) => {
 
         const res = await wrappedPromise;
 
-        logger.log('[service][apollo] queried apollo balance', { res });
+        // logger.log('[service][apollo] queried apollo balance', { res });
 
         return res;
       } catch (error) {

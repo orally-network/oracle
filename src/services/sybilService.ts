@@ -263,7 +263,7 @@ export const useFetchBalance = () => {
 
         const res = await wrappedPromise;
 
-        logger.log('[service] queried balance', { res });
+        // logger.log('[service][sybil] queried balance', { res });
 
         return Number(res);
       } catch (error) {
@@ -283,7 +283,7 @@ export const useFetchBaseFee = () => useQuery({
     try {
       const res = await sybilCanister.get_base_fee() as bigint;
 
-      logger.log('[service] queried base fee', { res });
+      // logger.log('[service][sybil] queried base fee', { res });
 
       return res;
     } catch (error) {

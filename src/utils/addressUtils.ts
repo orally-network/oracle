@@ -14,6 +14,13 @@ export const truncateAddressSymbolsNum = (address: string, num: number) => {
   return `${match[1]}…${match[2]}`;
 };
 
+export const truncateNumberSymbols = (address: string, num: number) => {
+  const regex = new RegExp(`^([0-9]{4})[a-zA-Z0-9]+([0-9]{${num}})$`);
+  const match = address.match(regex);
+  if (!match) return address;
+  return `${match[1]}…${match[2]}`;
+};
+
 export const remove0x = (address: string) => {
   return address.replace('0x', '');
 };

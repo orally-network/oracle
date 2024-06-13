@@ -1,8 +1,9 @@
-import { Card, CardHeader, Avatar, CardFooter } from '@nextui-org/react';
+import { Card, CardHeader, Avatar, CardFooter, Link } from '@nextui-org/react';
 import { formatEther } from 'viem';
 
 import { type ApolloInstance, useFetchApolloBalance } from 'Services/apolloService';
 import { CHAINS_MAP } from 'Constants/chains';
+import { AddressSnippet } from 'Components/AddressSnippet';
 
 import { InstanceCardBody } from './InstanceCardBody';
 
@@ -19,9 +20,15 @@ export const ApolloInstanceCard = ({ instance }: ApolloInstanceCardProps) => {
         <div className="flex flex-1 row gap-3 items-center">
           <Avatar src={CHAINS_MAP[instance.chainId].img}/>
 
-          <div className="text-lg">
+          <Link
+            href={`${CHAINS_MAP[instance.chainId].blockExplorers.default.url}/address/${instance.evmAddress}`}
+            color="foreground"
+            className="text-lg"
+            isExternal
+            showAnchorIcon
+          >
             {CHAINS_MAP[instance.chainId].name}
-          </div>
+          </Link>
         </div>
 
         <div className="text-lg">
@@ -31,8 +38,10 @@ export const ApolloInstanceCard = ({ instance }: ApolloInstanceCardProps) => {
 
       <InstanceCardBody instance={instance}/>
 
-      <CardFooter>
-        Footer
+      <CardFooter className="flex justify-around w-full">
+        <AddressSnippet address={instance.apolloCoordinator} title="Coordinator Address"/>
+
+        <AddressSnippet address={instance.evmAddress} title="Executor Address"/>
       </CardFooter>
     </Card>
   );

@@ -20,6 +20,7 @@ export default {
 
   pythia_canister_id: isStaging ? 'xmz4o-gqaaa-aaaag-qcjva-cai' : 'ettff-uaaaa-aaaag-abpcq-cai',
   sybil_canister_id: isStaging ? 'tysiw-qaaaa-aaaak-qcikq-cai' : 'wth3l-tiaaa-aaaap-aa5uq-cai',
+  apollo_canister_id: isStaging ? 'ndeka-riaaa-aaaak-afmaq-cai' : 'iuq3c-pqaaa-aaaag-qdcva-cai',
 
   weatherSource1Key: import.meta.env.VITE_WEATHER_SOURCE_1_KEY,
   weatherSource2Key: import.meta.env.VITE_WEATHER_SOURCE_2_KEY,

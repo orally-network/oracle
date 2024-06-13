@@ -14,7 +14,7 @@ import { ExportOutlined } from '@ant-design/icons';
 import IconLink from 'Components/IconLink';
 import { truncateEthAddress } from 'Utils/addressUtils';
 import { predictionsMap } from 'Constants/predictions';
-import ROUTES from 'Constants/routes';
+import ROUTES from 'Constants/routes.ts';
 import { useWeatherData } from 'Providers/WeatherAuctionData/useWeatherData';
 
 export const WeatherAuction = () => {

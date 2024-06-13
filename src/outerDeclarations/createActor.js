@@ -4,10 +4,12 @@ import config from 'Constants/config';
 
 import { idlFactory as pythiaIdl } from './pythia.did';
 import { idlFactory as sybilIdl } from './sybil.did';
+import { idlFactory as apolloIdl } from './apollo.did';
 
 const NAME_IDL_MAP = {
   'pythia': pythiaIdl,
   'sybil': sybilIdl,
+  'apollo': apolloIdl,
 };
 
 export const createActor = (canisterId, name = 'pythia', agentOptions = {}, actorOptions) => {

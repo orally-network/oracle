@@ -2,9 +2,10 @@ import { useState, useEffect, useMemo } from 'react';
 import { Button } from '@nextui-org/react';
 
 import { TopUpModal } from 'Shared/TopUpModal';
-import { useFetchAllowedChains, AllowedChain, AllowedToken } from 'Services/sybilService';
+import { useFetchAllowedChains } from 'Services/sybilService';
 import { useModal } from 'Components/Modal';
-import { mapTokensToOptions, mapChainsToNewOptions, mapTokenToOption } from 'Utils/mappers.ts';
+import { mapTokensToOptions, mapChainsToNewOptions, mapTokenToOption } from 'Utils/mappers';
+import { AllowedChain, AllowedToken } from 'Interfaces/common';
 
 import { useSybilDeposit } from './useSybilDeposit';
 

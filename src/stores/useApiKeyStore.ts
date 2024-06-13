@@ -3,11 +3,11 @@ import { create } from 'zustand';
 import { createSelectors } from './createSelectors';
 
 type State = {
-  selectedApiKey: string;
+  selectedApiKey: string | null;
 };
 
 type Action = {
-  updateSelectedApiKey: (apiKey: string) => void;
+  updateSelectedApiKey: (apiKey: string | null) => void;
 };
 
 const useApiKeyStoreBase = create<State & Action>((set) => ({

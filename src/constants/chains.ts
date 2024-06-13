@@ -16,6 +16,7 @@ import {
   lineaTestnet,
 } from 'wagmi/chains';
 import { ExplorerType } from 'Interfaces/chain';
+// import config from 'Constants/config';
 
 const ethereumImg = '/assets/chains/ethereum.jpeg';
 const polygonImg = '/assets/chains/polygon.jpeg';
@@ -31,6 +32,7 @@ const artheraImg = '/assets/chains/arthera.png';
 const mantaImg = '/assets/chains/manta.png';
 const blastImg = '/assets/chains/blast.png';
 const arbitrumImg = '/assets/chains/arbitrum.png';
+const zircuitImg = '/assets/chains/zircuit.png';
 
 const CHAINS = [
   {
@@ -46,8 +48,15 @@ const CHAINS = [
   },
   {
     ...sepolia,
+    // rpcUrls: {
+    //   default: {
+    //     http: [`https://sepolia.infura.io/v3/${config.INFURA_API_KEY}`],
+    //   },
+    // },
+    fromBlock: 6071603,
     img: ethereumImg,
     explorerType: ExplorerType.ScanExplorer,
+    multicallAddress: '0x15EAc62512C24Ad46988a838b2c8ACa4Dce2aE26',
   },
   {
     ...arbitrum,
@@ -422,6 +431,33 @@ const CHAINS = [
     },
     img: blastImg,
     explorerType: ExplorerType.ScanExplorer,
+  },
+  {
+    id: 48899,
+    name: 'Zircuit Sepolia',
+    network: 'Zircuit Sepolia',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://zircuit1.p2pify.com/'],
+      },
+      public: {
+        http: ['https://zircuit1.p2pify.com/'],
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Explorer Zircuit Sepolia',
+        url: 'https://explorer.zircuit.com/',
+      },
+    },
+    img: zircuitImg,
+    explorerType: ExplorerType.ScanExplorer,
+    multicallAddress: '0x8B2B8E6e8bF338e6071E6Def286B8518B7BFF7F1',
   },
 ];
 

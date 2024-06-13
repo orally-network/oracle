@@ -1,8 +1,9 @@
 import { erc20Abi, parseUnits } from 'viem';
 import { useCallback } from 'react';
 
-import { useFetchSybilTreasureAddress, useDeposit, AllowedToken } from 'Services/sybilService';
+import { useFetchSybilTreasureAddress, useDeposit } from 'Services/sybilService';
 import { useWriteContractWithWait } from 'Services/wagmiService';
+import { AllowedToken } from 'Interfaces/common';
 
 interface UseSybilDepositParams {
   setIsModalVisible: (val: boolean) => void;

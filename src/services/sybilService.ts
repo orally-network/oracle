@@ -7,22 +7,11 @@ import { remove0x } from 'Utils/addressUtils';
 import { useGlobalState } from 'Providers/GlobalState';
 import logger from 'Utils/logger';
 import { DEFAULT_DOMAIN_LIMIT_PER_DAY } from 'Constants/ui';
+import { type AllowedChain } from 'Interfaces/common';
 
 import { okOrErrResponseWrapper, toastWrapper } from './utils';
 
 // useQuery/useMutation + sybil request + toast
-
-export interface AllowedToken {
-  address: Address;
-  symbol: string;
-  decimals: number;
-}
-
-export interface AllowedChain {
-  chainId: number;
-  symbol: string;
-  tokens: AllowedToken[];
-}
 
 export type AllowedDomain = {
   key: string;
@@ -274,7 +263,7 @@ export const useFetchBalance = () => {
 
         const res = await wrappedPromise;
 
-        logger.log('[service] queried balance', { res });
+        // logger.log('[service][sybil] queried balance', { res });
 
         return Number(res);
       } catch (error) {
@@ -294,7 +283,7 @@ export const useFetchBaseFee = () => useQuery({
     try {
       const res = await sybilCanister.get_base_fee() as bigint;
 
-      logger.log('[service] queried base fee', { res });
+      // logger.log('[service][sybil] queried base fee', { res });
 
       return res;
     } catch (error) {

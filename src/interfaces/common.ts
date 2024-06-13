@@ -1,3 +1,5 @@
+import { Address } from 'viem';
+
 export interface GeneralResponse {
   Ok: any;
   Err: any;
@@ -47,6 +49,18 @@ export type SybilFilters = {
   search: string[];
   feed_type: { [key: string]: string }[];
 };
+
+export interface AllowedToken {
+  address: Address;
+  symbol: string;
+  decimals: number;
+}
+
+export interface AllowedChain {
+  chainId: number;
+  symbol: string;
+  tokens: AllowedToken[];
+}
 
 export type HashMap<K extends string | number | symbol, T> = {
   [key in K]: T;

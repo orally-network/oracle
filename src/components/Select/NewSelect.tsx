@@ -10,7 +10,7 @@ type Item = any & {
 
 interface SelectProps {
   items: Item[];
-  handleChange: (item: Item) => void;
+  handleChange?: (item: Item) => void;
   selectedItem: Item;
   title: string;
 }
@@ -19,7 +19,7 @@ export const NewSelect = ({ items, handleChange, selectedItem, title }: SelectPr
   const handleSelectionChange = useCallback((e) => {
     const item = items.find((item) => item.key == e.target.value);
 
-    handleChange(item);
+    handleChange?.(item);
   }, [items]);
 
   const selectedKeys = useMemo(() => [selectedItem?.key], [selectedItem]);
@@ -31,6 +31,7 @@ export const NewSelect = ({ items, handleChange, selectedItem, title }: SelectPr
       selectedKeys={selectedKeys}
       onChange={handleSelectionChange}
       label={title}
+      isDisabled={!handleChange}
       variant="bordered"
       classNames={{
         label: 'group-data-[filled=true]:-translate-y-4 text-lg',

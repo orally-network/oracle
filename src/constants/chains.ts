@@ -457,6 +457,7 @@ const CHAINS = [
     },
     img: zircuitImg,
     explorerType: ExplorerType.ScanExplorer,
+    multicallAddress: '0x8B2B8E6e8bF338e6071E6Def286B8518B7BFF7F1',
   },
 ];
 

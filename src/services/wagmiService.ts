@@ -167,7 +167,10 @@ export const useGetLogs = (chainId: number, abi: any, address: Address, topics: 
         provider
       );
 
-      const parsedlogs = responseLogs.map((log: any) => contract.interface.parseLog(log));
+      const parsedlogs = responseLogs.map((log: any) => ({
+        ...contract.interface.parseLog(log),
+        blockNumber: log.blockNumber,
+      }));
       const filteredLogs = filter ? parsedlogs.filter(filter) : parsedlogs;
       const logs = mapper ? filteredLogs.map(mapper) : filteredLogs;
 
@@ -196,6 +199,8 @@ export const useGetApolloCoordinatorLogs = (chainId: number, apolloCoordinatorAd
       name: log.name,
       dataFeedId: log.args.dataFeedId,
       requestId: log.args.requestId.toNumber(),
+      requester: log.args.requester,
+      requestedBlockNumber: log.blockNumber,
     })
   );
 };
@@ -212,8 +217,12 @@ export const useGetMulticallLogs = (chainId: number, apolloEvmAddress: Address) 
     ],
     (log) => ({
       name: log.name,
-      callsData: log.args.callsData.map((callData: any) => tryDecode(callData.callData)),
+      callsData: log.args.callsData.map((callData: any) => ({
+        ...tryDecode(callData.callData),
+        target: callData.target,
+      })),
       sender: log.args.sender,
+      fulfilledBlockNumber: log.blockNumber,
     }),
     (log: any) => log.args.sender.toLowerCase() === apolloEvmAddress.toLowerCase()
   );

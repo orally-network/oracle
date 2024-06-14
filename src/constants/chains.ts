@@ -48,6 +48,16 @@ const CHAINS = [
   },
   {
     ...sepolia,
+    rpcUrls: {
+      default: {
+        http: [
+          'https://endpoints.omniatech.io/v1/eth/sepolia/public',
+          'https://ethereum-sepolia-rpc.publicnode.com',
+          'https://ethereum-sepolia.rpc.subquery.network/public',
+          'https://rpc.sepolia.org',
+        ],
+      },
+    },
     // rpcUrls: {
     //   default: {
     //     http: [`https://sepolia.infura.io/v3/${config.INFURA_API_KEY}`],

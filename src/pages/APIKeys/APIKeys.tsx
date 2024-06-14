@@ -5,6 +5,7 @@ import { SybilBalance } from 'Shared/SybilBalance';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import { AuthorizedActions } from 'Shared/AuthorizedActions';
+import ROUTES from 'Constants/routes';
 
 import { SybilTopUp } from 'Shared/SybilTopUp';
 import { KeysTable } from './KeysTable';
@@ -20,7 +21,7 @@ export const APIKeys = () => {
       <div className={`flex justify-between ${isMobile ? 'flex-col' : ''}`}>
         <div className="flex flex-col">
           <Breadcrumbs radius="full" variant="solid" className="mb-2">
-            <BreadcrumbItem href="/sybil">Sybil</BreadcrumbItem>
+            <BreadcrumbItem href={ROUTES.SYBIL}>Sybil</BreadcrumbItem>
             <BreadcrumbItem>API Keys</BreadcrumbItem>
           </Breadcrumbs>
           <h3 className="text-xl font-bold">API Keys</h3>

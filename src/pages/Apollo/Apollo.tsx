@@ -17,7 +17,7 @@ export const Apollo = () => {
 
   return (
     <div>
-      <div className={`flex justify-between ${isMobile ? 'flex-col' : ''}`}>
+      <div className={`flex justify-between mb-4 ${isMobile ? 'flex-col' : ''}`}>
         <div className="flex flex-col">
           <Breadcrumbs radius="full" variant="solid" className="mb-2">
             <BreadcrumbItem>Apollo</BreadcrumbItem>

@@ -53,7 +53,7 @@ export const InstanceCardBody = ({ instance }: InstanceCardBodyProps) => {
   const lastMulticallLog = useMemo(() => multicallLogs?.[multicallLogs?.length - 1], [multicallLogs]);
 
   if (isCoordinatorLogsLoading) {
-    return <Spinner className="p-4"/>;
+    return <Spinner className="flex justify-center items-center w-full p-4"/>;
   }
 
   if (!lastCoordinatorLog) {

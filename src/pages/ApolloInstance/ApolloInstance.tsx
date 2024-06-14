@@ -79,6 +79,15 @@ export const ApolloInstance = () => {
             >
               {CHAINS_MAP[apolloInstance.chainId].name}
             </LinkUI>
+            <LinkUI
+              href="https://docs.orally.network/quick-start/apollo-request-feeds-from-evm"
+              color="foreground"
+              className="text-md text-gray-500"
+              isExternal
+              showAnchorIcon
+            >
+              Apollo Docs
+            </LinkUI>
           </Card>
 
           <Card className="flex justify-around w-48 p-4">

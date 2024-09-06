@@ -55,14 +55,14 @@ const router = createBrowserRouter([
         path: `${ROUTES.APOLLO}/:chainId`,
         element: <ApolloInstance/>,
       },
-      {
-        path: ROUTES.PYTHIA,
-        element: <Pythia/>,
-      },
-      {
-        path: `${ROUTES.PYTHIA}/:chainId/:id`,
-        element: <SubscriptionDetailsPage/>,
-      },
+      // {
+      //   path: ROUTES.PYTHIA,
+      //   element: <Pythia/>,
+      // },
+      // {
+      //   path: `${ROUTES.PYTHIA}/:chainId/:id`,
+      //   element: <SubscriptionDetailsPage/>,
+      // },
     ],
   },
 ]);

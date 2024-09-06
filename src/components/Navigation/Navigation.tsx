@@ -31,20 +31,20 @@ const menuItems: MenuItem[] = [
       </NavLink>
     ),
   },
-  {
-    key: '1',
-    icon: <UnorderedListOutlined />,
-    label: (
-      <NavLink
-        to="/pythia"
-        className={({ isActive, isPending }) =>
-          isPending ? styles.pending : isActive ? styles.active : ''
-        }
-      >
-        Pythia
-      </NavLink>
-    ),
-  },
+  // {
+  //   key: '1',
+  //   icon: <UnorderedListOutlined />,
+  //   label: (
+  //     <NavLink
+  //       to="/pythia"
+  //       className={({ isActive, isPending }) =>
+  //         isPending ? styles.pending : isActive ? styles.active : ''
+  //       }
+  //     >
+  //       Pythia
+  //     </NavLink>
+  //   ),
+  // },
   {
     key: '2',
     icon: <AccountBookFilled />,

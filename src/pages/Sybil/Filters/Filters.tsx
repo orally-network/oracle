@@ -23,32 +23,9 @@ export const Filters = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isFiltersMenuOpen, setFiltersMenuOpen] = useState(false);
 
-  const onChangeType = (e: RadioChangeEvent) => {
-    setFeedType(e.target.value);
-    searchParams.set('type', e.target.value);
-    setSearchParams(searchParams);
-  };
-
   const items: MenuProps['items'] = [
     {
       key: '1',
-      label: (
-        <Radio.Group
-          value={feedType}
-          onChange={onChangeType}
-          defaultValue="Price"
-          size="small"
-          options={[
-            { label: 'All', value: 'All' },
-            { label: 'Default', value: 'Default' },
-            { label: 'Custom', value: 'Custom' },
-          ]}
-          optionType="button"
-        ></Radio.Group>
-      ),
-    },
-    {
-      key: '2',
       label: (
         <>
           <Switch
@@ -81,18 +58,6 @@ export const Filters = () => {
       ) : (
         <>
           <Space>
-            <Radio.Group
-              value={feedType}
-              onChange={onChangeType}
-              defaultValue="Price"
-              size="large"
-              options={[
-                { label: 'All', value: 'All' },
-                { label: 'Default', value: 'Default' },
-                { label: 'Custom', value: 'Custom' },
-              ]}
-              optionType="button"
-            ></Radio.Group>
             <Switch
               checked={showMine}
               onChange={() => {

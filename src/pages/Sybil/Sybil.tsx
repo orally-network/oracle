@@ -13,6 +13,7 @@ import { FilterFeedType } from 'Interfaces/feed';
 import { NewFeed } from './NewFeed/NewFeed';
 import { Helmet } from 'react-helmet';
 
+// todo: will represent CustomFeed page
 const Sybil = () => {
   const [isNewFeedModalVisible, setIsNewFeedModalVisible] = useState(false);
   const [searchParams] = useSearchParams();
@@ -47,7 +48,7 @@ const Sybil = () => {
         <Space size="middle" direction="vertical" style={{ width: '100%', position: 'relative' }}>
           <Flex align="center" justify="space-between" gap={8}>
             <Typography.Title style={{ minWidth: '70px' }} level={3}>
-              Sybil
+              Sybil: Custom Feeds
             </Typography.Title>
             <Filters />
             <Button

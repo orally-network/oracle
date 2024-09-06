@@ -36,7 +36,15 @@ const router = createBrowserRouter([
         element: <Navigate to={ROUTES.SYBIL} replace/>,
       },
       {
-        path: ROUTES.SYBIL,
+        path: ROUTES.SYBIL_CUSTOM_FEEDS,
+        element: <Sybil/>,
+      },
+      {
+        path: `${ROUTES.SYBIL_CUSTOM_FEEDS}/:id`,
+        element: <FeedDetailsPage/>,
+      },
+      {
+        path: `${ROUTES.SYBIL}`,
         element: <APIKeys/>,
       },
       {

@@ -1,0 +1,55 @@
+name: Automatic Deployment to Prod
+
+on:
+  # Launches for pushes to main
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  VITE_WALLET_CONNECT_PROJECT_ID: ${{ secrets.VITE_WALLET_CONNECT_PROJECT_ID }}
+  VITE_ROLLBAR_ACCESS_TOKEN: ${{ secrets.VITE_ROLLBAR_ACCESS_TOKEN }}
+  VITE_GOOGLE_ANALYTICS_TRACKING_CODE: ${{ secrets.VITE_GOOGLE_ANALYTICS_TRACKING_CODE }}
+  VITE_ETHERSCAN_API_KEY: ${{ secrets.VITE_ETHERSCAN_API_KEY }}
+
+jobs:
+  deploy:
+    name: Deployment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.8.0
+        with:
+          access_token: ${{ github.token }}
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Install
+        run: |
+          rm -rf dist
+          npm install
+
+      - name: Build App
+        run: npm run build
+
+      - name: Deploy to Firebase
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only hosting:app-orally
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

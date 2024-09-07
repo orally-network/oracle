@@ -1,5 +1,6 @@
 import { Flex } from 'antd';
 import { Breadcrumbs, BreadcrumbItem } from '@nextui-org/react';
+import { Helmet } from 'react-helmet';
 
 import { SybilBalance } from 'Shared/SybilBalance';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
@@ -17,36 +18,46 @@ export const APIKeys = () => {
   const isMobile = width <= BREAK_POINT_MOBILE;
 
   return (
-    <div>
-      <div className={`flex justify-between ${isMobile ? 'flex-col' : ''}`}>
-        <div className="flex flex-col">
-          <Breadcrumbs radius="full" variant="solid" className="mb-2">
-            <BreadcrumbItem href={ROUTES.SYBIL}>Sybil</BreadcrumbItem>
-            <BreadcrumbItem>API Keys</BreadcrumbItem>
-          </Breadcrumbs>
-          <h3 className="text-xl font-bold">API Keys</h3>
+    <>
+      <Helmet>
+        <meta
+          name="description"
+          content="Sybil - Generate API Key to access permissionless data feeds"
+        />
+        <meta property="og:image" content="sybil.png" />
+        <title>Orally Network | Sybil - Permissionless Data Fetcher</title>
+      </Helmet>
+
+      <div>
+        <div className={`flex justify-between ${isMobile ? 'flex-col' : ''}`}>
+          <div className="flex flex-col">
+            <Breadcrumbs radius="full" variant="solid" className="mb-2">
+              <BreadcrumbItem href={ROUTES.SYBIL}>Sybil</BreadcrumbItem>
+            </Breadcrumbs>
+            <h3 className="text-xl font-bold">API Keys</h3>
+          </div>
+
+          <Flex align="center" justify="space-between" gap={8} vertical={isMobile}>
+            <SybilBalance/>
+
+            <AuthorizedActions>
+              <SybilTopUp/>
+            </AuthorizedActions>
+          </Flex>
         </div>
 
-        <Flex align="center" justify="space-between" gap={8} vertical={isMobile}>
-          <SybilBalance/>
+        <div className="flex justify-center mb-5">
+          <Example />
+        </div>
 
-          <AuthorizedActions>
-            <SybilTopUp/>
-          </AuthorizedActions>
-        </Flex>
-      </div>
+        <div className="my-5">
+          <KeysTable />
+        </div>
 
-      <div className="flex justify-center mb-5">
-        <Example />
+        <div className="my-5">
+          <DomainsTable />
+        </div>
       </div>
-
-      <div className="my-5">
-        <KeysTable />
-      </div>
-
-      <div className="my-5">
-        <DomainsTable />
-      </div>
-    </div>
+    </>
   );
 };

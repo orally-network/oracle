@@ -33,26 +33,18 @@ const router = createBrowserRouter([
       {
         // Default route navigation
         index: true,
-        element: <Navigate to={`/${ROUTES.SYBIL}/api-keys`} replace/>,
+        element: <Navigate to={ROUTES.SYBIL} replace/>,
       },
       {
-        path: ROUTES.WEATHER_AUCTION,
-        element: <Navigate to={`/${ROUTES.WEATHER_PREDICTION}`} replace/>,
-      },
-      {
-        path: ROUTES.WEATHER_PREDICTION,
-        element: <Navigate to={`/${ROUTES.WEATHER_PREDICTION}/denver`} replace/>,
-      },
-      {
-        path: ROUTES.SYBIL,
+        path: ROUTES.SYBIL_CUSTOM_FEEDS,
         element: <Sybil/>,
       },
       {
-        path: `${ROUTES.SYBIL}/:id`,
+        path: `${ROUTES.SYBIL_CUSTOM_FEEDS}/:id`,
         element: <FeedDetailsPage/>,
       },
       {
-        path: `${ROUTES.SYBIL}/api-keys`,
+        path: `${ROUTES.SYBIL}`,
         element: <APIKeys/>,
       },
       {
@@ -63,22 +55,14 @@ const router = createBrowserRouter([
         path: `${ROUTES.APOLLO}/:chainId`,
         element: <ApolloInstance/>,
       },
-      {
-        path: ROUTES.PYTHIA,
-        element: <Pythia/>,
-      },
-      {
-        path: `${ROUTES.PYTHIA}/:chainId/:id`,
-        element: <SubscriptionDetailsPage/>,
-      },
-      {
-        path: `${ROUTES.WEATHER_PREDICTION}/:city`,
-        element: <WeatherAuction/>,
-      },
-      {
-        path: `${ROUTES.WEATHER_PREDICTION}/:city/:day`,
-        element: <WeatherDayDetailsWrapper/>,
-      },
+      // {
+      //   path: ROUTES.PYTHIA,
+      //   element: <Pythia/>,
+      // },
+      // {
+      //   path: `${ROUTES.PYTHIA}/:chainId/:id`,
+      //   element: <SubscriptionDetailsPage/>,
+      // },
     ],
   },
 ]);

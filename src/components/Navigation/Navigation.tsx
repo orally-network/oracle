@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Menu } from 'antd';
-import { CloudOutlined, HomeFilled, UnorderedListOutlined, AccountBookFilled } from '@ant-design/icons';
+import { HomeFilled, UnorderedListOutlined, AccountBookFilled } from '@ant-design/icons';
 
 import styles from './Navigation.module.scss';
 
@@ -31,20 +31,20 @@ const menuItems: MenuItem[] = [
       </NavLink>
     ),
   },
-  {
-    key: '1',
-    icon: <UnorderedListOutlined />,
-    label: (
-      <NavLink
-        to="/pythia"
-        className={({ isActive, isPending }) =>
-          isPending ? styles.pending : isActive ? styles.active : ''
-        }
-      >
-        Pythia
-      </NavLink>
-    ),
-  },
+  // {
+  //   key: '1',
+  //   icon: <UnorderedListOutlined />,
+  //   label: (
+  //     <NavLink
+  //       to="/pythia"
+  //       className={({ isActive, isPending }) =>
+  //         isPending ? styles.pending : isActive ? styles.active : ''
+  //       }
+  //     >
+  //       Pythia
+  //     </NavLink>
+  //   ),
+  // },
   {
     key: '2',
     icon: <AccountBookFilled />,
@@ -56,20 +56,6 @@ const menuItems: MenuItem[] = [
         }
       >
         Apollo
-      </NavLink>
-    ),
-  },
-  {
-    key: '3',
-    icon: <CloudOutlined />,
-    label: (
-      <NavLink
-        to="/weather-auction"
-        className={({ isActive, isPending }) =>
-          isPending ? styles.pending : isActive ? styles.active : ''
-        }
-      >
-        Weather Auction
       </NavLink>
     ),
   },

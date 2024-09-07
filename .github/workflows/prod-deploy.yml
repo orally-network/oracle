@@ -4,7 +4,7 @@ on:
   # Launches for pushes to main
   push:
     branches:
-      - main
+      - master
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

@@ -1,4 +1,4 @@
-const isUndefined = function(value) {
+const isUndefined = function (value) {
   return typeof value === 'undefined';
 };
 

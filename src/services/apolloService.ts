@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { type Address } from 'viem';
+import { type Address, Hash } from 'viem';
 
 import apolloCanister from 'Canisters/apolloCanister';
 import logger from 'Utils/logger';
@@ -23,36 +23,41 @@ export type ApolloInstance = AllowedChain & {
 
 // query
 const APOLLO_INSTANCES_QUERY_KEY = 'apolloInstances';
-export const useFetchApolloInstances = () => useQuery({
-  queryKey: [APOLLO_INSTANCES_QUERY_KEY],
-  queryFn: async () => {
-    try {
-      const res: any = await apolloCanister.get_apollo_instances([{
-        page: 1,
-        size: 100,
-      }]);
+export const useFetchApolloInstances = () =>
+  useQuery({
+    queryKey: [APOLLO_INSTANCES_QUERY_KEY],
+    queryFn: async () => {
+      try {
+        const res: any = await apolloCanister.get_apollo_instances([
+          {
+            page: 1,
+            size: 100,
+          },
+        ]);
 
-      // formatter
-      const apolloInstances: ApolloInstance[] = res.items.map((apolloInstance: any) => ({
-        chainId: apolloInstance.chain_id,
-        symbol: CHAINS_MAP[apolloInstance.chain_id].nativeCurrency.symbol,
-        tokens: [nativeEthToken],
-        canisterId: apolloInstance.apollo_instance.canister_id.toString(),
-        isActive: apolloInstance.apollo_instance.is_active,
-        evmAddress: apolloInstance.apollo_instance.apollo_main_address,
-        apolloCoordinator: apolloInstance.apollo_instance.apollo_coordinator,
-      }));
+        // formatter
+        const apolloInstances: ApolloInstance[] = res.items.map((apolloInstance: any) => ({
+          chainId: apolloInstance.chain_id,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
+          symbol: CHAINS_MAP[apolloInstance.chain_id].nativeCurrency.symbol,
+          tokens: [nativeEthToken],
+          canisterId: apolloInstance.apollo_instance.canister_id.toString(),
+          isActive: apolloInstance.apollo_instance.is_active,
+          evmAddress: apolloInstance.apollo_instance.apollo_main_address,
+          apolloCoordinator: apolloInstance.apollo_instance.apollo_coordinator,
+        }));
 
-      logger.log('[service][apollo] queried apollo instances', { res, apolloInstances });
+        logger.log('[service][apollo] queried apollo instances', { res, apolloInstances });
 
-      return apolloInstances;
-    } catch (error) {
-      logger.error('[service][apollo] Failed to query apollo instances', error);
-    }
+        return apolloInstances;
+      } catch (error) {
+        logger.error('[service][apollo] Failed to query apollo instances', error);
+      }
 
-    return;
-  },
-});
+      return;
+    },
+  });
 
 // query balance (with chainId)
 // query
@@ -64,7 +69,10 @@ export const useFetchApolloBalance = (chainId: number) => {
     queryKey: [APOLLO_BALANCE_QUERY_KEY, chainId, addressData.address],
     queryFn: async () => {
       try {
-        const promise = apolloCanister.get_balance(chainId, addressData.address) as Promise<GeneralResponse>;
+        const promise = apolloCanister.get_balance(
+          chainId,
+          addressData.address,
+        ) as Promise<GeneralResponse>;
         const wrappedPromise = okOrErrResponseWrapper(promise);
 
         const res = await wrappedPromise;
@@ -80,7 +88,7 @@ export const useFetchApolloBalance = (chainId: number) => {
     },
     enabled: Boolean(chainId && addressData.address),
   });
-}
+};
 
 // mutate
 export const useDeposit = () => {
@@ -88,14 +96,13 @@ export const useDeposit = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    // @ts-ignore
-    mutationFn: async ({ chainId, tx_hash }: { chainId: number, tx_hash: Hash }) => {
+    mutationFn: async ({ chainId, tx_hash }: { chainId: number; tx_hash: Hash }) => {
       const promise = apolloCanister.deposit(
         chainId,
         tx_hash,
         [], // allowance
         addressData.message,
-        remove0x(addressData.signature)
+        remove0x(addressData.signature),
       ) as Promise<GeneralResponse>;
       const wrappedPromise = okOrErrResponseWrapper(promise);
 
@@ -113,7 +120,9 @@ export const useDeposit = () => {
     onSuccess: ({ chainId }) => {
       // todo[1]: clear localstorage here
 
-      queryClient.invalidateQueries({ queryKey: [APOLLO_BALANCE_QUERY_KEY, chainId, addressData.address] });
+      queryClient.invalidateQueries({
+        queryKey: [APOLLO_BALANCE_QUERY_KEY, chainId, addressData.address],
+      });
     },
   });
 };
@@ -124,13 +133,12 @@ export const useGrantAllowance = () => {
   const { addressData } = useGlobalState();
 
   return useMutation({
-    // @ts-ignore
-    mutationFn: async ({ chainId, spender }: { chainId: number, spender: Address }) => {
+    mutationFn: async ({ chainId, spender }: { chainId: number; spender: Address }) => {
       const promise = apolloCanister.grant(
         chainId,
         spender,
         addressData.message,
-        remove0x(addressData.signature)
+        remove0x(addressData.signature),
       ) as Promise<GeneralResponse>;
       const wrappedPromise = okOrErrResponseWrapper(promise);
 

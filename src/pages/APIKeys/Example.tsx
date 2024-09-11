@@ -51,14 +51,7 @@ const methods = [
   },
 ];
 
-const readLogsExtraFields = [
-  'chain_id',
-  'block_from',
-  'block_to',
-  'topics',
-  'limit',
-  'addresses',
-];
+const readLogsExtraFields = ['chain_id', 'block_from', 'block_to', 'topics', 'limit', 'addresses'];
 
 const readContractExtraFields = [
   'chain_id',
@@ -79,11 +72,14 @@ export const Example = () => {
   const [bytes, setBytes] = useState<boolean>(true);
   const [cacheTtl, setCacheTtl] = useState<boolean>(true);
 
-  const handleSelectionChange = useCallback((items: any[], handleChange: (arg0: any) => void) => (e: any) => {
-    const item = items.find((item) => item.key == e.target.value);
+  const handleSelectionChange = useCallback(
+    (items: any[], handleChange: (arg0: any) => void) => (e: any) => {
+      const item = items.find((item) => item.key == e.target.value);
 
-    handleChange(item.key);
-  }, []);
+      handleChange(item.key);
+    },
+    [],
+  );
 
   const handleApiKeyChange = useCallback(() => {
     if (selectedApiKey) {
@@ -109,11 +105,7 @@ export const Example = () => {
   }, [method, feed, selectedApiKey, bytes, cacheTtl]);
 
   return (
-    <Card
-      isFooterBlurred
-      radius="lg"
-      className="border-none"
-    >
+    <Card isFooterBlurred radius="lg" className="border-none">
       <div className="p-4 flex-col">
         <div className="flex gap-4 justify-center">
           <Select
@@ -123,11 +115,7 @@ export const Example = () => {
             selectedKeys={selectedFeed}
             onChange={handleSelectionChange(feeds, setFeed)}
           >
-            {(feed) => (
-              <SelectItem key={feed.key}>
-                {feed.label}
-              </SelectItem>
-            )}
+            {(feed) => <SelectItem key={feed.key}>{feed.label}</SelectItem>}
           </Select>
 
           <Select
@@ -137,11 +125,7 @@ export const Example = () => {
             selectedKeys={selectedMethod}
             onChange={handleSelectionChange(methods, setMethod)}
           >
-            {(method) => (
-              <SelectItem key={method.key}>
-                {method.label}
-              </SelectItem>
-            )}
+            {(method) => <SelectItem key={method.key}>{method.label}</SelectItem>}
           </Select>
         </div>
 
@@ -161,53 +145,29 @@ export const Example = () => {
       </div>
 
       <CardFooter className="flex flex-col gap-3">
-        <Snippet
-          codeString={codeString}
-          symbol=""
-          size="md"
-        >
-          <span className="max-w-2xl break-all inline-block">
-            {host}
-          </span>
-          <span>
-            {method}
-          </span>
-          {method === 'get_xrc_data_with_proof' && (
-            <span>
-              ?id={feed}
-            </span>
-          )}
-          {method === 'read_logs_with_proof' && (
+        <Snippet codeString={codeString} symbol="" size="md">
+          <span className="max-w-2xl break-all inline-block">{host}</span>
+          <span>{method}</span>
+          {method === 'get_xrc_data_with_proof' && <span>?id={feed}</span>}
+          {method === 'read_logs_with_proof' &&
             readLogsExtraFields.map((field) => (
               <span key={field}>
                 &{field}={'{}'}
               </span>
-            ))
-          )}
-          {method === 'read_contract_with_proof' && (
+            ))}
+          {method === 'read_contract_with_proof' &&
             readContractExtraFields.map((field) => (
               <span key={field}>
                 &{field}={'{}'}
               </span>
-            ))
-          )}
-          <span>
-            {selectedApiKey && `&api_key=${selectedApiKey}`}
-          </span>
-          <span>
-            {bytes && `&bytes=true`}
-          </span>
-          {cacheTtl && (
-            <span>
-              &cache_ttl=1800 // 30 minutes
-            </span>
-          )}
+            ))}
+          <span>{selectedApiKey && `&api_key=${selectedApiKey}`}</span>
+          <span>{bytes && `&bytes=true`}</span>
+          {cacheTtl && <span>&cache_ttl=1800 // 30 minutes</span>}
         </Snippet>
 
         <Snippet className="flex align-middle" size="md">
-          <span className="">
-            npm i @orally-network/solidity-sdk
-          </span>
+          <span className="">npm i @orally-network/solidity-sdk</span>
         </Snippet>
 
         <div className="flex gap-4 mt-2">
@@ -230,5 +190,5 @@ export const Example = () => {
         </div>
       </CardFooter>
     </Card>
-  )
+  );
 };

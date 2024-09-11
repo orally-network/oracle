@@ -1,16 +1,16 @@
 const lisbonData = {
-    timeZone: 'Europe/Lisbon',
-    title: 'Lisbon',
-    name: 'lisbon',
-    lat: '38.736946',
-    lon: '-9.142685',
-    version: 'v2',
-    closeAuctionSubscriptionId: null,
-    provideTemperatureSubscriptionId: null,
-    contract: {
-      // arbitrum
-      42161: '0x5Dbac3C004167c895aCF24B08E5C28EEa700696b',
-    }
+  timeZone: 'Europe/Lisbon',
+  title: 'Lisbon',
+  name: 'lisbon',
+  lat: '38.736946',
+  lon: '-9.142685',
+  version: 'v2',
+  closeAuctionSubscriptionId: null,
+  provideTemperatureSubscriptionId: null,
+  contract: {
+    // arbitrum
+    42161: '0x5Dbac3C004167c895aCF24B08E5C28EEa700696b',
+  },
 };
 
 export const predictionsMap = {
@@ -37,8 +37,8 @@ export const predictionsMap = {
     contract: {
       // arbitrum
       42161: '0xEb5d337c33f52E571fEB28b005C0b0B332D21028',
-    }
-  }
+    },
+  },
 };
 
 export const predictions = Object.values(predictionsMap);

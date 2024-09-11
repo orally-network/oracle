@@ -14,6 +14,7 @@ import {
   aurora,
   auroraTestnet,
   lineaTestnet,
+  Chain,
 } from 'wagmi/chains';
 import { ExplorerType } from 'Interfaces/chain';
 // import config from 'Constants/config';
@@ -34,7 +35,17 @@ const blastImg = '/assets/chains/blast.png';
 const arbitrumImg = '/assets/chains/arbitrum.png';
 const zircuitImg = '/assets/chains/zircuit.png';
 
-const CHAINS = [
+type EnhancedChain = Chain & {
+  img: string;
+  explorerType?: string;
+  explorerAddress?: string;
+  fromBlock?: number;
+  multicallAddress?: string;
+  network?: string;
+  isBlockscoutExplorer?: boolean;
+};
+
+const CHAINS: EnhancedChain[] = [
   {
     ...mainnet,
     img: ethereumImg,
@@ -261,10 +272,10 @@ const CHAINS = [
     },
     rpcUrls: {
       default: {
-        http: ['https://rpc.katla.taiko.xyz/']
+        http: ['https://rpc.katla.taiko.xyz/'],
       },
       public: {
-        http: ['https://rpc.katla.taiko.xyz/']
+        http: ['https://rpc.katla.taiko.xyz/'],
       },
     },
     blockExplorers: {
@@ -348,10 +359,10 @@ const CHAINS = [
     },
     rpcUrls: {
       default: {
-        http: ['https://rpc.arthera.net']
+        http: ['https://rpc.arthera.net'],
       },
       public: {
-        http: ['https://rpc.arthera.net']
+        http: ['https://rpc.arthera.net'],
       },
     },
     blockExplorers: {
@@ -472,6 +483,8 @@ const CHAINS = [
 ];
 
 export const CHAINS_MAP = CHAINS.reduce((acc, chain) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
   acc[chain.id] = chain;
 
   return acc;

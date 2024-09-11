@@ -17,7 +17,7 @@ interface SubscribeButtonsProps {
   withdraw?: any;
   disabled?: boolean;
   chain: any;
-  subId?: BigInt;
+  subId?: bigint;
 }
 
 export const SubscribeButtons = ({

@@ -6,11 +6,7 @@ import { useGlobalState } from 'Providers/GlobalState';
 import { Table, type Column } from 'Components/Table';
 import { DeleteIcon } from 'SVGICons/DeleteIcon';
 import { Modal, useModal } from 'Components/Modal';
-import {
-  type ApiKey,
-  type AllowedDomain,
-  useFetchBaseFee,
-} from 'Services/sybilService';
+import { type ApiKey, type AllowedDomain, useFetchBaseFee } from 'Services/sybilService';
 import { BALANCE_USD_DECIMALS } from 'Utils/balance';
 
 const columns: Column[] = [
@@ -33,18 +29,31 @@ const columns: Column[] = [
   },
 ];
 
-interface SybilTableProps extends Pick<TableProps, 'selectionMode' | 'onSelectionChange' | 'selectedKeys'> {
+interface SybilTableProps
+  extends Pick<TableProps, 'selectionMode' | 'onSelectionChange' | 'selectedKeys'> {
   items: any[];
   add: () => void;
   remove: (key: string) => void;
   isLoading: boolean;
   isAdding: boolean;
   addLabel: string;
-  title: string,
-  additionalColumns?: Column[],
+  title: string;
+  additionalColumns?: Column[];
 }
 
-export const SybilTable = ({ items, add, remove, isLoading, isAdding, addLabel, title, additionalColumns, selectionMode, selectedKeys, onSelectionChange }: SybilTableProps) => {
+export const SybilTable = ({
+  items,
+  add,
+  remove,
+  isLoading,
+  isAdding,
+  addLabel,
+  title,
+  additionalColumns,
+  selectionMode,
+  selectedKeys,
+  onSelectionChange,
+}: SybilTableProps) => {
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const { isOpen, onOpenChange, onOpen, onClose } = useModal();
 
@@ -52,51 +61,66 @@ export const SybilTable = ({ items, add, remove, isLoading, isAdding, addLabel, 
 
   const { data: baseFee, isLoading: isFeeLoading } = useFetchBaseFee();
 
-  const renderCell = useCallback((item: ApiKey | AllowedDomain, columnKey: string) => {
-    const cellValue = item[columnKey];
+  const renderCell = useCallback(
+    (item: ApiKey | AllowedDomain, columnKey: string) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      const cellValue = item[columnKey];
 
-    switch (columnKey) {
-      case 'spent':
-        return item.requestCount && baseFee ? `$${formatUnits(BigInt(item.requestCount) * baseFee, BALANCE_USD_DECIMALS)}` : 0;
-      case 'limit':
-        return (
-          <Tooltip content={`${item.requestCountToday}/${item.requestLimit}`}>
-            <Progress aria-label="Loading..." value={item.requestCountToday} maxValue={item.requestLimit} />
-          </Tooltip>
-        );
-      case 'actions':
-        return (
-          <div className="flex items-center text-center">
-            <span
-              onClick={() => {
-                // @ts-ignore
-                setSelectedKey(item.apiKey ?? item.domain);
-                onOpen();
-              }}
-              className="text-lg text-danger cursor-pointer active:opacity-50"
-            >
-              <DeleteIcon/>
-            </span>
-          </div>
-        );
-      default:
-        return cellValue;
-    }
-  }, [onOpen, baseFee]);
-
-  const deleteAction = useMemo(() => [
-    {
-      label: 'Delete',
-      onPress: () => {
-        if (selectedKey) {
-          remove(selectedKey);
-          setSelectedKey(null);
-          onClose();
-        }
-      },
-      variant: 'danger',
+      switch (columnKey) {
+        case 'spent':
+          return item.requestCount && baseFee
+            ? `$${formatUnits(BigInt(item.requestCount) * baseFee, BALANCE_USD_DECIMALS)}`
+            : 0;
+        case 'limit':
+          return (
+            <Tooltip content={`${item.requestCountToday}/${item.requestLimit}`}>
+              <Progress
+                aria-label="Loading..."
+                value={item.requestCountToday}
+                maxValue={item.requestLimit}
+              />
+            </Tooltip>
+          );
+        case 'actions':
+          return (
+            <div className="flex items-center text-center">
+              <span
+                onClick={() => {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-expect-error
+                  setSelectedKey(item.apiKey ?? item.domain);
+                  onOpen();
+                }}
+                className="text-lg text-danger cursor-pointer active:opacity-50"
+              >
+                <DeleteIcon />
+              </span>
+            </div>
+          );
+        default:
+          return cellValue;
+      }
     },
-  ], [selectedKey]);
+    [onOpen, baseFee],
+  );
+
+  const deleteAction = useMemo(
+    () => [
+      {
+        label: 'Delete',
+        onPress: () => {
+          if (selectedKey) {
+            remove(selectedKey);
+            setSelectedKey(null);
+            onClose();
+          }
+        },
+        variant: 'danger',
+      },
+    ],
+    [selectedKey],
+  );
 
   const topContent = useMemo(() => {
     return (
@@ -113,7 +137,7 @@ export const SybilTable = ({ items, add, remove, isLoading, isAdding, addLabel, 
           {addLabel}
         </Button>
       </div>
-    )
+    );
   }, [addressData.signature, isAdding, addLabel, title]);
 
   return (
@@ -125,9 +149,9 @@ export const SybilTable = ({ items, add, remove, isLoading, isAdding, addLabel, 
         renderCell={renderCell}
         isLoading={isLoading || isFeeLoading}
         topContent={topContent}
-
         selectionMode={selectionMode}
-        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         selectedKeys={selectedKeys}
         onSelectionChange={onSelectionChange}
       />
@@ -136,11 +160,12 @@ export const SybilTable = ({ items, add, remove, isLoading, isAdding, addLabel, 
         title="Are you sure?"
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         actions={deleteAction}
       >
         <div>You will not be able to recover this key.</div>
       </Modal>
     </>
-  )
+  );
 };

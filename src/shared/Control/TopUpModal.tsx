@@ -143,7 +143,7 @@ export const TopUpSybilModal = (props: TopUpWrapperProps) => {
               return 'Something went wrong. Try again later.';
             },
           },
-        }
+        },
       );
 
       console.log({ data, hash });
@@ -185,9 +185,11 @@ export const TopUpPythiaModal = (props: TopUpWrapperProps) => {
     setIsConfirming(true);
     try {
       const hash = await sendTransactionAsync({
-        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         to: props.executionAddress,
-        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         value: utils.parseUnits(String(amount || 0), props.decimals),
       });
 
@@ -209,7 +211,7 @@ export const TopUpPythiaModal = (props: TopUpWrapperProps) => {
               return 'Something went wrong. Try again later.';
             },
           },
-        }
+        },
       );
 
       console.log({ data, hash });

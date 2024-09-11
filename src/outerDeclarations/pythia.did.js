@@ -147,7 +147,7 @@ export const idlFactory = ({ IDL }) => {
     get_subscriptions: IDL.Func(
       [IDL.Opt(GetSubscriptionsFilter), IDL.Opt(Pagination)],
       [GetSubscriptionsResultWithPagination],
-      []
+      [],
     ),
     get_whitelist: IDL.Func([], [GetWhiteListResponse], []),
     is_whitelisted: IDL.Func([IDL.Text], [IsWhitelistedResponse], []),
@@ -177,6 +177,6 @@ export const idlFactory = ({ IDL }) => {
     withdraw_fee: IDL.Func([IDL.Nat, IDL.Text], [Error], []),
   });
 };
-export const init = ({ IDL }) => {
+export const init = () => {
   return [];
 };

@@ -1,4 +1,11 @@
-import { Link as LinkUI, BreadcrumbItem, Breadcrumbs, Spinner, Card, Avatar } from '@nextui-org/react';
+import {
+  Link as LinkUI,
+  BreadcrumbItem,
+  Breadcrumbs,
+  Spinner,
+  Card,
+  Avatar,
+} from '@nextui-org/react';
 import { useParams, Navigate } from 'react-router-dom';
 import { useMemo } from 'react';
 import { formatEther } from 'viem';
@@ -28,11 +35,11 @@ export const ApolloInstance = () => {
   const { data: balance, isLoading: isBalanceLoading } = useFetchApolloBalance(Number(chainId));
 
   if (!chainId) {
-    return <Navigate to={ROUTES.APOLLO} replace/>;
+    return <Navigate to={ROUTES.APOLLO} replace />;
   }
 
   if (!apolloInstance) {
-    return <Spinner className="p-4"/>;
+    return <Spinner className="p-4" />;
   }
 
   // console.log({ chainId, apolloInstance, isLoading, apolloInstances });
@@ -49,18 +56,13 @@ export const ApolloInstance = () => {
 
         <AuthorizedActions>
           <div className="flex items-center text-xl">
-            Balance: {!balance || isBalanceLoading ? '...' : Number(formatEther(balance)).toFixed(3)} ETH
+            Balance:{' '}
+            {!balance || isBalanceLoading ? '...' : Number(formatEther(balance)).toFixed(3)} ETH
           </div>
 
-          <ApolloTopUp
-            apolloInstances={apolloInstances}
-            isChainsLoading={isLoading}
-          />
+          <ApolloTopUp apolloInstances={apolloInstances} isChainsLoading={isLoading} />
 
-          <ApolloAddSpender
-            apolloInstances={apolloInstances}
-            isChainsLoading={isLoading}
-          />
+          <ApolloAddSpender apolloInstances={apolloInstances} isChainsLoading={isLoading} />
         </AuthorizedActions>
       </div>
 
@@ -69,7 +71,7 @@ export const ApolloInstance = () => {
 
         <div className="flex flex-row my-4 justify-center">
           <Card className="flex flex-1 row gap-3 items-center justify-center max-w-48 h-40 mr-4">
-            <Avatar src={CHAINS_MAP[apolloInstance.chainId].img}/>
+            <Avatar src={CHAINS_MAP[apolloInstance.chainId].img} />
             <LinkUI
               href={`${CHAINS_MAP[apolloInstance.chainId].blockExplorers.default.url}/address/${apolloInstance.evmAddress}`}
               color="foreground"
@@ -91,12 +93,15 @@ export const ApolloInstance = () => {
           </Card>
 
           <Card className="flex justify-around w-48 p-4">
-            <AddressSnippetWithLabel address={apolloInstance.apolloCoordinator} title="Coordinator Address"/>
-            <AddressSnippetWithLabel address={apolloInstance.evmAddress} title="Executor Address"/>
+            <AddressSnippetWithLabel
+              address={apolloInstance.apolloCoordinator}
+              title="Coordinator Address"
+            />
+            <AddressSnippetWithLabel address={apolloInstance.evmAddress} title="Executor Address" />
           </Card>
         </div>
 
-        <LogsTable instance={apolloInstance}/>
+        <LogsTable instance={apolloInstance} />
       </div>
     </div>
   );

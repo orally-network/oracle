@@ -45,14 +45,12 @@ const columns: Column[] = [
 ];
 
 interface LogsTableProps {
-  instance: ApolloInstance,
+  instance: ApolloInstance;
 }
 
 export const LogsTable = ({ instance }: LogsTableProps) => {
-  const { data: coordinatorLogs, isLoading: isCoordinatorLogsLoading } = useGetApolloCoordinatorLogs(
-    instance.chainId,
-    instance.apolloCoordinator,
-  );
+  const { data: coordinatorLogs, isLoading: isCoordinatorLogsLoading } =
+    useGetApolloCoordinatorLogs(instance.chainId, instance.apolloCoordinator);
 
   const { data: multicallLogs, isLoading: isMulticallLogsLoading } = useGetMulticallLogs(
     instance.chainId,
@@ -63,18 +61,24 @@ export const LogsTable = ({ instance }: LogsTableProps) => {
     if (!coordinatorLogs || !multicallLogs) return [];
 
     // make merge between coordinatorLogs and multicallLogs by requestId
-    return coordinatorLogs?.map((coordinatorLog) => {
-      const requestedData = multicallLogs?.find((multicallLog) => multicallLog?.callsData?.find((callData: any) => callData.requestId === coordinatorLog.requestId));
+    return coordinatorLogs
+      ?.map((coordinatorLog) => {
+        const requestedData = multicallLogs?.find((multicallLog) =>
+          multicallLog?.callsData?.find(
+            (callData: any) => callData.requestId === coordinatorLog.requestId,
+          ),
+        );
 
-      if (!requestedData) return;
+        if (!requestedData) return;
 
-      return {
-        key: coordinatorLog.requestId,
-        ...requestedData,
-        ...requestedData?.callsData?.[0],
-        ...coordinatorLog,
-      };
-    }).filter(Boolean);
+        return {
+          key: coordinatorLog.requestId,
+          ...requestedData,
+          ...requestedData?.callsData?.[0],
+          ...coordinatorLog,
+        };
+      })
+      .filter(Boolean);
   }, [coordinatorLogs, multicallLogs]);
 
   const renderCell = useCallback((item: any, columnKey: string) => {
@@ -92,7 +96,7 @@ export const LogsTable = ({ instance }: LogsTableProps) => {
             <Tooltip content={item.randomWords.join(', ')}>
               {truncateNumberSymbols(item.randomWords[0], 4)}
             </Tooltip>
-          )
+          );
         }
         break;
       case 'dataFeedId':
@@ -110,5 +114,5 @@ export const LogsTable = ({ instance }: LogsTableProps) => {
       renderCell={renderCell}
       isLoading={isCoordinatorLogsLoading || isMulticallLogsLoading}
     />
-  )
+  );
 };

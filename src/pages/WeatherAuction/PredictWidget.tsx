@@ -10,12 +10,12 @@ import useWindowDimensions from 'Utils/useWindowDimensions';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 
 const options = {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
+  year: 'numeric',
+  month: 'numeric',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: 'numeric',
+  second: 'numeric',
 };
 
 export const PredictWidget = () => {
@@ -28,20 +28,32 @@ export const PredictWidget = () => {
   const [isSubscriptionLoading, setIsSubscriptionLoading] = useState<boolean>(false);
   // const [nextUpdateDateTime, setNextUpdateDateTime] = useState<string | null>(null);
 
-  const { sendAuctionData, isAuctionOpen, getBids, currentDay, predictionChainId, prediction } = useWeatherData();
+  const { sendAuctionData, isAuctionOpen, predictionChainId, prediction } = useWeatherData();
   const { width } = useWindowDimensions();
   const isMobile = width < BREAK_POINT_MOBILE;
 
-  const timeFormatter = new Intl.DateTimeFormat([], {
-    ...options,
-    timeZone: prediction.timeZone,
-  });
+  const timeFormatter = new Intl.DateTimeFormat(
+    [],
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    { ...options, timeZone: prediction.timeZone },
+  );
 
   const fetchSubscription = async () => {
     try {
       setIsSubscriptionLoading(true);
-      const closeSubResponse: any = await pythiaCanister.get_subscription(predictionChainId, prediction.closeAuctionSubscriptionId);
-      const provideTempSubResponse: any = await pythiaCanister.get_subscription(predictionChainId, prediction.provideTemperatureSubscriptionId);
+      const closeSubResponse: any = await pythiaCanister.get_subscription(
+        predictionChainId,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        prediction.closeAuctionSubscriptionId,
+      );
+      const provideTempSubResponse: any = await pythiaCanister.get_subscription(
+        predictionChainId,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        prediction.provideTemperatureSubscriptionId,
+      );
       if (provideTempSubResponse.Err) {
         setSubscriptionData(null);
         throw new Error(provideTempSubResponse.Err);
@@ -109,9 +121,11 @@ export const PredictWidget = () => {
   return (
     <Card>
       <Flex gap="large" vertical>
-        <Typography.Title level={5}>How much degree will be at {isSubscriptionLoading ? (
-          <LoadingOutlined />
-        ) : (nextUpdateDateTime)}? {closeSubscriptionData?.status?.is_active ? '' : '[stopped]'}</Typography.Title>
+        <Typography.Title level={5}>
+          How much degree will be at{' '}
+          {isSubscriptionLoading ? <LoadingOutlined /> : nextUpdateDateTime}?{' '}
+          {closeSubscriptionData?.status?.is_active ? '' : '[stopped]'}
+        </Typography.Title>
         <Flex
           gap={isMobile ? 'middle' : 'large'}
           align={isMobile ? 'flex-start' : 'center'}
@@ -147,8 +161,10 @@ export const PredictWidget = () => {
               <strong>
                 {isSubscriptionLoading ? (
                   <LoadingOutlined />
+                ) : isAuctionOpen ? (
+                  nextCloseDateTime
                 ) : (
-                  isAuctionOpen ? nextCloseDateTime : nextUpdateDateTime
+                  nextUpdateDateTime
                 )}
               </strong>
             </Typography.Text>

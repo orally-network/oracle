@@ -1,11 +1,7 @@
 import { useCallback, useMemo } from 'react';
 
 import { Column } from 'Components/Table';
-import {
-  useFetchApiKeys,
-  useDeleteApiKey,
-  useGenerateApiKey
-} from 'Services/sybilService';
+import { useFetchApiKeys, useDeleteApiKey, useGenerateApiKey } from 'Services/sybilService';
 import { useApiKeyStore } from 'Stores/useApiKeyStore';
 
 import { SybilTable } from './SybilTable';
@@ -25,13 +21,16 @@ export const KeysTable = () => {
   const selectedApiKey = useApiKeyStore.use.selectedApiKey();
   const updateSelectedApiKey = useApiKeyStore.use.updateSelectedApiKey();
 
-  const handleSelectionChange = useCallback((e: any) => {
-    const item = (apiKeys ?? []).find((apiKey) => apiKey.key == [...e][0]);
+  const handleSelectionChange = useCallback(
+    (e: any) => {
+      const item = (apiKeys ?? []).find((apiKey) => apiKey.key == [...e][0]);
 
-    if (item) {
-      updateSelectedApiKey(item.apiKey);
-    }
-  }, [apiKeys]);
+      if (item) {
+        updateSelectedApiKey(item.apiKey);
+      }
+    },
+    [apiKeys],
+  );
 
   const selectedKeys = useMemo(() => {
     return selectedApiKey ? [selectedApiKey] : [];
@@ -48,11 +47,10 @@ export const KeysTable = () => {
         addLabel="Generate API Key"
         title="API Keys allow you to access the Sybil API."
         additionalColumns={additionalColumns}
-
         onSelectionChange={handleSelectionChange}
         selectionMode="single"
         selectedKeys={selectedKeys}
       />
     </>
-  )
+  );
 };

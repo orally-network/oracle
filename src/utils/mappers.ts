@@ -10,7 +10,7 @@ export const mapChainToNewOption = (chain: any) => {
     label: chainData.name,
     value: chainData.id,
     avatar: chainData.img,
-  }
+  };
 };
 
 export const mapChainsToNewOptions = (chains: any) => chains.map(mapChainToNewOption);

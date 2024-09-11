@@ -7,7 +7,9 @@ export const SybilBalance = () => {
 
   return (
     <Typography.Title level={3}>
-      Balance: {!balance || isBalanceLoading ? '...' : formatBalance(balance).toFixed(2)} USD
+      Balance:{' '}
+      {(!balance || isBalanceLoading) && balance !== 0 ? '...' : formatBalance(balance).toFixed(2)}{' '}
+      USD
     </Typography.Title>
   );
 };

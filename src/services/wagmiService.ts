@@ -2,7 +2,13 @@ import { Contract, providers, utils } from 'ethers';
 import { useCallback, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { type Address, erc20Abi, formatUnits } from 'viem';
-import { useConfig, useReadContracts, useWriteContract, useSendTransaction, useBalance } from 'wagmi';
+import {
+  useConfig,
+  useReadContracts,
+  useWriteContract,
+  useSendTransaction,
+  useBalance,
+} from 'wagmi';
 import { waitForTransactionReceipt } from 'wagmi/actions';
 
 import { CHAINS_MAP } from 'Constants/chains';
@@ -20,7 +26,12 @@ interface UseTokenBalanceProps {
   chainId: number;
 }
 
-export const useTokenBalance = ({ tokenAddress, address, enabled, chainId }: UseTokenBalanceProps) => {
+export const useTokenBalance = ({
+  tokenAddress,
+  address,
+  enabled,
+  chainId,
+}: UseTokenBalanceProps) => {
   const isNativeEth = tokenAddress === nativeEthToken.address;
 
   const { data: [tokenBalance, tokenDecimals, tokenSymbol] = [], ...tokenRest } = useReadContracts({
@@ -67,14 +78,17 @@ export const useTokenBalance = ({ tokenAddress, address, enabled, chainId }: Use
   };
 
   return {
-    balance: balance && decimals && symbol ? {
-      value: balance,
-      formatted: formatUnits(balance, decimals),
-      decimals,
-      symbol,
-    } : null,
+    balance:
+      balance && decimals && symbol
+        ? {
+            value: balance,
+            formatted: formatUnits(balance, decimals),
+            decimals,
+            symbol,
+          }
+        : null,
     ...rest,
-  }
+  };
 };
 
 export const useWriteContractWithWait = (notifyPrefix?: string) => {
@@ -83,32 +97,35 @@ export const useWriteContractWithWait = (notifyPrefix?: string) => {
   const config = useConfig();
   const { writeContractAsync, ...rest } = useWriteContract();
 
-  const writeContractWithWait = useCallback(async (params: any) => {
-    setIsPending(true);
+  const writeContractWithWait = useCallback(
+    async (params: any) => {
+      setIsPending(true);
 
-    try {
-      const hash = await writeContractAsync(params);
+      try {
+        const hash = await writeContractAsync(params);
 
-      const res = await toastWrapper(waitForTransactionReceipt(config, { hash }), notifyPrefix);
+        const res = await toastWrapper(waitForTransactionReceipt(config, { hash }), notifyPrefix);
 
-      logger.log('[service][wagmi] useWriteContractWithWait(ed)', { res, hash });
+        logger.log('[service][wagmi] useWriteContractWithWait(ed)', { res, hash });
 
-      return hash;
-    } catch (err) {
-      logger.error('[service][wagmi] useWriteContractWithWait failed', err);
-    } finally {
-      setIsPending(false);
-    }
+        return hash;
+      } catch (err) {
+        logger.error('[service][wagmi] useWriteContractWithWait failed', err);
+      } finally {
+        setIsPending(false);
+      }
 
-    return;
-  }, [config]);
+      return;
+    },
+    [config],
+  );
 
   return {
     ...rest,
     isPending,
     writeContractWithWait,
   };
-}
+};
 
 export const useSendTransactionWithWait = (notifyPrefix?: string) => {
   const [isPending, setIsPending] = useState(false);
@@ -116,75 +133,80 @@ export const useSendTransactionWithWait = (notifyPrefix?: string) => {
   const config = useConfig();
   const { sendTransactionAsync, ...rest } = useSendTransaction();
 
-  const sendTransactionWithWait = useCallback(async (params: any) => {
-    setIsPending(true);
+  const sendTransactionWithWait = useCallback(
+    async (params: any) => {
+      setIsPending(true);
 
-    try {
-      const hash = await sendTransactionAsync(params);
+      try {
+        const hash = await sendTransactionAsync(params);
 
-      const res = await toastWrapper(waitForTransactionReceipt(config, { hash }), notifyPrefix);
+        const res = await toastWrapper(waitForTransactionReceipt(config, { hash }), notifyPrefix);
 
-      logger.log('[service][wagmi] useSendTransactionWithWait(ed)', { res, hash });
+        logger.log('[service][wagmi] useSendTransactionWithWait(ed)', { res, hash });
 
-      return hash;
-    } catch (err) {
-      logger.error('[service][wagmi] useSendTransactionWithWait failed', err);
-    } finally {
-      setIsPending(false);
-    }
+        return hash;
+      } catch (err) {
+        logger.error('[service][wagmi] useSendTransactionWithWait failed', err);
+      } finally {
+        setIsPending(false);
+      }
 
-    return;
-  }, [config]);
+      return;
+    },
+    [config],
+  );
 
   return {
     ...rest,
     isPending,
     sendTransactionWithWait,
   };
-}
+};
 
 // query
 const LOGS_QUERY_KEY = 'logs';
-export const useGetLogs = (chainId: number, abi: any, address: Address, topics: string[], mapper?: (log: any) => any, filter?: (log: any) => any) => useQuery({
-  queryKey: [LOGS_QUERY_KEY, chainId, address],
-  queryFn: async () => {
-    try {
-      const rpc = CHAINS_MAP[chainId].rpcUrls.default.http[0];
-      const provider = new providers.JsonRpcProvider(rpc);
+export const useGetLogs = (
+  chainId: number,
+  abi: any,
+  address: Address,
+  topics: string[],
+  mapper?: (log: any) => any,
+  filter?: (log: any) => any,
+) =>
+  useQuery({
+    queryKey: [LOGS_QUERY_KEY, chainId, address],
+    queryFn: async () => {
+      try {
+        const rpc = CHAINS_MAP[chainId].rpcUrls.default.http[0];
+        const provider = new providers.JsonRpcProvider(rpc);
 
-      const responseLogs = await provider.getLogs({
-        address: address,
-        topics: [
-          topics,
-        ],
-        fromBlock: CHAINS_MAP[chainId].fromBlock ?? 'earliest',
-        toBlock: 'latest'
-      });
+        const responseLogs = await provider.getLogs({
+          address: address,
+          topics: [topics],
+          fromBlock: CHAINS_MAP[chainId].fromBlock ?? 'earliest',
+          toBlock: 'latest',
+        });
 
-      const contract = new Contract(
-        address,
-        abi,
-        provider
-      );
+        const contract = new Contract(address, abi, provider);
 
-      const parsedlogs = responseLogs.map((log: any) => ({
-        ...contract.interface.parseLog(log),
-        blockNumber: log.blockNumber,
-      }));
-      const filteredLogs = filter ? parsedlogs.filter(filter) : parsedlogs;
-      const logs = mapper ? filteredLogs.map(mapper) : filteredLogs;
+        const parsedlogs = responseLogs.map((log: any) => ({
+          ...contract.interface.parseLog(log),
+          blockNumber: log.blockNumber,
+        }));
+        const filteredLogs = filter ? parsedlogs.filter(filter) : parsedlogs;
+        const logs = mapper ? filteredLogs.map(mapper) : filteredLogs;
 
-      // logger.log('[service][apollo] queried logs', { responseLogs, logs, chainId });
+        // logger.log('[service][apollo] queried logs', { responseLogs, logs, chainId });
 
-      return logs;
-    } catch (error) {
-      logger.error('[service][apollo] Failed to query logs', error);
-    }
+        return logs;
+      } catch (error) {
+        logger.error('[service][apollo] Failed to query logs', error);
+      }
 
-    return;
-  },
-  enabled: Boolean(chainId && abi && address && topics),
-});
+      return;
+    },
+    enabled: Boolean(chainId && abi && address && topics),
+  });
 
 export const useGetApolloCoordinatorLogs = (chainId: number, apolloCoordinatorAddress: Address) => {
   return useGetLogs(
@@ -201,7 +223,7 @@ export const useGetApolloCoordinatorLogs = (chainId: number, apolloCoordinatorAd
       requestId: log.args.requestId.toNumber(),
       requester: log.args.requester,
       requestedBlockNumber: log.blockNumber,
-    })
+    }),
   );
 };
 
@@ -224,8 +246,8 @@ export const useGetMulticallLogs = (chainId: number, apolloEvmAddress: Address) 
       sender: log.args.sender,
       fulfilledBlockNumber: log.blockNumber,
     }),
-    (log: any) => log.args.sender.toLowerCase() === apolloEvmAddress.toLowerCase()
+    (log: any) => log.args.sender.toLowerCase() === apolloEvmAddress.toLowerCase(),
   );
 
   return { data, ...rest };
-}
+};

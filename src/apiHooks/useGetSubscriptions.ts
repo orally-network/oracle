@@ -71,7 +71,7 @@ export const useGetSubscriptions = ({
                   page,
                   size: size || DEFAULT_SUBSCRIPTIONS_SIZE,
                 },
-              ]
+              ],
         );
 
       subscriptionsResponse.items.forEach((subscription: Subscription) => {
@@ -96,7 +96,7 @@ export const useGetSubscriptions = ({
     {
       staleTime: 30 * 1000,
       keepPreviousData: true,
-    }
+    },
   );
 
   const refetch = async (): Promise<void> => {

@@ -239,9 +239,9 @@ const NewSubscription = ({ addressData, subscribe }: NewSubscriptionProps) => {
           options={useMemo(
             () =>
               mapFeedsToOptions(
-                feeds && feeds.data && feeds.data.items?.length ? feeds.data.items : []
+                feeds && feeds.data && feeds.data.items?.length ? feeds.data.items : [],
               ),
-            [feeds]
+            [feeds],
           )}
           onChange={(e: OptionType) => {
             setFeed(e?.value);

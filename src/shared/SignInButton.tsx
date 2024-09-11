@@ -1,14 +1,12 @@
-import { Button, ButtonProps } from 'antd';
+import { Button, ButtonProps } from '@nextui-org/react';
 import { useState } from 'react';
-import { toast } from 'react-toastify';
 import { useAccount } from 'wagmi';
+import { toast } from 'sonner';
 
 import logger from 'Utils/logger';
 import useSignature from 'Shared/useSignature';
 
-interface SignInButtonProps extends ButtonProps {
-}
-export const SignInButton = (props: SignInButtonProps) => {
+export const SignInButton = (props: ButtonProps) => {
   const [isSigning, setIsSigning] = useState(false);
   const { signMessage } = useSignature();
   const { chain: currentChain } = useAccount();
@@ -16,15 +14,13 @@ export const SignInButton = (props: SignInButtonProps) => {
   const signMessageHandler = async () => {
     setIsSigning(true);
     try {
-      await toast.promise(signMessage(currentChain?.id), {
-        pending: `SIWE processing...`,
+      toast.promise(signMessage(currentChain?.id), {
+        loading: `SIWE processing...`,
         success: `SIWE processed`,
-        error: {
-          render({ data }) {
-            logger.error(`SIWE`, data);
+        error: ({ data }) => {
+          logger.error(`SIWE`, data);
 
-            return 'Something went wrong. Try again later.';
-          },
+          return 'Something went wrong. Try again later.';
         },
       });
     } finally {
@@ -33,7 +29,7 @@ export const SignInButton = (props: SignInButtonProps) => {
   };
 
   return (
-    <Button onClick={signMessageHandler} type="primary" loading={isSigning} {...props}>
+    <Button onClick={signMessageHandler} color="primary" loading={isSigning} {...props}>
       Sign message
     </Button>
   );

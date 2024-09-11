@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Radio, Switch, Input, Dropdown, MenuProps, RadioChangeEvent, Flex, Space } from 'antd';
+import { Switch, Input, Dropdown, MenuProps, Flex, Space } from 'antd';
 import { SearchOutlined, FilterOutlined } from '@ant-design/icons';
 import { useSearchParams } from 'react-router-dom';
 import { SecondaryButton } from 'Components/SecondaryButton';
@@ -8,15 +8,7 @@ import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import useSybilData from 'Providers/SybilPairs/useSybilFeeds';
 
 export const Filters = () => {
-  const {
-    showMine,
-    feedType,
-    setShowMine,
-    setFeedType,
-    searchQuery,
-    setSearchQuery,
-    debouncedChangeHandler,
-  } = useSybilData();
+  const { showMine, setShowMine, debouncedChangeHandler } = useSybilData();
   const { width } = useWindowDimensions();
   const isMobile = width <= BREAK_POINT_MOBILE;
 

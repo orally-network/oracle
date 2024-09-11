@@ -23,8 +23,8 @@ const getExplorerUrl = (chain: Chain, address: string) => {
         chain.blockExplorers.default.url
       }${encodeURIComponent(
         `api?module=account&action=txlistinternal&address=${isAddressHasOx(
-          address
-        )}&sort=asc&apikey=${config.ETHERSCAN_API_KEY}`
+          address,
+        )}&sort=asc&apikey=${config.ETHERSCAN_API_KEY}`,
       )}`;
     // &startblock=0
     // &endblock=2702578
@@ -34,7 +34,7 @@ const getExplorerUrl = (chain: Chain, address: string) => {
       return `https://rpc.orally.network/?rpc=${
         chain.blockExplorers.default.url
       }${encodeURIComponent(
-        `api?module=account&action=txlistinternal&address=${address}&sort=asc`
+        `api?module=account&action=txlistinternal&address=${address}&sort=asc`,
       )}`;
     // &startblock=555555
     // &endblock=666666

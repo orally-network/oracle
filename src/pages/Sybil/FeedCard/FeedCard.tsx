@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Space, Card, Typography, Flex, Drawer, Skeleton as AntdSkeleton } from 'antd';
-import { useAccount } from 'wagmi';
 import { useNavigate } from 'react-router-dom';
 
 import styles from './FeedCard.module.scss';
@@ -25,7 +24,7 @@ export const getFeedImg = ({
   id: string;
   isWeather?: boolean;
 }) => {
-  if (feed_type && id && feed_type.hasOwnProperty('Default')) {
+  if (feed_type && id && Object.prototype.hasOwnProperty.call(feed_type, 'Default')) {
     return <FeedLogos feed={id} />;
   }
 
@@ -51,18 +50,30 @@ export const getFeedImg = ({
 };
 
 const FeedCard = ({ feed }: FeedCardProps) => {
-  const { address } = useAccount();
   const navigate = useNavigate();
   const [isFeedDetailsVisible, setIsFeedDetailsVisible] = useState<boolean>(false);
 
-  const { id, decimals, owner, data, update_freq, feed_type } = feed;
+  const { id, decimals, data, update_freq, feed_type } = feed;
 
-  let symbol, rate, timestamp;
+  let rate, timestamp;
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
   if (data && data.length !== 0) {
-    const feed = data[0].data.DefaultPriceFeed ?? data[0].data.CustomPriceFeed ?? data[0].data.CustomNumber ?? data[0].data.CustomString;
+    const feed =
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      data[0].data.DefaultPriceFeed ??
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      data[0].data.CustomPriceFeed ??
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      data[0].data.CustomNumber ??
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      data[0].data.CustomString;
 
-    symbol = feed.symbol;
     rate = feed.rate;
     timestamp = feed.timestamp;
   }
@@ -92,7 +103,9 @@ const FeedCard = ({ feed }: FeedCardProps) => {
             </Space>
           </div>
 
-          {(feed_type.hasOwnProperty('Custom') || feed_type.hasOwnProperty('CustomNumber') || feed_type.hasOwnProperty('CustomString')) && (
+          {(Object.prototype.hasOwnProperty.call(feed_type, 'Custom') ||
+            Object.prototype.hasOwnProperty.call(feed_type, 'CustomNumber') ||
+            Object.prototype.hasOwnProperty.call(feed_type, 'CustomString')) && (
             <div
               className={styles.menu}
               onClick={(e) => {
@@ -153,7 +166,7 @@ const FeedCard = ({ feed }: FeedCardProps) => {
 
 const Skeleton = () => {
   return (
-    <Card hoverable={true} className={styles.feed} style={{minWidth: 200}}>
+    <Card hoverable={true} className={styles.feed} style={{ minWidth: 200 }}>
       <AntdSkeleton active paragraph={{ rows: 3 }} round loading />
     </Card>
   );

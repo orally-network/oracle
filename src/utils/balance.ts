@@ -6,4 +6,4 @@ export const parseBalance = (balance: number) => {
 
 export const formatBalance = (balance: number) => {
   return balance / Math.pow(10, BALANCE_USD_DECIMALS);
-}
+};

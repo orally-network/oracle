@@ -5,55 +5,50 @@ import { NextUIProvider } from '@nextui-org/react';
 
 import { BaseLayout } from 'Components/Layout';
 
-import Pythia from 'Pages/Pythia';
 import Sybil from 'Pages/Sybil';
 import ROUTES from 'Constants/routes';
-import { SubscriptionDetailsPage } from 'Pages/SubscriptionDetailsPage';
 import ErrorPage from 'Pages/ErrorPage';
 import { PythiaDataProvider } from 'Providers/PythiaData';
-import { WeatherAuction } from 'Pages/WeatherAuction';
 import { FeedDetailsPage } from 'Pages/FeedDetailsPage';
 import SybilFeedsProvider from 'Providers/SybilPairs/SybilFeedsProvider';
-import { WeatherDayDetailsWrapper } from 'Pages/WeatherDayDetails';
 import { APIKeys } from 'Pages/APIKeys';
 import { Apollo } from 'Pages/Apollo';
 import { ApolloInstance } from 'Pages/ApolloInstance';
 
-
 const router = createBrowserRouter([
   {
     path: ROUTES.ROOT,
-    element: <BaseLayout/>,
+    element: <BaseLayout />,
     errorElement: (
       <BaseLayout>
-        <ErrorPage/>
+        <ErrorPage />
       </BaseLayout>
     ),
     children: [
       {
         // Default route navigation
         index: true,
-        element: <Navigate to={ROUTES.SYBIL} replace/>,
+        element: <Navigate to={ROUTES.SYBIL} replace />,
       },
       {
         path: ROUTES.SYBIL_CUSTOM_FEEDS,
-        element: <Sybil/>,
+        element: <Sybil />,
       },
       {
         path: `${ROUTES.SYBIL_CUSTOM_FEEDS}/:id`,
-        element: <FeedDetailsPage/>,
+        element: <FeedDetailsPage />,
       },
       {
         path: `${ROUTES.SYBIL}`,
-        element: <APIKeys/>,
+        element: <APIKeys />,
       },
       {
         path: `${ROUTES.APOLLO}`,
-        element: <Apollo/>,
+        element: <Apollo />,
       },
       {
         path: `${ROUTES.APOLLO}/:chainId`,
-        element: <ApolloInstance/>,
+        element: <ApolloInstance />,
       },
       // {
       //   path: ROUTES.PYTHIA,
@@ -78,7 +73,7 @@ const App = () => {
                 router={router}
                 fallbackElement={
                   <Space size="large">
-                    <Spin size="large"/>
+                    <Spin size="large" />
                   </Space>
                 }
               />

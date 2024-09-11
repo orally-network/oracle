@@ -19,33 +19,44 @@ export const SybilTopUp = () => {
 
   const { data: allowedChains, isLoading: isChainsLoading } = useFetchAllowedChains();
 
-  const mappedChains = useMemo(() => allowedChains && mapChainsToNewOptions(allowedChains), [allowedChains]);
+  const mappedChains = useMemo(
+    () => allowedChains && mapChainsToNewOptions(allowedChains),
+    [allowedChains],
+  );
   const mappedTokens = useMemo(() => chain && mapTokensToOptions(chain.tokens), [chain]);
 
   useEffect(() => {
     if (mappedChains && mappedChains.length > 0) {
-      setChain(mappedChains[0]);
-      setToken(mapTokenToOption(mappedChains[0].tokens[0]));
+      const mappedChain = mappedChains[0];
+      const token = mappedChain.tokens[0];
+
+      setChain(mappedChain);
+      if (token) {
+        setToken(mapTokenToOption(token));
+      }
     }
   }, [mappedChains]);
 
   useEffect(() => {
-    if (chain && chain.tokens.length > 0) {
+    if (chain && chain.tokens.length > 0 && chain.tokens[0]) {
       setToken(mapTokenToOption(chain.tokens[0]));
     }
   }, [chain]);
 
-  return  (
+  const enabled = mappedChains && chain && token;
+
+  return (
     <>
       <Button
         color="primary"
         onPress={onOpen}
+        isDisabled={!enabled}
         isLoading={isDepositing || isChainsLoading}
       >
         Top Up
       </Button>
 
-      {mappedChains && chain && token && (
+      {enabled && (
         <TopUpModal
           isOpen={isOpen}
           onOpenChange={onOpenChange}
@@ -60,5 +71,5 @@ export const SybilTopUp = () => {
         />
       )}
     </>
-  )
+  );
 };

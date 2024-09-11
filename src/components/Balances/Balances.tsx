@@ -40,20 +40,20 @@ export const Balances = () => {
         {
           chainId: 42161, // Arbitrum
           balance: balance.Ok || Number(balance.Ok) === 0 ? balance.Ok : 0,
-        }
+        },
       ]);
     } catch (e) {
       console.log(e);
     } finally {
       setIsBalancesLoading(false);
     }
-  }
+  };
 
   const fetchBalances = async () => {
     if (!currentCanister) return;
     setIsBalancesLoading(true);
     const balancePromises = chains.map((chain) =>
-      currentCanister.canister.get_balance(chain.chain_id, remove0x(addressData?.address))
+      currentCanister.canister.get_balance(chain.chain_id, remove0x(addressData?.address)),
     );
 
     try {

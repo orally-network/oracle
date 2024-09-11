@@ -18,7 +18,7 @@ interface TopUpModalProps {
   submit: (chain: number, token: AllowedToken, amount: number) => void;
   setChain: (AllowedChain: any) => void;
   chain: AllowedChain;
-  token: AllowedToken,
+  token: AllowedToken;
   setToken?: (AllowedToken: any) => void;
 }
 
@@ -26,7 +26,6 @@ export const TopUpModal = ({
   isOpen,
   onOpenChange,
   chains,
-  isChainsLoading,
   tokens,
   submit,
   setChain,
@@ -37,7 +36,9 @@ export const TopUpModal = ({
   const { switchChainAsync } = useSwitchChain();
   const { address, chain: currentChain } = useAccount();
 
-  const [amount, setAmount] = useState<number>(token.symbol === 'ETH' ? DEFAULT_TOP_UP_AMOUNT_ETH : DEFAULT_TOP_UP_AMOUNT);
+  const [amount, setAmount] = useState<number>(
+    token.symbol === 'ETH' ? DEFAULT_TOP_UP_AMOUNT_ETH : DEFAULT_TOP_UP_AMOUNT,
+  );
 
   const { balance } = useTokenBalance({
     tokenAddress: token?.address,
@@ -56,14 +57,17 @@ export const TopUpModal = ({
     submit(chain.chainId, token, amount);
   }, [chain.chainId, token, amount]);
 
-  const actions = useMemo(() => [
-    {
-      label: 'Top Up',
-      onPress: handleSubmit,
-      variant: 'primary',
-      disabled: !balance || Number(balance?.formatted) < amount || amount <= 0,
-    },
-  ], [balance?.formatted, handleSubmit, amount]);
+  const actions = useMemo(
+    () => [
+      {
+        label: 'Top Up',
+        onPress: handleSubmit,
+        variant: 'primary',
+        disabled: !balance || Number(balance?.formatted) < amount || amount <= 0,
+      },
+    ],
+    [balance?.formatted, handleSubmit, amount],
+  );
 
   return (
     <Modal
@@ -71,23 +75,14 @@ export const TopUpModal = ({
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       title="Top Up"
-      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       actions={actions}
     >
       <>
-        <NewSelect
-          items={chains}
-          handleChange={setChain}
-          selectedItem={chain}
-          title="Chain"
-        />
+        <NewSelect items={chains} handleChange={setChain} selectedItem={chain} title="Chain" />
 
-        <NewSelect
-          items={tokens}
-          handleChange={setToken}
-          selectedItem={token}
-          title="Token"
-        />
+        <NewSelect items={tokens} handleChange={setToken} selectedItem={token} title="Token" />
 
         <Input
           type="number"
@@ -97,9 +92,7 @@ export const TopUpModal = ({
           onChange={useCallback((e: any) => setAmount(Number(e.target.value)), [])}
         />
 
-        <div className="text-sm text-default-500">
-          Balance: {balance ? balance.formatted : '0'}
-        </div>
+        <div className="text-sm text-default-500">Balance: {balance ? balance.formatted : '0'}</div>
       </>
     </Modal>
   );

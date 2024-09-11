@@ -11,7 +11,7 @@ export const SingleValueChain = ({ children, ...props }) => {
   return (
     <components.SingleValue {...props}>
       <Flex align="center" gap="small">
-        <ChainLogo chain={CHAINS_MAP[children]}/> {CHAINS_MAP[props.data.value].name}
+        <ChainLogo chain={CHAINS_MAP[children]} /> {CHAINS_MAP[props.data.value].name}
       </Flex>
     </components.SingleValue>
   );
@@ -28,7 +28,7 @@ const SingleValueToken = (props: any) => {
   return (
     <components.SingleValue {...props}>
       <Flex align="center" gap="small">
-        <ChainLogo chain={logoParam}/> {props.data.label}
+        <ChainLogo chain={logoParam} /> {props.data.label}
       </Flex>
     </components.SingleValue>
   );

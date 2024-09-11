@@ -1,5 +1,4 @@
 import React, { ReactNode } from 'react';
-import cn from 'classnames';
 import { Button as AntdButton } from 'antd';
 
 import styles from './SecondaryButton.module.scss';

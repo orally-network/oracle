@@ -24,7 +24,7 @@ interface TableProps extends NextUITableProps {
   columns: Column[];
   rows: Row[];
   renderCell?: (row: Row, columnKey: string) => React.ReactNode;
-  isLoading: boolean,
+  isLoading: boolean;
   selectedKeys?: string[];
 }
 
@@ -62,7 +62,8 @@ export const Table = ({
       >
         {(item) => (
           <TableRow key={item.id}>
-            {/* @ts-ignore */}
+            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+            {/* @ts-expect-error */}
             {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
           </TableRow>
         )}

@@ -24,7 +24,7 @@ import { Helmet } from 'react-helmet';
 
 const Pythia = () => {
   const [isWhitelisted, setIsWhitelisted] = useState(true);
-  const [isSubscribing, setIsSubscribing] = useState(false);
+  const [setIsSubscribing] = useState(false);
   const [isNewSubscriptionModalVisible, setIsNewSubscriptionModalVisible] = useState(false);
   const { setFilterByType, setShowMine, setShowInactive } = usePythiaData();
   const { width } = useWindowDimensions();
@@ -76,10 +76,10 @@ const Pythia = () => {
       feed,
     }: {
       label: string;
-      chainId: BigInt;
+      chainId: bigint;
       methodName: string;
       addressToCall: string;
-      frequency: BigInt;
+      frequency: bigint;
       gasLimit: number;
       isRandom: boolean;
       feed: string;
@@ -115,16 +115,16 @@ const Pythia = () => {
 
       return res;
     },
-    [addressData]
+    [addressData],
   );
 
   const stopSubscription = useCallback(
-    async (chainId: BigInt, subId: BigInt) => {
+    async (chainId: bigint, subId: bigint) => {
       const res: GeneralResponse = await pythiaCanister.stop_subscription(
         chainId,
         subId,
         addressData.message,
-        remove0x(addressData.signature)
+        remove0x(addressData.signature),
       );
       console.log({ res });
 
@@ -134,16 +134,16 @@ const Pythia = () => {
 
       return res;
     },
-    [addressData]
+    [addressData],
   );
 
   const startSubscription = useCallback(
-    async (chainId: BigInt, subId: BigInt) => {
+    async (chainId: bigint, subId: bigint) => {
       const res: GeneralResponse = await pythiaCanister.start_subscription(
         chainId,
         subId,
         addressData.message,
-        remove0x(addressData.signature)
+        remove0x(addressData.signature),
       );
       console.log({ res });
 
@@ -153,16 +153,16 @@ const Pythia = () => {
 
       return res;
     },
-    [addressData]
+    [addressData],
   );
 
   const withdraw = useCallback(
-    async (chainId: BigInt) => {
+    async (chainId: bigint) => {
       const res: GeneralResponse = await pythiaCanister.withdraw(
         chainId,
         addressData.message,
         remove0x(addressData.signature),
-        address
+        address,
       );
       console.log({ res });
 
@@ -172,7 +172,7 @@ const Pythia = () => {
 
       return res;
     },
-    [addressData, address]
+    [addressData, address],
   );
 
   return (

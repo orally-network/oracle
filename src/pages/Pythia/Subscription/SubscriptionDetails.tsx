@@ -14,7 +14,6 @@ import {
   mapFeedsToOptions,
 } from 'Utils/helper';
 import logger from 'Utils/logger';
-import { usePythiaData } from 'Providers/PythiaData';
 import { BREAK_POINT_MOBILE, FREQUENCY_UNITS, MIN_FREQUENCY } from 'Constants/ui';
 import { getMethodAddon } from './NewSubscription';
 import { useAccount } from 'wagmi';
@@ -225,9 +224,9 @@ export const SubscriptionDetails = ({ subscription }: SubscriptionDetailsProps) 
           options={useMemo(
             () =>
               mapFeedsToOptions(
-                feeds && feeds.data && feeds.data.items?.length ? feeds.data.items : []
+                feeds && feeds.data && feeds.data.items?.length ? feeds.data.items : [],
               ),
-            [feeds]
+            [feeds],
           )}
           onChange={(e: OptionType) => {
             setFeed(e?.value);

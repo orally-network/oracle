@@ -1,6 +1,6 @@
 import basePickBy from './basePickBy';
 
-const omitBy = function(object, predicate) {
+const omitBy = function (object, predicate) {
   if (!object) {
     return {};
   }

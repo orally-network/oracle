@@ -7,15 +7,14 @@ import { useGetSubscriptions } from 'ApiHooks/useGetSubscriptions';
 import { GeneralResponse, RemoteDataType } from 'Interfaces/common';
 import { Pagination } from 'Components/Pagination/Pagination';
 
-import useSignature from 'Shared/useSignature';
 import styles from '../Pythia.module.scss';
 import { usePythiaData } from 'Providers/PythiaData';
 import { useAccount } from 'wagmi';
 
 interface SubscriptionListProps {
-  startSubscription: (chainId: BigInt, subId: BigInt) => Promise<GeneralResponse>;
-  stopSubscription: (chainId: BigInt, subId: BigInt) => Promise<GeneralResponse>;
-  withdraw: (chainId: BigInt, subId: BigInt) => Promise<GeneralResponse>;
+  startSubscription: (chainId: bigint, subId: bigint) => Promise<GeneralResponse>;
+  stopSubscription: (chainId: bigint, subId: bigint) => Promise<GeneralResponse>;
+  withdraw: (chainId: bigint, subId: bigint) => Promise<GeneralResponse>;
 }
 
 export const SubscriptionList = ({
@@ -24,7 +23,6 @@ export const SubscriptionList = ({
   withdraw,
 }: SubscriptionListProps) => {
   const { addressData } = useGlobalState();
-  const { signMessage } = useSignature();
   const { address } = useAccount();
   const { showInactive, searchQuery, chainIds, showMine, filterByType, page, setPage } =
     usePythiaData();

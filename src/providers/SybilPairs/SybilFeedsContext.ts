@@ -19,11 +19,11 @@ const SybilFeedsContext = createContext<SybilFeedsContextInterface>({
   feedType: 'Default',
   showMine: false,
   searchQuery: '',
-  setPage: (val: number) => {},
-  setSearchQuery: (val: string) => {},
-  setShowMine: (val: boolean) => {},
-  setFeedType: (val: FilterFeedType) => {},
-  debouncedChangeHandler: (val: React.ChangeEvent<HTMLInputElement>) => {},
+  setPage: () => {},
+  setSearchQuery: () => {},
+  setShowMine: () => {},
+  setFeedType: () => {},
+  debouncedChangeHandler: () => {},
   createFeed: () => Promise.resolve(),
 });
 

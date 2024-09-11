@@ -8,8 +8,8 @@ import { type ApolloInstance, useGrantAllowance } from 'Services/apolloService';
 import { Address } from 'viem';
 
 interface ApolloTopUpProps {
-  apolloInstances?: ApolloInstance[],
-  isChainsLoading: boolean,
+  apolloInstances?: ApolloInstance[];
+  isChainsLoading: boolean;
 }
 
 export const ApolloAddSpender = ({ apolloInstances, isChainsLoading }: ApolloTopUpProps) => {
@@ -19,13 +19,19 @@ export const ApolloAddSpender = ({ apolloInstances, isChainsLoading }: ApolloTop
 
   const { mutate: grantAllowance, isPending: isGranting } = useGrantAllowance();
 
-  const apolloAddSpender = useCallback(async (chainId: number, spender: Address) => {
-    onClose();
+  const apolloAddSpender = useCallback(
+    async (chainId: number, spender: Address) => {
+      onClose();
 
-    grantAllowance({ chainId, spender });
-  }, [onClose]);
+      grantAllowance({ chainId, spender });
+    },
+    [onClose],
+  );
 
-  const mappedChains = useMemo(() => apolloInstances && mapChainsToNewOptions(apolloInstances), [apolloInstances]);
+  const mappedChains = useMemo(
+    () => apolloInstances && mapChainsToNewOptions(apolloInstances),
+    [apolloInstances],
+  );
 
   useEffect(() => {
     if (mappedChains && mappedChains.length > 0) {
@@ -33,13 +39,9 @@ export const ApolloAddSpender = ({ apolloInstances, isChainsLoading }: ApolloTop
     }
   }, [mappedChains]);
 
-  return  (
+  return (
     <>
-      <Button
-        color="primary"
-        onPress={onOpen}
-        isLoading={isGranting || isChainsLoading}
-      >
+      <Button color="primary" onPress={onOpen} isLoading={isGranting || isChainsLoading}>
         Add Spender
       </Button>
 
@@ -54,5 +56,5 @@ export const ApolloAddSpender = ({ apolloInstances, isChainsLoading }: ApolloTop
         />
       )}
     </>
-  )
+  );
 };

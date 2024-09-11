@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Menu } from 'antd';
-import { HomeFilled, UnorderedListOutlined, AccountBookFilled } from '@ant-design/icons';
+import { HomeFilled, AccountBookFilled } from '@ant-design/icons';
 
 import styles from './Navigation.module.scss';
 

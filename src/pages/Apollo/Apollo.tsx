@@ -26,27 +26,18 @@ export const Apollo = () => {
         </div>
 
         <AuthorizedActions>
-          <ApolloTopUp
-            apolloInstances={apolloInstances}
-            isChainsLoading={isLoading}
-          />
+          <ApolloTopUp apolloInstances={apolloInstances} isChainsLoading={isLoading} />
 
-          <ApolloAddSpender
-            apolloInstances={apolloInstances}
-            isChainsLoading={isLoading}
-          />
+          <ApolloAddSpender apolloInstances={apolloInstances} isChainsLoading={isLoading} />
         </AuthorizedActions>
       </div>
 
       {isLoading ? (
-        <Spinner className="flex justify-center items-center h-64"/>
+        <Spinner className="flex justify-center items-center h-64" />
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {apolloInstances?.map((instance: ApolloInstance) => (
-            <ApolloInstanceCard
-              key={instance.chainId}
-              instance={instance}
-            />
+            <ApolloInstanceCard key={instance.chainId} instance={instance} />
           ))}
         </div>
       )}

@@ -1,4 +1,4 @@
-const basePickBy = function(object, paths, predicate) {
+const basePickBy = function (object, paths, predicate) {
   const result = {};
 
   paths.forEach((path) => {

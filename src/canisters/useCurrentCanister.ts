@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import pythiaCanister from './pythiaCanister';
-import sybilCanister from "./sybilCanister";
+import sybilCanister from './sybilCanister';
 
 type Canister = {
   name: string;
@@ -22,11 +22,11 @@ const CANISTERS: Canister[] = [
     canister: null,
     // canister: apolloCanister,
   },
-]
+];
 
 type useCurrentCanisterResult = {
-  currentCanister: typeof CANISTERS[0] | null;
-}
+  currentCanister: (typeof CANISTERS)[0] | null;
+};
 
 export const useCurrentCanister = (): useCurrentCanisterResult => {
   const location = useLocation();
@@ -38,12 +38,9 @@ export const useCurrentCanister = (): useCurrentCanisterResult => {
     if (canister) {
       setRoute(canister.name);
     }
-
-  }, [location])
-  
+  }, [location]);
 
   return {
     currentCanister: CANISTERS.find((c) => c.name === route) || null,
-  }
-  
-}
+  };
+};

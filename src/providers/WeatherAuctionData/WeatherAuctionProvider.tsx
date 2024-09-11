@@ -19,10 +19,12 @@ import { ARBITRUM_CHAIN_ID, TICKET_PRICE } from './contants';
 export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode }) => {
   const { city } = useParams();
   const config = useConfig();
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
   const prediction = city ? predictionsMap[city] : predictionsMap.denver;
 
   const [ticketPrice, setTicketPrice] = useState(TICKET_PRICE);
-  const [predictionChainId, setPredictionChainId] = useState(ARBITRUM_CHAIN_ID);
+  const [predictionChainId] = useState(ARBITRUM_CHAIN_ID);
   const [getBids, { loading, data: bidsData }] = useLazyQuery(GET_BIDS);
   const { address, chain: currentChain } = useAccount();
   const { switchChain } = useSwitchChain();
@@ -43,6 +45,8 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
       feed_type: [],
     },
   });
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
   const { rate, decimals } = feedsData.data.items?.[0]?.data?.[0]?.data?.DefaultPriceFeed ?? {};
   const ethRate = rate ? formatUnits(rate, decimals) : null;
 
@@ -56,7 +60,9 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
       ...weatherAuctionContract,
       value: parseUnits(
         String(ticketPrice * (ticketAmount ? +ticketAmount : 1)),
-        CHAINS_MAP[predictionChainId].nativeCurrency.decimals
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        CHAINS_MAP[predictionChainId].nativeCurrency.decimals,
       ), // amount of eth applied to transaction
       functionName: 'bid',
       args: [temp], // in format with decimals=1, e.g. 16.6C = 166
@@ -91,7 +97,7 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
           pending: 'Withdrawing...',
           success: 'Withdrawn!',
           error: 'Error withdrawing',
-        }
+        },
       );
       setUserWinningBalance(0);
       return res;
@@ -116,6 +122,8 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
         setUserWinningBalance(0);
         throw new Error(`No balance found for ${address}:${userBalance}`);
       } else {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         setUserWinningBalance(+formatEther(userBalance));
       }
     } catch (err) {
@@ -176,6 +184,8 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
       });
       console.log({ Ticket: data });
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       setTicketPrice(Number(formatEther(data)));
       return data;
     } catch (err) {
@@ -199,7 +209,9 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
 
   useEffect(() => {
     if (isAuctionOpen !== null) {
-      getBids({ variables: { day: day ?? currentDay, contract: prediction.contract[predictionChainId] } });
+      getBids({
+        variables: { day: day ?? currentDay, contract: prediction.contract[predictionChainId] },
+      });
     }
   }, [isAuctionOpen, day]);
 
@@ -211,6 +223,8 @@ export const WeatherAuctionProvider = ({ children }: { children: React.ReactNode
     }
 
     return bidsData.winnerDeclareds.map((winner: Winner) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       const eth = Number(formatEther(winner.winnerPrize)).toFixed(4);
 
       return {

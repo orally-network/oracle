@@ -19,7 +19,10 @@ export const SybilTopUp = () => {
 
   const { data: allowedChains, isLoading: isChainsLoading } = useFetchAllowedChains();
 
-  const mappedChains = useMemo(() => allowedChains && mapChainsToNewOptions(allowedChains), [allowedChains]);
+  const mappedChains = useMemo(
+    () => allowedChains && mapChainsToNewOptions(allowedChains),
+    [allowedChains],
+  );
   const mappedTokens = useMemo(() => chain && mapTokensToOptions(chain.tokens), [chain]);
 
   useEffect(() => {
@@ -35,13 +38,9 @@ export const SybilTopUp = () => {
     }
   }, [chain]);
 
-  return  (
+  return (
     <>
-      <Button
-        color="primary"
-        onPress={onOpen}
-        isLoading={isDepositing || isChainsLoading}
-      >
+      <Button color="primary" onPress={onOpen} isLoading={isDepositing || isChainsLoading}>
         Top Up
       </Button>
 
@@ -60,5 +59,5 @@ export const SybilTopUp = () => {
         />
       )}
     </>
-  )
+  );
 };

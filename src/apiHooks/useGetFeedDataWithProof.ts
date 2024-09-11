@@ -22,7 +22,7 @@ export const useGetFeedDataWithProof = ({
     [dynamicQueryKeys.feedDataWithProof(id)],
     async () => {
       const response = await fetch(
-        `https://${config.sybil_canister_id}.icp0.io/get_feed_data_with_proof?id=${id}`
+        `https://${config.sybil_canister_id}.icp0.io/get_feed_data_with_proof?id=${id}`,
       );
 
       const signatureData = await response.json();
@@ -41,7 +41,7 @@ export const useGetFeedDataWithProof = ({
     {
       staleTime: 30 * 1000,
       keepPreviousData: true,
-    }
+    },
   );
 
   return {

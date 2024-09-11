@@ -16,7 +16,7 @@ const GlobalStateContext = createContext<GlobalStateContextInterface>({
     address: '',
     executionAddress: '',
   },
-  setAddressData: (addressData: AddressData) => {},
+  setAddressData: () => {},
   chains: [] as Chain[],
   isChainsLoading: false,
 });

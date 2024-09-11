@@ -25,14 +25,17 @@ export const AddSpenderModal = ({
 }: TopUpModalProps) => {
   const [spenderAddress, setSpenderAddress] = useState<Address>(`0x`);
 
-  const actions = useMemo(() => [
-    {
-      label: 'Add Spender',
-      onPress: () => submit(chain.chainId, spenderAddress),
-      variant: 'primary',
-      disabled: !spenderAddress,
-    },
-  ], [spenderAddress, chain.chainId]);
+  const actions = useMemo(
+    () => [
+      {
+        label: 'Add Spender',
+        onPress: () => submit(chain.chainId, spenderAddress),
+        variant: 'primary',
+        disabled: !spenderAddress,
+      },
+    ],
+    [spenderAddress, chain.chainId],
+  );
 
   return (
     <Modal
@@ -40,16 +43,12 @@ export const AddSpenderModal = ({
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       title="Add Spender"
-      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       actions={actions}
     >
       <>
-        <NewSelect
-          items={chains}
-          handleChange={setChain}
-          selectedItem={chain}
-          title="Chain"
-        />
+        <NewSelect items={chains} handleChange={setChain} selectedItem={chain} title="Chain" />
 
         <Input
           type="string"

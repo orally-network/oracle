@@ -1,7 +1,5 @@
 import { MAX_FREQUENCY } from 'Constants/ui';
 import { FrequencyType, Unit } from 'Interfaces/subscription';
-import { TOKEN_IMAGES } from 'Constants/tokens';
-import { CHAINS_MAP } from 'Constants/chains';
 
 export const RAND_METHOD_TYPES = [
   'string',

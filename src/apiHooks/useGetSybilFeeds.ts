@@ -65,7 +65,7 @@ export const useGetSybilFeeds = ({
               },
             ],
         [], //TODO: add msg and sig
-        []
+        [],
       );
 
       feedsResponse.Ok.items.forEach((feed: Feed) => {

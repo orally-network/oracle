@@ -1,4 +1,4 @@
-import { Card, Flex, Layout, Space, Typography } from 'antd';
+import { Flex, Layout, Space, Typography } from 'antd';
 import { useParams, Navigate } from 'react-router-dom';
 import React from 'react';
 import { Actions } from './Actions';
@@ -14,7 +14,7 @@ import { ExportOutlined } from '@ant-design/icons';
 import IconLink from 'Components/IconLink';
 import { truncateEthAddress } from 'Utils/addressUtils';
 import { predictionsMap } from 'Constants/predictions';
-import ROUTES from 'Constants/routes.ts';
+import ROUTES from 'Constants/routes';
 import { useWeatherData } from 'Providers/WeatherAuctionData/useWeatherData';
 
 export const WeatherAuction = () => {
@@ -23,7 +23,11 @@ export const WeatherAuction = () => {
   const { predictionChainId } = useWeatherData();
   const { city } = useParams();
 
-  if (!city || !predictionsMap[city]) {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  const predictionCity = predictionsMap[city];
+
+  if (!city || !predictionCity) {
     return <Navigate to={`/${ROUTES.WEATHER_PREDICTION}/denver`} replace />;
   }
 
@@ -33,10 +37,9 @@ export const WeatherAuction = () => {
         <Space size="middle" direction="vertical" style={{ width: '100%', position: 'relative' }}>
           <Flex align="center" justify="space-between" gap={8}>
             <Typography.Title style={{ minWidth: '70px' }} level={3}>
-              Weather Prediction (
-              {truncateEthAddress(predictionsMap[city].contract[predictionChainId])}){' '}
+              Weather Prediction ({truncateEthAddress(predictionCity.contract[predictionChainId])}){' '}
               <IconLink
-                link={`https://arbiscan.io/address/${predictionsMap[city].contract[predictionChainId]}`}
+                link={`https://arbiscan.io/address/${predictionCity.contract[predictionChainId]}`}
                 IconComponent={ExportOutlined}
               />
             </Typography.Title>

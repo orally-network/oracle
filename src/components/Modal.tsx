@@ -1,4 +1,12 @@
-import { Modal as NextUIModal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from '@nextui-org/react';
+import {
+  Modal as NextUIModal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure,
+} from '@nextui-org/react';
 
 export const useModal = () => {
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
@@ -15,7 +23,7 @@ interface Action {
   label: string;
   onPress: () => void;
   variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'default';
-  disabled?: boolean,
+  disabled?: boolean;
 }
 
 interface ModalProps {
@@ -27,20 +35,21 @@ interface ModalProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
 }
 
-export const Modal = ({ isOpen, onOpenChange, actions = [], children, title, size }: ModalProps) => {
+export const Modal = ({
+  isOpen,
+  onOpenChange,
+  actions = [],
+  children,
+  title,
+  size,
+}: ModalProps) => {
   return (
-    <NextUIModal
-      size={size}
-      isOpen={isOpen}
-      onOpenChange={onOpenChange}
-    >
+    <NextUIModal size={size} isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
-            <ModalBody>
-              {children}
-            </ModalBody>
+            <ModalBody>{children}</ModalBody>
 
             <ModalFooter>
               <Button color="danger" variant="bordered" onPress={onClose}>
@@ -61,5 +70,5 @@ export const Modal = ({ isOpen, onOpenChange, actions = [], children, title, siz
         )}
       </ModalContent>
     </NextUIModal>
-  )
-}
+  );
+};

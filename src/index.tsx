@@ -64,6 +64,8 @@ const metadata = {
 const projectId = config.wagmiConnectProjectId;
 
 const wagmiConfig = defaultWagmiConfig({
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
   chains: CHAINS,
   projectId,
   metadata,
@@ -85,6 +87,8 @@ createWeb3Modal({
 
 const container = document.getElementById('app');
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 const root = createRoot(container);
 
 import('./rollbarSetup').then(() => {
@@ -94,9 +98,9 @@ import('./rollbarSetup').then(() => {
         <WagmiProvider config={wagmiConfig}>
           <QueryClientProvider client={queryClient}>
             <ApolloProvider client={client}>
-              <App/>
+              <App />
 
-              <Toaster/>
+              <Toaster />
 
               <ToastContainer
                 position="top-right"
@@ -113,6 +117,6 @@ import('./rollbarSetup').then(() => {
           </QueryClientProvider>
         </WagmiProvider>
       </ErrorBoundary>
-    </RollbarProvider>
+    </RollbarProvider>,
   );
 });

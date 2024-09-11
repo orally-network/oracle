@@ -10,8 +10,8 @@ import { nativeEthToken } from 'Constants/tokens';
 import { useApolloDeposit } from './useApolloDeposit';
 
 interface ApolloTopUpProps {
-  apolloInstances?: ApolloInstance[],
-  isChainsLoading: boolean,
+  apolloInstances?: ApolloInstance[];
+  isChainsLoading: boolean;
 }
 
 const mappedNativeToken = mapTokenToOption(nativeEthToken);
@@ -27,7 +27,10 @@ export const ApolloTopUp = ({ apolloInstances, isChainsLoading }: ApolloTopUpPro
     chain,
   });
 
-  const mappedChains = useMemo(() => apolloInstances && mapChainsToNewOptions(apolloInstances), [apolloInstances]);
+  const mappedChains = useMemo(
+    () => apolloInstances && mapChainsToNewOptions(apolloInstances),
+    [apolloInstances],
+  );
 
   useEffect(() => {
     if (mappedChains && mappedChains.length > 0) {
@@ -35,13 +38,9 @@ export const ApolloTopUp = ({ apolloInstances, isChainsLoading }: ApolloTopUpPro
     }
   }, [mappedChains]);
 
-  return  (
+  return (
     <>
-      <Button
-        color="primary"
-        onPress={onOpen}
-        isLoading={isDepositing || isChainsLoading}
-      >
+      <Button color="primary" onPress={onOpen} isLoading={isDepositing || isChainsLoading}>
         Top Up
       </Button>
 
@@ -59,5 +58,5 @@ export const ApolloTopUp = ({ apolloInstances, isChainsLoading }: ApolloTopUpPro
         />
       )}
     </>
-  )
+  );
 };

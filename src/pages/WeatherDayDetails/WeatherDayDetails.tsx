@@ -32,7 +32,7 @@ export const WeatherDayDetails = () => {
     dayWinners.length > 0
       ? dayWinners.reduce(
           (acc, currentValue) => acc + +utils.formatEther(currentValue.winnerPrize),
-          0
+          0,
         )
       : 0;
   console.log({ dayWinners });
@@ -67,7 +67,7 @@ export const WeatherDayDetails = () => {
 
         const decodedCallData = callDataInterface.decodeFunctionData(
           'updateTemperature',
-          decodedMulticallInput?.[0]?.[0]?.[1]
+          decodedMulticallInput?.[0]?.[0]?.[1],
         );
 
         console.log({ resCallData: decodedCallData });

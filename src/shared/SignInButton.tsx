@@ -6,9 +6,7 @@ import { useAccount } from 'wagmi';
 import logger from 'Utils/logger';
 import useSignature from 'Shared/useSignature';
 
-interface SignInButtonProps extends ButtonProps {
-}
-export const SignInButton = (props: SignInButtonProps) => {
+export const SignInButton = (props: ButtonProps) => {
   const [isSigning, setIsSigning] = useState(false);
   const { signMessage } = useSignature();
   const { chain: currentChain } = useAccount();

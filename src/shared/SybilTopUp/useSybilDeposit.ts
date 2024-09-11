@@ -12,31 +12,36 @@ interface UseSybilDepositParams {
 export const useSybilDeposit = ({ setIsModalVisible }: UseSybilDepositParams) => {
   const { data: treasureAddress } = useFetchSybilTreasureAddress();
 
-  const { writeContractWithWait, isPending: isTransferring } = useWriteContractWithWait('Transferring funds to Sybil');
+  const { writeContractWithWait, isPending: isTransferring } = useWriteContractWithWait(
+    'Transferring funds to Sybil',
+  );
   const { mutate: deposit, isPending: isDepositing } = useDeposit();
 
-  const sybilDeposit = useCallback(async (chainId: number, token: AllowedToken, amount: number) => {
-    setIsModalVisible(false);
+  const sybilDeposit = useCallback(
+    async (chainId: number, token: AllowedToken, amount: number) => {
+      setIsModalVisible(false);
 
-    // todo: handle if token is eth, so make another deposit transfer
-    const hash = await writeContractWithWait({
-      address: token.address,
-      abi: erc20Abi,
-      functionName: 'transfer',
-      args: [treasureAddress, parseUnits(String(amount || 0), Number(token.decimals))],
-      chainId,
-    });
-
-    if (hash) {
-      deposit({
+      // todo: handle if token is eth, so make another deposit transfer
+      const hash = await writeContractWithWait({
+        address: token.address,
+        abi: erc20Abi,
+        functionName: 'transfer',
+        args: [treasureAddress, parseUnits(String(amount || 0), Number(token.decimals))],
         chainId,
-        tx_hash: hash,
       });
-    }
-  }, [setIsModalVisible, treasureAddress]);
+
+      if (hash) {
+        deposit({
+          chainId,
+          tx_hash: hash,
+        });
+      }
+    },
+    [setIsModalVisible, treasureAddress],
+  );
 
   return {
     isDepositing: isDepositing || isTransferring,
     sybilDeposit,
   };
-}
+};

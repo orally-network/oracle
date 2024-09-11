@@ -27,7 +27,7 @@ interface ControlProps {
   subscribe?: () => void;
   disabled?: boolean;
   subscribed?: boolean;
-  subId?: BigInt;
+  subId?: bigint;
   stopSubscription?: any;
   startSubscription?: any;
   withdraw?: any;
@@ -66,7 +66,9 @@ const Control = ({
     return <SignInButton chain={chain} />;
   }
 
-  const formattedBalance = (Number(balance) / Math.pow(10, decimals ?? chain.nativeCurrency.decimals)).toFixed(3);
+  const formattedBalance = (
+    Number(balance) / Math.pow(10, decimals ?? chain.nativeCurrency.decimals)
+  ).toFixed(3);
 
   return (
     <div className={styles.control}>

@@ -1,16 +1,12 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import viteTsconfigPaths from 'vite-tsconfig-paths'
-import path from 'path'
-import svgr from 'vite-plugin-svgr'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import viteTsconfigPaths from 'vite-tsconfig-paths';
+import path from 'path';
+import svgr from 'vite-plugin-svgr';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    react(),
-    viteTsconfigPaths(),
-    svgr(),
-  ],
+  plugins: [react(), viteTsconfigPaths(), svgr()],
   resolve: {
     alias: {
       Components: path.resolve(__dirname, './src/components/'),
@@ -31,5 +27,5 @@ export default defineConfig({
       SVGIcons: path.resolve(__dirname, './src/SVGIcons/'),
       Hooks: path.resolve(__dirname, './src/hooks/'),
     },
-  }
-})
+  },
+});

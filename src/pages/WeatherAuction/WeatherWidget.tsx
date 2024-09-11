@@ -37,7 +37,11 @@ export const WeatherWidget = () => {
   const isMobile = width < BREAK_POINT_MOBILE;
   const { prediction } = useWeatherData();
 
-  const { weatherSource1, weatherSource2, weatherSource3 } = getWeatherSources(prediction.name, prediction.lat, prediction.lon);
+  const { weatherSource1, weatherSource2, weatherSource3 } = getWeatherSources(
+    prediction.name,
+    prediction.lat,
+    prediction.lon,
+  );
 
   const fetchWeatherData = async () => {
     setIsWeatherDataLoading(true);

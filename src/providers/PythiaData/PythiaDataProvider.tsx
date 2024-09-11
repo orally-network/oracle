@@ -16,7 +16,7 @@ const PythiaDataProvider = ({ children }: any) => {
   const [filterByType, setFilterByType] = useState<FilterType>('Empty');
   const [chainIds, setChainIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [balance, setBalance] = useState(0);
+  const [balance] = useState(0);
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
   const [pma, setPma] = useState<`0x${string}`>('0x');
 
@@ -66,7 +66,7 @@ const PythiaDataProvider = ({ children }: any) => {
         chainId,
         tx_hash,
         addressData.message,
-        remove0x(addressData.signature)
+        remove0x(addressData.signature),
       );
 
       console.log('deposit res', res);
@@ -76,7 +76,7 @@ const PythiaDataProvider = ({ children }: any) => {
       }
       return res;
     },
-    [addressData]
+    [addressData],
   );
 
   useEffect(() => {

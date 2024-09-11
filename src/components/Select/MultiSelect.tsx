@@ -67,8 +67,8 @@ export const MultiSelect = (props: any & { isToken: boolean }) => {
       components={{
         Option: props.isToken ? OptionToken : OptionChain,
         MultiValueContainer: props.isToken ? MultiValueContainerToken : MultiValueContainerChain,
-        IndicatorSeparator: () => null
-    }}
+        IndicatorSeparator: () => null,
+      }}
       {...props}
     />
   );

@@ -11,28 +11,31 @@ const useSignature = ({ canister = 'pythia' } = {}) => {
   const { signMessageAsync } = useSignMessage();
   const { setAddressData } = useGlobalState();
   const { chains } = usePythiaData();
-  
-  const signMessage = useCallback(async (chainId) => {
-    const message = new SiweMessage({
-      domain: window.location.host,
-      address,
-      statement: `Sign in with Ethereum to the ${canister}.`,
-      uri: window.location.origin,
-      version: '1',
-      chainId: String(chainId),
-    });
-    const messageString = message.prepareMessage();
 
-    const signature = await signMessageAsync({
-      message: messageString,
-    });
+  const signMessage = useCallback(
+    async (chainId) => {
+      const message = new SiweMessage({
+        domain: window.location.host,
+        address,
+        statement: `Sign in with Ethereum to the ${canister}.`,
+        uri: window.location.origin,
+        version: '1',
+        chainId: String(chainId),
+      });
+      const messageString = message.prepareMessage();
 
-    const data = setLocalStorageAddress(address, messageString, signature);
+      const signature = await signMessageAsync({
+        message: messageString,
+      });
 
-    console.log({ data });
-    setAddressData(data);
-  }, [address, signMessageAsync, setAddressData, chains, canister]);
-  
+      const data = setLocalStorageAddress(address, messageString, signature);
+
+      console.log({ data });
+      setAddressData(data);
+    },
+    [address, signMessageAsync, setAddressData, chains, canister],
+  );
+
   return {
     signMessage,
   };

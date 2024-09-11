@@ -1,11 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { Space, Modal, Input } from 'antd';
-import { useBalance } from 'wagmi';
 import { toast } from 'react-toastify';
 import jsonSize from 'json-size';
 
 import Button from 'Components/Button';
-import useSignature from 'Shared/useSignature';
 import { useGlobalState } from 'Providers/GlobalState';
 import { CHAINS_MAP } from 'Constants/chains';
 import Control from 'Shared/Control';
@@ -15,7 +13,6 @@ import { remove0x } from 'Utils/addressUtils';
 
 import styles from './CustomFeed.scss';
 import { useTokenBalance } from 'Services/wagmiService';
-import { Address } from 'viem';
 
 const TREASURER_CHAIN = CHAINS_MAP[137];
 const USDT_TOKEN_POLYGON = '0xc2132D05D31c914a87C6611C10748AEb04B58e8F';
@@ -32,17 +29,16 @@ const CustomFeed = () => {
   const [sources, setSources] = useState([
     { uri: '', resolver: '', bytes_amount: 0, locked: false, isLoading: false, isInvalid: false },
   ]);
-  const [uri, setUri] = useState('');
-  const [resolver, setResolver] = useState('');
+  const [uri] = useState('');
+  const [resolver] = useState('');
 
-  const { signMessage } = useSignature({ canister: 'sybil' });
   const { addressData } = useGlobalState();
 
-//  const { data: executionBalance } = useBalance({
-//    address: addressData?.executionAddress,
-//    chainId: TREASURER_CHAIN.id,
-//    token: USDT_TOKEN_POLYGON,
-//  });
+  //  const { data: executionBalance } = useBalance({
+  //    address: addressData?.executionAddress,
+  //    chainId: TREASURER_CHAIN.id,
+  //    token: USDT_TOKEN_POLYGON,
+  //  });
 
   const { balance: executionBalance } = useTokenBalance({
     tokenAddress: USDT_TOKEN_POLYGON,
@@ -76,7 +72,7 @@ const CustomFeed = () => {
               return 'Something went wrong. Try again later.';
             },
           },
-        }
+        },
       );
 
       console.log({ depositResult });
@@ -101,7 +97,7 @@ const CustomFeed = () => {
               return 'Something went wrong. Try again later.';
             },
           },
-        }
+        },
       );
 
       console.log({ customFeedRes });
@@ -117,36 +113,29 @@ const CustomFeed = () => {
 
   const getMethods = useCallback(
     (index) => {
-      // TODO: refactor this useCallback cannot be called inside a callback
-      const handleChangeUri = useCallback(
-        (e) =>
-          setSources(
-            sources.map((source, i) => {
-              console.log({ source, i, index, sources }, e.target.value);
-              if (index === i) return { ...source, uri: e.target.value };
-              return source;
-            })
-          ),
-        [sources]
-      );
+      const handleChangeUri = (e) =>
+        setSources(
+          sources.map((source, i) => {
+            console.log({ source, i, index, sources }, e.target.value);
+            if (index === i) return { ...source, uri: e.target.value };
+            return source;
+          }),
+        );
 
-      const handleChangeResolver = useCallback(
-        (e) =>
-          setSources(
-            sources.map((source, i) => {
-              if (index === i) return { ...source, resolver: e.target.value };
-              return source;
-            })
-          ),
-        [sources]
-      );
+      const handleChangeResolver = (e) =>
+        setSources(
+          sources.map((source, i) => {
+            if (index === i) return { ...source, resolver: e.target.value };
+            return source;
+          }),
+        );
 
-      const handleSubmitSource = useCallback(async () => {
+      const handleSubmitSource = async () => {
         setSources(
           sources.map((source, i) => {
             if (index === i) return { ...source, isLoading: true };
             return source;
-          })
+          }),
         );
 
         try {
@@ -174,10 +163,10 @@ const CustomFeed = () => {
             sources.map((source, i) => {
               if (index === i) return { ...source, isLoading: false, isInvalid: true };
               return source;
-            })
+            }),
           );
         }
-      }, [sources]);
+      };
 
       return {
         handleChangeUri,
@@ -185,7 +174,7 @@ const CustomFeed = () => {
         handleSubmitSource,
       };
     },
-    [sources]
+    [sources],
   );
 
   console.log({ addressData });

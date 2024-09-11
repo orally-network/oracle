@@ -41,7 +41,6 @@ jobs:
 
       - name: Install
         run: |
-          rm -rf dist
           npm install
 
       - name: Build App

@@ -23,12 +23,12 @@ const GlobalStateProvider = ({ children }: { children: React.ReactNode }) => {
 
   useAccountEffect({
     onConnect(data) {
-      console.log('connected', data)
+      console.log('connected', data);
     },
     onDisconnect() {
-      console.log('disconnected')
+      console.log('disconnected');
     },
-  })
+  });
 
   const fetchChains = async () => {
     setIsChainsLoading(true);

@@ -84,7 +84,7 @@ export const TodayBidsTable = ({
 
   const chartData = bids.reduce<ChartItem[]>((acc, record) => {
     const index = acc.findIndex(
-      (item: ChartItem) => Number(item.temperatureGuess) === Number(record.temperatureGuess) / 10
+      (item: ChartItem) => Number(item.temperatureGuess) === Number(record.temperatureGuess) / 10,
     );
 
     if (index !== -1) {
@@ -121,7 +121,7 @@ export const TodayBidsTable = ({
           scroll={{ y: 240 }}
           loading={isWinnersLoading}
           rowKey="id"
-          rowClassName={(record, index) => {
+          rowClassName={(record) => {
             return record.bidder === address?.toLowerCase() ? 'highlight' : '';
           }}
         />
@@ -136,7 +136,7 @@ export const TodayBidsTable = ({
       ) : (
         renderChart(
           chartData.sort((a: any, b: any) => a.temperatureGuess - b.temperatureGuess),
-          isMobile
+          isMobile,
         )
       )}
     </Card>

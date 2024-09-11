@@ -21,7 +21,7 @@ export type AllowedDomain = {
   requestCount: number;
   requestCountPerMethod: Record<string, number>;
   requestLimit: number;
-  requestCountToday: number,
+  requestCountToday: number;
 };
 
 export type ApiKey = Omit<AllowedDomain, 'domain'> & {
@@ -29,7 +29,7 @@ export type ApiKey = Omit<AllowedDomain, 'domain'> & {
   bannedDomains: string[];
   requestCountPerDomain: Record<string, number>;
   requestLimitByDomain: Record<string, number>;
-}
+};
 
 // query
 export const useFetchApiKeys = () => {
@@ -39,7 +39,10 @@ export const useFetchApiKeys = () => {
     queryKey: ['apiKeys', addressData],
     queryFn: async () => {
       try {
-        const promise = sybilCanister.get_api_keys(addressData.message, remove0x(addressData.signature)) as Promise<GeneralResponse>;
+        const promise = sybilCanister.get_api_keys(
+          addressData.message,
+          remove0x(addressData.signature),
+        ) as Promise<GeneralResponse>;
         const wrappedPromise = okOrErrResponseWrapper(promise);
 
         const res = await wrappedPromise;
@@ -82,7 +85,10 @@ export const useFetchAllowedDomains = () => {
     queryKey: ['allowedDomains', addressData],
     queryFn: async () => {
       try {
-        const promise = sybilCanister.get_allowed_domains(addressData.message, remove0x(addressData.signature)) as Promise<GeneralResponse>;
+        const promise = sybilCanister.get_allowed_domains(
+          addressData.message,
+          remove0x(addressData.signature),
+        ) as Promise<GeneralResponse>;
         const wrappedPromise = okOrErrResponseWrapper(promise);
 
         const res = await wrappedPromise;
@@ -120,9 +126,11 @@ export const useGenerateApiKey = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    // @ts-ignore
     mutationFn: async () => {
-      const promise = sybilCanister.generate_api_key(addressData.message, remove0x(addressData.signature)) as Promise<GeneralResponse>;
+      const promise = sybilCanister.generate_api_key(
+        addressData.message,
+        remove0x(addressData.signature),
+      ) as Promise<GeneralResponse>;
       const wrappedPromise = okOrErrResponseWrapper(promise);
 
       const res = await toastWrapper(wrappedPromise);
@@ -146,9 +154,13 @@ export const useGrantDomain = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    // @ts-ignore
     mutationFn: async (domain: string) => {
-      const promise = sybilCanister.grant(domain, [DEFAULT_DOMAIN_LIMIT_PER_DAY], addressData.message, remove0x(addressData.signature)) as Promise<GeneralResponse>;
+      const promise = sybilCanister.grant(
+        domain,
+        [DEFAULT_DOMAIN_LIMIT_PER_DAY],
+        addressData.message,
+        remove0x(addressData.signature),
+      ) as Promise<GeneralResponse>;
       const wrappedPromise = okOrErrResponseWrapper(promise);
 
       const res = await toastWrapper(wrappedPromise, 'Grant Domain');
@@ -168,51 +180,53 @@ export const useGrantDomain = () => {
 
 // todo: add to tokens coin of the chain + change transfer for this case
 // query
-export const useFetchAllowedChains = () => useQuery({
-  queryKey: ['allowedChains'],
-  queryFn: async () => {
-    try {
-      const res: any = await sybilCanister.get_allowed_chains();
+export const useFetchAllowedChains = () =>
+  useQuery({
+    queryKey: ['allowedChains'],
+    queryFn: async () => {
+      try {
+        const res: any = await sybilCanister.get_allowed_chains();
 
-      // formatter
-      const allowedChains: AllowedChain[] = res.map(([chainId, chainData]: any) => ({
-        chainId: Number(chainId),
-        symbol: chainData.coin_symbol,
-        tokens: chainData.erc20_contracts.map((tokenData: any) => ({
-          address: tokenData.erc20_contract,
-          symbol: tokenData.token_symbol,
-          decimals: tokenData.decimals,
-        })),
-      }));
+        // formatter
+        const allowedChains: AllowedChain[] = res.map(([chainId, chainData]: any) => ({
+          chainId: Number(chainId),
+          symbol: chainData.coin_symbol,
+          tokens: chainData.erc20_contracts.map((tokenData: any) => ({
+            address: tokenData.erc20_contract,
+            symbol: tokenData.token_symbol,
+            decimals: tokenData.decimals,
+          })),
+        }));
 
-      logger.log('[service] queried allowed chains', { res, allowedChains });
+        logger.log('[service] queried allowed chains', { res, allowedChains });
 
-      return allowedChains;
-    } catch (error) {
-      logger.error('[service] Failed to query allowed chains', error);
-    }
+        return allowedChains;
+      } catch (error) {
+        logger.error('[service] Failed to query allowed chains', error);
+      }
 
-    return;
-  },
-});
+      return;
+    },
+  });
 
 // query
-export const useFetchSybilTreasureAddress = () => useQuery({
-  queryKey: ['treasureAddress'],
-  queryFn: async () => {
-    try {
-      const res: Address = await sybilCanister.get_treasure_address() as Address;
+export const useFetchSybilTreasureAddress = () =>
+  useQuery({
+    queryKey: ['treasureAddress'],
+    queryFn: async () => {
+      try {
+        const res: Address = (await sybilCanister.get_treasure_address()) as Address;
 
-      logger.log('[service] queried treasurer address', { res });
+        logger.log('[service] queried treasurer address', { res });
 
-      return res;
-    } catch (error) {
-      logger.error('[service] Failed to query treasurer address', error);
-    }
+        return res;
+      } catch (error) {
+        logger.error('[service] Failed to query treasurer address', error);
+      }
 
-    return;
-  },
-});
+      return;
+    },
+  });
 
 // mutate
 export const useDeposit = () => {
@@ -220,14 +234,13 @@ export const useDeposit = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    // @ts-ignore
-    mutationFn: async ({ chainId, tx_hash }: { chainId: number, tx_hash: Hash }) => {
+    mutationFn: async ({ chainId, tx_hash }: { chainId: number; tx_hash: Hash }) => {
       const promise = sybilCanister.deposit(
         chainId,
         tx_hash,
         [], // grantee
         addressData.message,
-        remove0x(addressData.signature)
+        remove0x(addressData.signature),
       ) as Promise<GeneralResponse>;
       const wrappedPromise = okOrErrResponseWrapper(promise);
 
@@ -277,22 +290,23 @@ export const useFetchBalance = () => {
 };
 
 // query
-export const useFetchBaseFee = () => useQuery({
-  queryKey: ['baseFee'],
-  queryFn: async () => {
-    try {
-      const res = await sybilCanister.get_base_fee() as bigint;
+export const useFetchBaseFee = () =>
+  useQuery({
+    queryKey: ['baseFee'],
+    queryFn: async () => {
+      try {
+        const res = (await sybilCanister.get_base_fee()) as bigint;
 
-      // logger.log('[service][sybil] queried base fee', { res });
+        // logger.log('[service][sybil] queried base fee', { res });
 
-      return res;
-    } catch (error) {
-      logger.error('[service] Failed to query base fee', error);
-    }
+        return res;
+      } catch (error) {
+        logger.error('[service] Failed to query base fee', error);
+      }
 
-    return;
-  },
-});
+      return;
+    },
+  });
 
 // mutate
 export const useDeleteApiKey = () => {
@@ -300,7 +314,6 @@ export const useDeleteApiKey = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    // @ts-ignore
     mutationFn: async (apiKey: string) => {
       const promise = sybilCanister.revoke_key(
         apiKey,
@@ -328,7 +341,6 @@ export const useBanDomain = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    // @ts-ignore
     mutationFn: async (domain: string) => {
       const promise = sybilCanister.restrict(
         domain,

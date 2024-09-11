@@ -2,7 +2,7 @@ import { FilterType } from 'Interfaces/subscription';
 import { createContext } from 'react';
 
 interface PythiaDataContextInterface {
-  fetchBalance: (chainId: BigInt | number, address: string) => void;
+  fetchBalance: (chainId: bigint | number, address: string) => void;
   balance: number;
   isBalanceLoading: boolean;
   pma: `0x${string}`;
@@ -31,18 +31,18 @@ const PythiaDataContext = createContext<PythiaDataContextInterface>({
   deposit: () => Promise.resolve(),
 
   page: 1,
-  setPage: (val: number) => {},
+  setPage: () => {},
   filterByType: 'Empty',
   showMine: false,
   showInactive: false,
   chainIds: [] as string[],
   searchQuery: '',
-  setSearchQuery: (val: string) => {},
-  setShowMine: (val: boolean) => {},
-  setShowInactive: (val: boolean) => {},
-  setFilterByType: (val: string) => {},
-  setChainIds: (val: string[]) => {},
-  debouncedChangeHandler: (val: React.ChangeEvent<HTMLInputElement>) => {},
+  setSearchQuery: () => {},
+  setShowMine: () => {},
+  setShowInactive: () => {},
+  setFilterByType: () => {},
+  setChainIds: () => {},
+  debouncedChangeHandler: () => {},
 });
 
 export default PythiaDataContext;

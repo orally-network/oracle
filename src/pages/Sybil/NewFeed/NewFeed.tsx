@@ -7,7 +7,6 @@ import { SybilBalance } from 'Shared/SybilBalance';
 import { SybilTopUp } from 'Shared/SybilTopUp';
 import logger from 'Utils/logger';
 
-import styles from './NewFeed.module.scss';
 import { DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { useGlobalState } from 'Providers/GlobalState';
 import { remove0x } from 'Utils/addressUtils';
@@ -32,7 +31,7 @@ export const NewFeed = (params: any) => {
   const convertedFrequency = Number(params.frequency) / 60;
   const [feedId, setFeedId] = useState<string>(params.feedId ?? '');
   const [frequency, setFrequency] = useState<string>(
-    params.frequency ? convertedFrequency.toString() : ''
+    params.frequency ? convertedFrequency.toString() : '',
   );
   const [sources, setSources] = useState<Source[]>(params.sources ?? [newSource]);
   const [isCreating, setIsCreating] = useState(false);
@@ -76,14 +75,16 @@ export const NewFeed = (params: any) => {
             Custom: null,
           },
           update_freq: +frequency * 60,
-          // @ts-ignore
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
           sources: sources.map((item) => ({
             HttpSource: {
               ...item,
               uri: item.uri.trim(),
               resolver: item.resolver.trim(),
               api_keys: [item.api_keys],
-            }})),
+            },
+          })),
           decimals: isPriceFeed ? [Number(decimals)] : [],
           msg: addressData.message,
           sig: remove0x(addressData.signature),
@@ -97,7 +98,7 @@ export const NewFeed = (params: any) => {
               return `Create failed. ${data} Try again later.`;
             },
           },
-        }
+        },
       );
     } catch (error) {
       logger.error(`Create feed`, error);
@@ -116,7 +117,7 @@ export const NewFeed = (params: any) => {
     <Flex vertical={true} gap="large" style={{ paddingBottom: '60px' }}>
       <Space direction="vertical">
         <div>Feed id</div>
-        <div className={styles.label}>.../USD</div>
+        <div className="text-secondary-button">.../USD</div>
         <Input
           disabled={isViewingMode}
           value={feedId}
@@ -127,7 +128,7 @@ export const NewFeed = (params: any) => {
       </Space>
       <Space direction="vertical">
         <div>Expiration time</div>
-        <div className={styles.label}>Frequency (min)</div>
+        <div className="text-secondary-button">Frequency (min)</div>
         <Input
           disabled={isViewingMode}
           pattern="[0-9]*"
@@ -148,7 +149,7 @@ export const NewFeed = (params: any) => {
       {isPriceFeed && (
         <Space direction="vertical">
           <div>Decimals</div>
-          <div className={styles.label}>Add decimals</div>
+          <div className="text-secondary-button">Add decimals</div>
           <Input
             disabled={isViewingMode}
             value={decimals}
@@ -180,7 +181,7 @@ export const NewFeed = (params: any) => {
             )}
           </Flex>
           <Space direction="vertical" style={{ width: '100%' }}>
-            <div className={styles.label}>URI</div>
+            <div className="text-secondary-button">URI</div>
             <Tooltip
               trigger={['focus']}
               title={
@@ -202,7 +203,7 @@ export const NewFeed = (params: any) => {
             </Tooltip>
           </Space>
           <Space direction="vertical" style={{ width: '100%' }}>
-            <div className={styles.label}>Resolver</div>
+            <div className="text-secondary-button">Resolver</div>
             <Input
               disabled={isViewingMode}
               value={source.resolver}
@@ -213,7 +214,11 @@ export const NewFeed = (params: any) => {
             />
           </Space>
 
+          {/*eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+          {/* @ts-expect-error */}
           {(params.sources && source.api_keys.length ? source.api_keys[0] : source.api_keys).map(
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
             (key, idx) => (
               <Card
                 key={idx}
@@ -234,7 +239,7 @@ export const NewFeed = (params: any) => {
               >
                 <Space size="middle" direction="vertical" style={{ width: '100%', paddingTop: 16 }}>
                   <Space direction="vertical" style={{ width: '100%' }}>
-                    <div className={styles.label}>Title</div>
+                    <div className="text-secondary-button">Title</div>
                     <Input
                       disabled={true}
                       value={key.title}
@@ -243,14 +248,14 @@ export const NewFeed = (params: any) => {
                         updateSource(index, {
                           ...source,
                           api_keys: source.api_keys.map((k, i) =>
-                            i === idx ? { ...k, title: e.target.value } : k
+                            i === idx ? { ...k, title: e.target.value } : k,
                           ),
                         })
                       }
                     />
                   </Space>
                   <Space direction="vertical" style={{ width: '100%' }}>
-                    <div className={styles.label}>Code</div>
+                    <div className="text-secondary-button">Code</div>
                     <Input.Password
                       disabled={isViewingMode}
                       value={key.key}
@@ -259,7 +264,7 @@ export const NewFeed = (params: any) => {
                         updateSource(index, {
                           ...source,
                           api_keys: source.api_keys.map((k, i) =>
-                            i === idx ? { ...k, key: e.target.value } : k
+                            i === idx ? { ...k, key: e.target.value } : k,
                           ),
                         })
                       }
@@ -267,7 +272,7 @@ export const NewFeed = (params: any) => {
                   </Space>
                 </Space>
               </Card>
-            )
+            ),
           )}
 
           {source.api_keys.length !== MAX_API_KEYS && !isViewingMode && (
@@ -296,7 +301,7 @@ export const NewFeed = (params: any) => {
 
       {addressData && addressData.address ? (
         <Space direction="vertical" size="middle">
-          <SybilBalance/>
+          <SybilBalance />
           <SybilTopUp />
 
           <Flex justify="flex-end">

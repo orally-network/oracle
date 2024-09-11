@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import FeedDetails from './FeedDetails';
 import { useGlobalState } from 'Providers/GlobalState';
-import { remove0x } from 'Utils/addressUtils';
 
 export const FeedDetailsPage = () => {
   const { id } = useParams();
@@ -16,12 +15,8 @@ export const FeedDetailsPage = () => {
   const fetchFeed = async (id: string) => {
     setIsFeedLoading(true);
     try {
-      // TODO: sign before the request 
-      const response: any = await sybilCanister.get_feed(
-        id.replace('-', '/'), 
-        [],
-        []
-      );
+      // TODO: sign before the request
+      const response: any = await sybilCanister.get_feed(id.replace('-', '/'), [], []);
 
       if (response.Err) {
         setFeedData(null);

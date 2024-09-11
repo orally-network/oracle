@@ -41,11 +41,10 @@ jobs:
 
       - name: Install
         run: |
-          rm -rf dist
           npm install
 
       - name: Build App
-        run: npm run build
+        run: npm run build-stg
 
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@master

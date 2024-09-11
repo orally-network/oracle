@@ -4,8 +4,6 @@ import { useParams } from 'react-router-dom';
 import { Subscription } from 'Interfaces/subscription';
 
 import InformationCard from './InformationCard';
-import useWindowDimensions from 'Utils/useWindowDimensions';
-import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import pythiaCanister from 'Canisters/pythiaCanister';
 
 export const SubscriptionDetailsPage = () => {
@@ -13,7 +11,7 @@ export const SubscriptionDetailsPage = () => {
   const [subscriptionData, setSubscriptionData] = useState<Subscription | null>(null);
   const [isSubscriptionLoading, setIsSubscriptionLoading] = useState<boolean>(false);
 
-  const fetchSubscription = async (id: BigInt, chainId: BigInt) => {
+  const fetchSubscription = async (id: bigint, chainId: bigint) => {
     setIsSubscriptionLoading(true);
     try {
       const response: any = await pythiaCanister.get_subscription(chainId, id);

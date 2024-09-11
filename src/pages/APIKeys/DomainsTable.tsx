@@ -3,11 +3,7 @@ import { Input } from '@nextui-org/react';
 
 import { Modal, useModal } from 'Components/Modal.tsx';
 import { type Column } from 'Components/Table';
-import {
-  useBanDomain,
-  useFetchAllowedDomains,
-  useGrantDomain,
-} from 'Services/sybilService';
+import { useBanDomain, useFetchAllowedDomains, useGrantDomain } from 'Services/sybilService';
 
 import { SybilTable } from './SybilTable';
 
@@ -27,16 +23,19 @@ export const DomainsTable = () => {
   const { mutate: grantDomain, isPending } = useGrantDomain();
   const { mutate: banDomain } = useBanDomain();
 
-  const grantAction = useMemo(() => [
-    {
-      label: 'Grant',
-      onPress: () => {
-        grantDomain(newDomain);
-        setNewDomain('');
-        onClose();
+  const grantAction = useMemo(
+    () => [
+      {
+        label: 'Grant',
+        onPress: () => {
+          grantDomain(newDomain);
+          setNewDomain('');
+          onClose();
+        },
       },
-    },
-  ], [newDomain]);
+    ],
+    [newDomain],
+  );
 
   return (
     <>
@@ -65,5 +64,5 @@ export const DomainsTable = () => {
         />
       </Modal>
     </>
-  )
+  );
 };

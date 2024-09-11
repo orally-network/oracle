@@ -9,7 +9,7 @@ import { useGetApolloCoordinatorLogs, useGetMulticallLogs } from 'Services/wagmi
 import { truncateNumberSymbols } from 'Utils/addressUtils';
 
 interface InstanceCardBodyProps {
-  instance: ApolloInstance,
+  instance: ApolloInstance;
 }
 
 const getLogLabel = (parsedLog: any) => {
@@ -17,7 +17,7 @@ const getLogLabel = (parsedLog: any) => {
     case EVENT_NAME_RANDOM_FEED_REQUESTED:
       return 'Random';
     case EVENT_NAME_DATA_FEED_REQUESTED:
-      return <FeedLogos feed={parsedLog.dataFeedId}/>;
+      return <FeedLogos feed={parsedLog.dataFeedId} />;
     default:
       return '';
   }
@@ -36,24 +36,28 @@ const getRequestedData = (requestLogName: string, requestedData: any) => {
     default:
       return '';
   }
-}
+};
 
 export const InstanceCardBody = ({ instance }: InstanceCardBodyProps) => {
-  const { data: coordinatorLogs, isLoading: isCoordinatorLogsLoading } = useGetApolloCoordinatorLogs(
-    instance.chainId,
-    instance.apolloCoordinator,
-  );
+  const { data: coordinatorLogs, isLoading: isCoordinatorLogsLoading } =
+    useGetApolloCoordinatorLogs(instance.chainId, instance.apolloCoordinator);
 
   const { data: multicallLogs, isLoading: isMulticallLogsLoading } = useGetMulticallLogs(
     instance.chainId,
     instance.evmAddress,
   );
 
-  const lastCoordinatorLog = useMemo(() => coordinatorLogs?.[coordinatorLogs?.length - 1], [coordinatorLogs]);
-  const lastMulticallLog = useMemo(() => multicallLogs?.[multicallLogs?.length - 1], [multicallLogs]);
+  const lastCoordinatorLog = useMemo(
+    () => coordinatorLogs?.[coordinatorLogs?.length - 1],
+    [coordinatorLogs],
+  );
+  const lastMulticallLog = useMemo(
+    () => multicallLogs?.[multicallLogs?.length - 1],
+    [multicallLogs],
+  );
 
   if (isCoordinatorLogsLoading) {
-    return <Spinner className="flex justify-center items-center w-full p-4"/>;
+    return <Spinner className="flex justify-center items-center w-full p-4" />;
   }
 
   if (!lastCoordinatorLog) {
@@ -64,7 +68,9 @@ export const InstanceCardBody = ({ instance }: InstanceCardBodyProps) => {
     );
   }
 
-  const requestedData = lastMulticallLog?.callsData?.find((callData: any) => callData.requestId === lastCoordinatorLog.requestId);
+  const requestedData = lastMulticallLog?.callsData?.find(
+    (callData: any) => callData.requestId === lastCoordinatorLog.requestId,
+  );
 
   return (
     <div className="bg-background w-full flex items-center justify-around h-20">
@@ -75,7 +81,7 @@ export const InstanceCardBody = ({ instance }: InstanceCardBodyProps) => {
       <div className="flex flex-col">
         <div>
           {isMulticallLogsLoading || !requestedData ? (
-            <Spinner className="flex justify-center p-4"/>
+            <Spinner className="flex justify-center p-4" />
           ) : (
             <div className="flex justify-center text-lg">
               {getRequestedData(lastCoordinatorLog.name, requestedData)}
@@ -83,9 +89,7 @@ export const InstanceCardBody = ({ instance }: InstanceCardBodyProps) => {
           )}
         </div>
 
-        <div className="flex justify-center">
-          Request id: {lastCoordinatorLog.requestId}
-        </div>
+        <div className="flex justify-center">Request id: {lastCoordinatorLog.requestId}</div>
       </div>
     </div>
   );

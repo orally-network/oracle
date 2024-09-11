@@ -4,25 +4,18 @@ import { truncateAddressSymbolsNum } from 'Utils/addressUtils';
 
 export const AddressSnippet = ({ address }: { address: string }) => {
   return (
-    <Snippet
-      codeString={address}
-      symbol=""
-      variant="bordered"
-      size="sm"
-    >
+    <Snippet codeString={address} symbol="" variant="bordered" size="sm">
       {truncateAddressSymbolsNum(address, 6)}
     </Snippet>
-  )
+  );
 };
 
-export const AddressSnippetWithLabel = ({ address, title }: { address: string, title: string }) => {
+export const AddressSnippetWithLabel = ({ address, title }: { address: string; title: string }) => {
   return (
     <div className="flex flex-col">
-      <span className="text text-gray-500">
-        {title}
-      </span>
+      <span className="text text-gray-500">{title}</span>
 
-      <AddressSnippet address={address}/>
+      <AddressSnippet address={address} />
     </div>
-  )
+  );
 };

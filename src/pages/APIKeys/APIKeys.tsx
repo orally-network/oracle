@@ -38,10 +38,10 @@ export const APIKeys = () => {
           </div>
 
           <Flex align="center" justify="space-between" gap={8} vertical={isMobile}>
-            <SybilBalance/>
+            <SybilBalance />
 
             <AuthorizedActions>
-              <SybilTopUp/>
+              <SybilTopUp />
             </AuthorizedActions>
           </Flex>
         </div>

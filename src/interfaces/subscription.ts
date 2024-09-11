@@ -4,7 +4,7 @@ export interface Subscription {
   owner: string;
   contract_addr: string;
   frequency: any;
-  id: BigInt;
+  id: bigint;
   label: string;
 }
 
@@ -22,7 +22,7 @@ interface ExecutionCondition {
     price_mutation_type: PriceMutationType;
     feed_id: string;
   };
-  Frequency: BigInt;
+  Frequency: bigint;
 }
 
 interface PriceMutationType {
@@ -33,9 +33,9 @@ interface PriceMutationType {
 
 interface SubscriptionMethod {
   abi: string;
-  chain_id: BigInt | number;
+  chain_id: bigint | number;
   name: string;
-  gas_limit: BigInt;
+  gas_limit: bigint;
   exec_condition: ExecutionCondition[];
   method_type: {
     Feed: string;

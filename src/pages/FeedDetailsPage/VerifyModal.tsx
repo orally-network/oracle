@@ -4,14 +4,12 @@ import ConfettiExplosion, { ConfettiProps } from 'react-confetti-explosion';
 import { BREAK_POINT_MOBILE } from 'Constants/ui';
 import useWindowDimensions from 'Utils/useWindowDimensions';
 import Loader from 'Components/Loader';
-import useSybilFeeds from 'Providers/SybilPairs/useSybilFeeds';
 import { add0x } from 'Utils/addressUtils';
 import { ExportOutlined } from '@ant-design/icons';
 import IconLink from 'Components/IconLink';
 import ReactJson from '@microlink/react-json-view';
 import { toast } from 'react-toastify';
 import Button from 'Components/Button';
-import { VerifyData } from 'Interfaces/feed';
 import { useGetFeedDataWithProof } from 'ApiHooks/useGetFeedDataWithProof';
 
 const confetti: ConfettiProps = {
@@ -50,7 +48,7 @@ export const VerifyModal = ({
 
   const { isLoading, verifyData } = useGetFeedDataWithProof({ id });
 
-  const [newVerifyData, setNewVerifyData] = useState<VerifyData | {}>({ ...verifyData });
+  // const [newVerifyData, setNewVerifyData] = useState<VerifyData | {}>({ ...verifyData });
 
   const { width } = useWindowDimensions();
   const isMobile = width < BREAK_POINT_MOBILE;
@@ -68,6 +66,7 @@ export const VerifyModal = ({
       }
     } catch (error) {
       setIsConfettiExplode(true);
+      console.error(error);
       toast.error('Something went wrong. Try again later.');
       setIsValid(false);
     } finally {
@@ -126,7 +125,7 @@ export const VerifyModal = ({
             backgroundColor: '#050B15',
           }}
         >
-          {isLoading ? (
+          {isLoading || !verifyData ? (
             <Flex align="center" justify="center" style={{ height: 200 }}>
               <Loader />
             </Flex>
@@ -140,7 +139,7 @@ export const VerifyModal = ({
               displayObjectSize={false}
               displayDataTypes={false}
               collapseStringsAfterLength={300}
-              onEdit={(obj) => setNewVerifyData(obj?.updated_src)}
+              // onEdit={(obj) => setNewVerifyData(obj?.updated_src)}
               indentWidth={2}
             />
           )}

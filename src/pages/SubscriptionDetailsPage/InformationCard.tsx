@@ -39,13 +39,15 @@ const InformationCard = ({ subscription }: InformationCardProps) => {
       chain_id,
       name: method_name,
       gas_limit,
-      method_type: { Feed: feed, Random: random },
+      method_type: { Feed: feed },
       exec_condition,
     },
     owner,
     contract_addr,
   } = subscription;
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
   const chain = CHAINS_MAP[chain_id as number];
   const lastUpdateDateTime = new Date(Number(last_update) * 1000);
   const frequency = exec_condition[0]?.Frequency || BigInt(3600);

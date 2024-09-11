@@ -26,7 +26,6 @@ const FeedDetails = ({ feed }: FeedDetailsProps) => {
   const {
     id,
     decimals,
-    owner,
     data,
     update_freq,
     feed_type,
@@ -42,7 +41,8 @@ const FeedDetails = ({ feed }: FeedDetailsProps) => {
         : feed_type.CustomNumber === null
           ? 'CustomNumber'
           : feed_type.CustomSitrng === null
-            ? 'CustomString' : '';
+            ? 'CustomString'
+            : '';
 
   const lastUpdateDate = last_update
     ? last_update
@@ -68,9 +68,14 @@ const FeedDetails = ({ feed }: FeedDetailsProps) => {
           alignItems: 'center',
         }}
       >
-        <Flex align="center" justify="center" vertical style={{
-          height: '100%',
-        }}>
+        <Flex
+          align="center"
+          justify="center"
+          vertical
+          style={{
+            height: '100%',
+          }}
+        >
           {isWeather ? (
             <img
               src="/assets/weather.png"
@@ -82,7 +87,7 @@ const FeedDetails = ({ feed }: FeedDetailsProps) => {
           ) : (
             <FeedLogos feed={id} size={76} />
           )}
-        
+
           <Typography.Title level={4} style={{ margin: 0, textAlign: 'center' }} ellipsis={true}>
             {id}
           </Typography.Title>

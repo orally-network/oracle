@@ -22,7 +22,7 @@ import { useNavigate } from 'react-router-dom';
 import Control from 'Shared/Control';
 import { CHAINS_MAP } from 'Constants/chains';
 import ChainLogo from 'Shared/ChainLogo';
-import { add0x, isAddressHasOx } from 'Utils/addressUtils';
+import { isAddressHasOx } from 'Utils/addressUtils';
 import { usePythiaData } from 'Providers/PythiaData';
 import { truncateEthAddress } from 'Utils/addressUtils';
 import { stopPropagation } from 'Utils/reactUtils';
@@ -42,9 +42,9 @@ interface SubscriptionProps {
     message: string;
     signature: string;
   };
-  stopSubscription: (chainId: BigInt, subId: BigInt) => Promise<GeneralResponse>;
-  startSubscription: (chainId: BigInt, subId: BigInt) => Promise<GeneralResponse>;
-  withdraw: (chainId: BigInt, subId: BigInt) => Promise<GeneralResponse>;
+  stopSubscription: (chainId: bigint, subId: bigint) => Promise<GeneralResponse>;
+  startSubscription: (chainId: bigint, subId: bigint) => Promise<GeneralResponse>;
+  withdraw: (chainId: bigint, subId: bigint) => Promise<GeneralResponse>;
 }
 
 const SubscriptionCard = ({
@@ -62,9 +62,7 @@ const SubscriptionCard = ({
     status: { is_active, last_update, executions_counter },
     method: {
       chain_id,
-      name: method_name,
-      gas_limit,
-      method_type: { Feed: feed, Random: random, Empty: empty },
+      method_type: { Feed: feed, Empty: empty },
       exec_condition,
       abi,
     },
@@ -112,8 +110,17 @@ const SubscriptionCard = ({
                 {feed ? feed : empty === null ? `Pure` : 'Random'}
               </Typography.Title>
             </Space>
-            <Typography.Text className={styles.sybilLink} onClick={feed ? () => navigate(`/sybil/${id}`) : null}>
-              {feed ? (<>DATA FEED <RightOutlined size={4} /></>) : abiObj.name}
+            <Typography.Text
+              className={styles.sybilLink}
+              onClick={feed ? () => navigate(`/sybil/${id}`) : null}
+            >
+              {feed ? (
+                <>
+                  DATA FEED <RightOutlined size={4} />
+                </>
+              ) : (
+                abiObj.name
+              )}
             </Typography.Text>
           </div>
 
@@ -142,9 +149,7 @@ const SubscriptionCard = ({
           <div className={styles.label}>Address</div>
 
           <Flex gap={2} justify="space-between">
-            <Typography.Title level={5}>
-              {truncateEthAddress(contract_addr)}{' '}
-            </Typography.Title>
+            <Typography.Title level={5}>{truncateEthAddress(contract_addr)} </Typography.Title>
             <Space size={5} align="center">
               <IconLink
                 link={null}

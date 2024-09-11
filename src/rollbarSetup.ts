@@ -1,5 +1,5 @@
 import Rollbar from 'rollbar';
-import config from "Constants/config";
+import config from 'Constants/config';
 
 const ROLLBAR_CONFIG = {
   accessToken: config.ROLLBAR_ACCESS_TOKEN,
@@ -19,12 +19,13 @@ const ROLLBAR_CONFIG = {
       },
     },
     server: {
-      branch: "master",
+      branch: 'master',
     },
   },
 };
 
-// @ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 const rollbarSetup = new Rollbar(ROLLBAR_CONFIG);
 
 export default rollbarSetup;

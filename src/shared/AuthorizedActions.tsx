@@ -7,11 +7,9 @@ export const AuthorizedActions = ({ children }: any) => {
   return (
     <div className="flex justify-between gap-2">
       {addressData && addressData.signature ? (
-        <>
-          {children}
-        </>
+        <>{children}</>
       ) : (
-        <SignInButton style={{ alignSelf: 'flex-end' }}/>
+        <SignInButton style={{ alignSelf: 'flex-end' }} />
       )}
     </div>
   );

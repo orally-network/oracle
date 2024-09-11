@@ -6,7 +6,7 @@ type Item = any & {
   label: string;
   value: string | number;
   avatar?: string;
-}
+};
 
 interface SelectProps {
   items: Item[];
@@ -16,11 +16,14 @@ interface SelectProps {
 }
 
 export const NewSelect = ({ items, handleChange, selectedItem, title }: SelectProps) => {
-  const handleSelectionChange = useCallback((e) => {
-    const item = items.find((item) => item.key == e.target.value);
+  const handleSelectionChange = useCallback(
+    (e) => {
+      const item = items.find((item) => item.key == e.target.value);
 
-    handleChange?.(item);
-  }, [items]);
+      handleChange?.(item);
+    },
+    [items],
+  );
 
   const selectedKeys = useMemo(() => [selectedItem?.key], [selectedItem]);
 
@@ -82,7 +85,7 @@ export const NewSelect = ({ items, handleChange, selectedItem, title }: SelectPr
       {(item) => (
         <SelectItem key={item.key} textValue={item.label}>
           <div className="flex gap-2 items-center">
-            <Avatar alt={item.label} className="flex-shrink-0" size="sm" src={item.avatar}/>
+            <Avatar alt={item.label} className="flex-shrink-0" size="sm" src={item.avatar} />
             <div className="flex flex-col">
               <span className="text-small">{item.label}</span>
               <span className="text-tiny text-default-400">{item.value}</span>
@@ -92,4 +95,4 @@ export const NewSelect = ({ items, handleChange, selectedItem, title }: SelectPr
       )}
     </Select>
   );
-}
+};

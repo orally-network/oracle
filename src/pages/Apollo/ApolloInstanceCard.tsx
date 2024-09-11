@@ -31,7 +31,7 @@ export const ApolloInstanceCard = ({ instance }: ApolloInstanceCardProps) => {
     >
       <CardHeader>
         <div className="flex flex-1 row gap-3 items-center">
-          <Avatar src={CHAINS_MAP[instance.chainId].img}/>
+          <Avatar src={CHAINS_MAP[instance.chainId].img} />
 
           <Link
             href={`${CHAINS_MAP[instance.chainId].blockExplorers.default.url}/address/${instance.evmAddress}`}
@@ -45,16 +45,17 @@ export const ApolloInstanceCard = ({ instance }: ApolloInstanceCardProps) => {
         </div>
 
         <div className="text-lg">
-          Balance: {!balance || isBalanceLoading ? '...' : Number(formatEther(balance)).toFixed(3)} ETH
+          Balance: {!balance || isBalanceLoading ? '...' : Number(formatEther(balance)).toFixed(3)}{' '}
+          ETH
         </div>
       </CardHeader>
 
-      <InstanceCardBody instance={instance}/>
+      <InstanceCardBody instance={instance} />
 
       <CardFooter className="flex justify-around w-full">
-        <AddressSnippetWithLabel address={instance.apolloCoordinator} title="Coordinator Address"/>
+        <AddressSnippetWithLabel address={instance.apolloCoordinator} title="Coordinator Address" />
 
-        <AddressSnippetWithLabel address={instance.evmAddress} title="Executor Address"/>
+        <AddressSnippetWithLabel address={instance.evmAddress} title="Executor Address" />
       </CardFooter>
     </Card>
   );

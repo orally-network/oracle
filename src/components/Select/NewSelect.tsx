@@ -76,7 +76,7 @@ export const NewSelect = ({ items, handleChange, selectedItem, title }: SelectPr
             )}
             <div className="flex flex-col">
               <span>{item.data.label}</span>
-              <span className="text-default-500 text-tiny">({item.data.value})</span>
+              <span className="text-default-500 text-tiny">{item.data.value}</span>
             </div>
           </div>
         ));

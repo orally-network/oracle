@@ -1,5 +1,5 @@
-import { CHAINS_MAP } from 'Constants/chains.ts';
-import { TOKEN_IMAGES } from 'Constants/tokens.ts';
+import { CHAINS_MAP } from 'Constants/chains';
+import { TOKEN_IMAGES } from 'Constants/tokens';
 
 export const mapChainToNewOption = (chain: any) => {
   const chainData = CHAINS_MAP[chain.chainId];
@@ -19,7 +19,7 @@ export const mapTokenToOption = (token: any) => ({
   ...token,
   key: token.address,
   label: token.symbol,
-  value: token.address,
+  value: token.balance ?? token.address,
   avatar: TOKEN_IMAGES[token.symbol.toUpperCase()] ?? TOKEN_IMAGES.default,
 });
 

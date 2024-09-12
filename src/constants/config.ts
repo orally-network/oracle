@@ -29,4 +29,7 @@ export default {
   zeroXApiKey: import.meta.env.VITE_ZERO_X_API_KEY,
 
   wagmiConnectProjectId: import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID,
+
+  liFiSdkIntegrator: import.meta.env.VITE_LIFI_SDK_INTEGRATOR,
+  liFiApiUrl: 'https://li.quest/v1',
 };

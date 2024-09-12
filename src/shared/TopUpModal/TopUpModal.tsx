@@ -18,7 +18,7 @@ interface TopUpModalProps {
   submit: (chain: number, token: AllowedToken, amount: number) => void;
   setChain: (AllowedChain: any) => void;
   chain: AllowedChain;
-  token: AllowedToken;
+  token?: AllowedToken;
   setToken?: (AllowedToken: any) => void;
 }
 
@@ -37,7 +37,7 @@ export const TopUpModal = ({
   const { address, chain: currentChain } = useAccount();
 
   const [amount, setAmount] = useState<number>(
-    token.symbol === 'ETH' ? DEFAULT_TOP_UP_AMOUNT_ETH : DEFAULT_TOP_UP_AMOUNT,
+    token?.symbol === 'ETH' ? DEFAULT_TOP_UP_AMOUNT_ETH : DEFAULT_TOP_UP_AMOUNT,
   );
 
   const { balance } = useTokenBalance({
@@ -54,7 +54,9 @@ export const TopUpModal = ({
       }
     }
 
-    submit(chain.chainId, token, amount);
+    if (token) {
+      submit(chain.chainId, token, amount);
+    }
   }, [chain.chainId, token, amount]);
 
   const actions = useMemo(

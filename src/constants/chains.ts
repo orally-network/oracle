@@ -14,6 +14,7 @@ import {
   aurora,
   auroraTestnet,
   lineaTestnet,
+  base,
   Chain,
 } from 'wagmi/chains';
 import { ExplorerType } from 'Interfaces/chain';
@@ -34,6 +35,7 @@ const mantaImg = '/assets/chains/manta.png';
 const blastImg = '/assets/chains/blast.png';
 const arbitrumImg = '/assets/chains/arbitrum.png';
 const zircuitImg = '/assets/chains/zircuit.png';
+const baseImg = '/assets/chains/base.svg';
 
 type EnhancedChain = Chain & {
   img: string;
@@ -55,6 +57,11 @@ const CHAINS: EnhancedChain[] = [
   {
     ...goerli,
     img: ethereumImg,
+    explorerType: ExplorerType.ScanExplorer,
+  },
+  {
+    ...base,
+    img: baseImg,
     explorerType: ExplorerType.ScanExplorer,
   },
   {

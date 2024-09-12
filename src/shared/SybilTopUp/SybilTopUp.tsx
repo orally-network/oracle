@@ -12,8 +12,8 @@ import { useSybilDeposit } from './useSybilDeposit';
 export const SybilTopUp = () => {
   const { isOpen, onOpen, onOpenChange } = useModal();
 
-  const [chain, setChain] = useState<AllowedChain | null>(null);
-  const [token, setToken] = useState<AllowedToken | null>(null);
+  const [chain, setChain] = useState<AllowedChain>();
+  const [token, setToken] = useState<AllowedToken>();
 
   const { isDepositing, sybilDeposit } = useSybilDeposit({ setIsModalVisible: onOpenChange });
 
@@ -43,7 +43,7 @@ export const SybilTopUp = () => {
     }
   }, [chain]);
 
-  const enabled = mappedChains && chain && token;
+  const enabled = mappedChains && chain;
 
   return (
     <>

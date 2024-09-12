@@ -68,6 +68,9 @@
       "Hooks/*": [
         "./hooks/*"
       ],
+      "Types/*": [
+        "./types/*"
+      ],
     },
     "outDir": "./dist",
     "incremental": true

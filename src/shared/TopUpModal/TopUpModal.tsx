@@ -1,9 +1,9 @@
-import { useTokenBalance } from 'Services/wagmiService';
 import { useState, useCallback, useMemo } from 'react';
 import { useSwitchChain, useAccount } from 'wagmi';
 import { Input } from '@nextui-org/react';
 import { type Address } from 'viem';
 
+import { useTokenBalance } from 'Services/wagmiService';
 import { DEFAULT_TOP_UP_AMOUNT, DEFAULT_TOP_UP_AMOUNT_ETH } from 'Constants/ui';
 import { NewSelect } from 'Components/Select/NewSelect';
 import { Modal } from 'Components/Modal';

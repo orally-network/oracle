@@ -20,7 +20,7 @@ import APOLLO_COORDINATOR_CONTRACT_EVENTS_ABI from 'ABIs/ApolloCoordinatorEvents
 import { toastWrapper, tryDecode } from './utils';
 
 interface UseTokenBalanceProps {
-  tokenAddress: Address;
+  tokenAddress?: Address;
   address: Address;
   enabled: boolean;
   chainId: number;

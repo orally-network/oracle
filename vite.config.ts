@@ -26,6 +26,7 @@ export default defineConfig({
       Stores: path.resolve(__dirname, './src/stores/'),
       SVGIcons: path.resolve(__dirname, './src/SVGIcons/'),
       Hooks: path.resolve(__dirname, './src/hooks/'),
+      Types: path.resolve(__dirname, './src/types/'),
     },
   },
 });

@@ -4,12 +4,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client/react';
 import { WagmiProvider } from 'wagmi';
+import { getWalletClient, switchChain } from '@wagmi/core';
 import { createWeb3Modal } from '@web3modal/wagmi/react';
 import { defaultWagmiConfig } from '@web3modal/wagmi/react/config';
 import { Toaster } from 'sonner';
 // todo: remove later
 import { ToastContainer } from 'react-toastify';
 import Modal from 'react-modal';
+import { createConfig as createLiFiConfig, EVM } from '@lifi/sdk';
 
 import config from 'Constants/config';
 import CHAINS from 'Constants/chains';
@@ -23,19 +25,33 @@ import 'react-toastify/dist/ReactToastify.css';
 // todo: remove later
 Modal.setAppElement('#app');
 
+createLiFiConfig({
+  apiUrl: config.liFiApiUrl,
+  integrator: config.liFiSdkIntegrator,
+  providers: [
+    EVM({
+      getWalletClient: () => getWalletClient(wagmiConfig),
+      switchChain: async (chainId) => {
+        const chain = await switchChain(wagmiConfig, { chainId });
+        return getWalletClient(wagmiConfig, { chainId: chain.id });
+      },
+    }),
+  ],
+});
+
 // react query
 const queryClient = new QueryClient({
-  // defaultOptions: {
-  //   queries: {
-  //     staleTime: TIME_TO_WAIT,
-  //     refetchOnMount: true,
-  //     refetchOnReconnect: true,
-  //     refetchOnWindowFocus: false,
-  //     refetchInterval: TIME_TO_WAIT,
-  //     cacheTime: CACHE_TIME,
-  //     retry: QUERY_CLIENT_DEFAULT_RETRY_COUNT,
-  //   },
-  // },
+  defaultOptions: {
+    queries: {
+      // staleTime: TIME_TO_WAIT,
+      refetchOnMount: false,
+      refetchOnReconnect: true,
+      refetchOnWindowFocus: false,
+      // refetchInterval: TIME_TO_WAIT,
+      // cacheTime: CACHE_TIME,
+      // retry: QUERY_CLIENT_DEFAULT_RETRY_COUNT,
+    },
+  },
 });
 
 const link = new HttpLink({
